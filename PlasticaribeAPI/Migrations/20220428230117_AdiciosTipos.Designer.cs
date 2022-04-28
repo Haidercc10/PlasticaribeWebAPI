@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -10,9 +11,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220428230117_AdiciosTipos")]
+    partial class AdiciosTipos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,55 +44,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("area_Id");
 
                     b.ToTable("Areas");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Empresa", b =>
-                {
-                    b.Property<long>("Empresa_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Empresa_COdigoPostal")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Empresa_Ciudad")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<int>("Empresa_Codigo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Empresa_Codigo"), 1L, 1);
-
-                    b.Property<string>("Empresa_Correo")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("Empresa_Direccion")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("Empresa_Nombre")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("Empresa_Telefono")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("TipoIdentificacion_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("TipoIdentificacion_Id1")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.HasKey("Empresa_Id");
-
-                    b.HasIndex("TipoIdentificacion_Id1");
-
-                    b.ToTable("Empresas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Rol", b =>
@@ -160,17 +113,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("TipoUsuario_Id");
 
                     b.ToTable("TipoUsuarios");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Empresa", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.TipoIdentificacion", "TipoIdentificacion")
-                        .WithMany()
-                        .HasForeignKey("TipoIdentificacion_Id1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TipoIdentificacion");
                 });
 #pragma warning restore 612, 618
         }

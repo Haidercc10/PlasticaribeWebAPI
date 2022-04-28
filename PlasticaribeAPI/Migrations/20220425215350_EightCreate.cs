@@ -12,8 +12,7 @@ namespace PlasticaribeAPI.Migrations
                 name: "Areas",
                 columns: table => new
                 {
-                    area_Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    area_Id = table.Column<int>(type: "int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
                     area_Codigo = table.Column<int>(type: "int", nullable: false),
                     area_Nombre = table.Column<string>(type: "varchar(50)", nullable: false),
                     area_Descripcion = table.Column<string>(type: "varchar(200)", nullable: true)
