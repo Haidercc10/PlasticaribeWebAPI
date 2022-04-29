@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -10,9 +11,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220429200202_ActualizacionUsuario")]
+    partial class ActualizacionUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -306,7 +308,7 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Estado_Id")
                         .HasColumnType("int");
 
-                    b.Property<int>("Rol_Id")
+                    b.Property<int>("RolesRol_Id")
                         .HasColumnType("int");
 
                     b.Property<string>("TipoIdentificacion_Id")
@@ -343,7 +345,7 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("eps_Id")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("fPen_Id")
+                    b.Property<long>("fondosPensionfPen_Id")
                         .HasColumnType("bigint");
 
                     b.HasKey("Usu_Id");
@@ -354,7 +356,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Estado_Id");
 
-                    b.HasIndex("Rol_Id");
+                    b.HasIndex("RolesRol_Id");
 
                     b.HasIndex("TipoIdentificacion_Id");
 
@@ -364,7 +366,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("eps_Id");
 
-                    b.HasIndex("fPen_Id");
+                    b.HasIndex("fondosPensionfPen_Id");
 
                     b.ToTable("Usuarios");
                 });
@@ -400,9 +402,9 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Rol", "Rol")
+                    b.HasOne("PlasticaribeAPI.Models.Rol", "Roles")
                         .WithMany()
-                        .HasForeignKey("Rol_Id")
+                        .HasForeignKey("RolesRol_Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -426,9 +428,9 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.fondoPension", "fPen")
+                    b.HasOne("PlasticaribeAPI.Models.fondoPension", "fondosPension")
                         .WithMany()
-                        .HasForeignKey("fPen_Id")
+                        .HasForeignKey("fondosPensionfPen_Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -440,7 +442,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Navigation("Estado");
 
-                    b.Navigation("Rol");
+                    b.Navigation("Roles");
 
                     b.Navigation("TipoIdentificacion");
 
@@ -448,7 +450,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Navigation("cajComp");
 
-                    b.Navigation("fPen");
+                    b.Navigation("fondosPension");
                 });
 #pragma warning restore 612, 618
         }

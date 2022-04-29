@@ -22,7 +22,7 @@ namespace PlasticaribeAPI.Models
 
         public TipoUsuario TipoUsuario { get; set; }
 
-        public Rol Roles { get; set; }
+        public Rol Rol { get; set; }
 
         public Empresa Empresa { get; set; }
 
@@ -37,11 +37,11 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(100)")]
         public String Usu_Contrasena { get; set; }
 
-        public cajaCompensacion cajas_Compensacion { get; set; }
+        public cajaCompensacion cajComp { get; set; }
 
         public EPS EPS { get; set; }
 
-        public fondoPension fondosPension { get; set; }
+        public fondoPension fPen { get; set; }
 
 
     }
