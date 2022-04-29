@@ -9,11 +9,11 @@ namespace PlasticaribeAPI.Data
         public dataContext(DbContextOptions<dataContext> options) : base(options)
         { }
 
-        public DbSet<Models.Area> Areas { get; set; }
         public DbSet<Models.Rol> Roles { get; set; }
         public DbSet<PlasticaribeAPI.Models.TipoIdentificacion> TipoIdentificaciones { get; set; }
         public DbSet<PlasticaribeAPI.Models.TipoUsuario> TipoUsuarios { get; set; }
         public DbSet<PlasticaribeAPI.Models.Empresa> Empresas { get; set; }
+        //public DbSet<Models.Area> Areas { get; set; }
 
     }
 }

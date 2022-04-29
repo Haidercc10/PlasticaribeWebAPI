@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -10,9 +11,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220429131116_actualizacionEmpresa")]
+    partial class actualizacionEmpresa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,23 +25,23 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Area", b =>
                 {
-                    b.Property<int>("Area_Id")
+                    b.Property<int>("area_Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Area_Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("area_Id"), 1L, 1);
 
-                    b.Property<int>("Area_Codigo")
+                    b.Property<int>("area_Codigo")
                         .HasColumnType("int");
 
-                    b.Property<string>("Area_Descripcion")
+                    b.Property<string>("area_Descripcion")
                         .HasColumnType("varchar(200)");
 
-                    b.Property<string>("Area_Nombre")
+                    b.Property<string>("area_Nombre")
                         .IsRequired()
                         .HasColumnType("varchar(50)");
 
-                    b.HasKey("Area_Id");
+                    b.HasKey("area_Id");
 
                     b.ToTable("Areas");
                 });

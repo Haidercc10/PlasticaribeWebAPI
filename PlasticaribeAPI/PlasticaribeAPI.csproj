@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20220428230504_AdiciosEmpresa.cs" />
+    <Compile Remove="Migrations\20220428230504_AdiciosEmpresa.Designer.cs" />
+    <Compile Remove="Migrations\20220429131433_AdicionAreas.cs" />
+    <Compile Remove="Migrations\20220429131433_AdicionAreas.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 

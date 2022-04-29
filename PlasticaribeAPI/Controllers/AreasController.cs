@@ -48,7 +48,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutArea(int id, Area area)
         {
-            if (id != area.area_Id)
+            if (id != area.Area_Id)
             {
                 return BadRequest();
             }
@@ -82,7 +82,7 @@ namespace PlasticaribeAPI.Controllers
             _context.Areas.Add(area);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetArea", new { id = area.area_Id }, area);
+            return CreatedAtAction("GetArea", new { id = area.Area_Id }, area);
         }
 
         // DELETE: api/Areas/5
@@ -103,7 +103,7 @@ namespace PlasticaribeAPI.Controllers
 
         private bool AreaExists(int id)
         {
-            return _context.Areas.Any(e => e.area_Id == id);
+            return _context.Areas.Any(e => e.Area_Id == id);
         }
     }
 }

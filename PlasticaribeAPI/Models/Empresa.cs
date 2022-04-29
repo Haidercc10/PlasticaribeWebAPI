@@ -13,10 +13,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "bigint")]
         public long Empresa_Id { get; set; }
 
-        [Column(TypeName = "varchar(10)")]
-        public String TipoIdentificacion_Id { get; set; }
         public TipoIdentificacion TipoIdentificacion { get; set; }
-
 
         [Column(TypeName = "varchar(50)")]
         public String Empresa_Nombre { get; set; }

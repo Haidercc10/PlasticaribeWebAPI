@@ -6,16 +6,14 @@ namespace PlasticaribeAPI.Models
 {
     public class Area
     {
-        
-        [Key]              
-        public int area_Id { get; set; }
-               
-        public int area_Codigo { get; set; }
-        
-        [Column(TypeName = "varchar(50)")]
-        public String area_Nombre { get; set; }
 
-        [Column(TypeName = "varchar(200)")]
-        public String? area_Descripcion { get; set; }
+        [Key]
+        public int Area_Id { get; set; }
+
+        [Column(TypeName = "varchar(50)")]
+        public String Area_Nombre { get; set; }
+
+        [Column(TypeName = "text")]
+        public String? Area_Descripcion { get; set; }
     }
 }
