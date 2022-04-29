@@ -23,6 +23,7 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Area", b =>
                 {
+<<<<<<< Updated upstream
                     b.Property<int>("Area_Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
@@ -34,6 +35,17 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Property<string>("Area_Descripcion")
                         .HasColumnType("varchar(200)");
+=======
+                    b.Property<long>("area_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("area_Id"), 1L, 1);
+
+                    b.Property<string>("area_Descripcion")
+                        .IsRequired()
+                        .HasColumnType("text");
+>>>>>>> Stashed changes
 
                     b.Property<string>("Area_Nombre")
                         .IsRequired()
@@ -44,6 +56,7 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Areas");
                 });
 
+<<<<<<< Updated upstream
             modelBuilder.Entity("PlasticaribeAPI.Models.Empresa", b =>
                 {
                     b.Property<long>("Empresa_Id")
@@ -167,6 +180,123 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("TipoIdentificacion");
+=======
+            modelBuilder.Entity("PlasticaribeAPI.Models.cajaCompensacion", b =>
+                {
+                    b.Property<long>("cajComp_Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("cajComp_Ciudad")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<int>("cajComp_Codigo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("cajComp_Codigo"), 1L, 1);
+
+                    b.Property<long>("cajComp_CuentaBancaria")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("cajComp_Direccion")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("cajComp_Email")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("cajComp_Nombre")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("cajComp_Telefono")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.HasKey("cajComp_Id");
+
+                    b.ToTable("cajas_Compensaciones");
+                });
+
+            modelBuilder.Entity("PlasticaribeAPI.Models.EPS", b =>
+                {
+                    b.Property<long>("eps_Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("eps_Ciudad")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<int>("eps_Codigo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("eps_Codigo"), 1L, 1);
+
+                    b.Property<long>("eps_CuentaBancaria")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("eps_Direccion")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("eps_Email")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("eps_Nombre")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("eps_Telefono")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.HasKey("eps_Id");
+
+                    b.ToTable("EPS");
+                });
+
+            modelBuilder.Entity("PlasticaribeAPI.Models.fondoPension", b =>
+                {
+                    b.Property<long>("fPen_Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("fPen_Ciudad")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<int>("fPen_Codigo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("fPen_Codigo"), 1L, 1);
+
+                    b.Property<long>("fPen_CuentaBancaria")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("fPen_Direccion")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("fPen_Email")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("fPen_Nombre")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("fPen_Telefono")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.HasKey("fPen_Id");
+
+                    b.ToTable("fondosPensiones");
+>>>>>>> Stashed changes
                 });
 #pragma warning restore 612, 618
         }
