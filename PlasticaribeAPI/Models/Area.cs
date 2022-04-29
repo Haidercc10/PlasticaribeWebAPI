@@ -8,7 +8,7 @@ namespace PlasticaribeAPI.Models
 
         [Key]
 
-        public int Area_Id { get; set; }
+        public long Area_Id { get; set; }
 
         [Column(TypeName = "varchar(50)")]
         public String Area_Nombre { get; set; }
