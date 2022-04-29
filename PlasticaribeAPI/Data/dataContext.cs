@@ -19,6 +19,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<Models.fondoPension> FondosPensiones { get; set; }
         public DbSet<Models.Area> Areas { get; set; }
         public DbSet<Models.Estado> Estados { get; set; }
+        public DbSet<Models.Usuario> Usuarios { get; set; }
     }       
 
 }

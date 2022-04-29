@@ -13,11 +13,11 @@ namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RolsController : ControllerBase
+    public class RolesController : ControllerBase
     {
         private readonly dataContext _context;
 
-        public RolsController(dataContext context)
+        public RolesController(dataContext context)
         {
             _context = context;
         }
