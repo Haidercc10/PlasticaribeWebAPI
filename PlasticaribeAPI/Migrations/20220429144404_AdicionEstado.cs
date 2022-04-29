@@ -4,28 +4,30 @@
 
 namespace PlasticaribeAPI.Migrations
 {
-    public partial class migracionArea1 : Migration
+    public partial class AdicionEstado : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Areas",
+                name: "Estados",
                 columns: table => new
                 {
-                    area_Id = table.Column<int>(type: "int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
-                    area_Nombre = table.Column<string>(type: "varchar(50)", nullable: false),
-                    area_Descripcion = table.Column<string>(type: "text", nullable: false)
+                    Estado_Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Estado_Nombre = table.Column<string>(type: "varchar(50)", nullable: false),
+                    Estado_Descripcion = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Areas", x => x.area_Id);
+                    table.PrimaryKey("PK_Estados", x => x.Estado_Id);
                 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Areas");
+                name: "Estados");
+
         }
     }
 }

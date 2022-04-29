@@ -6,25 +6,19 @@ namespace PlasticaribeAPI.Data
 {
     public class dataContext : DbContext
     {
-        public dataContext(DbContextOptions<dataContext> options) : base(options)
-        { }
-<<<<<<< Updated upstream
+
+        public dataContext(DbContextOptions<dataContext>options) : base(options) { }
+
 
         public DbSet<Models.Rol> Roles { get; set; }
         public DbSet<PlasticaribeAPI.Models.TipoIdentificacion> TipoIdentificaciones { get; set; }
         public DbSet<PlasticaribeAPI.Models.TipoUsuario> TipoUsuarios { get; set; }
         public DbSet<PlasticaribeAPI.Models.Empresa> Empresas { get; set; }
-        //public DbSet<Models.Area> Areas { get; set; }
-
-    }
-=======
-            
-            public DbSet<Models.EPS> EPS { get; set; }
-            public DbSet<Models.cajaCompensacion> cajas_Compensaciones{ get; set; }
-            public DbSet<Models.fondoPension> fondosPensiones { get; set; }
-
-            public DbSet<Models.Area> Areas { get; set; }
-
+        public DbSet<Models.EPS> EPS { get; set; }
+        public DbSet<Models.cajaCompensacion> Cajas_Compensaciones{ get; set; }
+        public DbSet<Models.fondoPension> FondosPensiones { get; set; }
+        public DbSet<Models.Area> Areas { get; set; }
+        public DbSet<Models.Estado> Estados { get; set; }
     }       
->>>>>>> Stashed changes
+
 }

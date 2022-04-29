@@ -3,19 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
-    public class Area
+    public class Estado
     {
-
         [Key]
-
-        public int Area_Id { get; set; }
+        public int Estado_Id { get; set; }
 
         [Column(TypeName = "varchar(50)")]
-        public String Area_Nombre { get; set; }
+        public String Estado_Nombre { get; set; }
 
         [Column(TypeName = "text")]
-        public String? Area_Descripcion { get; set; }
-
+        public String? Estado_Descripcion { get; set; }
 
     }
 }
