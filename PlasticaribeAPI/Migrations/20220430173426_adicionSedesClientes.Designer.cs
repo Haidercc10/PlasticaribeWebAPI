@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -10,9 +11,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220430173426_adicionSedesClientes")]
+    partial class adicionSedesClientes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -120,32 +122,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("TipoIdentificacion_Id");
 
                     b.ToTable("Clientes");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.ClientesUsuarios", b =>
-                {
-                    b.Property<int>("CliUsu_Id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CliUsu_Codigo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CliUsu_Codigo"), 1L, 1);
-
-                    b.Property<long>("Cli_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Usua_Id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("CliUsu_Id");
-
-                    b.HasIndex("Cli_Id");
-
-                    b.HasIndex("Usua_Id");
-
-                    b.ToTable("Clientes_Usuarios");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Empresa", b =>
@@ -468,7 +444,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("TipoIdentificacion_Id")
-                        .IsRequired()
                         .HasColumnType("varchar(10)");
 
                     b.Property<int>("Usua_Codigo")
@@ -547,25 +522,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("TipoIdentificacion");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.ClientesUsuarios", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Clientes", "Cli")
-                        .WithMany()
-                        .HasForeignKey("Cli_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usua")
-                        .WithMany()
-                        .HasForeignKey("Usua_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cli");
-
-                    b.Navigation("Usua");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Empresa", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.TipoIdentificacion", "TipoIdentificacion")
@@ -627,9 +583,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasOne("PlasticaribeAPI.Models.TipoIdentificacion", "TipoIdentificacion")
                         .WithMany()
-                        .HasForeignKey("TipoIdentificacion_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TipoIdentificacion_Id");
 
                     b.HasOne("PlasticaribeAPI.Models.cajaCompensacion", "cajComp")
                         .WithMany()
