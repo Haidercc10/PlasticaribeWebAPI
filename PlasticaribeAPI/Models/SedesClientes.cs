@@ -18,6 +18,6 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(50)")]
         public String SedeCli_CodPostal { get; set; }
-        public Usuario Usua_Id { get; set; }
+        public Usuario Usu_Id { get; set; }
     }
 }
