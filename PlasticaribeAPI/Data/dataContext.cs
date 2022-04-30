@@ -24,8 +24,20 @@ namespace PlasticaribeAPI.Data
         public DbSet<Models.Tipo_Bodega> Tipos_Bodegas { get; set; }
         public DbSet<Models.Clientes> Clientes { get; set; }
 
+
         public DbSet<Models.Unidad_Medida> Unidades_Medidas { get; set; }
 
+
+
+        public DbSet<Models.SedesClientes> Sedes_Clientes { get; set; }
+
+
+
+
+       
+       
+        
+        public DbSet<Models.Producto> Productos { get; set; }
 
     }
 
