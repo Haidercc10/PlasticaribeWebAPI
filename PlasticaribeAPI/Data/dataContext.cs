@@ -21,9 +21,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<Models.Rol_Usuario> Roles_Usuarios { get; set; }
         public DbSet<Models.Tipo_Producto> Tipos_Productos { get; set; }
         public DbSet<Models.TiposClientes> Tipos_Clientes { get; set; }
-
         public DbSet<Models.Tipo_Bodega> Tipos_Bodegas { get; set; }
-
+        public DbSet<Models.Clientes> Clientes { get; set; }
     }
 
 }
