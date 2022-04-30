@@ -38,7 +38,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("Area_Id");
 
-                    b.ToTable("Areas");
+                    b.ToTable("Areas", (string)null);
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.cajaCompensacion", b =>
@@ -77,7 +77,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("cajComp_Id");
 
-                    b.ToTable("Cajas_Compensaciones");
+                    b.ToTable("Cajas_Compensaciones", (string)null);
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Clientes", b =>
@@ -119,7 +119,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("TipoIdentificacion_Id");
 
-                    b.ToTable("Clientes");
+                    b.ToTable("Clientes", (string)null);
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Empresa", b =>
@@ -164,7 +164,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("TipoIdentificacion_Id");
 
-                    b.ToTable("Empresas");
+                    b.ToTable("Empresas", (string)null);
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.EPS", b =>
@@ -203,7 +203,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("eps_Id");
 
-                    b.ToTable("EPS");
+                    b.ToTable("EPS", (string)null);
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Estado", b =>
@@ -223,7 +223,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("Estado_Id");
 
-                    b.ToTable("Estados");
+                    b.ToTable("Estados", (string)null);
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.fondoPension", b =>
@@ -262,7 +262,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("fPen_Id");
 
-                    b.ToTable("FondosPensiones");
+                    b.ToTable("FondosPensiones", (string)null);
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Rol_Usuario", b =>
@@ -282,7 +282,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("RolUsu_Id");
 
-                    b.ToTable("Roles_Usuarios");
+                    b.ToTable("Roles_Usuarios", (string)null);
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.SedesClientes", b =>
@@ -311,7 +311,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Usu_IdUsua_Id");
 
-                    b.ToTable("Sedes_Clientes");
+                    b.ToTable("Sedes_Clientes", (string)null);
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Bodega", b =>
@@ -337,7 +337,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Area_Id");
 
-                    b.ToTable("Tipos_Bodegas");
+                    b.ToTable("Tipos_Bodegas", (string)null);
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Producto", b =>
@@ -358,7 +358,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("TpProd_Id");
 
-                    b.ToTable("Tipos_Productos");
+                    b.ToTable("Tipos_Productos", (string)null);
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Usuario", b =>
@@ -379,7 +379,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("tpUsu_Id");
 
-                    b.ToTable("Tipos_Usuarios");
+                    b.ToTable("Tipos_Usuarios", (string)null);
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.TipoIdentificacion", b =>
@@ -402,7 +402,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("TipoIdentificacion_Id");
 
-                    b.ToTable("TipoIdentificaciones");
+                    b.ToTable("TipoIdentificaciones", (string)null);
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.TiposClientes", b =>
@@ -422,7 +422,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("TPCli_Id");
 
-                    b.ToTable("Tipos_Clientes");
+                    b.ToTable("Tipos_Clientes", (string)null);
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Usuario", b =>
@@ -499,7 +499,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("tpUsu_Id");
 
-                    b.ToTable("Usuarios");
+                    b.ToTable("Usuarios", (string)null);
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Clientes", b =>
