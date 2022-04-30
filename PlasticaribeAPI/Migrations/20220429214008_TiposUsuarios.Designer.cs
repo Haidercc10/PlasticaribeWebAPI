@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -10,9 +11,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220429214008_TiposUsuarios")]
+    partial class TiposUsuarios
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -223,45 +225,27 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("FondosPensiones");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Rol_Usuario", b =>
+            modelBuilder.Entity("PlasticaribeAPI.Models.Rol", b =>
                 {
-                    b.Property<int>("RolUsu_Id")
+                    b.Property<int>("Rol_Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rol_Codigo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RolUsu_Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Rol_Codigo"), 1L, 1);
 
-                    b.Property<string>("RolUsu_Descripcion")
+                    b.Property<string>("Rol_Descripcion")
                         .HasColumnType("varchar(200)");
 
-                    b.Property<string>("RolUsu_Nombre")
+                    b.Property<string>("Rol_Nombre")
                         .IsRequired()
                         .HasColumnType("varchar(50)");
 
-                    b.HasKey("RolUsu_Id");
+                    b.HasKey("Rol_Id");
 
-                    b.ToTable("Roles_Usuarios");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Producto", b =>
-                {
-                    b.Property<int>("TpProd_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TpProd_Id"), 1L, 1);
-
-                    b.Property<string>("TpProd_Descripcion")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("TpProd_Nombre")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.HasKey("TpProd_Id");
-
-                    b.ToTable("Tipos_Productos");
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Usuario", b =>
@@ -308,9 +292,26 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("TipoIdentificaciones");
                 });
 
+            modelBuilder.Entity("PlasticaribeAPI.Models.TipoUsuario", b =>
+                {
+                    b.Property<string>("TipoUsuario_Id")
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<string>("TipoUsuario_Descripcion")
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("TipoUsuario_Nombre")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.HasKey("TipoUsuario_Id");
+
+                    b.ToTable("TipoUsuarios");
+                });
+
             modelBuilder.Entity("PlasticaribeAPI.Models.Usuario", b =>
                 {
-                    b.Property<long>("Usua_Id")
+                    b.Property<long>("Usu_Id")
                         .HasColumnType("bigint");
 
                     b.Property<long>("Area_Id")
@@ -322,31 +323,34 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Estado_Id")
                         .HasColumnType("int");
 
-                    b.Property<int>("RolUsu_Id")
+                    b.Property<int>("Rol_Id")
                         .HasColumnType("int");
 
                     b.Property<string>("TipoIdentificacion_Id")
                         .HasColumnType("varchar(10)");
 
-                    b.Property<int>("Usua_Codigo")
+                    b.Property<string>("TipoUsuario_Id")
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<int>("Usu_Codigo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Usua_Codigo"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Usu_Codigo"), 1L, 1);
 
-                    b.Property<string>("Usua_Contrasena")
+                    b.Property<string>("Usu_Contrasena")
                         .IsRequired()
                         .HasColumnType("varchar(100)");
 
-                    b.Property<string>("Usua_Email")
+                    b.Property<string>("Usu_Email")
                         .IsRequired()
                         .HasColumnType("varchar(100)");
 
-                    b.Property<string>("Usua_Nombre")
+                    b.Property<string>("Usu_Nombre")
                         .IsRequired()
                         .HasColumnType("varchar(50)");
 
-                    b.Property<string>("Usua_Telefono")
+                    b.Property<string>("Usu_Telefono")
                         .IsRequired()
                         .HasColumnType("varchar(50)");
 
@@ -359,10 +363,7 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("fPen_Id")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("tpUsu_Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("Usua_Id");
+                    b.HasKey("Usu_Id");
 
                     b.HasIndex("Area_Id");
 
@@ -370,17 +371,17 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Estado_Id");
 
-                    b.HasIndex("RolUsu_Id");
+                    b.HasIndex("Rol_Id");
 
                     b.HasIndex("TipoIdentificacion_Id");
+
+                    b.HasIndex("TipoUsuario_Id");
 
                     b.HasIndex("cajComp_Id");
 
                     b.HasIndex("eps_Id");
 
                     b.HasIndex("fPen_Id");
-
-                    b.HasIndex("tpUsu_Id");
 
                     b.ToTable("Usuarios");
                 });
@@ -416,15 +417,19 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Rol_Usuario", "RolUsu")
+                    b.HasOne("PlasticaribeAPI.Models.Rol", "Rol")
                         .WithMany()
-                        .HasForeignKey("RolUsu_Id")
+                        .HasForeignKey("Rol_Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PlasticaribeAPI.Models.TipoIdentificacion", "TipoIdentificacion")
                         .WithMany()
                         .HasForeignKey("TipoIdentificacion_Id");
+
+                    b.HasOne("PlasticaribeAPI.Models.TipoUsuario", "TipoUsuario")
+                        .WithMany()
+                        .HasForeignKey("TipoUsuario_Id");
 
                     b.HasOne("PlasticaribeAPI.Models.cajaCompensacion", "cajComp")
                         .WithMany()
@@ -444,12 +449,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Tipo_Usuario", "tpUsu")
-                        .WithMany()
-                        .HasForeignKey("tpUsu_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Area");
 
                     b.Navigation("EPS");
@@ -458,15 +457,15 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Navigation("Estado");
 
-                    b.Navigation("RolUsu");
+                    b.Navigation("Rol");
 
                     b.Navigation("TipoIdentificacion");
+
+                    b.Navigation("TipoUsuario");
 
                     b.Navigation("cajComp");
 
                     b.Navigation("fPen");
-
-                    b.Navigation("tpUsu");
                 });
 #pragma warning restore 612, 618
         }

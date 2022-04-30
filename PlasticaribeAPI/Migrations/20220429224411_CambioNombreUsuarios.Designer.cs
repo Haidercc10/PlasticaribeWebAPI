@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -10,9 +11,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220429224411_CambioNombreUsuarios")]
+    partial class CambioNombreUsuarios
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -241,27 +243,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("RolUsu_Id");
 
                     b.ToTable("Roles_Usuarios");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Producto", b =>
-                {
-                    b.Property<int>("TpProd_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TpProd_Id"), 1L, 1);
-
-                    b.Property<string>("TpProd_Descripcion")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("TpProd_Nombre")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.HasKey("TpProd_Id");
-
-                    b.ToTable("Tipos_Productos");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Usuario", b =>

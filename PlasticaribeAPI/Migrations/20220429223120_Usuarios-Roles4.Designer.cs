@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -10,9 +11,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220429223120_Usuarios-Roles4")]
+    partial class UsuariosRoles4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,27 +245,6 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Roles_Usuarios");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Producto", b =>
-                {
-                    b.Property<int>("TpProd_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TpProd_Id"), 1L, 1);
-
-                    b.Property<string>("TpProd_Descripcion")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("TpProd_Nombre")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.HasKey("TpProd_Id");
-
-                    b.ToTable("Tipos_Productos");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Usuario", b =>
                 {
                     b.Property<int>("tpUsu_Id")
@@ -308,7 +289,7 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("TipoIdentificaciones");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Usuario", b =>
+            modelBuilder.Entity("PlasticaribeAPI.Models.Usuarios", b =>
                 {
                     b.Property<long>("Usua_Id")
                         .HasColumnType("bigint");
@@ -382,7 +363,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("tpUsu_Id");
 
-                    b.ToTable("Usuarios");
+                    b.ToTable("UsuariosSistema");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Empresa", b =>
@@ -396,7 +377,7 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("TipoIdentificacion");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Usuario", b =>
+            modelBuilder.Entity("PlasticaribeAPI.Models.Usuarios", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.Area", "Area")
                         .WithMany()
