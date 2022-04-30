@@ -285,35 +285,6 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Roles_Usuarios");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.SedesClientes", b =>
-                {
-                    b.Property<int>("SedeCli_Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SedeCli_Ciudad")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("SedeCli_CodPostal")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<int>("SedeCli_Codigo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SedeCli_Codigo"), 1L, 1);
-
-                    b.Property<long>("Usu_IdUsua_Id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("SedeCli_Id");
-
-                    b.HasIndex("Usu_IdUsua_Id");
-
-                    b.ToTable("Sedes_Clientes");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Bodega", b =>
                 {
                     b.Property<int>("TpBod_Id")
@@ -530,17 +501,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("TipoIdentificacion");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.SedesClientes", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usu_Id")
-                        .WithMany()
-                        .HasForeignKey("Usu_IdUsua_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Usu_Id");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Bodega", b =>
