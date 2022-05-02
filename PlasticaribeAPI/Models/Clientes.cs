@@ -26,5 +26,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(60)")]
         public String Cli_Email { get; set; }
         public TiposClientes TPCli { get; set; }
+
+        
     }
 }
