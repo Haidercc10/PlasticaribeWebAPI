@@ -11,8 +11,8 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    [Migration("20220430174737_CreacionClientesUsuario")]
-    partial class CreacionClientesUsuario
+    [Migration("20220502222613_CreacionTipoMoneda")]
+    partial class CreacionTipoMoneda
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -115,39 +115,18 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(10)");
 
+                    b.Property<long>("Usua_Id")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Cli_Id");
 
                     b.HasIndex("TPCli_Id");
 
                     b.HasIndex("TipoIdentificacion_Id");
 
-                    b.ToTable("Clientes");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.ClientesUsuarios", b =>
-                {
-                    b.Property<int>("CliUsu_Id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CliUsu_Codigo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CliUsu_Codigo"), 1L, 1);
-
-                    b.Property<long>("Cli_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Usua_Id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("CliUsu_Id");
-
-                    b.HasIndex("Cli_Id");
-
                     b.HasIndex("Usua_Id");
 
-                    b.ToTable("Clientes_Usuarios");
+                    b.ToTable("Clientes");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Empresa", b =>
@@ -367,6 +346,23 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Tipos_Bodegas");
                 });
 
+            modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Moneda", b =>
+                {
+                    b.Property<string>("TpMoneda_Id")
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<int>("TpMoneda_Codigo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TpMoneda_Nombre")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.HasKey("TpMoneda_Id");
+
+                    b.ToTable("Tipos_Monedas");
+                });
+
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Producto", b =>
                 {
                     b.Property<int>("TpProd_Id")
@@ -544,26 +540,15 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("TPCli");
-
-                    b.Navigation("TipoIdentificacion");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.ClientesUsuarios", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Clientes", "Cli")
-                        .WithMany()
-                        .HasForeignKey("Cli_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "Usua")
                         .WithMany()
                         .HasForeignKey("Usua_Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Cli");
+                    b.Navigation("TPCli");
+
+                    b.Navigation("TipoIdentificacion");
 
                     b.Navigation("Usua");
                 });

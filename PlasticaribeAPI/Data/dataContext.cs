@@ -6,7 +6,6 @@ namespace PlasticaribeAPI.Data
 {
     public class dataContext : DbContext
     {
-
         public dataContext(DbContextOptions<dataContext>options) : base(options) { }
  
         public DbSet<PlasticaribeAPI.Models.TipoIdentificacion> TipoIdentificaciones { get; set; }        
@@ -30,6 +29,10 @@ namespace PlasticaribeAPI.Data
 
 
         public DbSet<Models.SedesClientes> Sedes_Clientes { get; set; }
+
+
+
+        public DbSet<Models.Tipo_Moneda> Tipos_Moneda { get; set; }
     }
 
 }
