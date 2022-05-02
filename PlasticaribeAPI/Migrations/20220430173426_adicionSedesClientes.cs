@@ -4,7 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
-    public partial class CreacionSedesClientes : Migration
+    public partial class adicionSedesClientes : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,28 +12,28 @@ namespace PlasticaribeAPI.Migrations
                 name: "Sedes_Clientes",
                 columns: table => new
                 {
-                    SedeCli_Id = table.Column<int>(type: "int", nullable: false),
+                    SedeCli_Id = table.Column<long>(type: "bigint", nullable: false),
                     SedeCli_Codigo = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SedeCli_Ciudad = table.Column<string>(type: "varchar(50)", nullable: false),
-                    SedeCli_CodPostal = table.Column<string>(type: "varchar(50)", nullable: false),
-                    Usu_IdUsua_Id = table.Column<long>(type: "bigint", nullable: false)
+                    SedeCliente_Ciudad = table.Column<string>(type: "varchar(100)", nullable: false),
+                    SedeCli_CodPostal = table.Column<long>(type: "bigint", nullable: false),
+                    Cli_Id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Sedes_Clientes", x => x.SedeCli_Id);
                     table.ForeignKey(
-                        name: "FK_Sedes_Clientes_Usuarios_Usu_IdUsua_Id",
-                        column: x => x.Usu_IdUsua_Id,
-                        principalTable: "Usuarios",
-                        principalColumn: "Usua_Id",
+                        name: "FK_Sedes_Clientes_Clientes_Cli_Id",
+                        column: x => x.Cli_Id,
+                        principalTable: "Clientes",
+                        principalColumn: "Cli_Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Sedes_Clientes_Usu_IdUsua_Id",
+                name: "IX_Sedes_Clientes_Cli_Id",
                 table: "Sedes_Clientes",
-                column: "Usu_IdUsua_Id");
+                column: "Cli_Id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

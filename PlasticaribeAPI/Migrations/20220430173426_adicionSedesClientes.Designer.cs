@@ -11,8 +11,8 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    [Migration("20220430152829_CreacionSedesClientes")]
-    partial class CreacionSedesClientes
+    [Migration("20220430173426_adicionSedesClientes")]
+    partial class adicionSedesClientes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -289,16 +289,14 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.SedesClientes", b =>
                 {
-                    b.Property<int>("SedeCli_Id")
-                        .HasColumnType("int");
+                    b.Property<long>("SedeCli_Id")
+                        .HasColumnType("bigint");
 
-                    b.Property<string>("SedeCli_Ciudad")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
+                    b.Property<long>("Cli_Id")
+                        .HasColumnType("bigint");
 
-                    b.Property<string>("SedeCli_CodPostal")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
+                    b.Property<long>("SedeCli_CodPostal")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("SedeCli_Codigo")
                         .ValueGeneratedOnAdd()
@@ -306,12 +304,13 @@ namespace PlasticaribeAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SedeCli_Codigo"), 1L, 1);
 
-                    b.Property<long>("Usu_IdUsua_Id")
-                        .HasColumnType("bigint");
+                    b.Property<string>("SedeCliente_Ciudad")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("SedeCli_Id");
 
-                    b.HasIndex("Usu_IdUsua_Id");
+                    b.HasIndex("Cli_Id");
 
                     b.ToTable("Sedes_Clientes");
                 });
@@ -536,13 +535,13 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.SedesClientes", b =>
                 {
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usu_Id")
+                    b.HasOne("PlasticaribeAPI.Models.Clientes", "Cli")
                         .WithMany()
-                        .HasForeignKey("Usu_IdUsua_Id")
+                        .HasForeignKey("Cli_Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Usu_Id");
+                    b.Navigation("Cli");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Bodega", b =>

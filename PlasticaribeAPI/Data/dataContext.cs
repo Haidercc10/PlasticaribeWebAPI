@@ -30,15 +30,6 @@ namespace PlasticaribeAPI.Data
 
 
         public DbSet<Models.SedesClientes> Sedes_Clientes { get; set; }
-
-
-
-
-       
-       
-        
-        public DbSet<Models.Producto> Productos { get; set; }
-
     }
 
 }
