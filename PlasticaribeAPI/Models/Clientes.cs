@@ -27,5 +27,6 @@ namespace PlasticaribeAPI.Models
         public String Cli_Email { get; set; }
         public TiposClientes TPCli { get; set; }
         public Usuario Usua { get; set;}
+        
     }
 }
