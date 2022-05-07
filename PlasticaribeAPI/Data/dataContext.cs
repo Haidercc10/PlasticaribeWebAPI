@@ -40,6 +40,9 @@ namespace PlasticaribeAPI.Data
 
         }
 
+        //Fluent API
+        public DbSet<PlasticaribeAPI.Models.Existencia_Producto> Existencia_Producto { get; set; }
+
     }
 
 }

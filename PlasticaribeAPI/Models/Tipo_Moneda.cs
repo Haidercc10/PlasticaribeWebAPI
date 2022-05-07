@@ -5,7 +5,7 @@ namespace PlasticaribeAPI.Models
 {
     public class Tipo_Moneda
     {
-        
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int TpMoneda_Codigo { get; set; }
 
         [Key]
