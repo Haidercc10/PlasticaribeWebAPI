@@ -25,7 +25,7 @@ namespace PlasticaribeAPI.Data
 
         public DbSet<Models.Unidad_Medida> Unidades_Medidas { get; set; }
         public DbSet<Models.SedesClientes> Sedes_Clientes { get; set; }
-        public DbSet<Models.Tipo_Moneda> Tipos_Moneda { get; set; }
+        public DbSet<Models.Tipo_Moneda> Tipos_Monedas { get; set; }
 
         public DbSet<Models.Producto> Productos { get; set; }
 
@@ -39,6 +39,11 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<PedidoExterno>().HasOne(Pext => Pext.SedeCli).WithMany().HasForeignKey(Pext => Pext.SedeCliente).OnDelete(DeleteBehavior.Restrict);
 
         }
+
+        //Fluent API
+        public DbSet<PlasticaribeAPI.Models.Existencia_Producto> Existencia_Producto { get; set; }
+
+        public DbSet<Models.Tipo_Estado> Tipos_Estados { get; set; }
 
     }
 

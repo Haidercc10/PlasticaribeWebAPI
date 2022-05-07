@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿        using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -31,5 +31,5 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "binary(MAX)")]
         public int PedExt_Archivo { get; set; }
 
-}
+    }
 }

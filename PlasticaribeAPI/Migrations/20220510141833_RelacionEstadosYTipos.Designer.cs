@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220510141833_RelacionEstadosYTipos")]
+    partial class RelacionEstadosYTipos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -227,7 +229,7 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int>("TpEstado_Id")
+                    b.Property<int?>("TpEstado_Id")
                         .HasColumnType("int");
 
                     b.HasKey("Estado_Id");
@@ -777,9 +779,7 @@ namespace PlasticaribeAPI.Migrations
                 {
                     b.HasOne("PlasticaribeAPI.Models.Tipo_Estado", "TpEstado")
                         .WithMany()
-                        .HasForeignKey("TpEstado_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TpEstado_Id");
 
                     b.Navigation("TpEstado");
                 });
