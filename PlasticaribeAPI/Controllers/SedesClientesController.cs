@@ -22,6 +22,15 @@ namespace PlasticaribeAPI.Controllers
             _context = context;
         }
 
+        public class ClientesController : ControllerBase
+        {
+            private readonly dataContext _context;
+            public ClientesController(dataContext context)
+            {
+                _context = context;
+            }
+        }
+
         // GET: api/SedesClientes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SedesClientes>>> GetSedes_Clientes()

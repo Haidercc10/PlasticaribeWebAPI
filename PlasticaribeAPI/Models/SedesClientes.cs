@@ -15,8 +15,11 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(100)")]
         public String SedeCliente_Ciudad { get; set; }
 
+        [Column(TypeName = "varchar(100)")]
+        public String SedeCliente_Direccion { get; set; }
+
         [Column(TypeName = "bigint")]
         public long SedeCli_CodPostal { get; set; }
-        public Clientes Cli { get; set; }
+        public Clientes Cli_Id { get; set; }
     }
 }

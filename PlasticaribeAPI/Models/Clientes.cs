@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
@@ -25,8 +24,9 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(60)")]
         public String Cli_Email { get; set; }
-        public TiposClientes TPCli { get; set; }
-        public Usuario Usua { get; set;}
         
+        [Column(TypeName = "int")]
+        public TiposClientes TPCli { get; set; }
+        public Usuario Usua { get; set;}        
     }
 }

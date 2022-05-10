@@ -5,3 +5,6 @@ dotnet_diagnostic.CS8618.severity = none
 
 # CA1707: Los identificadores no deben contener caracteres de subrayado
 dotnet_diagnostic.CA1707.severity = none
+
+# CS8619: La nulabilidad de los tipos de referencia del valor no coincide con el tipo de destino
+dotnet_diagnostic.CS8619.severity = none
