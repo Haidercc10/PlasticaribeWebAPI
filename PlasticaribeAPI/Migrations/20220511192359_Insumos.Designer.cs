@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,13 +12,14 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220511192359_Insumos")]
+    partial class Insumos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.5")
+                .HasAnnotation("ProductVersion", "6.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -248,12 +250,12 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int>("TpEstado_Id")
+                    b.Property<int>("TpEstado_Id1")
                         .HasColumnType("int");
 
                     b.HasKey("Estado_Id");
 
-                    b.HasIndex("TpEstado_Id");
+                    b.HasIndex("TpEstado_Id1");
 
                     b.ToTable("Estados");
                 });
@@ -376,7 +378,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("UndMed_Id");
 
-                    b.ToTable("Insumos");
+                    b.ToTable("Insumo");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.PedidoExterno", b =>
@@ -833,11 +835,13 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Estado", b =>
                 {
-                    b.HasOne("PlasticaribeAPI.Models.Tipo_Estado", null)
+                    b.HasOne("PlasticaribeAPI.Models.Tipo_Estado", "TpEstado")
                         .WithMany()
-                        .HasForeignKey("TpEstado_Id")
+                        .HasForeignKey("TpEstado_Id1")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("TpEstado");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Existencia_Producto", b =>

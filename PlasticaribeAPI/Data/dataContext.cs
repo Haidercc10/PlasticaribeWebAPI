@@ -37,13 +37,20 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Producto>().HasOne(prd => prd.UndMed1).WithMany().HasForeignKey(prd => prd.UndMedPeso).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto>().HasOne(prd => prd.UndMed2).WithMany().HasForeignKey(prd => prd.UndMedACF).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<PedidoExterno>().HasOne(Pext => Pext.SedeCli).WithMany().HasForeignKey(Pext => Pext.SedeCliente).OnDelete(DeleteBehavior.Restrict);
-
+            modelBuilder.Entity<Estado>().HasOne<Tipo_Estado>().WithMany().HasForeignKey(Est => Est.TpEstado_Id).OnDelete(DeleteBehavior.Restrict);
+            //Sin propiedades de navegación, solo llave foranea. (Clave externa)
+            modelBuilder.Entity<Insumo>().HasOne<Unidad_Medida>().WithMany().HasForeignKey(Ins => Ins.UndMed_Id);
+            modelBuilder.Entity<Insumo>().HasOne<Categoria_Insumo>().WithMany().HasForeignKey(Ins2 => Ins2.CatInsu_Id);
         }
 
         //Fluent API
         public DbSet<PlasticaribeAPI.Models.Existencia_Producto> Existencia_Producto { get; set; }
 
         public DbSet<Models.Tipo_Estado> Tipos_Estados { get; set; }
+
+        public DbSet<Models.Categoria_Insumo> Categorias_Insumos { get; set; }
+
+        public DbSet<Models.Insumo> Insumos { get; set; }
 
     }
 

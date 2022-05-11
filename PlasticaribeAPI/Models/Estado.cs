@@ -13,8 +13,9 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "text")]
         public String? Estado_Descripcion { get; set; }
-
-        public Tipo_Estado TpEstado { get; set; }
+        
+        public int TpEstado_Id { get; set; }
+        //public Tipo_Estado TpEstado { get; set; }
 
     }
 }
