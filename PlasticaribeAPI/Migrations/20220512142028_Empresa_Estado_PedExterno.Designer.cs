@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220512142028_Empresa_Estado_PedExterno")]
+    partial class Empresa_Estado_PedExterno
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,10 +49,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("cajComp_Id")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("TipoIdentificacion_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
                     b.Property<string>("cajComp_Ciudad")
                         .IsRequired()
                         .HasColumnType("varchar(50)");
@@ -81,8 +79,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.HasKey("cajComp_Id");
-
-                    b.HasIndex("TipoIdentificacion_Id");
 
                     b.ToTable("Cajas_Compensaciones");
                 });
@@ -205,10 +201,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("eps_Id")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("TipoIdentificacion_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
                     b.Property<string>("eps_Ciudad")
                         .IsRequired()
                         .HasColumnType("varchar(50)");
@@ -239,8 +231,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.HasKey("eps_Id");
-
-                    b.HasIndex("TipoIdentificacion_Id");
 
                     b.ToTable("EPS");
                 });
@@ -299,21 +289,14 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Prod_Id")
-                        .HasColumnType("int")
-                        .HasColumnOrder(1);
+                        .HasColumnType("int");
 
                     b.Property<int>("TpBod_Id")
-                        .HasColumnType("int")
-                        .HasColumnOrder(4);
-
-                    b.Property<string>("TpMoneda_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("int");
 
                     b.Property<string>("UndMed_Id")
                         .IsRequired()
-                        .HasColumnType("varchar(10)")
-                        .HasColumnOrder(3);
+                        .HasColumnType("varchar(10)");
 
                     b.HasKey("ExProd_Id");
 
@@ -321,21 +304,15 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("TpBod_Id");
 
-                    b.HasIndex("TpMoneda_Id");
-
                     b.HasIndex("UndMed_Id");
 
-                    b.ToTable("Existencias_Productos");
+                    b.ToTable("Existencia_Producto");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.fondoPension", b =>
                 {
                     b.Property<long>("fPen_Id")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("TipoIdentificacion_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
 
                     b.Property<string>("fPen_Ciudad")
                         .IsRequired()
@@ -367,8 +344,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.HasKey("fPen_Id");
-
-                    b.HasIndex("TipoIdentificacion_Id");
 
                     b.ToTable("FondosPensiones");
                 });
@@ -820,17 +795,6 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Usuarios");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.cajaCompensacion", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.TipoIdentificacion", "TipoIdentificacion")
-                        .WithMany()
-                        .HasForeignKey("TipoIdentificacion_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("TipoIdentificacion");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Clientes", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.TiposClientes", "TPCli")
@@ -869,17 +833,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("TipoIdentificacion");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.EPS", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.TipoIdentificacion", "TipoIdentificacion")
-                        .WithMany()
-                        .HasForeignKey("TipoIdentificacion_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("TipoIdentificacion");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Estado", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.Tipo_Estado", null)
@@ -894,45 +847,26 @@ namespace PlasticaribeAPI.Migrations
                     b.HasOne("PlasticaribeAPI.Models.Producto", "Prod")
                         .WithMany()
                         .HasForeignKey("Prod_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PlasticaribeAPI.Models.Tipo_Bodega", "TpBod")
                         .WithMany()
                         .HasForeignKey("TpBod_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Tipo_Moneda", "TpMoneda")
-                        .WithMany()
-                        .HasForeignKey("TpMoneda_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "UndMed")
                         .WithMany()
                         .HasForeignKey("UndMed_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Prod");
 
                     b.Navigation("TpBod");
 
-                    b.Navigation("TpMoneda");
-
                     b.Navigation("UndMed");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.fondoPension", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.TipoIdentificacion", "TipoIdentificacion")
-                        .WithMany()
-                        .HasForeignKey("TipoIdentificacion_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("TipoIdentificacion");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Insumo", b =>

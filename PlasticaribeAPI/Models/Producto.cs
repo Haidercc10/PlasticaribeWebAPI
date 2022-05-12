@@ -21,6 +21,8 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "text")]
         public string? Prod_Descripcion { get; set; }
 
+        //Llave tipos productos agregada. 
+        public int TpProd_Id { get; set; }
         public Tipo_Producto TpProd { get; set; } //Foranea tipos productos
         
         [Precision(14, 2)]

@@ -26,14 +26,14 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Existencia_Producto>>> GetExistencia_Producto()
         {
-            return await _context.Existencia_Producto.ToListAsync();
+            return await _context.Existencias_Productos.ToListAsync();
         }
 
         // GET: api/Existencia_Producto/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Existencia_Producto>> GetExistencia_Producto(long id)
         {
-            var existencia_Producto = await _context.Existencia_Producto.FindAsync(id);
+            var existencia_Producto = await _context.Existencias_Productos.FindAsync(id);
 
             if (existencia_Producto == null)
             {
@@ -79,7 +79,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Existencia_Producto>> PostExistencia_Producto(Existencia_Producto existencia_Producto)
         {
-            _context.Existencia_Producto.Add(existencia_Producto);
+            _context.Existencias_Productos.Add(existencia_Producto);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetExistencia_Producto", new { id = existencia_Producto.ExProd_Id }, existencia_Producto);
@@ -89,13 +89,13 @@ namespace PlasticaribeAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExistencia_Producto(long id)
         {
-            var existencia_Producto = await _context.Existencia_Producto.FindAsync(id);
+            var existencia_Producto = await _context.Existencias_Productos.FindAsync(id);
             if (existencia_Producto == null)
             {
                 return NotFound();
             }
 
-            _context.Existencia_Producto.Remove(existencia_Producto);
+            _context.Existencias_Productos.Remove(existencia_Producto);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -103,7 +103,7 @@ namespace PlasticaribeAPI.Controllers
 
         private bool Existencia_ProductoExists(long id)
         {
-            return _context.Existencia_Producto.Any(e => e.ExProd_Id == id);
+            return _context.Existencias_Productos.Any(e => e.ExProd_Id == id);
         }
     }
 }

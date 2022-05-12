@@ -15,11 +15,15 @@ namespace PlasticaribeAPI.Models
 
         public DateTime PedExt_FechaEntrega { get; set; }
 
+        //Llave foranea empresa
+        public long Empresa_Id { get; set; }
         public Empresa Empresa { get; set; }
 
         public long SedeCliente { get; set; }
         public SedesClientes SedeCli { get; set; }
 
+        //Llave foranea estados
+        public int Estado_Id { get; set; }
         public Estado Estado { get; set; }
 
         [Column(TypeName = "text")]
