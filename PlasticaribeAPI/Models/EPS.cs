@@ -12,6 +12,8 @@ namespace PlasticaribeAPI.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long eps_Id { get; set; }
+        /*public String TipoIdentificacion_Id { get; set; }
+        public TipoIdentificacion TipoIdentificacion { get; set; }*/
 
         //Llave foranea tipo identificacion agregada. 
         public String TipoIdentificacion_Id { get; set; }

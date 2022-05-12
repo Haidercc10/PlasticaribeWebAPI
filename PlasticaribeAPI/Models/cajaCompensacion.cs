@@ -12,6 +12,8 @@ namespace PlasticaribeAPI.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long cajComp_Id { get; set; }
+        /*public String TipoIdentificacion_Id { get; set; }
+        public TipoIdentificacion TipoIdentificacion { get; set; }*/
 
         //llave foranea tipo ID agregada.
         public String TipoIdentificacion_Id { get; set; }
@@ -33,7 +35,6 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(50)")]
         public String cajComp_Ciudad { get; set; }
-
 
     }
 }
