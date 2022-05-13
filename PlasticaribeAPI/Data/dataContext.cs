@@ -63,10 +63,10 @@ namespace PlasticaribeAPI.Data
             //Relaciones Caja Compensación 
             modelBuilder.Entity<cajaCompensacion>().HasOne(ccom => ccom.TipoIdentificacion).WithMany().HasForeignKey(ccom => ccom.TipoIdentificacion_Id).OnDelete(DeleteBehavior.Restrict);
             //Relaciones Extistencia Productos. 
-            modelBuilder.Entity<Existencia_Producto>().HasOne(ep => ep.Prod).WithMany().HasForeignKey(ep => ep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Existencia_Producto>().HasOne(exp => exp.TpBod).WithMany().HasForeignKey(exp => exp.TpBod_Id).OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Existencia_Producto>().HasOne(expr => expr.UndMed).WithMany().HasForeignKey(expr => expr.UndMed_Id).OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Existencia_Producto>().HasOne(Exprd => Exprd.TpMoneda).WithMany().HasForeignKey(Exprd => Exprd.TpMoneda_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Existencia_Productos>().HasOne(ep => ep.Prod).WithMany().HasForeignKey(ep => ep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Existencia_Productos>().HasOne(exp => exp.TpBod).WithMany().HasForeignKey(exp => exp.TpBod_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Existencia_Productos>().HasOne(expr => expr.UndMed).WithMany().HasForeignKey(expr => expr.UndMed_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Existencia_Productos>().HasOne(Exprd => Exprd.TpMoneda).WithMany().HasForeignKey(Exprd => Exprd.TpMoneda_Id).OnDelete(DeleteBehavior.Restrict);
 
             //Relación de empresa con tipo de identificación de la empresa
             modelBuilder.Entity<Empresa>().HasOne(emp => emp.TipoIdentificacion).WithMany().HasForeignKey(emp => emp.TipoIdentificacion_Id).OnDelete(DeleteBehavior.Restrict);
@@ -78,11 +78,12 @@ namespace PlasticaribeAPI.Data
 
             //Relacipon de sedes de clientes con clientes
             modelBuilder.Entity<SedesClientes>().HasOne(Sedecli => Sedecli.Cli).WithMany().HasForeignKey(Sedecli => Sedecli.Cli_Id).OnDelete(DeleteBehavior.Restrict);
-
+            //Relacion de Tipos de bodegas
+            modelBuilder.Entity<Tipo_Bodega>().HasOne(tpBodg => tpBodg.Area).WithMany().HasForeignKey(tpBodg => tpBodg.Area_Id).OnDelete(DeleteBehavior.Restrict);
         }
 
         //Fluent API
-        public DbSet<PlasticaribeAPI.Models.Existencia_Producto> Existencias_Productos { get; set; }
+        public DbSet<Models.Existencia_Productos> Existencias_Productos { get; set; }
 
         public DbSet<Models.Tipo_Estado> Tipos_Estados { get; set; }
 

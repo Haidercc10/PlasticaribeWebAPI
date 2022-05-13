@@ -4,9 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
-    public class Existencia_Producto
+    public class Existencia_Productos
     {
-
         [Key]
         public long ExProd_Id { get; set; }
 
@@ -15,7 +14,7 @@ namespace PlasticaribeAPI.Models
         public int Prod_Id { get; set; }
         public Producto Prod { get; set; }
 
-
+        [Column(Order = 2)]
         [Precision(18, 2)]
         public decimal ExProd_Cantidad { get; set; }
 
@@ -29,12 +28,12 @@ namespace PlasticaribeAPI.Models
         public int TpBod_Id { get; set; }
         public Tipo_Bodega TpBod { get; set; }
 
-        [Precision(18,2)]
+        [Precision(18, 2)]
         public decimal ExProd_Precio { get; set; }
 
         [Precision(18, 2)]
         public decimal ExProd_PrecioExistencia { get; set; }
-        
+
         [Precision(18, 2)]
         public decimal? ExProd_PrecioSinInflacion { get; set; }
 
@@ -44,6 +43,5 @@ namespace PlasticaribeAPI.Models
         // Llave foranea Tipo Moneda agregada.
         public String TpMoneda_Id { get; set; }
         public Tipo_Moneda TpMoneda { get; set; }
-
     }
 }

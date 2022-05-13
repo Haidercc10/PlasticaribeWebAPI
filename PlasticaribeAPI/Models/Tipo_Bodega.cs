@@ -15,6 +15,8 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "text")]
         public String TpBod_Descripcion { get; set; }
 
-        public Area area { get; set; } //Foranea areas.
+        //Llave foranea areas agregada.
+        public long Area_Id { get; set; }
+        public Area Area { get; set; } //Foranea areas.
 }
 }
