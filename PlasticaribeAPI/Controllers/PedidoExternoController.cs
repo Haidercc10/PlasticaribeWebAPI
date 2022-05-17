@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,26 +12,34 @@ namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PedidoExternoesController : ControllerBase
+    public class PedidoExternoController : ControllerBase
     {
         private readonly dataContext _context;
 
-        public PedidoExternoesController(dataContext context)
+        public PedidoExternoController(dataContext context)
         {
             _context = context;
         }
 
-        // GET: api/PedidoExternoes
+        // GET: api/PedidoExterno
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PedidoExterno>>> GetPedidos_Externos()
         {
+          if (_context.Pedidos_Externos == null)
+          {
+              return NotFound();
+          }
             return await _context.Pedidos_Externos.ToListAsync();
         }
 
-        // GET: api/PedidoExternoes/5
+        // GET: api/PedidoExterno/5
         [HttpGet("{id}")]
         public async Task<ActionResult<PedidoExterno>> GetPedidoExterno(long id)
         {
+          if (_context.Pedidos_Externos == null)
+          {
+              return NotFound();
+          }
             var pedidoExterno = await _context.Pedidos_Externos.FindAsync(id);
 
             if (pedidoExterno == null)
@@ -43,7 +50,7 @@ namespace PlasticaribeAPI.Controllers
             return pedidoExterno;
         }
 
-        // PUT: api/PedidoExternoes/5
+        // PUT: api/PedidoExterno/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPedidoExterno(long id, PedidoExterno pedidoExterno)
@@ -74,21 +81,29 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/PedidoExternoes
+        // POST: api/PedidoExterno
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<PedidoExterno>> PostPedidoExterno(PedidoExterno pedidoExterno)
         {
+          if (_context.Pedidos_Externos == null)
+          {
+              return Problem("Entity set 'dataContext.Pedidos_Externos'  is null.");
+          }
             _context.Pedidos_Externos.Add(pedidoExterno);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetPedidoExterno", new { id = pedidoExterno.PedExt_Id }, pedidoExterno);
         }
 
-        // DELETE: api/PedidoExternoes/5
+        // DELETE: api/PedidoExterno/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePedidoExterno(long id)
         {
+            if (_context.Pedidos_Externos == null)
+            {
+                return NotFound();
+            }
             var pedidoExterno = await _context.Pedidos_Externos.FindAsync(id);
             if (pedidoExterno == null)
             {
@@ -103,7 +118,7 @@ namespace PlasticaribeAPI.Controllers
 
         private bool PedidoExternoExists(long id)
         {
-            return _context.Pedidos_Externos.Any(e => e.PedExt_Id == id);
+            return (_context.Pedidos_Externos?.Any(e => e.PedExt_Id == id)).GetValueOrDefault();
         }
     }
 }

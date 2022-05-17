@@ -12,7 +12,7 @@ namespace PlasticaribeAPI.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long Cli_Id { get; set; }
         public string TipoIdentificacion_Id { get; set; }
-        public TipoIdentificacion TipoIdentificacion { get; set; }
+        public TipoIdentificacion? TipoIdentificacion { get; set; }
 
         [Column(TypeName = "varchar(50)")]
         public String Cli_Nombre { get; set; }
@@ -29,8 +29,8 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "int")]
 
         public int TPCli_Id { get; set; }
-        public TiposClientes TPCli { get; set; }
+        public TiposClientes? TPCli { get; set; }
         public long usua_Id { get; set; }
-        public Usuario Usua { get; set;}        
+        public Usuario? Usua { get; set;}        
     }
 }

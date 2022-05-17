@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220517133802_ColocarPropiedadesNavNull2")]
+    partial class ColocarPropiedadesNavNull2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -415,10 +417,10 @@ namespace PlasticaribeAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("PedExt_Id"), 1L, 1);
 
-                    b.Property<long>("Empresa_Id")
+                    b.Property<long?>("Empresa_Id")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("Estado_Id")
+                    b.Property<int?>("Estado_Id")
                         .HasColumnType("int");
 
                     b.Property<byte[]>("PedExt_Archivo")
@@ -442,12 +444,8 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<long?>("SedeCli_Id")
+                    b.Property<long?>("SedeCliente")
                         .HasColumnType("bigint");
-
-                    b.Property<long?>("Usua_Id")
-                        .HasColumnType("bigint")
-                        .HasColumnOrder(6);
 
                     b.HasKey("PedExt_Id");
 
@@ -455,9 +453,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Estado_Id");
 
-                    b.HasIndex("SedeCli_Id");
-
-                    b.HasIndex("Usua_Id");
+                    b.HasIndex("SedeCliente");
 
                     b.ToTable("Pedidos_Externos");
                 });
@@ -962,23 +958,16 @@ namespace PlasticaribeAPI.Migrations
                     b.HasOne("PlasticaribeAPI.Models.Empresa", "Empresa")
                         .WithMany()
                         .HasForeignKey("Empresa_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("PlasticaribeAPI.Models.Estado", "Estado")
                         .WithMany()
                         .HasForeignKey("Estado_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("PlasticaribeAPI.Models.SedesClientes", "SedeCli")
                         .WithMany()
-                        .HasForeignKey("SedeCli_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usua")
-                        .WithMany()
-                        .HasForeignKey("Usua_Id")
+                        .HasForeignKey("SedeCliente")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Empresa");
@@ -986,8 +975,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Estado");
 
                     b.Navigation("SedeCli");
-
-                    b.Navigation("Usua");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Producto", b =>

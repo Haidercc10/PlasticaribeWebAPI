@@ -17,7 +17,7 @@ namespace PlasticaribeAPI.Models
 
         //Llave foranea tipo identificacion agregada. 
         public String TipoIdentificacion_Id { get; set; }
-        public TipoIdentificacion TipoIdentificacion{ get; set; }
+        public TipoIdentificacion? TipoIdentificacion{ get; set; }
 
         [Column(TypeName = "varchar(50)")]
         public String eps_Nombre { get; set; }

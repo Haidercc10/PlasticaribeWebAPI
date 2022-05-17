@@ -23,7 +23,7 @@ namespace PlasticaribeAPI.Models
 
         //Llave tipos productos agregada. 
         public int TpProd_Id { get; set; }
-        public Tipo_Producto TpProd { get; set; } //Foranea tipos productos
+        public Tipo_Producto? TpProd { get; set; } //Foranea tipos productos
         
         [Precision(14, 2)]
         public decimal Prod_Peso_Bruto { get; set; }
@@ -32,7 +32,7 @@ namespace PlasticaribeAPI.Models
         public decimal Prod_Peso_Neto { get; set; }
 
         public string UndMedPeso { get; set; }
-        public Unidad_Medida UndMed1 { get; set; } //Foranea unidades medidas
+        public Unidad_Medida? UndMed1 { get; set; } //Foranea unidades medidas
 
         [Precision(14, 2)]
         public decimal? Prod_Fuelle { get; set; }
@@ -45,7 +45,7 @@ namespace PlasticaribeAPI.Models
 
         public string UndMedACF { get; set; }
         
-        public Unidad_Medida UndMed2 { get; set; } //Foranea unidades medidas
+        public Unidad_Medida? UndMed2 { get; set; } //Foranea unidades medidas
 
 
     }

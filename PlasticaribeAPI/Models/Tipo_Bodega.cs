@@ -17,6 +17,6 @@ namespace PlasticaribeAPI.Models
 
         //Llave foranea areas agregada.
         public long Area_Id { get; set; }
-        public Area Area { get; set; } //Foranea areas.
+        public Area? Area { get; set; } //Foranea areas.
 }
 }

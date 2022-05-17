@@ -12,7 +12,7 @@ namespace PlasticaribeAPI.Models
         // Llave foranea Producto agregada
         [Column(Order = 1)]
         public int Prod_Id { get; set; }
-        public Producto Prod { get; set; }
+        public Producto? Prod { get; set; }
 
         [Column(Order = 2)]
         [Precision(18, 2)]
@@ -21,12 +21,12 @@ namespace PlasticaribeAPI.Models
         // Llave foranea unidad medida agregada.
         [Column(Order = 3)]
         public String UndMed_Id { get; set; }
-        public Unidad_Medida UndMed { get; set; }
+        public Unidad_Medida? UndMed { get; set; }
 
         // Llave foranea Tipo Bodega agregada.
         [Column(Order = 4)]
         public int TpBod_Id { get; set; }
-        public Tipo_Bodega TpBod { get; set; }
+        public Tipo_Bodega? TpBod { get; set; }
 
         [Precision(18, 2)]
         public decimal ExProd_Precio { get; set; }
@@ -42,6 +42,6 @@ namespace PlasticaribeAPI.Models
 
         // Llave foranea Tipo Moneda agregada.
         public String TpMoneda_Id { get; set; }
-        public Tipo_Moneda TpMoneda { get; set; }
+        public Tipo_Moneda? TpMoneda { get; set; }
     }
 }

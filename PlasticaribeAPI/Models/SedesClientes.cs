@@ -21,6 +21,6 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "bigint")]
         public long SedeCli_CodPostal { get; set; }
         public long Cli_Id { get; set; }
-        public Clientes Cli { get; set; }
+        public Clientes? Cli { get; set; }
     }
 }

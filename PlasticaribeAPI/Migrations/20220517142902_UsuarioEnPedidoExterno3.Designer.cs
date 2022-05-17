@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220517142902_UsuarioEnPedidoExterno3")]
+    partial class UsuarioEnPedidoExterno3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -442,7 +444,7 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<long?>("SedeCli_Id")
+                    b.Property<long?>("SedeCliente")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("Usua_Id")
@@ -455,7 +457,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Estado_Id");
 
-                    b.HasIndex("SedeCli_Id");
+                    b.HasIndex("SedeCliente");
 
                     b.HasIndex("Usua_Id");
 
@@ -973,7 +975,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasOne("PlasticaribeAPI.Models.SedesClientes", "SedeCli")
                         .WithMany()
-                        .HasForeignKey("SedeCli_Id")
+                        .HasForeignKey("SedeCliente")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "Usua")
