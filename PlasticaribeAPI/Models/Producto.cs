@@ -47,6 +47,9 @@ namespace PlasticaribeAPI.Models
         
         public Unidad_Medida? UndMed2 { get; set; } //Foranea unidades medidas
 
+        public int? Estado_Id { get; set; }
+        public Estado? Estado { get; set; } //Foranea de estados en producto.
+
 
     }
 }

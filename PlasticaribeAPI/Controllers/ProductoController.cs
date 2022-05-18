@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,26 +12,34 @@ namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductoesController : ControllerBase
+    public class ProductoController : ControllerBase
     {
         private readonly dataContext _context;
 
-        public ProductoesController(dataContext context)
+        public ProductoController(dataContext context)
         {
             _context = context;
         }
 
-        // GET: api/Productoes
+        // GET: api/Producto
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Producto>>> GetProductos()
         {
+          if (_context.Productos == null)
+          {
+              return NotFound();
+          }
             return await _context.Productos.ToListAsync();
         }
 
-        // GET: api/Productoes/5
+        // GET: api/Producto/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Producto>> GetProducto(int id)
         {
+          if (_context.Productos == null)
+          {
+              return NotFound();
+          }
             var producto = await _context.Productos.FindAsync(id);
 
             if (producto == null)
@@ -43,7 +50,7 @@ namespace PlasticaribeAPI.Controllers
             return producto;
         }
 
-        // PUT: api/Productoes/5
+        // PUT: api/Producto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProducto(int id, Producto producto)
@@ -74,11 +81,15 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Productoes
+        // POST: api/Producto
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Producto>> PostProducto(Producto producto)
         {
+          if (_context.Productos == null)
+          {
+              return Problem("Entity set 'dataContext.Productos'  is null.");
+          }
             _context.Productos.Add(producto);
             try
             {
@@ -99,10 +110,14 @@ namespace PlasticaribeAPI.Controllers
             return CreatedAtAction("GetProducto", new { id = producto.Prod_Id }, producto);
         }
 
-        // DELETE: api/Productoes/5
+        // DELETE: api/Producto/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProducto(int id)
         {
+            if (_context.Productos == null)
+            {
+                return NotFound();
+            }
             var producto = await _context.Productos.FindAsync(id);
             if (producto == null)
             {
@@ -117,7 +132,7 @@ namespace PlasticaribeAPI.Controllers
 
         private bool ProductoExists(int id)
         {
-            return _context.Productos.Any(e => e.Prod_Id == id);
+            return (_context.Productos?.Any(e => e.Prod_Id == id)).GetValueOrDefault();
         }
     }
 }

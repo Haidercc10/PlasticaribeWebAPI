@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,6 +25,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Clientes>>> GetClientes()
         {
+          if (_context.Clientes == null)
+          {
+              return NotFound();
+          }
             return await _context.Clientes.ToListAsync();
         }
 
@@ -33,6 +36,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Clientes>> GetClientes(long id)
         {
+          if (_context.Clientes == null)
+          {
+              return NotFound();
+          }
             var clientes = await _context.Clientes.FindAsync(id);
 
             if (clientes == null)
@@ -79,6 +86,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Clientes>> PostClientes(Clientes clientes)
         {
+          if (_context.Clientes == null)
+          {
+              return Problem("Entity set 'dataContext.Clientes'  is null.");
+          }
             _context.Clientes.Add(clientes);
             try
             {
@@ -103,6 +114,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteClientes(long id)
         {
+            if (_context.Clientes == null)
+            {
+                return NotFound();
+            }
             var clientes = await _context.Clientes.FindAsync(id);
             if (clientes == null)
             {
@@ -117,7 +132,7 @@ namespace PlasticaribeAPI.Controllers
 
         private bool ClientesExists(long id)
         {
-            return _context.Clientes.Any(e => e.Cli_Id == id);
+            return (_context.Clientes?.Any(e => e.Cli_Id == id)).GetValueOrDefault();
         }
     }
 }

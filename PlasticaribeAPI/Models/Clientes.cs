@@ -31,6 +31,10 @@ namespace PlasticaribeAPI.Models
         public int TPCli_Id { get; set; }
         public TiposClientes? TPCli { get; set; }
         public long usua_Id { get; set; }
-        public Usuario? Usua { get; set;}        
+        public Usuario? Usua { get; set;}
+
+        //Llave foranea de estado en Clientes
+        public int? Estado_Id { get; set; }
+        public Estado? Estado { get; set; }
     }
 }
