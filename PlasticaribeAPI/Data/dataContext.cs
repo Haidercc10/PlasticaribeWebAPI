@@ -82,8 +82,16 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<SedesClientes>().HasOne(Sedecli => Sedecli.Cli).WithMany().HasForeignKey(Sedecli => Sedecli.Cli_Id).OnDelete(DeleteBehavior.Restrict);
             //Relacion de Tipos de bodegas
             modelBuilder.Entity<Tipo_Bodega>().HasOne(tpBodg => tpBodg.Area).WithMany().HasForeignKey(tpBodg => tpBodg.Area_Id).OnDelete(DeleteBehavior.Restrict);
-            //Relación de clientes
-            
+
+            //Relación de pedidos_productos
+            modelBuilder.Entity<Pedido_Producto>().HasKey(pep => new { pep.Prod_Id, pep.PedExt_Id }); //Llave compuesta
+            /*
+            modelBuilder.Entity<Pedido_Producto>().HasOne<Producto>(ppp => ppp.Prod).WithMany(pp => pp.PedExtProd).HasForeignKey(ppp => ppp.Prod_Id);
+            modelBuilder.Entity<Pedido_Producto>().HasOne<PedidoExterno>(ppp => ppp.PedExt).WithMany(pp => pp.PedExtProd).HasForeignKey(ppp => ppp.PedExt_Id);
+            */
+
+            //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.Prod).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
+            //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.PedExt).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
         }
 
         //Fluent API
@@ -94,6 +102,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<Models.Categoria_Insumo> Categorias_Insumos { get; set; }
 
         public DbSet<Models.Insumo> Insumos { get; set; }
+
+        public DbSet<Models.Pedido_Producto> Pedidos_Productos { get; set; }
 
     }
 
