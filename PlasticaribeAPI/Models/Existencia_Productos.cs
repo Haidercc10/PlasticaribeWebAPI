@@ -38,7 +38,7 @@ namespace PlasticaribeAPI.Models
         public decimal? ExProd_PrecioSinInflacion { get; set; }
 
         [Precision(18, 2)]
-        public string? ExProd_PrecioTotalFinal { get; set; }
+        public decimal? ExProd_PrecioTotalFinal { get; set; }
 
         // Llave foranea Tipo Moneda agregada.
         public String TpMoneda_Id { get; set; }
