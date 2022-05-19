@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220518230528_Limpieza2")]
+    partial class Limpieza2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -461,21 +463,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Usua_Id");
 
                     b.ToTable("Pedidos_Externos");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.PedidoProducto", b =>
-                {
-                    b.Property<int>("Prod_Id")
-                        .HasColumnType("int");
-
-                    b.Property<long>("PedExt_Id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Prod_Id", "PedExt_Id");
-
-                    b.HasIndex("PedExt_Id");
-
-                    b.ToTable("PedidosExternos_Productos");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Producto", b =>
@@ -1018,25 +1005,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Usua");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.PedidoProducto", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.PedidoExterno", "PedidoExt")
-                        .WithMany("PedExtProd")
-                        .HasForeignKey("PedExt_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Producto", "Product")
-                        .WithMany("PedExtProd")
-                        .HasForeignKey("Prod_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PedidoExt");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Producto", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.Estado", "Estado")
@@ -1166,16 +1134,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("fPen");
 
                     b.Navigation("tpUsu");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.PedidoExterno", b =>
-                {
-                    b.Navigation("PedExtProd");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Producto", b =>
-                {
-                    b.Navigation("PedExtProd");
                 });
 #pragma warning restore 612, 618
         }

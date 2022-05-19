@@ -12,8 +12,8 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    [Migration("20220518204940_RelacionMtMPedidosProductos2")]
-    partial class RelacionMtMPedidosProductos2
+    [Migration("20220519132035_RelacionMtMPedidosProductos8")]
+    partial class RelacionMtMPedidosProductos8
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -410,29 +410,6 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Insumos");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Pedido_Producto", b =>
-                {
-                    b.Property<int>("Prod_Id")
-                        .HasColumnType("int");
-
-                    b.Property<long>("PedExt_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("PedExt_Id1")
-                        .HasColumnType("bigint");
-
-                    b.Property<int?>("Prod_Id1")
-                        .HasColumnType("int");
-
-                    b.HasKey("Prod_Id", "PedExt_Id");
-
-                    b.HasIndex("PedExt_Id1");
-
-                    b.HasIndex("Prod_Id1");
-
-                    b.ToTable("Pedidos_Productos");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.PedidoExterno", b =>
                 {
                     b.Property<long>("PedExt_Id")
@@ -486,6 +463,21 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Usua_Id");
 
                     b.ToTable("Pedidos_Externos");
+                });
+
+            modelBuilder.Entity("PlasticaribeAPI.Models.PedidoProducto", b =>
+                {
+                    b.Property<int>("Prod_Id")
+                        .HasColumnType("int");
+
+                    b.Property<long>("PedExt_Id")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Prod_Id", "PedExt_Id");
+
+                    b.HasIndex("PedExt_Id");
+
+                    b.ToTable("PedidosExternos_Productos");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Producto", b =>
@@ -995,21 +987,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Pedido_Producto", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.PedidoExterno", "PedExt")
-                        .WithMany("PedExtProd")
-                        .HasForeignKey("PedExt_Id1");
-
-                    b.HasOne("PlasticaribeAPI.Models.Producto", "Prod")
-                        .WithMany("PedExtProd")
-                        .HasForeignKey("Prod_Id1");
-
-                    b.Navigation("PedExt");
-
-                    b.Navigation("Prod");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.PedidoExterno", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.Empresa", "Empresa")
@@ -1041,6 +1018,25 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("SedeCli");
 
                     b.Navigation("Usua");
+                });
+
+            modelBuilder.Entity("PlasticaribeAPI.Models.PedidoProducto", b =>
+                {
+                    b.HasOne("PlasticaribeAPI.Models.PedidoExterno", "PedidoExt")
+                        .WithMany("PedExtProd")
+                        .HasForeignKey("PedExt_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Producto", "Product")
+                        .WithMany("PedExtProd")
+                        .HasForeignKey("Prod_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PedidoExt");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Producto", b =>

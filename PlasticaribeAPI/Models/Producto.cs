@@ -50,6 +50,6 @@ namespace PlasticaribeAPI.Models
         public int? Estado_Id { get; set; }
         public Estado? Estado { get; set; } //Foranea de estados en producto.
 
-        public IList<Pedido_Producto>? PedExtProd { get; set; }
+        public IList<PedidoProducto>? PedExtProd { get; set; }
     }
 }

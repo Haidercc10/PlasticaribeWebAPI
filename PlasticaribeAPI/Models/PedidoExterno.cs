@@ -45,7 +45,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "binary(MAX)")]
         public int PedExt_Archivo { get; set; }
 
-        public IList<Pedido_Producto>? PedExtProd { get; set; }
+        public IList<PedidoProducto>? PedExtProd { get; set; }
 
     }
 }
