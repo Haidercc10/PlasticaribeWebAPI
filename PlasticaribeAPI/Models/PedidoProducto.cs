@@ -1,4 +1,6 @@
-﻿namespace PlasticaribeAPI.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace PlasticaribeAPI.Models
 {
     public class PedidoProducto
     {
@@ -11,11 +13,12 @@
 
         //Campos para la información detallada del pedido
         //Cantidad
-        /*public decimal PedExtProd_Cantidad { get; set; }
+        [Precision(14, 2)]
+        public decimal PedExtProd_Cantidad { get; set; }
         
         //Llave foranea unidad medida
         public string UndMed_Id { get; set; }
-        public Unidad_Medida? UndMed { get; set; }*/
+        public Unidad_Medida? UndMed { get; set; }
 
     }
 }
