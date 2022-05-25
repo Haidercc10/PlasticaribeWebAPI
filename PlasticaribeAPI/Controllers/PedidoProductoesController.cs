@@ -12,16 +12,16 @@ namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PedidoExtProductoController : ControllerBase
+    public class PedidoProductoesController : ControllerBase
     {
         private readonly dataContext _context;
 
-        public PedidoExtProductoController(dataContext context)
+        public PedidoProductoesController(dataContext context)
         {
             _context = context;
         }
 
-        // GET: api/PedidoExtProducto
+        // GET: api/PedidoProductoes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PedidoProducto>>> GetPedidosExternos_Productos()
         {
@@ -32,7 +32,7 @@ namespace PlasticaribeAPI.Controllers
             return await _context.PedidosExternos_Productos.ToListAsync();
         }
 
-        // GET: api/PedidoExtProducto/5
+        // GET: api/PedidoProductoes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<PedidoProducto>> GetPedidoProducto(int id)
         {
@@ -50,7 +50,7 @@ namespace PlasticaribeAPI.Controllers
             return pedidoProducto;
         }
 
-        // PUT: api/PedidoExtProducto/5
+        // PUT: api/PedidoProductoes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPedidoProducto(int id, PedidoProducto pedidoProducto)
@@ -81,7 +81,7 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/PedidoExtProducto
+        // POST: api/PedidoProductoes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<PedidoProducto>> PostPedidoProducto(PedidoProducto pedidoProducto)
@@ -110,7 +110,7 @@ namespace PlasticaribeAPI.Controllers
             return CreatedAtAction("GetPedidoProducto", new { id = pedidoProducto.Prod_Id }, pedidoProducto);
         }
 
-        // DELETE: api/PedidoExtProducto/5
+        // DELETE: api/PedidoProductoes/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePedidoProducto(int id)
         {
