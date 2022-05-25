@@ -5,26 +5,31 @@ namespace PlasticaribeAPI.Models
 {
     public class Usuario
     {
+        /**TEMPORAL: PARA USUARIOS VENDEDORES. 
+         Los comentarios de este tipo estan relacionados con la revisión de
+         las tablas para inserción de datos, en este caso se verifican campos de
+         la TABLA MAEVENDE EN BD CONTABILIDAD: ZEUS */
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Usua_Codigo { get; set; }
+        public int Usua_Codigo { get; set; } /** IDVENDE */
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public long Usua_Id { get; set; }
+        public long Usua_Id { get; set; } /** IDENTIFICACION */
         
         //Llave tipo ID agregada
         public string TipoIdentificacion_Id { get; set; }
         public TipoIdentificacion? TipoIdentificacion { get; set; }
 
         [Column(TypeName = "varchar(50)")]
-        public String Usua_Nombre { get; set; }
+        public String Usua_Nombre { get; set; } /** NOMBVENDE */
 
         //Llave area agregada
         public long Area_Id { get; set; }
         public Area? Area { get; set; }
 
         //Llave tipo usuario agregada
-        public int tpUsu_Id { get; set; }
+        public int tpUsu_Id { get; set; } 
         public Tipo_Usuario? tpUsu { get; set; }
 
         //Llave rol usuario agregada
@@ -36,17 +41,17 @@ namespace PlasticaribeAPI.Models
         public Empresa? Empresa { get; set; }
 
         //Llave empresa agregada
-        public int Estado_Id { get; set; }
+        public int Estado_Id { get; set; } /** DESHABILITADO */
         public Estado? Estado { get; set; }
 
         [Column(TypeName = "varchar(100)")]
-        public String Usua_Email { get; set; }
+        public String Usua_Email { get; set; } /** EMAIL */
 
         [Column(TypeName = "varchar(50)")]
-        public String Usua_Telefono { get; set; }
+        public String Usua_Telefono { get; set; } /** TELEFONO */
 
         [Column(TypeName = "varchar(100)")]
-        public String Usua_Contrasena { get; set; }
+        public String Usua_Contrasena { get; set; } 
 
         //Llave caja compensacion agregada
         public long cajComp_Id { get; set; }

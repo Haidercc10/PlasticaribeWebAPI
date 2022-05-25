@@ -88,9 +88,12 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<PedidoProducto>().HasOne<Producto>(ppp => ppp.Product).WithMany(pp => pp.PedExtProd).HasForeignKey(ppp => ppp.Prod_Id); //Foranea 1
             modelBuilder.Entity<PedidoProducto>().HasOne<PedidoExterno>(ppp => ppp.PedidoExt).WithMany(pp => pp.PedExtProd).HasForeignKey(ppp => ppp.PedExt_Id); //Foranea 2
             //Llave foranea aparte unidad medida
-            modelBuilder.Entity<PedidoProducto>().HasOne(pUnd => pUnd.UndMed).WithMany().HasForeignKey(pUnd => pUnd.UndMed_Id).OnDelete(DeleteBehavior.Restrict); 
+            modelBuilder.Entity<PedidoProducto>().HasOne(pUnd => pUnd.UndMed).WithMany().HasForeignKey(pUnd => pUnd.UndMed_Id).OnDelete(DeleteBehavior.Restrict);
 
-
+            //Relaciones clientes_productos
+            modelBuilder.Entity<Cliente_Producto>().HasKey(cpro => new { cpro.Prod_Id, cpro.Cli_Id });
+            modelBuilder.Entity<Cliente_Producto>().HasOne<Clientes>(clipro => clipro.Cli).WithMany(clprod => clprod.CliProd).HasForeignKey(clipro => clipro.Cli_Id);
+            modelBuilder.Entity<Cliente_Producto>().HasOne<Producto>(clipro => clipro.Prod).WithMany(clprod => clprod.CliProd).HasForeignKey(clipro => clipro.Prod_Id);
 
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.Prod).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.PedExt).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
@@ -107,6 +110,7 @@ namespace PlasticaribeAPI.Data
 
         public DbSet<Models.PedidoProducto> PedidosExternos_Productos { get; set; }
 
+        public DbSet<Models.Cliente_Producto> Clientes_Productos { get; set; }
     }
 
 }
