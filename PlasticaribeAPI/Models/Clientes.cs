@@ -25,7 +25,7 @@ namespace PlasticaribeAPI.Models
         /*[Column(TypeName = "varchar(60)")]
         public String Cli_Direccion { get; set; }*/
 
-        [Column(TypeName = "bigint")] 
+        [Column(TypeName = "varchar(60)")]
         public long Cli_Telefono { get; set; } /** OK TELEFONO */
 
         [Column(TypeName = "varchar(60)")]

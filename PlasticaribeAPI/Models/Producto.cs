@@ -52,11 +52,13 @@ namespace PlasticaribeAPI.Models
         public Unidad_Medida? UndMed2 { get; set; } //Foranea unidades medidas
 
         public int? Estado_Id { get; set; } /** POSIBLE: DESHABILITADO | */
-
-        public Estado? Estado { get; set; } //Foranea de estados en producto.
+        
+        //Foranea de estados en producto.    
+        public Estado? Estado { get; set; } 
 
         public IList<PedidoProducto>? PedExtProd { get; set; }
 
-        public IList<Cliente_Producto>? CliProd { get; set; } //Lista requerida para relación clientes-productos
+        //Lista requerida para relación clientes-productos
+        public IList<Cliente_Producto>? CliProd { get; set; } 
     }
 }
