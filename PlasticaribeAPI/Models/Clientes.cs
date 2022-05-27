@@ -19,7 +19,7 @@ namespace PlasticaribeAPI.Models
         public string TipoIdentificacion_Id { get; set; }
         public TipoIdentificacion? TipoIdentificacion { get; set; }
 
-        [Column(TypeName = "varchar(50)")] 
+        [Column(TypeName = "varchar(MAX)")] 
         public String Cli_Nombre { get; set; } /** OK RAZONCIAL */
 
         /*[Column(TypeName = "varchar(60)")]
@@ -28,7 +28,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(60)")]
         public long Cli_Telefono { get; set; } /** OK TELEFONO */
 
-        [Column(TypeName = "varchar(60)")]
+        [Column(TypeName = "varchar(MAX)")]
         public String Cli_Email { get; set; } /** OK EMAIL*/
         
         [Column(TypeName = "int")]
