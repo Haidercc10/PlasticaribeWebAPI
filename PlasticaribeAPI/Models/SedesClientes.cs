@@ -15,7 +15,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(100)")]
         public String SedeCliente_Ciudad { get; set; }
 
-        [Column(TypeName = "varchar(100)")]
+        [Column(TypeName = "varchar(MAX)")]
         public String SedeCliente_Direccion { get; set; }
 
         [Column(TypeName = "bigint")]

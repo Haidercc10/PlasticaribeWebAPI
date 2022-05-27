@@ -35,7 +35,7 @@ namespace PlasticaribeAPI.Models
         [Precision(14, 2)]
         public decimal Prod_Peso_Neto { get; set; } /** PESO | PtPesopt */
 
-        public string UndMedPeso { get; set; } /** PRESENTACIÓN | PrPresentacionNom */
+        public string UndMedPeso { get; set; } /** PRESENTACIÓN | PtPresentacionNom */
         public Unidad_Medida? UndMed1 { get; set; } //Foranea unidades medidas
 
         [Precision(14, 2)]

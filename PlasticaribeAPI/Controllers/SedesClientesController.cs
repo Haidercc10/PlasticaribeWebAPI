@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,19 +21,14 @@ namespace PlasticaribeAPI.Controllers
             _context = context;
         }
 
-        public class ClientesController : ControllerBase
-        {
-            private readonly dataContext _context;
-            public ClientesController(dataContext context)
-            {
-                _context = context;
-            }
-        }
-
         // GET: api/SedesClientes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SedesClientes>>> GetSedes_Clientes()
         {
+          if (_context.Sedes_Clientes == null)
+          {
+              return NotFound();
+          }
             return await _context.Sedes_Clientes.ToListAsync();
         }
 
@@ -42,6 +36,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SedesClientes>> GetSedesClientes(long id)
         {
+          if (_context.Sedes_Clientes == null)
+          {
+              return NotFound();
+          }
             var sedesClientes = await _context.Sedes_Clientes.FindAsync(id);
 
             if (sedesClientes == null)
@@ -88,6 +86,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<SedesClientes>> PostSedesClientes(SedesClientes sedesClientes)
         {
+          if (_context.Sedes_Clientes == null)
+          {
+              return Problem("Entity set 'dataContext.Sedes_Clientes'  is null.");
+          }
             _context.Sedes_Clientes.Add(sedesClientes);
             try
             {
@@ -112,6 +114,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSedesClientes(long id)
         {
+            if (_context.Sedes_Clientes == null)
+            {
+                return NotFound();
+            }
             var sedesClientes = await _context.Sedes_Clientes.FindAsync(id);
             if (sedesClientes == null)
             {
@@ -126,7 +132,7 @@ namespace PlasticaribeAPI.Controllers
 
         private bool SedesClientesExists(long id)
         {
-            return _context.Sedes_Clientes.Any(e => e.SedeCli_Id == id);
+            return (_context.Sedes_Clientes?.Any(e => e.SedeCli_Id == id)).GetValueOrDefault();
         }
     }
 }
