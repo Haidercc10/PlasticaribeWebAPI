@@ -36,13 +36,13 @@ namespace PlasticaribeAPI.Models
         public decimal ExProd_Precio { get; set; } /** VALOR */
 
         [Precision(18, 2)]
-        public decimal ExProd_PrecioExistencia { get; set; } 
+        public decimal ExProd_PrecioExistencia { get; set; } /** VALOR 2  */ 
 
         [Precision(18, 2)]
         public decimal? ExProd_PrecioSinInflacion { get; set; } /** VALORSININFLACION */
 
-        [Precision(18, 2)]
-        public decimal? ExProd_PrecioTotalFinal { get; set; } /** VALOR 2 */
+       /* [Precision(18, 2)]
+        public decimal? ExProd_PrecioTotalFinal { get; set; } */ /** VALOR 2 */
 
         // Llave foranea Tipo Moneda agregada.
         public String TpMoneda_Id { get; set; } 

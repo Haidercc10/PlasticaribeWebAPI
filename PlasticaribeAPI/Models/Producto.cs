@@ -12,48 +12,65 @@ namespace PlasticaribeAPI.Models
         EN BD PLASTICARIBE: BAGPRO*/
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column(Order = 0)]
         public int Prod_Cod { get; set; } /** CODIGO |  */
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Column(Order = 1)]
         public int Prod_Id { get; set; } /** IDARTICULO | ClienteItems */
 
-
-        [Column(TypeName = "varchar(100)")]
+        
+        [Column(TypeName = "varchar(100)", Order = 2)]
+        
         public string Prod_Nombre { get; set; } /** NOMBRE | ClienteItemsNom */
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "text", Order = 3)]
         public string? Prod_Descripcion { get; set; } /** DESCRIPCION |   */
 
         //Llave tipos productos agregada. 
+        [Column(Order = 4)]
         public int TpProd_Id { get; set; } /** POSIBLE: TIPO ó CATEGORIA | PtFormatoPt */
         public Tipo_Producto? TpProd { get; set; } //Foranea tipos productos
-        
+
+        [Column(Order = 5)]
         [Precision(14, 2)]
         public decimal Prod_Peso_Bruto { get; set; } /** PESOCONEMPAQUE | PtPesopt  */
 
+        [Column(Order = 6)]
         [Precision(14, 2)]
         public decimal Prod_Peso_Neto { get; set; } /** PESO | PtPesopt */
 
+        [Column(Order = 7)]
         public string UndMedPeso { get; set; } /** PRESENTACIÓN | PtPresentacionNom */
         public Unidad_Medida? UndMed1 { get; set; } //Foranea unidades medidas
 
+        [Column(Order = 8)]
         [Precision(14, 2)]
         public decimal? Prod_Fuelle { get; set; } /**  | PtFuelle */
 
+        [Column(Order = 9)]
         [Precision(14, 2)]
         public decimal? Prod_Ancho { get; set; } /**  | PtAnchopt */
 
+        [Column(Order = 10)]
+        [Precision(14, 2)]
+        public decimal? Prod_Largo { get; set; } /**  | PtLargopt */
+
+        [Column(Order = 11)]
         [Precision(14, 2)]
         public decimal? Prod_Calibre { get; set; } /**  | ExtCalibre */
 
-        public string UndMedACF { get; set; } /**  |   */
-        
+        [Column(Order = 12)]
+        public string UndMedACF { get; set; } /**  | ExtUnidadesNom  */
+
+        [Column(Order = 13)]
         public Unidad_Medida? UndMed2 { get; set; } //Foranea unidades medidas
 
         public int? Estado_Id { get; set; } /** POSIBLE: DESHABILITADO | */
-        
-        //Foranea de estados en producto.    
+
+        //Foranea de estados en producto.
+        [Column(Order = 14)]
         public Estado? Estado { get; set; } 
 
         public IList<PedidoProducto>? PedExtProd { get; set; }
