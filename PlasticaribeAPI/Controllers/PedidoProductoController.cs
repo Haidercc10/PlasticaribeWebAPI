@@ -12,16 +12,16 @@ namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PedidoProductoesController : ControllerBase
+    public class PedidoProductoController : ControllerBase
     {
         private readonly dataContext _context;
 
-        public PedidoProductoesController(dataContext context)
+        public PedidoProductoController(dataContext context)
         {
             _context = context;
         }
 
-        // GET: api/PedidoProductoes
+        // GET: api/PedidoProducto
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PedidoProducto>>> GetPedidosExternos_Productos()
         {
@@ -32,15 +32,15 @@ namespace PlasticaribeAPI.Controllers
             return await _context.PedidosExternos_Productos.ToListAsync();
         }
 
-        // GET: api/PedidoProductoes/5
+        // GET: api/PedidoProducto/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PedidoProducto>> GetPedidoProducto(int id)
+        public async Task<ActionResult<PedidoProducto>> GetPedidoProducto(int Prod_Id, long PedExt_Id)
         {
           if (_context.PedidosExternos_Productos == null)
           {
               return NotFound();
           }
-            var pedidoProducto = await _context.PedidosExternos_Productos.FindAsync(id);
+            var pedidoProducto = await _context.PedidosExternos_Productos.FindAsync(Prod_Id, PedExt_Id);
 
             if (pedidoProducto == null)
             {
@@ -50,7 +50,7 @@ namespace PlasticaribeAPI.Controllers
             return pedidoProducto;
         }
 
-        // PUT: api/PedidoProductoes/5
+        // PUT: api/PedidoProducto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPedidoProducto(int id, PedidoProducto pedidoProducto)
@@ -81,7 +81,7 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/PedidoProductoes
+        // POST: api/PedidoProducto
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<PedidoProducto>> PostPedidoProducto(PedidoProducto pedidoProducto)
@@ -110,7 +110,7 @@ namespace PlasticaribeAPI.Controllers
             return CreatedAtAction("GetPedidoProducto", new { id = pedidoProducto.Prod_Id }, pedidoProducto);
         }
 
-        // DELETE: api/PedidoProductoes/5
+        // DELETE: api/PedidoProducto/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePedidoProducto(int id)
         {
