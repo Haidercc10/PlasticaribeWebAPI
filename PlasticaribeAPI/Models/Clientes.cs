@@ -26,7 +26,7 @@ namespace PlasticaribeAPI.Models
         public String Cli_Direccion { get; set; }*/
 
         [Column(TypeName = "varchar(60)")]
-        public long Cli_Telefono { get; set; } /** OK TELEFONO */
+        public String Cli_Telefono { get; set; } /** OK TELEFONO */
 
         [Column(TypeName = "varchar(MAX)")]
         public String Cli_Email { get; set; } /** OK EMAIL*/
