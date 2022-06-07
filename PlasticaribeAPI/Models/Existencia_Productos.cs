@@ -47,5 +47,9 @@ namespace PlasticaribeAPI.Models
         // Llave foranea Tipo Moneda agregada.
         public String TpMoneda_Id { get; set; } 
         public Tipo_Moneda? TpMoneda { get; set; }
+       
+        [Precision(18,2)]
+        public decimal? ExProd_PrecioVenta { get; set; } /** PrecioVenta Tabla Articulo */
+
     }
 }

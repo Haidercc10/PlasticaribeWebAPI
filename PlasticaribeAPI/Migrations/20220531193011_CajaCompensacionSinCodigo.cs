@@ -8,9 +8,9 @@ namespace PlasticaribeAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
+           /* migrationBuilder.DropColumn(
                 name: "cajComp_Codigo",
-                table: "Cajas_Compensaciones");
+                table: "Cajas_Compensaciones");*/
 
         }
 
