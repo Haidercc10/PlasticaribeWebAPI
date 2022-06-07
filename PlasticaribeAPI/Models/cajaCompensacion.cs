@@ -6,8 +6,8 @@ namespace PlasticaribeAPI.Models
     public class cajaCompensacion
     {
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int cajComp_Codigo { get; set; }
+        /*[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int cajComp_Codigo { get; set; }*/
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
