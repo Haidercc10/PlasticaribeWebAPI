@@ -54,7 +54,6 @@ namespace PlasticaribeAPI.Data
             //Relaciones de productos
             modelBuilder.Entity<Producto>().HasOne(Prd => Prd.TpProd).WithMany().HasForeignKey(Prd => Prd.TpProd_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto>().HasOne(Prd => Prd.Estado).WithMany().HasForeignKey(Prd => Prd.Estado_Id).OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Producto>().HasOne(Prd => Prd.Pigmt).WithMany().HasForeignKey(Prd => Prd.Pigmt_Id).OnDelete(DeleteBehavior.Restrict);
             //Relaciones pedido externo
             modelBuilder.Entity<PedidoExterno>().HasOne(Pext => Pext.Empresa).WithMany().HasForeignKey(Pext => Pext.Empresa_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<PedidoExterno>().HasOne(Pext => Pext.Estado).WithMany().HasForeignKey(Pext => Pext.Estado_Id).OnDelete(DeleteBehavior.Restrict);
@@ -79,6 +78,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Clientes>().HasOne(cli => cli.TPCli).WithMany().HasForeignKey(cli => cli.TPCli_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Clientes>().HasOne(cli => cli.Usua).WithMany().HasForeignKey(cli => cli.usua_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Clientes>().HasOne(cli => cli.Estado).WithMany().HasForeignKey(cli => cli.Estado_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Clientes>().Property(cli => cli.Cli_Codigo).UseIdentityColumn().ValueGeneratedOnAddOrUpdate();
             //Relacipon de sedes de clientes con clientes
             modelBuilder.Entity<SedesClientes>().HasOne(Sedecli => Sedecli.Cli).WithMany().HasForeignKey(Sedecli => Sedecli.Cli_Id).OnDelete(DeleteBehavior.Restrict);
             //Relacion de Tipos de bodegas

@@ -53,9 +53,9 @@ namespace PlasticaribeAPI.Controllers
         // PUT: api/PedidoProducto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPedidoProducto(int id, PedidoProducto pedidoProducto)
+        public async Task<IActionResult> PutPedidoProducto(int Prod_Id, long PedExt_Id, PedidoProducto pedidoProducto)
         {
-            if (id != pedidoProducto.Prod_Id)
+            if (Prod_Id != pedidoProducto.Prod_Id && PedExt_Id != pedidoProducto.PedExt_Id)
             {
                 return BadRequest();
             }
@@ -68,7 +68,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PedidoProductoExists(id))
+                if (!PedidoProductoExists(Prod_Id))
                 {
                     return NotFound();
                 }
@@ -112,13 +112,13 @@ namespace PlasticaribeAPI.Controllers
 
         // DELETE: api/PedidoProducto/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePedidoProducto(int id)
+        public async Task<IActionResult> DeletePedidoProducto(int Prod_Id, long PedExt_Id)
         {
             if (_context.PedidosExternos_Productos == null)
             {
                 return NotFound();
             }
-            var pedidoProducto = await _context.PedidosExternos_Productos.FindAsync(id);
+            var pedidoProducto = await _context.PedidosExternos_Productos.FindAsync(Prod_Id, PedExt_Id);
             if (pedidoProducto == null)
             {
                 return NotFound();
