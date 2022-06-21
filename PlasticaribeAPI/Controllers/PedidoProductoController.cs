@@ -15,7 +15,7 @@ namespace PlasticaribeAPI.Controllers
     public class PedidoProductoController : ControllerBase
     {
         private readonly dataContext _context;
-        
+
         public PedidoProductoController(dataContext context)
         {
             _context = context;
@@ -25,28 +25,27 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PedidoProducto>>> GetPedidosExternos_Productos()
         {
-            if (_context.PedidosExternos_Productos == null)
-            {
-                return NotFound();
-            }
+          if (_context.PedidosExternos_Productos == null)
+          {
+              return NotFound();
+          }
             return await _context.PedidosExternos_Productos.ToListAsync();
         }
 
         // GET: api/PedidoProducto/5
         [HttpGet("{id}")]
-               
-        public async Task<ActionResult<PedidoProducto>> GetPedidoProducto(int Prod_Id, long PedExt_Id)
+        public async Task<ActionResult<PedidoProducto>> GetPedidoProducto(int id)
         {
           if (_context.PedidosExternos_Productos == null)
           {
               return NotFound();
           }
-            var pedidoProducto = await _context.PedidosExternos_Productos.FindAsync(Prod_Id, PedExt_Id);
+            var pedidoProducto = await _context.PedidosExternos_Productos.FindAsync(id);
 
             if (pedidoProducto == null)
             {
                 return NotFound();
-            } 
+            }
 
             return pedidoProducto;
         }

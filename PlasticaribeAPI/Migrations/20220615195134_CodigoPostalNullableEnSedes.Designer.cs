@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220615195134_CodigoPostalNullableEnSedes")]
+    partial class CodigoPostalNullableEnSedes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -485,10 +487,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
 
-                    b.Property<decimal?>("PedExtProd_PrecioUnitario")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("UndMed_Id")
                         .IsRequired()
                         .HasColumnType("varchar(10)");
@@ -502,27 +500,6 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("PedidosExternos_Productos");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Pigmento", b =>
-                {
-                    b.Property<int>("Pigmt_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Pigmt_Id"), 1L, 1);
-
-                    b.Property<string>("Pigmt_Descripcion")
-                        .IsRequired()
-                        .HasColumnType("varchar(MAX)");
-
-                    b.Property<string>("Pigmt_Nombre")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.HasKey("Pigmt_Id");
-
-                    b.ToTable("Pigmentos");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Producto", b =>
                 {
                     b.Property<int>("Prod_Id")
@@ -530,12 +507,7 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnOrder(1);
 
                     b.Property<int?>("Estado_Id")
-                        .HasColumnType("int")
-                        .HasColumnOrder(14);
-
-                    b.Property<int?>("Pigmt_Id")
-                        .HasColumnType("int")
-                        .HasColumnOrder(15);
+                        .HasColumnType("int");
 
                     b.Property<decimal?>("Prod_Ancho")
                         .HasPrecision(14, 2)
@@ -600,8 +572,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("Prod_Id");
 
                     b.HasIndex("Estado_Id");
-
-                    b.HasIndex("Pigmt_Id");
 
                     b.HasIndex("TpProd_Id");
 
@@ -1140,11 +1110,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("Estado_Id")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("PlasticaribeAPI.Models.Pigmento", "Pigmt")
-                        .WithMany()
-                        .HasForeignKey("Pigmt_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.Tipo_Producto", "TpProd")
                         .WithMany()
                         .HasForeignKey("TpProd_Id")
@@ -1164,8 +1129,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Estado");
-
-                    b.Navigation("Pigmt");
 
                     b.Navigation("TpProd");
 

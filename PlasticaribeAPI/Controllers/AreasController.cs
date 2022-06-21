@@ -11,6 +11,7 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class AreasController : ControllerBase
@@ -29,9 +30,23 @@ namespace PlasticaribeAPI.Controllers
             return await _context.Areas.ToListAsync();
         }
 
+        /*[HttpGet("{Area_Nombre}")]
+        [Route("[controller]/[GetAreaNombre]/{Area_Nombre}")]
+        public async Task<ActionResult<Area>> GetAreaNombre(string Area_Nombre)
+        {
+            var area = await _context.Areas.FindAsync(Area_Nombre);
+
+            if (area == null)
+            {
+                return NotFound();
+            }
+
+            return area;
+        }*/
+
         // GET: api/Areas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Area>> GetArea(int id)
+        public async Task<ActionResult<Area>> GetArea(long id)
         {
             var area = await _context.Areas.FindAsync(id);
 
@@ -46,7 +61,7 @@ namespace PlasticaribeAPI.Controllers
         // PUT: api/Areas/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutArea(int id, Area area)
+        public async Task<IActionResult> PutArea(long id, Area area)
         {
             if (id != area.Area_Id)
             {
@@ -87,7 +102,7 @@ namespace PlasticaribeAPI.Controllers
 
         // DELETE: api/Areas/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteArea(int id)
+        public async Task<IActionResult> DeleteArea(long id)
         {
             var area = await _context.Areas.FindAsync(id);
             if (area == null)
@@ -101,7 +116,7 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        private bool AreaExists(int id)
+        private bool AreaExists(long id)
         {
             return _context.Areas.Any(e => e.Area_Id == id);
         }

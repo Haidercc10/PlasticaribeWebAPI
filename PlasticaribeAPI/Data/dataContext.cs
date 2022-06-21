@@ -54,6 +54,7 @@ namespace PlasticaribeAPI.Data
             //Relaciones de productos
             modelBuilder.Entity<Producto>().HasOne(Prd => Prd.TpProd).WithMany().HasForeignKey(Prd => Prd.TpProd_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto>().HasOne(Prd => Prd.Estado).WithMany().HasForeignKey(Prd => Prd.Estado_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto>().HasOne(Prd => Prd.Pigmt).WithMany().HasForeignKey(Prd => Prd.Pigmt_Id).OnDelete(DeleteBehavior.Restrict);
             //Relaciones pedido externo
             modelBuilder.Entity<PedidoExterno>().HasOne(Pext => Pext.Empresa).WithMany().HasForeignKey(Pext => Pext.Empresa_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<PedidoExterno>().HasOne(Pext => Pext.Estado).WithMany().HasForeignKey(Pext => Pext.Estado_Id).OnDelete(DeleteBehavior.Restrict);
@@ -111,6 +112,10 @@ namespace PlasticaribeAPI.Data
         public DbSet<Models.PedidoProducto> PedidosExternos_Productos { get; set; }
 
         public DbSet<Models.Cliente_Producto> Clientes_Productos { get; set; }
+
+        public DbSet<Models.Pigmento> Pigmentos { get; set; }
+
+        //public DbSet<Models.Material_MatPrima> Materiales_MatPrima { get; set; }
     }
 
 }

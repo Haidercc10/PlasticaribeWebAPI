@@ -10,6 +10,7 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class PedidoExternoController : ControllerBase
@@ -33,7 +34,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // GET: api/PedidoExterno/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:long}")]
         public async Task<ActionResult<PedidoExterno>> GetPedidoExterno(long id)
         {
           if (_context.Pedidos_Externos == null)
@@ -49,6 +50,34 @@ namespace PlasticaribeAPI.Controllers
 
             return pedidoExterno;
         }
+
+        //[Route("PedidoExternoXEstado")]
+       /* [HttpGet("PedidoExternoXEstado")]
+        public  ActionResult<PedidoExterno> PedidoExternoXEstado([FromQuery]int Estado_Id)
+        {
+            if (_context.Pedidos_Externos == null)
+            {
+                return NotFound();
+            }
+            var pedidoExterno = await _context.Pedidos_Externos.FindAsync(Estado_Id);
+
+            if (pedidoExterno == null)
+            {
+                return NotFound();
+            }
+
+            return pedidoExterno;*/
+
+            /*var pedidoExterno = await _context.Pedidos_Externos.FindAsync(PedExt_FechaCreacion);
+
+            if (pedidoExterno == null)
+            {
+                return NotFound();
+            }
+
+            return PedidoExternoXEstado(Estado_Id);
+        }*/
+
 
         // PUT: api/PedidoExterno/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

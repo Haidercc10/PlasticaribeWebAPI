@@ -13,10 +13,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<dataContext>(options =>
 
-//CONEXIÓN A BASE DE DATOS. 
+//CONEXIÓN A BASE DE DATOS PlasticaribeBDD. 
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+
 });
+
+//CONEXIÓN A BASE DE DATOS ZEUS. 
+builder.Services.AddDbContext<ZeusDataContext>(options =>
+{    
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ZeusConnection"));
+});
+
 
 //HABILITAR CORS
 
@@ -38,7 +46,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if  (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();

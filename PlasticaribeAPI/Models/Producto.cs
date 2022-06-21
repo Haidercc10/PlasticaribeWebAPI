@@ -67,11 +67,15 @@ namespace PlasticaribeAPI.Models
         [Column(Order = 13)]
         public Unidad_Medida? UndMed2 { get; set; } //Foranea unidades medidas
 
-        public int? Estado_Id { get; set; } /** POSIBLE: DESHABILITADO | */
 
-        //Foranea de estados en producto.
         [Column(Order = 14)]
-        public Estado? Estado { get; set; } 
+        public int? Estado_Id { get; set; } /** POSIBLE: DESHABILITADO | */   //Foranea de estados en producto.
+
+        public Estado? Estado { get; set; }
+
+        [Column(Order = 15)]
+        public int? Pigmt_Id { get; set; } //Llave Foranea Pigmentos
+        public Pigmento? Pigmt { get; set; }
 
         public IList<PedidoProducto>? PedExtProd { get; set; }
 

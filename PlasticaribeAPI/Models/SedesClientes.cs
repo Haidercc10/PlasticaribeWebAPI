@@ -19,7 +19,7 @@ namespace PlasticaribeAPI.Models
         public String SedeCliente_Direccion { get; set; }
 
         [Column(TypeName = "bigint")]
-        public long SedeCli_CodPostal { get; set; }
+        public long? SedeCli_CodPostal { get; set; } //Colocar NUllable.
         public long Cli_Id { get; set; }
         public Clientes? Cli { get; set; }
     }

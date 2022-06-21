@@ -20,5 +20,8 @@ namespace PlasticaribeAPI.Models
         public string UndMed_Id { get; set; }
         public Unidad_Medida? UndMed { get; set; }
 
+        [Precision(18, 2)]
+        public decimal? PedExtProd_PrecioUnitario { get; set; } /** Valor */
+
     }
 }
