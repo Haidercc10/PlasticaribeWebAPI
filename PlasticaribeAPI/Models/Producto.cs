@@ -77,6 +77,10 @@ namespace PlasticaribeAPI.Models
         public int? Pigmt_Id { get; set; } //Llave Foranea Pigmentos
         public Pigmento? Pigmt { get; set; }
 
+        [Column(Order = 16)]
+        public int? Material_Id { get; set; } //Llave foranea Materiales_MatPrima
+        public Material_MatPrima? MaterialMP { get; set; }
+
         public IList<PedidoProducto>? PedExtProd { get; set; }
 
         //Lista requerida para relación clientes-productos
