@@ -19,13 +19,6 @@ builder.Services.AddDbContext<dataContext>(options =>
 
 });
 
-//CONEXIÓN A BASE DE DATOS ZEUS. 
-builder.Services.AddDbContext<ZeusDataContext>(options =>
-{    
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ZeusConnection"));
-});
-
-
 //HABILITAR CORS
 
 builder.Services.AddCors(options =>
@@ -36,7 +29,7 @@ builder.Services.AddCors(options =>
         builder =>
         {
             
-            builder.WithOrigins("http://192.168.0.153:4600", "http://localhost:4200")
+            builder.WithOrigins("http://192.168.0.153:4600", "http://192.168.0.153:4700", "http://192.168.0.85:4700")
             .AllowAnyMethod()
             .AllowAnyHeader();
 
