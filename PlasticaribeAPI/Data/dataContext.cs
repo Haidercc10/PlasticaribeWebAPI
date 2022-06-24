@@ -6,17 +6,17 @@ namespace PlasticaribeAPI.Data
 {
     public class dataContext : DbContext
     {
-        public dataContext(DbContextOptions<dataContext>options) : base(options) { }
- 
-        public DbSet<PlasticaribeAPI.Models.TipoIdentificacion> TipoIdentificaciones { get; set; }        
+        public dataContext(DbContextOptions<dataContext> options) : base(options) { }
+
+        public DbSet<PlasticaribeAPI.Models.TipoIdentificacion> TipoIdentificaciones { get; set; }
         public DbSet<PlasticaribeAPI.Models.Empresa> Empresas { get; set; }
         public DbSet<Models.EPS> EPS { get; set; }
-        public DbSet<Models.cajaCompensacion> Cajas_Compensaciones{ get; set; }
+        public DbSet<Models.cajaCompensacion> Cajas_Compensaciones { get; set; }
         public DbSet<Models.fondoPension> FondosPensiones { get; set; }
         public DbSet<Models.Area> Areas { get; set; }
         public DbSet<Models.Estado> Estados { get; set; }
         public DbSet<Models.Tipo_Usuario> Tipos_Usuarios { get; set; }
-        public DbSet<Models.Usuario> Usuarios{ get; set; }
+        public DbSet<Models.Usuario> Usuarios { get; set; }
         public DbSet<Models.Rol_Usuario> Roles_Usuarios { get; set; }
         public DbSet<Models.Tipo_Producto> Tipos_Productos { get; set; }
         public DbSet<Models.TiposClientes> Tipos_Clientes { get; set; }
@@ -57,7 +57,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Usuario>().HasOne(Usu => Usu.cajComp).WithMany().HasForeignKey(Usu => Usu.cajComp_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Usuario>().HasOne(Usu => Usu.EPS).WithMany().HasForeignKey(Usu => Usu.eps_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Usuario>().HasOne(Usu => Usu.fPen).WithMany().HasForeignKey(Usu => Usu.fPen_Id).OnDelete(DeleteBehavior.Restrict);
-            
+
             //Relaciones pedido externo
             modelBuilder.Entity<PedidoExterno>().HasOne(Pext => Pext.Empresa).WithMany().HasForeignKey(Pext => Pext.Empresa_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<PedidoExterno>().HasOne(Pext => Pext.Estado).WithMany().HasForeignKey(Pext => Pext.Estado_Id).OnDelete(DeleteBehavior.Restrict);
@@ -78,7 +78,7 @@ namespace PlasticaribeAPI.Data
 
             //Relación de empresa con tipo de identificación de la empresa
             modelBuilder.Entity<Empresa>().HasOne(emp => emp.TipoIdentificacion).WithMany().HasForeignKey(emp => emp.TipoIdentificacion_Id).OnDelete(DeleteBehavior.Restrict);
-           
+
             //Relacion de clientes con Tipo de identificacón y Tipo de clientes.
             modelBuilder.Entity<Clientes>().HasOne(cli => cli.TipoIdentificacion).WithMany().HasForeignKey(cli => cli.TipoIdentificacion_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Clientes>().HasOne(cli => cli.TPCli).WithMany().HasForeignKey(cli => cli.TPCli_Id).OnDelete(DeleteBehavior.Restrict);
@@ -98,9 +98,24 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<PedidoProducto>().HasOne(pUnd => pUnd.UndMed).WithMany().HasForeignKey(pUnd => pUnd.UndMed_Id).OnDelete(DeleteBehavior.Restrict);
 
             //Relaciones clientes_productos
-            modelBuilder.Entity<Cliente_Producto>().HasKey(cpro => new { cpro.Prod_Id, cpro.Cli_Id });
+            modelBuilder.Entity<Cliente_Producto>().HasKey(cpro => new { cpro.Prod_Id, cpro.Cli_Id }); //Llave Compuesta
             modelBuilder.Entity<Cliente_Producto>().HasOne<Clientes>(clipro => clipro.Cli).WithMany(clprod => clprod.CliProd).HasForeignKey(clipro => clipro.Cli_Id);
             modelBuilder.Entity<Cliente_Producto>().HasOne<Producto>(clipro => clipro.Prod).WithMany(clprod => clprod.CliProd).HasForeignKey(clipro => clipro.Prod_Id);
+
+            //Relaciones Materias_Primas
+            modelBuilder.Entity<Materia_Prima>().HasOne(mtp => mtp.CatMP).WithMany().HasForeignKey(mtp => mtp.CatMP_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Materia_Prima>().HasOne(mtp => mtp.UndMed).WithMany().HasForeignKey(mtp => mtp.UndMed_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Materia_Prima>().HasOne(mtp => mtp.TpBod).WithMany().HasForeignKey(mtp => mtp.TpBod_Id).OnDelete(DeleteBehavior.Restrict);
+
+            //Relaciones Proveedores
+            modelBuilder.Entity<Proveedor>().HasOne(prv => prv.TipoIdentificacion).WithMany().HasForeignKey(prv => prv.TipoIdentificacion_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Proveedor>().HasOne(prv => prv.TpProv).WithMany().HasForeignKey(prv => prv.TpProv_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Proveedor>().Property(p => p.Prov_Codigo).UseIdentityColumn().ValueGeneratedOnAddOrUpdate();
+
+            //Relaciones Provedor_MateriaPrima
+            modelBuilder.Entity<Provedor_MateriaPrima>().HasKey(provmp => new { provmp.Prov_Id, provmp.MatPri_Id }); //Llave Compuesta Provedor_MateriaPrima 
+            modelBuilder.Entity<Provedor_MateriaPrima>().HasOne<Proveedor>(prvmp => prvmp.Prov).WithMany(prvMtp => prvMtp.ProvMatPri).HasForeignKey(prvmp => prvmp.Prov_Id); //Foranea proveedor
+            modelBuilder.Entity<Provedor_MateriaPrima>().HasOne<Materia_Prima>(prvmp => prvmp.MatPri).WithMany(prvMtp => prvMtp.ProvMatPri).HasForeignKey(prvmp => prvmp.MatPri_Id); //Foranea materiaprima
 
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.Prod).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.PedExt).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
@@ -122,6 +137,16 @@ namespace PlasticaribeAPI.Data
         public DbSet<Models.Pigmento> Pigmentos { get; set; }
 
         public DbSet<Models.Material_MatPrima> Materiales_MatPrima { get; set; }
+
+        public DbSet<Models.Materia_Prima> Materias_Primas { get; set; }
+
+        public DbSet<Models.Categoria_MatPrima> Categorias_MatPrima { get; set; }
+
+        public DbSet<Models.Tipo_Proveedor> Tipos_Proveedores { get; set; }
+
+        public DbSet<Models.Proveedor> Proveedores { get; set; }
+
+        public DbSet<Models.Provedor_MateriaPrima> Proveedores_MateriasPrimas { get; set; }
     }
 
 }

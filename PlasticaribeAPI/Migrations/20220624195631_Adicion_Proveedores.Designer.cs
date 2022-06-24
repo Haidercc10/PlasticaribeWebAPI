@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220624195631_Adicion_Proveedores")]
+    partial class Adicion_Proveedores
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -705,21 +707,6 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Productos");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Provedor_MateriaPrima", b =>
-                {
-                    b.Property<long>("Prov_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("MatPri_Id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Prov_Id", "MatPri_Id");
-
-                    b.HasIndex("MatPri_Id");
-
-                    b.ToTable("Proveedores_MateriasPrimas");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Proveedor", b =>
                 {
                     b.Property<long>("Prov_Id")
@@ -1379,25 +1366,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("UndMed2");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Provedor_MateriaPrima", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Materia_Prima", "MatPri")
-                        .WithMany("ProvMatPri")
-                        .HasForeignKey("MatPri_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Proveedor", "Prov")
-                        .WithMany("ProvMatPri")
-                        .HasForeignKey("Prov_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MatPri");
-
-                    b.Navigation("Prov");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Proveedor", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.TipoIdentificacion", "TipoIdentificacion")
@@ -1519,11 +1487,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("CliProd");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Materia_Prima", b =>
-                {
-                    b.Navigation("ProvMatPri");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.PedidoExterno", b =>
                 {
                     b.Navigation("PedExtProd");
@@ -1534,11 +1497,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("CliProd");
 
                     b.Navigation("PedExtProd");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Proveedor", b =>
-                {
-                    b.Navigation("ProvMatPri");
                 });
 #pragma warning restore 612, 618
         }
