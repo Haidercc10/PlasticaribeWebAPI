@@ -117,6 +117,30 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Provedor_MateriaPrima>().HasOne<Proveedor>(prvmp => prvmp.Prov).WithMany(prvMtp => prvMtp.ProvMatPri).HasForeignKey(prvmp => prvmp.Prov_Id); //Foranea proveedor
             modelBuilder.Entity<Provedor_MateriaPrima>().HasOne<Materia_Prima>(prvmp => prvmp.MatPri).WithMany(prvMtp => prvMtp.ProvMatPri).HasForeignKey(prvmp => prvmp.MatPri_Id); //Foranea materiaprima
 
+            //Relaciones Facturas Compras
+            modelBuilder.Entity<Factura_Compra>().HasOne(fcco => fcco.Prov).WithMany().HasForeignKey(facco => facco.Prov_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Factura_Compra>().HasOne(fcco => fcco.Estado).WithMany().HasForeignKey(facco => facco.Estado_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Factura_Compra>().HasOne(fcco => fcco.Usua).WithMany().HasForeignKey(facco => facco.Usua_Id).OnDelete(DeleteBehavior.Restrict);
+
+            //Relaciones FacturasCompras_MateriasPrimas
+            modelBuilder.Entity<FacturaCompra_MateriaPrima>().HasKey(fcmp => new { fcmp.Facco_Id, fcmp.MatPri_Id }); //Llave Compuesta FacturaCompra_MateriaPrima 
+            modelBuilder.Entity<FacturaCompra_MateriaPrima>().HasOne<Factura_Compra>(fcomp => fcomp.Facco).WithMany(fccomp => fccomp.FaccoMatPri).HasForeignKey(fcomp => fcomp.Facco_Id); //Foranea factura compra
+            modelBuilder.Entity<FacturaCompra_MateriaPrima>().HasOne<Materia_Prima>(fcomp => fcomp.MatPri).WithMany(fccomp => fccomp.FaccoMatPri).HasForeignKey(fcomp => fcomp.MatPri_Id); //Foranea materiaprima
+            modelBuilder.Entity<FacturaCompra_MateriaPrima>().HasOne(fcco => fcco.UndMed).WithMany().HasForeignKey(facco => facco.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
+
+            //Relaciones Asignaciones_MatPrima
+            modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Usua).WithMany().HasForeignKey(asigmp => asigmp.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario recibe
+            modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Area).WithMany().HasForeignKey(asigmp => asigmp.Area_Id).OnDelete(DeleteBehavior.Restrict); //foranea area
+            modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Estado).WithMany().HasForeignKey(asigmp => asigmp.Estado_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado
+
+            //Relaciones DetallesAsignaciones_MateriasPrimas
+            modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasKey(damp => new { damp.AsigMp_Id, damp.MatPri_Id }); //Llave Compuesta DetalleAsignacion_MateriaPrima 
+            modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasOne<Asignacion_MatPrima>(dasigmp => dasigmp.AsigMp).WithMany(dasimp => dasimp.DtAsigMatPri).HasForeignKey(dasigmp => dasigmp.AsigMp_Id); //Foranea Asignacion_matpri
+            modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasOne<Materia_Prima>(dasigmp => dasigmp.MatPri).WithMany(dasimp => dasimp.DtAsigMatPri).HasForeignKey(dasigmp => dasigmp.MatPri_Id); //Foranea materiaprima
+            modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasOne(damp => damp.UndMed).WithMany().HasForeignKey(damp => damp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
+            modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasOne(damp => damp.Proceso).WithMany().HasForeignKey(damp => damp.Proceso_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
+
+
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.Prod).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.PedExt).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
         }
@@ -147,6 +171,16 @@ namespace PlasticaribeAPI.Data
         public DbSet<Models.Proveedor> Proveedores { get; set; }
 
         public DbSet<Models.Provedor_MateriaPrima> Proveedores_MateriasPrimas { get; set; }
+
+        public DbSet<Models.Factura_Compra> Facturas_Compras { get; set; }
+
+        public DbSet<Models.FacturaCompra_MateriaPrima> FacturasCompras_MateriaPrimas { get; set; }
+
+        public DbSet<Models.Proceso> Procesos { get; set; }
+
+        public DbSet<Models.Asignacion_MatPrima> Asignaciones_MatPrima { get; set; }
+
+        public DbSet<Models.DetalleAsignacion_MateriaPrima> DetallesAsignaciones_MateriasPrimas { get; set; } 
     }
 
 }

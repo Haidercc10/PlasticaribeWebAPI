@@ -12,11 +12,11 @@ namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class Provedor_MateriaPrimaController : ControllerBase
+    public class Proveedor_MateriaPrimaController : ControllerBase
     {
         private readonly dataContext _context;
 
-        public Provedor_MateriaPrimaController(dataContext context)
+        public Proveedor_MateriaPrimaController(dataContext context)
         {
             _context = context;
         }

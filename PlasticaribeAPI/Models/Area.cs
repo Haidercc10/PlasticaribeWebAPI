@@ -15,6 +15,5 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "text")]
         public String? Area_Descripcion { get; set; }
 
-
     }
 }
