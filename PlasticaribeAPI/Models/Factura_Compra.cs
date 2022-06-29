@@ -25,7 +25,7 @@ namespace PlasticaribeAPI.Models
         public decimal Facco_ValorTotal { get; set; }
        
         [Column(TypeName = "text")]
-        public string Facco_Observacion { get; set; }
+        public string? Facco_Observacion { get; set; }
 
         public int Estado_Id { get; set; } //Llave foranea de proveedores
         public Estado? Estado { get; set; } //Propiedad de navegación proveedores 
