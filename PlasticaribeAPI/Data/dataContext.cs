@@ -130,8 +130,6 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<FacturaCompra_MateriaPrima>().HasOne(fcco => fcco.UndMed).WithMany().HasForeignKey(facco => facco.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
 
             //Relaciones Asignaciones_MatPrima
-            //modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Usua).WithMany().HasForeignKey(asigmp => asigmp.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario recibe
-            //modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Area).WithMany().HasForeignKey(asigmp => asigmp.Area_Id).OnDelete(DeleteBehavior.Restrict); //foranea area
             modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Estado).WithMany().HasForeignKey(asigmp => asigmp.Estado_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado
 
             //Relaciones DetallesAsignaciones_MateriasPrimas
@@ -152,6 +150,13 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Remision>().HasOne(rem => rem.Estado).WithMany().HasForeignKey(remi => remi.Estado_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de estado
             modelBuilder.Entity<Remision>().HasOne(rem => rem.Usua).WithMany().HasForeignKey(remi => remi.Usua_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de usuario
             modelBuilder.Entity<Remision>().HasOne(rem => rem.TpDoc).WithMany().HasForeignKey(remi => remi.TpDoc_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de tipo de documento
+
+
+            //Relaciones Remisiones - Materias Primas 
+            modelBuilder.Entity<Remision_MateriaPrima>().HasKey(rmp => new { rmp.Rem_Id, rmp.MatPri_Id }); //Llave Compuesta Remision_MateriaPrima 
+            modelBuilder.Entity<Remision_MateriaPrima>().HasOne<Remision>(remi => remi.Rem).WithMany(remmp => remmp.RemiMatPri).HasForeignKey(remi => remi.Rem_Id); //Foranea remision
+            modelBuilder.Entity<Remision_MateriaPrima>().HasOne<Materia_Prima>(fcomp => fcomp.MatPri).WithMany(remmp => remmp.RemiMatPri).HasForeignKey(remi => remi.MatPri_Id); //Foranea materiaprima
+            modelBuilder.Entity<Remision_MateriaPrima>().HasOne(rmp => rmp.UndMed).WithMany().HasForeignKey(rmp => rmp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
 
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.Prod).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.PedExt).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
@@ -199,6 +204,10 @@ namespace PlasticaribeAPI.Data
         public DbSet<Models.Tipo_Documento> Tipos_Documentos{ get; set; }
 
         public DbSet<Models.Remision> Remisiones { get; set; }
+
+        public DbSet<Models.Remision_MateriaPrima> Remisiones_MateriasPrimas { get; set; }
+
+
     }
 
 }

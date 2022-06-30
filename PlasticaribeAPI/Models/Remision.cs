@@ -32,8 +32,9 @@ namespace PlasticaribeAPI.Models
         public Tipo_Documento? TpDoc { get; set; } //Propiedad de navegación de Tipo_Documento.
 
         [Column(TypeName = "text")] 
-        public string? Rem_Observacion { get; set; } 
+        public string? Rem_Observacion { get; set; }
 
-       
+        public IList<Remision_MateriaPrima>? RemiMatPri { get; set; }
+
     }
 }
