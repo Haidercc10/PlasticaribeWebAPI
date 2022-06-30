@@ -16,14 +16,16 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "text")]
         public string? AsigMp_Observacion { get; set; }
 
-        public long Usua_Id { get; set; } //Llave foranea de usuario que pide materia prima
-        public Usuario? Usua { get; set; } //Propiedad de navegación usuario que pide materia prima 
+       // public long Usua_Id { get; set; } //Llave foranea de usuario que pide materia prima
+       // public Usuario? Usua { get; set; } //Propiedad de navegación usuario que pide materia prima 
 
-        public long Area_Id { get; set; } //Llave foranea de area que pide materia prima
-        public Area? Area { get; set; } //Propiedad de navegación area que pide materia prima        
+       // public long Area_Id { get; set; } //Llave foranea de area que pide materia prima
+       // public Area? Area { get; set; } //Propiedad de navegación area que pide materia prima        
         
         public int Estado_Id { get; set; } //Llave foranea de estado
         public Estado? Estado { get; set; } //Propiedad de navegación estado
+
+        public int AsigMp_Maquina { get; set; } 
 
         //Lista requerida para relación detalles asignacion - materias primas
         public IList<DetalleAsignacion_MateriaPrima>? DtAsigMatPri { get; set; }

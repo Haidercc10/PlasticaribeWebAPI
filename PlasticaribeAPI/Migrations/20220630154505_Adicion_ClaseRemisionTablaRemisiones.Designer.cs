@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220630154505_Adicion_ClaseRemisionTablaRemisiones")]
+    partial class Adicion_ClaseRemisionTablaRemisiones
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,14 +52,14 @@ namespace PlasticaribeAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("AsigMp_Id"), 1L, 1);
 
+                    b.Property<long>("Area_Id")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("AsigMP_OrdenTrabajo")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("AsigMp_FechaEntrega")
                         .HasColumnType("Date");
-
-                    b.Property<int>("AsigMp_Maquina")
-                        .HasColumnType("int");
 
                     b.Property<string>("AsigMp_Observacion")
                         .HasColumnType("text");
@@ -65,9 +67,16 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Estado_Id")
                         .HasColumnType("int");
 
+                    b.Property<long>("Usua_Id")
+                        .HasColumnType("bigint");
+
                     b.HasKey("AsigMp_Id");
 
+                    b.HasIndex("Area_Id");
+
                     b.HasIndex("Estado_Id");
+
+                    b.HasIndex("Usua_Id");
 
                     b.ToTable("Asignaciones_MatPrima");
                 });
@@ -1320,13 +1329,29 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Asignacion_MatPrima", b =>
                 {
+                    b.HasOne("PlasticaribeAPI.Models.Area", "Area")
+                        .WithMany()
+                        .HasForeignKey("Area_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("PlasticaribeAPI.Models.Estado", "Estado")
                         .WithMany()
                         .HasForeignKey("Estado_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usua")
+                        .WithMany()
+                        .HasForeignKey("Usua_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Area");
+
                     b.Navigation("Estado");
+
+                    b.Navigation("Usua");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.cajaCompensacion", b =>

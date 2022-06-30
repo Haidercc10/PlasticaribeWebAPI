@@ -27,8 +27,8 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "text")]
         public string? Facco_Observacion { get; set; }
 
-        public int Estado_Id { get; set; } //Llave foranea de proveedores
-        public Estado? Estado { get; set; } //Propiedad de navegación proveedores 
+        public int Estado_Id { get; set; } //Llave foranea de estado
+        public Estado? Estado { get; set; } //Propiedad de navegación estado 
 
         public long Usua_Id { get; set; } //Llave foranea de usuario que registra la factura de compra
         public Usuario? Usua { get; set; } //Propiedad de navegación usuario que registra la factura de compra 

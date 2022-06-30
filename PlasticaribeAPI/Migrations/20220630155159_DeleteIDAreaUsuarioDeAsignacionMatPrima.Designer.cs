@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220630155159_DeleteIDAreaUsuarioDeAsignacionMatPrima")]
+    partial class DeleteIDAreaUsuarioDeAsignacionMatPrima
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,9 +57,6 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Property<DateTime>("AsigMp_FechaEntrega")
                         .HasColumnType("Date");
-
-                    b.Property<int>("AsigMp_Maquina")
-                        .HasColumnType("int");
 
                     b.Property<string>("AsigMp_Observacion")
                         .HasColumnType("text");

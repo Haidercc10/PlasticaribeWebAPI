@@ -118,9 +118,9 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Provedor_MateriaPrima>().HasOne<Materia_Prima>(prvmp => prvmp.MatPri).WithMany(prvMtp => prvMtp.ProvMatPri).HasForeignKey(prvmp => prvmp.MatPri_Id); //Foranea materiaprima
 
             //Relaciones Facturas Compras
-            modelBuilder.Entity<Factura_Compra>().HasOne(fcco => fcco.Prov).WithMany().HasForeignKey(facco => facco.Prov_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de tipo de documento
-            modelBuilder.Entity<Factura_Compra>().HasOne(fcco => fcco.Estado).WithMany().HasForeignKey(facco => facco.Estado_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de tipo de documento
-            modelBuilder.Entity<Factura_Compra>().HasOne(fcco => fcco.Usua).WithMany().HasForeignKey(facco => facco.Usua_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de tipo de documento
+            modelBuilder.Entity<Factura_Compra>().HasOne(fcco => fcco.Prov).WithMany().HasForeignKey(facco => facco.Prov_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de proveedor
+            modelBuilder.Entity<Factura_Compra>().HasOne(fcco => fcco.Estado).WithMany().HasForeignKey(facco => facco.Estado_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de estado
+            modelBuilder.Entity<Factura_Compra>().HasOne(fcco => fcco.Usua).WithMany().HasForeignKey(facco => facco.Usua_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de usuario
             modelBuilder.Entity<Factura_Compra>().HasOne(fcco => fcco.TpDoc).WithMany().HasForeignKey(facco => facco.TpDoc_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de tipo de documento
 
             //Relaciones FacturasCompras_MateriasPrimas
@@ -130,8 +130,8 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<FacturaCompra_MateriaPrima>().HasOne(fcco => fcco.UndMed).WithMany().HasForeignKey(facco => facco.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
 
             //Relaciones Asignaciones_MatPrima
-            modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Usua).WithMany().HasForeignKey(asigmp => asigmp.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario recibe
-            modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Area).WithMany().HasForeignKey(asigmp => asigmp.Area_Id).OnDelete(DeleteBehavior.Restrict); //foranea area
+            //modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Usua).WithMany().HasForeignKey(asigmp => asigmp.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario recibe
+            //modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Area).WithMany().HasForeignKey(asigmp => asigmp.Area_Id).OnDelete(DeleteBehavior.Restrict); //foranea area
             modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Estado).WithMany().HasForeignKey(asigmp => asigmp.Estado_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado
 
             //Relaciones DetallesAsignaciones_MateriasPrimas
@@ -147,8 +147,11 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Existencia_MatPrima>().HasOne(mp => mp.UndMed).WithMany().HasForeignKey(mp => mp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de Unidad Medida
             modelBuilder.Entity<Existencia_MatPrima>().HasOne(mp => mp.TpMoneda).WithMany().HasForeignKey(mp => mp.TpMoneda_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de Tipo Moneda*/
 
-            
-
+            //Relaciones Remisiones
+            modelBuilder.Entity<Remision>().HasOne(rem => rem.Prov).WithMany().HasForeignKey(remi => remi.Prov_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de proveedor
+            modelBuilder.Entity<Remision>().HasOne(rem => rem.Estado).WithMany().HasForeignKey(remi => remi.Estado_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de estado
+            modelBuilder.Entity<Remision>().HasOne(rem => rem.Usua).WithMany().HasForeignKey(remi => remi.Usua_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de usuario
+            modelBuilder.Entity<Remision>().HasOne(rem => rem.TpDoc).WithMany().HasForeignKey(remi => remi.TpDoc_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de tipo de documento
 
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.Prod).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.PedExt).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
@@ -194,6 +197,8 @@ namespace PlasticaribeAPI.Data
         /*public DbSet<Models.Existencia_MatPrima> Existencias_MatPrima { get; set; }*/
 
         public DbSet<Models.Tipo_Documento> Tipos_Documentos{ get; set; }
+
+        public DbSet<Models.Remision> Remisiones { get; set; }
     }
 
 }
