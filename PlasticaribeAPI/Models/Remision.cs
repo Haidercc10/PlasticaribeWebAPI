@@ -36,5 +36,7 @@ namespace PlasticaribeAPI.Models
 
         public IList<Remision_MateriaPrima>? RemiMatPri { get; set; }
 
+        public IList<Remision_FacturaCompra>? RemiFacco { get; set; }
+
     }
 }

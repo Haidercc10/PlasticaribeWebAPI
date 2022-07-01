@@ -42,5 +42,7 @@ namespace PlasticaribeAPI.Models
         //Lista requerida para relación facturas compras - materias primas
         public IList<FacturaCompra_MateriaPrima>? FaccoMatPri { get; set; }
 
+        public IList<Remision_FacturaCompra>? RemiFacco { get; set; }
+
     }
 }
