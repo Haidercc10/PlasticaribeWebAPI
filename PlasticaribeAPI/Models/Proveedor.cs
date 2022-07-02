@@ -25,11 +25,11 @@ namespace PlasticaribeAPI.Models
 
 
         [Column(TypeName = "varchar(100)")]
-        public string Prov_Ciudad { get; set; }
+        public string? Prov_Ciudad { get; set; }
 
         
         [Column(TypeName = "varchar(100)")]
-        public string Prov_Telefono { get; set; }
+        public string? Prov_Telefono { get; set; }
 
 
         [Column(TypeName = "varchar(MAX)")]

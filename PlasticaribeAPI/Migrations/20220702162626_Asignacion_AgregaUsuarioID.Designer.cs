@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220702162626_Asignacion_AgregaUsuarioID")]
+    partial class Asignacion_AgregaUsuarioID
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,7 +67,7 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Estado_Id")
                         .HasColumnType("int");
 
-                    b.Property<long>("Usua_Id")
+                    b.Property<long?>("Usua_Id")
                         .HasColumnType("bigint");
 
                     b.HasKey("AsigMp_Id");
@@ -926,6 +928,7 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Prov_Ciudad")
+                        .IsRequired()
                         .HasColumnType("varchar(100)");
 
                     b.Property<long>("Prov_Codigo")
@@ -942,6 +945,7 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("varchar(MAX)");
 
                     b.Property<string>("Prov_Telefono")
+                        .IsRequired()
                         .HasColumnType("varchar(100)");
 
                     b.Property<string>("TipoIdentificacion_Id")
@@ -1454,8 +1458,7 @@ namespace PlasticaribeAPI.Migrations
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "Usua")
                         .WithMany()
                         .HasForeignKey("Usua_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Estado");
 
