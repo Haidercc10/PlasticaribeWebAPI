@@ -45,6 +45,8 @@ namespace PlasticaribeAPI.Models
 
         public IList<Remision_MateriaPrima>? RemiMatPri { get; set; }
 
+        public IList<DetalleRecuperado_MateriaPrima>? DetRecMatPri { get; set; }
+
     }
 }
  

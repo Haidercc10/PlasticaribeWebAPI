@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220702152246_TipoRecuperado_DescripcionNullable")]
+    partial class TipoRecuperado_DescripcionNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -246,37 +248,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("UndMed_Id");
 
                     b.ToTable("DetallesAsignaciones_MateriasPrimas");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.DetalleRecuperado_MateriaPrima", b =>
-                {
-                    b.Property<long>("RecMp_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("MatPri_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<decimal>("RecMatPri_Cantidad")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("TpRecu_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("UndMed_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.HasKey("RecMp_Id", "MatPri_Id");
-
-                    b.HasIndex("MatPri_Id");
-
-                    b.HasIndex("TpRecu_Id");
-
-                    b.HasIndex("UndMed_Id");
-
-                    b.ToTable("DetallesRecuperados_MateriasPrimas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Empresa", b =>
@@ -957,36 +928,6 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Proveedores");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Recuperado_MatPrima", b =>
-                {
-                    b.Property<long>("RecMp_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("RecMp_Id"), 1L, 1);
-
-                    b.Property<string>("Proc_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<DateTime>("RecMp_FechaIngreso")
-                        .HasColumnType("date");
-
-                    b.Property<string>("RecMp_Observacion")
-                        .HasColumnType("text");
-
-                    b.Property<long>("Usua_Id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("RecMp_Id");
-
-                    b.HasIndex("Proc_Id");
-
-                    b.HasIndex("Usua_Id");
-
-                    b.ToTable("Recuperados_MatPrima");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Remision", b =>
                 {
                     b.Property<int>("Rem_Id")
@@ -1550,41 +1491,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("UndMed");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.DetalleRecuperado_MateriaPrima", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Materia_Prima", "MatPri")
-                        .WithMany("DetRecMatPri")
-                        .HasForeignKey("MatPri_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Recuperado_MatPrima", "RecMp")
-                        .WithMany("DetRecMatPri")
-                        .HasForeignKey("RecMp_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Tipo_Recuperado", "TpRecu")
-                        .WithMany()
-                        .HasForeignKey("TpRecu_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "UndMed")
-                        .WithMany()
-                        .HasForeignKey("UndMed_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("MatPri");
-
-                    b.Navigation("RecMp");
-
-                    b.Navigation("TpRecu");
-
-                    b.Navigation("UndMed");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Empresa", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.TipoIdentificacion", "TipoIdentificacion")
@@ -1911,25 +1817,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("TpProv");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Recuperado_MatPrima", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Proceso", "Proceso")
-                        .WithMany()
-                        .HasForeignKey("Proc_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usua")
-                        .WithMany()
-                        .HasForeignKey("Usua_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Proceso");
-
-                    b.Navigation("Usua");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Remision", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.Estado", "Estado")
@@ -2127,8 +2014,6 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Materia_Prima", b =>
                 {
-                    b.Navigation("DetRecMatPri");
-
                     b.Navigation("DtAsigMatPri");
 
                     b.Navigation("FaccoMatPri");
@@ -2153,11 +2038,6 @@ namespace PlasticaribeAPI.Migrations
             modelBuilder.Entity("PlasticaribeAPI.Models.Proveedor", b =>
                 {
                     b.Navigation("ProvMatPri");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Recuperado_MatPrima", b =>
-                {
-                    b.Navigation("DetRecMatPri");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Remision", b =>

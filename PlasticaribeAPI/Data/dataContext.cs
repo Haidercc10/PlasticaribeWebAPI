@@ -162,6 +162,17 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Remision_FacturaCompra>().HasOne<Factura_Compra>(refc => refc.Faccom).WithMany(refco => refco.RemiFacco).HasForeignKey(refc => refc.Facco_Id); //Foranea Facturas compras
             modelBuilder.Entity<Remision_FacturaCompra>().HasOne<Remision>(refc => refc.Remi).WithMany(refco => refco.RemiFacco).HasForeignKey(refc => refc.Rem_Id); //Foranea Remisiones
 
+            //Relaciones Recuperado_MatPrima
+            modelBuilder.Entity<Recuperado_MatPrima>().HasOne(rmp => rmp.Usua).WithMany().HasForeignKey(rmp => rmp.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario
+            modelBuilder.Entity<Recuperado_MatPrima>().HasOne(rmp => rmp.Proceso).WithMany().HasForeignKey(rmp => rmp.Proc_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
+
+
+            //Relaciones DetallesRecuperados_MateriasPrimas
+            modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasKey(dremp => new { dremp.RecMp_Id, dremp.MatPri_Id }); //Llave Compuesta de recuperadosmatpri y materias primas 
+            modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasOne<Recuperado_MatPrima>(remp => remp.RecMp).WithMany(rempr => rempr.DetRecMatPri).HasForeignKey(remp => remp.RecMp_Id); //Foranea Recuperado_MatPrima
+            modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasOne<Materia_Prima>(remp => remp.MatPri).WithMany(rempr => rempr.DetRecMatPri).HasForeignKey(remp => remp.MatPri_Id); //Foranea Materia_Prima
+            modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasOne(dremp => dremp.UndMed).WithMany().HasForeignKey(dremp => dremp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
+            modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasOne(dremp => dremp.TpRecu).WithMany().HasForeignKey(dremp => dremp.TpRecu_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
 
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.Prod).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.PedExt).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
@@ -213,6 +224,13 @@ namespace PlasticaribeAPI.Data
         public DbSet<Models.Remision_MateriaPrima> Remisiones_MateriasPrimas { get; set; }
 
         public DbSet<Models.Remision_FacturaCompra> Remisiones_FacturasCompras { get; set; }
+
+        public DbSet<Models.Tipo_Recuperado> Tipos_Recuperados { get; set; }
+
+        public DbSet<Models.Recuperado_MatPrima> Recuperados_MatPrima { get; set; }
+
+        public DbSet<Models.DetalleRecuperado_MateriaPrima> DetallesRecuperados_MateriasPrimas { get; set; }
+
     }
 
 }
