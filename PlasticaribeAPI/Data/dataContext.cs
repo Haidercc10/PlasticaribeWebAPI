@@ -175,6 +175,9 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasOne(dremp => dremp.UndMed).WithMany().HasForeignKey(dremp => dremp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasOne(dremp => dremp.TpRecu).WithMany().HasForeignKey(dremp => dremp.TpRecu_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
 
+            //Relaciones InventarioInicialXDia_MatPrimas
+            modelBuilder.Entity<InventarioInicialXDia_MatPrima>().HasOne(inv => inv.UndMed).WithMany().HasForeignKey(invini => invini.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
+
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.Prod).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.PedExt).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
         }
@@ -231,6 +234,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<Models.Recuperado_MatPrima> Recuperados_MatPrima { get; set; }
 
         public DbSet<Models.DetalleRecuperado_MateriaPrima> DetallesRecuperados_MateriasPrimas { get; set; }
+
+        public DbSet<Models.InventarioInicialXDia_MatPrima> InventarioInicialXDias_MatPrima { get; set; }
 
     }
 

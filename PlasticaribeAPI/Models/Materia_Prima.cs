@@ -17,6 +17,7 @@ namespace PlasticaribeAPI.Models
 
        [Precision(18, 2)]
        public decimal MatPri_Stock { get; set; }
+       
         [Column(TypeName = "varchar(10)")]
         
         public string UndMed_Id { get; set; } //Llave foranea Unidad_Medida           
