@@ -50,6 +50,22 @@ namespace PlasticaribeAPI.Controllers
             return remision_FacturaCompra;
         }
 
+        //Consulta por el Id de la Factura
+        [HttpGet("F/{Facco_Id}")]
+        public ActionResult<Remision_FacturaCompra> GetRemision_Factura(long Facco_Id)
+        {
+            var remision_FacturaCompra = _context.Remisiones_FacturasCompras.Where(remFac => remFac.Facco_Id == Facco_Id).ToList();
+
+            if (remision_FacturaCompra == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(remision_FacturaCompra);
+            }
+        }
+
         // PUT: api/Remision_FacturaCompra/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

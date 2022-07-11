@@ -50,6 +50,19 @@ namespace PlasticaribeAPI.Controllers
             return recuperado_MatPrima;
         }
 
+        [HttpGet("fecha/{RecMp_FechaIngreso}")]
+        public ActionResult<Recuperado_MatPrima> Getfechaa(DateTime RecMp_FechaIngreso)
+        {
+            var recuperado_MatPrima = _context.Recuperados_MatPrima.Where(rec => rec.RecMp_FechaIngreso == RecMp_FechaIngreso).ToList();    
+
+            if (recuperado_MatPrima == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(recuperado_MatPrima);
+        }
+
         // PUT: api/Recuperado_MatPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
