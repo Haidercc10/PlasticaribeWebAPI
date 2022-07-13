@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220713155353_Adicion_DevolucionesMP")]
+    partial class Adicion_DevolucionesMP
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -251,31 +253,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("UndMed_Id");
 
                     b.ToTable("DetallesAsignaciones_MateriasPrimas");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.DetalleDevolucion_MateriaPrima", b =>
-                {
-                    b.Property<long>("DevMatPri_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("MatPri_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<decimal>("DtDevMatPri_CantidadDevuelta")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<string>("UndMed_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.HasKey("DevMatPri_Id", "MatPri_Id");
-
-                    b.HasIndex("MatPri_Id");
-
-                    b.HasIndex("UndMed_Id");
-
-                    b.ToTable("DetallesDevoluciones_MateriasPrimas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.DetalleRecuperado_MateriaPrima", b =>
@@ -1633,33 +1610,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("UndMed");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.DetalleDevolucion_MateriaPrima", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Devolucion_MatPrima", "DevMatPri")
-                        .WithMany("DetDevMatPri")
-                        .HasForeignKey("DevMatPri_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Materia_Prima", "MatPri")
-                        .WithMany("DetDevMatPri")
-                        .HasForeignKey("MatPri_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "UndMed")
-                        .WithMany()
-                        .HasForeignKey("UndMed_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("DevMatPri");
-
-                    b.Navigation("MatPri");
-
-                    b.Navigation("UndMed");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.DetalleRecuperado_MateriaPrima", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.Materia_Prima", "MatPri")
@@ -2250,11 +2200,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("CliProd");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Devolucion_MatPrima", b =>
-                {
-                    b.Navigation("DetDevMatPri");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Factura_Compra", b =>
                 {
                     b.Navigation("FaccoMatPri");
@@ -2264,8 +2209,6 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Materia_Prima", b =>
                 {
-                    b.Navigation("DetDevMatPri");
-
                     b.Navigation("DetRecMatPri");
 
                     b.Navigation("DtAsigMatPri");

@@ -51,24 +51,25 @@ namespace PlasticaribeAPI.Controllers
         }
 
         
-        /*[HttpGet]
-        [Route("[action]/{Insu_Nombre}")]
-        public IQueryable<Insumo> GetNombreInsumo(string Insu_Nombre)
+        /*[HttpGet("{Insu_Nombre}")]
+        //[Route("{name}")]
+        public IActionResult GetNombreInsumo(string Insu_Nombre)
         {
             if (_context.Insumos == null)
             {
                 return NotFound();
             }
-            var insumo =   _context.Insumos.Find(Insu_Nombre);
+            var insumo =   _context.Insumos.SingleOrDefault(ct => ct.Insu_Nombre == Insu_Nombre);
 
             if (insumo == null)
             {
-                return NotFound();
+                return new NoContentResult();
             }
+            else { return Ok(insumo);  }
 
-            return insumo;
-        }*/
-
+            
+        }
+        */
         // PUT: api/Insumoes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

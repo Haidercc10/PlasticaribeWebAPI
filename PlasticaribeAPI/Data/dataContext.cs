@@ -21,7 +21,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<Models.Tipo_Producto> Tipos_Productos { get; set; }
         public DbSet<Models.TiposClientes> Tipos_Clientes { get; set; }
         public DbSet<Models.Tipo_Bodega> Tipos_Bodegas { get; set; }
-        public DbSet<Models.Clientes> Clientes { get; set; }
+        public DbSet<Models.Clientes> Clientes { get; set; }    
 
         public DbSet<Models.Unidad_Medida> Unidades_Medidas { get; set; }
         public DbSet<Models.SedesClientes> Sedes_Clientes { get; set; }
@@ -178,6 +178,16 @@ namespace PlasticaribeAPI.Data
             //Relaciones InventarioInicialXDia_MatPrimas
             modelBuilder.Entity<InventarioInicialXDia_MatPrima>().HasOne(inv => inv.UndMed).WithMany().HasForeignKey(invini => invini.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
 
+            //Relaciones Devoluciones_MatPrima
+            modelBuilder.Entity<Devolucion_MatPrima>().HasOne(dev => dev.Usua).WithMany().HasForeignKey(devmp => devmp.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
+
+            //Relaciones Devoluciones_MatPrima
+            modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasKey(ddmp => new { ddmp.DevMatPri_Id, ddmp.MatPri_Id }); //Llave Compuesta DetalleAsignacion_MateriaPrima 
+            modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne<Devolucion_MatPrima>(ddmp => ddmp.DevMatPri).WithMany(ddmp => ddmp.DetDevMatPri).HasForeignKey(ddmp => ddmp.DevMatPri_Id); //Foranea Asignacion_matpri
+            modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne<Materia_Prima>(ddmp => ddmp.MatPri).WithMany(ddmp => ddmp.DetDevMatPri).HasForeignKey(ddmp => ddmp.MatPri_Id); //Foranea materiaprima
+            modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(ddmp => ddmp.UndMed).WithMany().HasForeignKey(damp => damp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
+            
+
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.Prod).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.PedExt).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
         }
@@ -236,6 +246,10 @@ namespace PlasticaribeAPI.Data
         public DbSet<Models.DetalleRecuperado_MateriaPrima> DetallesRecuperados_MateriasPrimas { get; set; }
 
         public DbSet<Models.InventarioInicialXDia_MatPrima> InventarioInicialXDias_MatPrima { get; set; }
+
+        public DbSet<Models.Devolucion_MatPrima> Devoluciones_MatPrima { get; set; }
+
+        public DbSet<Models.DetalleDevolucion_MateriaPrima> DetallesDevoluciones_MateriasPrimas { get; set; }
 
     }
 
