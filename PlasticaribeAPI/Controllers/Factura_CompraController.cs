@@ -50,6 +50,42 @@ namespace PlasticaribeAPI.Controllers
             return factura_Compra;
         }
 
+        //Consulta por el valor total de la factura
+        [HttpGet("api/Factura_Compra/{Facco_ValorTotal}")]
+        public ActionResult Nombre(long Facco_ValorTotal)
+        {
+            var factCompra = _context.Facturas_Compras.Where(f => f.Facco_ValorTotal >= Facco_ValorTotal).ToList();
+
+            return Ok(factCompra);
+        }
+
+        //Consulta por el usuario que regitró la factura
+        [HttpGet("F/{Usua_Id}")]
+        public ActionResult Usuario(long Usua_Id)
+        {
+            var factCompra = _context.Facturas_Compras.Where(f => f.Usua_Id == Usua_Id).ToList();
+
+            return Ok(factCompra);
+        }
+
+        //Consulta por el proveedor de la factura
+        [HttpGet("P/{Prov_Id}")]
+        public ActionResult Proveedor(long Prov_Id)
+        {
+            var factCompra = _context.Facturas_Compras.Where(f => f.Prov_Id == Prov_Id).ToList();
+
+            return Ok(factCompra);
+        }
+
+        //Conslta por fecha 
+        [HttpGet("fecha/{Facco_FechaFactura}")]
+        public ActionResult Fecha(DateTime Facco_FechaFactura)
+        {
+            var factCompra = _context.Facturas_Compras.Where(f => f.Facco_FechaFactura == Facco_FechaFactura).ToList();
+
+            return Ok(factCompra);
+        }
+
         // PUT: api/Factura_Compra/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

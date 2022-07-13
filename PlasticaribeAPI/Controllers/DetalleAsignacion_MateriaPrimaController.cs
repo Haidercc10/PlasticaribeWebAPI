@@ -50,6 +50,36 @@ namespace PlasticaribeAPI.Controllers
             return detalleAsignacion_MateriaPrima;
         }
 
+        [HttpGet("asignacion/{AsigMp_Id}")]
+        public ActionResult<DetalleAsignacion_MateriaPrima> GetIdAsignacion(long AsigMp_Id)
+        {
+            var detallesAsignacion = _context.DetallesAsignaciones_MateriasPrimas.Where(dtA => dtA.AsigMp_Id == AsigMp_Id).ToList();
+
+            if (detallesAsignacion == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(detallesAsignacion);
+            }
+        }
+
+        [HttpGet("matPri/{MatPri_Id}")]
+        public ActionResult<DetalleAsignacion_MateriaPrima> GetIdMateriaPrima(long MatPri_Id)
+        {
+            var detallesAsignacion = _context.DetallesAsignaciones_MateriasPrimas.Where (dtA => dtA.MatPri_Id == MatPri_Id).ToList();
+
+            if (detallesAsignacion == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(detallesAsignacion);
+            }
+        }
+
         // PUT: api/DetalleAsignacion_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

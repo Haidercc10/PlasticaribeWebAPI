@@ -36,10 +36,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<FacturaCompra_MateriaPrima>> GetFacturaCompra_MateriaPrima(long Facco_Id, long MatPri_Id)
         {
-          if (_context.FacturasCompras_MateriaPrimas == null)
-          {
-              return NotFound();
-          }
+            if (_context.FacturasCompras_MateriaPrimas == null)
+            {
+                return NotFound();
+            }
             var facturaCompra_MateriaPrima = await _context.FacturasCompras_MateriaPrimas.FindAsync(Facco_Id, MatPri_Id);
 
             if (facturaCompra_MateriaPrima == null)
@@ -48,6 +48,24 @@ namespace PlasticaribeAPI.Controllers
             }
 
             return facturaCompra_MateriaPrima;
+        }
+
+        //Consulta por el Id de la factura
+        [HttpGet("facturaCompra/{Facco_Id}")]
+        public ActionResult FacturaId(long Facco_Id)
+        {
+            var factCompra = _context.FacturasCompras_MateriaPrimas.Where(f => f.Facco_Id == Facco_Id).ToList();
+
+            return Ok(factCompra);
+        }
+
+        //Consulta por el id de la materia prima
+        [HttpGet("MP/{MatPri_Id}")]
+        public ActionResult materiaPrimaId(long MatPri_Id)
+        {
+            var factCompra = _context.FacturasCompras_MateriaPrimas.Where(f => f.MatPri_Id == MatPri_Id).ToList();
+
+            return Ok(factCompra);
         }
 
         // PUT: api/FacturaCompra_MateriaPrima/5

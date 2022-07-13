@@ -50,6 +50,38 @@ namespace PlasticaribeAPI.Controllers
             return detalleRecuperado_MateriaPrima;
         }
 
+        [HttpGet("materiaPrima/{MatPri_Id}")]
+        public ActionResult<DetalleRecuperado_MateriaPrima> GetIdMateriaPrima(long MatPri_Id)
+        {
+            var detalleRecuperado_MateriaPrima = _context.DetallesRecuperados_MateriasPrimas.Where(dtR => dtR.MatPri_Id == MatPri_Id).ToList();
+
+            if (detalleRecuperado_MateriaPrima == null)
+            {
+                return  BadRequest();
+            }
+            else
+            {
+                return Ok(detalleRecuperado_MateriaPrima);
+            }
+
+        }
+
+        [HttpGet("recuperado/{RecMp_Id}")]
+        public ActionResult<DetalleRecuperado_MateriaPrima> GetRecuperado(long RecMp_Id)
+        {
+            var detalleRecuperado_MateriaPrima = _context.DetallesRecuperados_MateriasPrimas.Where(dtR => dtR.RecMp_Id == RecMp_Id).ToList();
+
+            if (detalleRecuperado_MateriaPrima == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(detalleRecuperado_MateriaPrima);
+            }
+
+        }
+
         // PUT: api/DetalleRecuperado_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
