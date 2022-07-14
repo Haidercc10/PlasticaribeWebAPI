@@ -50,6 +50,30 @@ namespace PlasticaribeAPI.Controllers
             return asignacion_MatPrima;
         }
 
+        /*Materia Prima agrupada */
+       /* [HttpGet("AsignacionesAgrupadas")]
+        public IActionResult GetAsignacion_MatPrimaAgrupada(int AsigMP_OrdenTrabajo)
+        {
+            if (_context.Asignaciones_MatPrima == null)
+            {
+                return NotFound();
+            }
+            var asignacion_MatPrima =  _context.Asignaciones_MatPrima.Where(a => a.AsigMP_OrdenTrabajo == AsigMP_OrdenTrabajo)
+                                                                     .Include(a => a.DtAsigMatPri)
+                                                                     .Include(a => a.)
+                                                                     .Select(busq => new {
+                                                                     
+                                                                        
+                                                                     })  ;
+
+            if (asignacion_MatPrima == null)
+            {
+                return NotFound();
+            }
+
+            return asignacion_MatPrima;
+        }*/
+
         //Consulta por orden de trabajo
         [HttpGet("ot/{AsigMP_OrdenTrabajo}")]
         public ActionResult<Asignacion_MatPrima> GetOt(long AsigMP_OrdenTrabajo)

@@ -14,5 +14,8 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "text")]
         public string CatInsu_Descripcion { get; set; }
+
+        [StringLength(255)]
+        public string? CatInsu_UrlImagen { get; set; }
     }
 }

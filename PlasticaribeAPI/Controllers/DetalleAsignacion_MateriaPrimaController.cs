@@ -50,6 +50,48 @@ namespace PlasticaribeAPI.Controllers
             return detalleAsignacion_MateriaPrima;
         }
 
+        /*Materia Prima agrupada */
+        [HttpGet("AsignacionesAgrupadas/{AsigMP_OrdenTrabajo}")] 
+        public IActionResult GetAsignacion_MatPrimaAgrupada(long AsigMP_OrdenTrabajo)
+        {
+            if (_context.DetallesAsignaciones_MateriasPrimas == null)
+            {
+                return NotFound();
+            }
+
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var DetAsignacion_MatPrima = _context.DetallesAsignaciones_MateriasPrimas
+                /** Consulta OT */
+                .Where(da => da.AsigMp.AsigMP_OrdenTrabajo == AsigMP_OrdenTrabajo)
+                /** Relación con Materia Prima a través de la Prop. navegación */
+                .Include(da => da.MatPri)
+                /** Relación con Asignaciones_MatPrima a través de la Prop. navegación */
+                .Include(da => da.AsigMp)
+                /** Agrupar por ciertos campos */
+                .GroupBy(da => new { da.MatPri_Id, da.MatPri.MatPri_Nombre, da.UndMed_Id })
+                /** Campos a mostrar */
+                .Select(agr => new 
+                {
+                /** 'Key' hace referencia a los campos que están en el GroupBy */    
+                      agr.Key.MatPri_Id,
+                      agr.Key.MatPri_Nombre,
+                      Sum = agr.Sum(da => da.DtAsigMp_Cantidad),
+                      agr.Key.UndMed_Id
+                }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+
+            if (DetAsignacion_MatPrima == null)
+            {
+                return NotFound();
+            } else
+            {
+                return Ok(DetAsignacion_MatPrima);
+            }
+
+            
+        }
+
         [HttpGet("asignacion/{AsigMp_Id}")]
         public ActionResult<DetalleAsignacion_MateriaPrima> GetIdAsignacion(long AsigMp_Id)
         {

@@ -84,12 +84,29 @@ namespace PlasticaribeAPI.Controllers
         // POST: api/Categoria_Insumo
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Categoria_Insumo>> PostCategoria_Insumo(Categoria_Insumo categoria_Insumo)
+        public async Task<ActionResult> PostCategoria_Insumo(Categoria_Insumo categoria_Insumo, IFormFile Image)
         {
-          if (_context.Categorias_Insumos == null)
-          {
-              return Problem("Entity set 'dataContext.Categorias_Insumos'  is null.");
-          }
+            if (Image == null || Image.Length == 0)
+            {
+                return Problem("Debe seleccionar una imagen");
+            }
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "Release", Image.FileName);
+
+            Console.WriteLine(path);
+
+            using (FileStream stream = new FileStream(path, FileMode.Create))
+            {
+                await Image.CopyToAsync(stream);
+                stream.Close();
+            }
+
+            categoria_Insumo.CatInsu_UrlImagen = Image.FileName;
+
+            if (_context.Categorias_Insumos == null)
+            {
+                return Problem("Entity set 'dataContext.Categorias_Insumos'  is null.");
+            }
             _context.Categorias_Insumos.Add(categoria_Insumo);
             await _context.SaveChangesAsync();
 
