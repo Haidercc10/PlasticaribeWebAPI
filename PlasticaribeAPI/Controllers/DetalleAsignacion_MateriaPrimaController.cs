@@ -67,8 +67,10 @@ namespace PlasticaribeAPI.Controllers
                 .Include(da => da.MatPri)
                 /** Relación con Asignaciones_MatPrima a través de la Prop. navegación */
                 .Include(da => da.AsigMp)
+                /** Relación con Proceso a través de la Prop. navegación */
+                .Include(da => da.Proceso)
                 /** Agrupar por ciertos campos */
-                .GroupBy(da => new { da.MatPri_Id, da.MatPri.MatPri_Nombre, da.UndMed_Id })
+                .GroupBy(da => new { da.MatPri_Id, da.MatPri.MatPri_Nombre, da.UndMed_Id, da.MatPri.MatPri_Precio, da.Proceso.Proceso_Nombre})
                 /** Campos a mostrar */
                 .Select(agr => new 
                 {
@@ -76,7 +78,9 @@ namespace PlasticaribeAPI.Controllers
                       agr.Key.MatPri_Id,
                       agr.Key.MatPri_Nombre,
                       Sum = agr.Sum(da => da.DtAsigMp_Cantidad),
-                      agr.Key.UndMed_Id
+                      agr.Key.UndMed_Id,
+                      agr.Key.MatPri_Precio,
+                      agr.Key.Proceso_Nombre
                 }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
