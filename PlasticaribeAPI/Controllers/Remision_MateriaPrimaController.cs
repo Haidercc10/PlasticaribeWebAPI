@@ -54,7 +54,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("remision/{Rem_Id}")]
         public ActionResult RemisionId(long Rem_Id)
         {
-            var remCompra = _context.Remisiones_MateriasPrimas.Where(f => f.Rem_Id >= Rem_Id).ToList();
+            var remCompra = _context.Remisiones_MateriasPrimas.Where(f => f.Rem_Id == Rem_Id).ToList();
 
             return Ok(remCompra);
         }
@@ -63,7 +63,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("MP/{MatPri_Id}")]
         public ActionResult MateriaPrimaId(long MatPri_Id)
         {
-            var remCompra = _context.Remisiones_MateriasPrimas.Where(f => f.MatPri_Id >= MatPri_Id).ToList();
+            var remCompra = _context.Remisiones_MateriasPrimas.Where(f => f.MatPri_Id == MatPri_Id).ToList();
 
             return Ok(remCompra);
         }

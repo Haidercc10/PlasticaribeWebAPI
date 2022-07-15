@@ -50,6 +50,32 @@ namespace PlasticaribeAPI.Controllers
             return detalleDevolucion_MateriaPrima;
         }
 
+        [HttpGet("devolucion/{DevMatPri_Id}")]
+        public ActionResult<DetalleDevolucion_MateriaPrima> GetDetalleDevolucion_MateriaPrima(long DevMatPri_Id)
+        {
+            var detalleDevolucion_MateriaPrima = _context.DetallesDevoluciones_MateriasPrimas.Where(dev => dev.DevMatPri_Id == DevMatPri_Id).ToList();
+
+            if (detalleDevolucion_MateriaPrima == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(detalleDevolucion_MateriaPrima);
+        }
+
+        [HttpGet("materiaPrima/{MatPri_Id}")]
+        public ActionResult<DetalleDevolucion_MateriaPrima> GetMateriaPrima(long MatPri_Id)
+        {
+            var detalleDevolucion_MateriaPrima = _context.DetallesDevoluciones_MateriasPrimas.Where(dev => dev.MatPri_Id == MatPri_Id).ToList();
+
+            if (detalleDevolucion_MateriaPrima == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(detalleDevolucion_MateriaPrima);
+        }
+
         // PUT: api/DetalleDevolucion_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

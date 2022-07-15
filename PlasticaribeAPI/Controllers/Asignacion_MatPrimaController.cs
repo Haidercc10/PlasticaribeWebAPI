@@ -121,6 +121,21 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        [HttpGet("fecha_Ot/")]
+        public ActionResult<Asignacion_MatPrima> GetFecha_OT(DateTime AsigMp_FechaEntrega, long AsigMP_OrdenTrabajo)
+        {
+            var asignacion_MatPrima = _context.Asignaciones_MatPrima.Where(asg => asg.AsigMp_FechaEntrega == AsigMp_FechaEntrega && asg.AsigMP_OrdenTrabajo == AsigMP_OrdenTrabajo).ToList();
+
+            if (asignacion_MatPrima == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(asignacion_MatPrima);
+            }
+        }
+
         // PUT: api/Asignacion_MatPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

@@ -82,6 +82,36 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        [HttpGet("fecha/")]
+        public ActionResult<Remision> GetFechas(DateTime Rem_Fecha1, DateTime Rem_Fecha2)
+        {
+            var remision = _context.Remisiones.Where(rem => rem.Rem_Fecha >= Rem_Fecha1 && rem.Rem_Fecha <= Rem_Fecha2).ToList();
+
+            if (remision == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(remision);
+            }
+        }
+
+        [HttpGet("codigo/{Rem_Codigo}")]
+        public ActionResult<Remision> GetCodigo(string Rem_Codigo)
+        {
+            var remision = _context.Remisiones.Where(rem => rem.Rem_Codigo == Rem_Codigo).ToList();
+
+            if (remision == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(remision);
+            }
+        }
+
         // PUT: api/Remision/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
