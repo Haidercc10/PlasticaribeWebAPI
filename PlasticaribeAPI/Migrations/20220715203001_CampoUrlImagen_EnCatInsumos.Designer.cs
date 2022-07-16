@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220715203001_CampoUrlImagen_EnCatInsumos")]
+    partial class CampoUrlImagen_EnCatInsumos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -268,10 +270,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
 
-                    b.Property<string>("Proceso_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
                     b.Property<string>("UndMed_Id")
                         .IsRequired()
                         .HasColumnType("varchar(10)");
@@ -279,8 +277,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("DevMatPri_Id", "MatPri_Id");
 
                     b.HasIndex("MatPri_Id");
-
-                    b.HasIndex("Proceso_Id");
 
                     b.HasIndex("UndMed_Id");
 
@@ -1656,12 +1652,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Proceso", "Proceso")
-                        .WithMany()
-                        .HasForeignKey("Proceso_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "UndMed")
                         .WithMany()
                         .HasForeignKey("UndMed_Id")
@@ -1671,8 +1661,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("DevMatPri");
 
                     b.Navigation("MatPri");
-
-                    b.Navigation("Proceso");
 
                     b.Navigation("UndMed");
                 });

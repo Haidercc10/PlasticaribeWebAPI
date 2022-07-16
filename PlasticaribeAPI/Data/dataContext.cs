@@ -186,7 +186,8 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne<Devolucion_MatPrima>(ddmp => ddmp.DevMatPri).WithMany(ddmp => ddmp.DetDevMatPri).HasForeignKey(ddmp => ddmp.DevMatPri_Id); //Foranea Asignacion_matpri
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne<Materia_Prima>(ddmp => ddmp.MatPri).WithMany(ddmp => ddmp.DetDevMatPri).HasForeignKey(ddmp => ddmp.MatPri_Id); //Foranea materiaprima
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(ddmp => ddmp.UndMed).WithMany().HasForeignKey(damp => damp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
-            
+            modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(ddmp => ddmp.Proceso).WithMany().HasForeignKey(damp => damp.Proceso_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
+
 
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.Prod).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
             //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.PedExt).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);

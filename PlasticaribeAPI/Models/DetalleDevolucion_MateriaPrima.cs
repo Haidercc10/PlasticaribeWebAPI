@@ -17,7 +17,11 @@ namespace PlasticaribeAPI.Models
         
         [Column(TypeName = "varchar(10)")]
         public string UndMed_Id { get; set; }
-        public Unidad_Medida? UndMed { get; set; }       
-       
+        public Unidad_Medida? UndMed { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string Proceso_Id { get; set; } 
+        public Proceso? Proceso { get; set; }
+
     }
 }
