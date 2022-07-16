@@ -129,9 +129,9 @@ namespace PlasticaribeAPI.Controllers
         // PUT: api/DetalleAsignacion_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDetalleAsignacion_MateriaPrima(long id, DetalleAsignacion_MateriaPrima detalleAsignacion_MateriaPrima)
+        public async Task<IActionResult> PutDetalleAsignacion_MateriaPrima(long AsigMp_Id, long MatPri_Id, DetalleAsignacion_MateriaPrima detalleAsignacion_MateriaPrima)
         {
-            if (id != detalleAsignacion_MateriaPrima.AsigMp_Id)
+            if (AsigMp_Id != detalleAsignacion_MateriaPrima.AsigMp_Id && MatPri_Id != detalleAsignacion_MateriaPrima.MatPri_Id)
             {
                 return BadRequest();
             }
@@ -144,7 +144,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!DetalleAsignacion_MateriaPrimaExists(id))
+                if (!DetalleAsignacion_MateriaPrimaExists(AsigMp_Id) && !DetalleAsignacion_MateriaPrimaExists(MatPri_Id))
                 {
                     return NotFound();
                 }

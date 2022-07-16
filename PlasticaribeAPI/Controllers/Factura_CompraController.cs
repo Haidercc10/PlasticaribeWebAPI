@@ -86,6 +86,22 @@ namespace PlasticaribeAPI.Controllers
             return Ok(factCompra);
         }
 
+        [HttpGet("fechas/")]
+        public ActionResult Fechas(DateTime Facco_FechaFactura1, DateTime Facco_FechaFactura2)
+        {
+            var factCompra = _context.Facturas_Compras.Where(f => f.Facco_FechaFactura >= Facco_FechaFactura1 && f.Facco_FechaFactura <= Facco_FechaFactura2).ToList();
+
+            return Ok(factCompra);
+        }
+
+        [HttpGet("codigo/{Facco_Codigo}")]
+        public ActionResult codigo(string Facco_Codigo)
+        {
+            var factCompra = _context.Facturas_Compras.Where(f => f.Facco_Codigo == Facco_Codigo).ToList();
+
+            return Ok(factCompra);
+        }
+
         // PUT: api/Factura_Compra/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

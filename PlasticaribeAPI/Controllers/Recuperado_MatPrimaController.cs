@@ -51,9 +51,22 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("fecha/{RecMp_FechaIngreso}")]
-        public ActionResult<Recuperado_MatPrima> Getfechaa(DateTime RecMp_FechaIngreso)
+        public ActionResult<Recuperado_MatPrima> Getfecha(DateTime RecMp_FechaIngreso)
         {
             var recuperado_MatPrima = _context.Recuperados_MatPrima.Where(rec => rec.RecMp_FechaIngreso == RecMp_FechaIngreso).ToList();    
+
+            if (recuperado_MatPrima == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(recuperado_MatPrima);
+        }
+
+        [HttpGet("fechas/")]
+        public ActionResult<Recuperado_MatPrima> Getfechas(DateTime RecMp_FechaIngreso1 , DateTime RecMp_FechaIngreso2)
+        {
+            var recuperado_MatPrima = _context.Recuperados_MatPrima.Where(rec => rec.RecMp_FechaIngreso >= RecMp_FechaIngreso1 && rec.RecMp_FechaIngreso <= RecMp_FechaIngreso2).ToList();
 
             if (recuperado_MatPrima == null)
             {

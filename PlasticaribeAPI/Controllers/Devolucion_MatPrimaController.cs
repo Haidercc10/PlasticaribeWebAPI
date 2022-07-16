@@ -50,6 +50,45 @@ namespace PlasticaribeAPI.Controllers
             return devolucion_MatPrima;
         }
 
+        [HttpGet("fecha/{DevMatPri_Fecha}")]
+        public ActionResult<Devolucion_MatPrima> Getfecha(DateTime DevMatPri_Fecha)
+        {
+            var devolucion_MatPrima = _context.Devoluciones_MatPrima.Where(dev => dev.DevMatPri_Fecha == DevMatPri_Fecha).ToList(); 
+
+            if (devolucion_MatPrima == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(devolucion_MatPrima);
+        }
+
+        [HttpGet("fechas/")]
+        public ActionResult<Devolucion_MatPrima> Getfechas(DateTime DevMatPri_Fecha1, DateTime DevMatPri_Fecha2)
+        {
+            var devolucion_MatPrima = _context.Devoluciones_MatPrima.Where(dev => dev.DevMatPri_Fecha >= DevMatPri_Fecha1 && dev.DevMatPri_Fecha <= DevMatPri_Fecha2).ToList();
+
+            if (devolucion_MatPrima == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(devolucion_MatPrima);
+        }
+
+        [HttpGet("OT/{DevMatPri_OrdenTrabajo}")]
+        public ActionResult<Devolucion_MatPrima> GetOT(long DevMatPri_OrdenTrabajo)
+        {
+            var devolucion_MatPrima = _context.Devoluciones_MatPrima.Where(dev => dev.DevMatPri_OrdenTrabajo == DevMatPri_OrdenTrabajo).ToList();
+
+            if (devolucion_MatPrima == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(devolucion_MatPrima);
+        }
+
         // PUT: api/Devolucion_MatPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
