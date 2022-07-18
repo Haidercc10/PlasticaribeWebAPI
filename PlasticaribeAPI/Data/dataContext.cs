@@ -188,9 +188,37 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(ddmp => ddmp.UndMed).WithMany().HasForeignKey(damp => damp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(ddmp => ddmp.Proceso).WithMany().HasForeignKey(damp => damp.Proceso_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
 
+            //Relaciones TINTAS
+            modelBuilder.Entity<Tinta>().HasOne(tin => tin.UndMed).WithMany().HasForeignKey(tint => tint.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
+            modelBuilder.Entity<Tinta>().HasOne(tin => tin.CatMP).WithMany().HasForeignKey(tint => tint.CatMP_Id).OnDelete(DeleteBehavior.Restrict); //foranea categorias matprima
+            modelBuilder.Entity<Tinta>().HasOne(tin => tin.TpBod).WithMany().HasForeignKey(tint => tint.TpBod_Id).OnDelete(DeleteBehavior.Restrict); //foranea Tipo de bodega
 
-            //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.Prod).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
-            //modelBuilder.Entity<Pedido_Producto>().HasOne(pep => pep.PedExt).WithMany().HasForeignKey(pep => pep.Prod_Id).OnDelete(DeleteBehavior.Restrict);
+            //Relaciones Tintas_MateriasPrimas
+            modelBuilder.Entity<Tinta_MateriaPrima>().HasKey(tmp => new { tmp.Tinta_Id, tmp.MatPri_Id }); //Llave Compuesta Tinta_MateriaPrima 
+            modelBuilder.Entity<Tinta_MateriaPrima>().HasOne<Tinta>(tinmp => tinmp.Tinta).WithMany(ttmp => ttmp.TintaMatPri).HasForeignKey(ddmp => ddmp.Tinta_Id); //Foranea tintas
+            modelBuilder.Entity<Tinta_MateriaPrima>().HasOne<Materia_Prima>(tinmp => tinmp.MatPri).WithMany(ttmp => ttmp.TintaMatPri).HasForeignKey(ddmp => ddmp.MatPri_Id); //Foranea materiaprima 
+
+
+            //Relaciones Asignacion_MatPrimaXTintas
+            modelBuilder.Entity<Asignacion_MatPrimaXTinta>().HasOne(asgmpx => asgmpx.Estado).WithMany().HasForeignKey(asigmpx => asigmpx.Estado_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado
+            modelBuilder.Entity<Asignacion_MatPrimaXTinta>().HasOne(asgmpx => asgmpx.Usua).WithMany().HasForeignKey(asgmprx => asgmprx.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario
+            modelBuilder.Entity<Asignacion_MatPrimaXTinta>().HasOne(asgmpx => asgmpx.Tinta).WithMany().HasForeignKey(asgmprx => asgmprx.Tinta_Id).OnDelete(DeleteBehavior.Restrict); //foranea materia prima
+            modelBuilder.Entity<Asignacion_MatPrimaXTinta>().HasOne(asgmpx => asgmpx.UndMed).WithMany().HasForeignKey(asgmprx => asgmprx.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida 
+
+            //Relaciones DetalleAsignacion_MatPrimaXTintas
+            modelBuilder.Entity<DetalleAsignacion_MatPrimaXTinta>().HasKey(dampxt => new { dampxt.AsigMPxTinta_Id, dampxt.MatPri_Id }); //Llave Compuesta DetalleAsignacion_MateriaPrimaXTinta 
+            modelBuilder.Entity<DetalleAsignacion_MatPrimaXTinta>().HasOne<Asignacion_MatPrimaXTinta>(dampxt => dampxt.AsigMPxTinta).WithMany(dampxti => dampxti.DetAsigMPxTinta).HasForeignKey(dampxt => dampxt.AsigMPxTinta_Id); //Foranea Asignacion_matpri
+            modelBuilder.Entity<DetalleAsignacion_MatPrimaXTinta>().HasOne<Materia_Prima>(ddmp => ddmp.MatPri).WithMany(ddmp => ddmp.DetAsigMPxTinta).HasForeignKey(ddmp => ddmp.MatPri_Id); //Foranea materiaprima
+            modelBuilder.Entity<DetalleAsignacion_MatPrimaXTinta>().HasOne(ddmp => ddmp.UndMed).WithMany().HasForeignKey(damp => damp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
+            modelBuilder.Entity<DetalleAsignacion_MatPrimaXTinta>().HasOne(ddmp => ddmp.Proceso).WithMany().HasForeignKey(damp => damp.Proceso_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
+
+            //Relaciones Detalles Asignacion Tintas Para una OT
+
+            modelBuilder.Entity<DetalleAsignacion_Tinta>().HasKey(dat => new { dat.AsigMp_Id, dat.Tinta_Id }); //Llave Compuesta DetalleAsignacion_Tinta
+            modelBuilder.Entity<DetalleAsignacion_Tinta>().HasOne<Asignacion_MatPrima>(dasigmp => dasigmp.AsigMp).WithMany(dastin => dastin.DetAsigTinta).HasForeignKey(dasigmp => dasigmp.AsigMp_Id); //Foranea Asignacion_matpri
+            modelBuilder.Entity<DetalleAsignacion_Tinta>().HasOne<Tinta>(dasigmp => dasigmp.Tinta).WithMany(dastin => dastin.DetAsigTinta).HasForeignKey(dasigmp => dasigmp.Tinta_Id); //Foranea tintas
+            modelBuilder.Entity<DetalleAsignacion_Tinta>().HasOne(dat => dat.UndMed).WithMany().HasForeignKey(dat => dat.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //Foranea Unidad Medida
+            modelBuilder.Entity<DetalleAsignacion_Tinta>().HasOne(dat => dat.Proceso).WithMany().HasForeignKey(dat => dat.Proceso_Id).OnDelete(DeleteBehavior.Restrict); //Foranea Proceso
         }
 
         //Fluent API
@@ -252,6 +280,15 @@ namespace PlasticaribeAPI.Data
 
         public DbSet<Models.DetalleDevolucion_MateriaPrima> DetallesDevoluciones_MateriasPrimas { get; set; }
 
+        public DbSet<Models.Tinta> Tintas { get; set; }
+
+        public DbSet<Models.Tinta_MateriaPrima> Tintas_MateriasPrimas { get; set; } 
+
+        public DbSet<Models.Asignacion_MatPrimaXTinta> Asignaciones_MatPrimasXTintas { get; set; }
+
+        public DbSet<Models.DetalleAsignacion_MatPrimaXTinta> DetallesAsignaciones_MatPrimasXTintas { get; set; }
+
+        public DbSet<Models.DetalleAsignacion_Tinta> DetalleAsignaciones_Tintas { get; set; }
     }
 
 }

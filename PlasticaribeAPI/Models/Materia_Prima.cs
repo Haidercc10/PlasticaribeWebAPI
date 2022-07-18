@@ -18,8 +18,7 @@ namespace PlasticaribeAPI.Models
        [Precision(18, 2)]
        public decimal MatPri_Stock { get; set; }
        
-        [Column(TypeName = "varchar(10)")]
-        
+        [Column(TypeName = "varchar(10)")]        
         public string UndMed_Id { get; set; } //Llave foranea Unidad_Medida           
         public Unidad_Medida? UndMed { get; set; } //Propiedad de Navegación Unidad_Medida
 
@@ -49,6 +48,12 @@ namespace PlasticaribeAPI.Models
         public IList<DetalleRecuperado_MateriaPrima>? DetRecMatPri { get; set; }
 
         public IList<DetalleDevolucion_MateriaPrima>? DetDevMatPri { get; set; }
+
+        //Lista requerida para relación tintas - materias primas
+        public IList<Tinta_MateriaPrima>? TintaMatPri { get; set; }
+
+        //Lista requerida para relación Asignacion_MatPrimaXTinta - materias primas
+        public IList<DetalleAsignacion_MatPrimaXTinta>? DetAsigMPxTinta { get; set; }
 
     }
 }

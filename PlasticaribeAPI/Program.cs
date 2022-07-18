@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
 using PlasticaribeAPI.Data;
 
 var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -13,12 +11,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.Configure<FormOptions>(o =>
-{
-    o.ValueLengthLimit = int.MaxValue;
-    o.MultipartBodyLengthLimit = int.MaxValue;
-    o.MemoryBufferThreshold = int.MaxValue;
-});
 builder.Services.AddDbContext<dataContext>(options =>
 
 //CONEXIÓN A BASE DE DATOS PlasticaribeBDD. 
@@ -54,13 +46,6 @@ if  (app.Environment.IsDevelopment())
 //USAR CORS 
 app.UseCors(myAllowSpecificOrigins);
 
-app.UseStaticFiles();
-
-app.UseStaticFiles(new StaticFileOptions()
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot")),
-    RequestPath = new PathString("/wwwroot")
-});
 
 app.UseHttpsRedirection();
 
