@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220719200606_Adicion_FechaEnBOPP2")]
+    partial class Adicion_FechaEnBOPP2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,38 +42,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("Area_Id");
 
                     b.ToTable("Areas");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Asignacion_BOPP", b =>
-                {
-                    b.Property<long>("AsigBOPP_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("AsigBOPP_Id"), 1L, 1);
-
-                    b.Property<DateTime>("AsigBOPP_FechaEntrega")
-                        .HasColumnType("Date");
-
-                    b.Property<string>("AsigBOPP_Observacion")
-                        .HasColumnType("text");
-
-                    b.Property<long>("AsigBOPP_OrdenTrabajo")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Estado_Id")
-                        .HasColumnType("int");
-
-                    b.Property<long>("Usua_Id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("AsigBOPP_Id");
-
-                    b.HasIndex("Estado_Id");
-
-                    b.HasIndex("Usua_Id");
-
-                    b.ToTable("Asignaciones_BOPP");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Asignacion_MatPrima", b =>
@@ -350,37 +320,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("usua_Id");
 
                     b.ToTable("Clientes");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.DetalleAsignacion_BOPP", b =>
-                {
-                    b.Property<long>("AsigBOPP_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("BOPP_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<decimal>("DtAsigBOPP_Cantidad")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<string>("Proceso_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("UndMed_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.HasKey("AsigBOPP_Id", "BOPP_Id");
-
-                    b.HasIndex("BOPP_Id");
-
-                    b.HasIndex("Proceso_Id");
-
-                    b.HasIndex("UndMed_Id");
-
-                    b.ToTable("DetallesAsignaciones_BOPP");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.DetalleAsignacion_MateriaPrima", b =>
@@ -1806,25 +1745,6 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Usuarios");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Asignacion_BOPP", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Estado", "Estado")
-                        .WithMany()
-                        .HasForeignKey("Estado_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usua")
-                        .WithMany()
-                        .HasForeignKey("Usua_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Estado");
-
-                    b.Navigation("Usua");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Asignacion_MatPrima", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.Estado", "Estado")
@@ -1968,41 +1888,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("TipoIdentificacion");
 
                     b.Navigation("Usua");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.DetalleAsignacion_BOPP", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Asignacion_BOPP", "AsigBOPP")
-                        .WithMany("DetAsigBOPP")
-                        .HasForeignKey("AsigBOPP_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.BOPP", "BOPP")
-                        .WithMany("DetAsigBOPP")
-                        .HasForeignKey("BOPP_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Proceso", "Proceso")
-                        .WithMany()
-                        .HasForeignKey("Proceso_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "UndMed")
-                        .WithMany()
-                        .HasForeignKey("UndMed_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("AsigBOPP");
-
-                    b.Navigation("BOPP");
-
-                    b.Navigation("Proceso");
-
-                    b.Navigation("UndMed");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.DetalleAsignacion_MateriaPrima", b =>
@@ -2771,11 +2656,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("tpUsu");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Asignacion_BOPP", b =>
-                {
-                    b.Navigation("DetAsigBOPP");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Asignacion_MatPrima", b =>
                 {
                     b.Navigation("DetAsigTinta");
@@ -2786,11 +2666,6 @@ namespace PlasticaribeAPI.Migrations
             modelBuilder.Entity("PlasticaribeAPI.Models.Asignacion_MatPrimaXTinta", b =>
                 {
                     b.Navigation("DetAsigMPxTinta");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.BOPP", b =>
-                {
-                    b.Navigation("DetAsigBOPP");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Clientes", b =>

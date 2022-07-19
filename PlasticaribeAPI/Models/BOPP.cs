@@ -41,5 +41,12 @@ namespace PlasticaribeAPI.Models
 
         public int TpBod_Id { get; set; } //Llave foranea Tipo_Bodega
         public Tipo_Bodega? TpBod { get; set; } //Propiedad de Navegación Tipos_Bodegas
+
+        
+        [Column(TypeName = "Date")]
+        public DateTime BOPP_FechaIngreso { get; set; }
+
+        //Lista requerida para relacion con BOPP en detalles asignaciones bopp
+        public IList<DetalleAsignacion_BOPP>? DetAsigBOPP { get; set; }
     }
 }
