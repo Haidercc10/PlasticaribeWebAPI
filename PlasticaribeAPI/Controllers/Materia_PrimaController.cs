@@ -50,6 +50,22 @@ namespace PlasticaribeAPI.Controllers
             return materia_Prima;
         }
 
+        // GET: api/Materia_Prima/5
+        [HttpGet("categoria/{CatMP_Id}")]
+        public ActionResult<Materia_Prima> Getcaegoria(long CatMP_Id)
+        {
+            var materia_Prima = _context.Materias_Primas.Where(mp => mp.CatMP_Id == CatMP_Id).ToList();
+
+            if (materia_Prima == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(materia_Prima);
+            }
+        }
+
         // PUT: api/Materia_Prima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

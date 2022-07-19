@@ -50,6 +50,23 @@ namespace PlasticaribeAPI.Controllers
             return detalleAsignacion_Tinta;
         }
 
+        // GET: api/DetalleAsignacion_Tinta/5
+        [HttpGet("asignacion/{AsigMp_Id}")]
+        public ActionResult<DetalleAsignacion_Tinta> GetDetalleAsignacion(long AsigMp_Id)
+        {
+            var detalleAsignacion_Tinta = _context.DetalleAsignaciones_Tintas.Where(dtAsg => dtAsg.AsigMp_Id == AsigMp_Id).ToList();
+
+            if (detalleAsignacion_Tinta == null)
+            {
+                return NotFound();
+            } 
+            else
+            {
+                return Ok(detalleAsignacion_Tinta);
+            }
+
+        }
+
         // PUT: api/DetalleAsignacion_Tinta/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
