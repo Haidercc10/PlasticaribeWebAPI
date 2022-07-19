@@ -47,6 +47,15 @@ if  (app.Environment.IsDevelopment())
 app.UseCors(myAllowSpecificOrigins);
 
 
+app.UseStaticFiles();
+
+/*app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot")),
+    RequestPath = new PathString("/wwwroot")
+});*/
+
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

@@ -51,7 +51,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("devolucion/{DevMatPri_Id}")]
-        public ActionResult<DetalleDevolucion_MateriaPrima> GetDetalleDevolucion_MateriaPrima(long DevMatPri_Id)
+        public ActionResult<DetalleDevolucion_MateriaPrima> GetDetalleDevolucion(long DevMatPri_Id)
         {
             var detalleDevolucion_MateriaPrima = _context.DetallesDevoluciones_MateriasPrimas.Where(dev => dev.DevMatPri_Id == DevMatPri_Id).ToList();
 
