@@ -81,6 +81,31 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        /** Get para contar la cantidad de unidades, precio total segun existencias 
+        y cantidad en Kilos agrupados BOPP por Nombre */
+        [HttpGet("BoppAgrupado")]
+        public ActionResult<BOPP> GetBoppAgrupado()
+        {
+            var bOPP = _context.BOPP.GroupBy(x => new {x.BOPP_Nombre})
+                                    .Select(bopp => new
+                                    {
+                                        bopp.Key.BOPP_Nombre,
+                                        sumaPrecio = bopp.Sum(x => x.BOPP_Precio),
+                                        conteoNombre = bopp.Key.BOPP_Nombre.Count() 
+                                    })
+                                    .ToList();
+
+            if (bOPP == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(bOPP);
+            }
+        }
+
+
         // PUT: api/BOPP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
