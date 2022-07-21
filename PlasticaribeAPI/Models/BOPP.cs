@@ -46,6 +46,10 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "Date")]
         public DateTime BOPP_FechaIngreso { get; set; }
 
+
+        [Precision(18, 2)]
+        public decimal BOPP_Ancho { get; set; }
+
         //Lista requerida para relacion con BOPP en detalles asignaciones bopp
         public IList<DetalleAsignacion_BOPP>? DetAsigBOPP { get; set; }
     }
