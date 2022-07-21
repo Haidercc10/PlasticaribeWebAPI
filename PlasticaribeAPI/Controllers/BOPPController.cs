@@ -66,6 +66,20 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        [HttpGet("fecha/{BOPP_FechaIngreso}")]
+        public ActionResult<BOPP> GetFecha(DateTime BOPP_FechaIngreso)
+        {
+            var bOPP = _context.BOPP.Where(bopp => bopp.BOPP_FechaIngreso == BOPP_FechaIngreso).ToList();
+
+            if (bOPP == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(bOPP);
+            }
+        }
 
         // PUT: api/BOPP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
