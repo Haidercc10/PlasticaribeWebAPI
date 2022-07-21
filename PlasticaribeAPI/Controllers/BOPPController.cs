@@ -50,6 +50,21 @@ namespace PlasticaribeAPI.Controllers
             return bOPP;
         }
 
+        [HttpGet("serial/{BOPP_Serial}")]
+        public ActionResult<BOPP> GetSerial(string BOPP_Serial)
+        {
+            var bOPP = _context.BOPP.Where(bopp => bopp.BOPP_Serial == BOPP_Serial).ToList();
+
+            if (bOPP == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(bOPP);
+            }
+        }
+
         // PUT: api/BOPP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
