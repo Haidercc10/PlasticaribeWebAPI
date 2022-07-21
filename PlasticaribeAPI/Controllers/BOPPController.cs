@@ -50,6 +50,7 @@ namespace PlasticaribeAPI.Controllers
             return bOPP;
         }
 
+        /** Obtener BOPP consultado por serial */
         [HttpGet("serial/{BOPP_Serial}")]
         public ActionResult<BOPP> GetSerial(string BOPP_Serial)
         {
@@ -64,6 +65,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(bOPP);
             }
         }
+
 
         // PUT: api/BOPP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
