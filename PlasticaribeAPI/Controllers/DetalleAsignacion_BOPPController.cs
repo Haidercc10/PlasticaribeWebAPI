@@ -65,6 +65,7 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+
         // PUT: api/DetalleAsignacion_BOPP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

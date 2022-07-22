@@ -70,6 +70,28 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        [HttpGet("AsignacionesXOrden/{AsigBOPP_OrdenTrabajo}")]
+        public ActionResult<Asignacion_BOPP> Get(int AsigBOPP_OrdenTrabajo)
+        {
+            if (_context.Asignaciones_BOPP == null)
+            {
+                return NotFound();
+            }
+            var asignacion_BOPP = _context.Asignaciones_BOPP.Where(asgBopp => asgBopp.AsigBOPP_OrdenTrabajo == AsigBOPP_OrdenTrabajo)
+                                                                    .Select(x => x.AsigBOPP_Id)
+                                                                    .Max();
+
+
+            if (asignacion_BOPP == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(asignacion_BOPP);
+            }
+        }
+
         [HttpGet("fechas/")]
         public ActionResult<Asignacion_BOPP> Getfechas(DateTime AsigBOPP_FechaEntrega1, DateTime AsigBOPP_FechaEntrega2)
         {
