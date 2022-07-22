@@ -70,6 +70,29 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        /** Consulta el maximo ID de Asignaciones_BOPP (columna AsigBOPP_Id) */
+        [HttpGet("AsignacionesXOrden/{AsigBOPP_OrdenTrabajo}")]
+        public ActionResult<Asignacion_BOPP> Get(int AsigBOPP_OrdenTrabajo)
+        {
+            if (_context.Asignaciones_BOPP == null)
+            {
+                return NotFound();
+            }
+            long asignacion_BOPP = _context.Asignaciones_BOPP.Where(asgBopp => asgBopp.AsigBOPP_OrdenTrabajo == AsigBOPP_OrdenTrabajo)
+                                                                    .Select(x => x.AsigBOPP_Id)
+                                                                    .Max();
+            
+
+            if (asignacion_BOPP == 0)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(asignacion_BOPP);
+            }
+        }
+
         // PUT: api/Asignacion_BOPP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
