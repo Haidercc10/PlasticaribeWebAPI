@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220722220010_Adicion_CantidadInicialEnKG")]
+    partial class Adicion_CantidadInicialEnKG
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -165,11 +167,15 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal>("BOPP_Cantidad")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("BOPP_CantidadInicialKg")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("BOPP_CantidadMicras")
+                    b.Property<decimal>("BOPP_CantidadKg")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
@@ -190,10 +196,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<string>("BOPP_Serial")
                         .IsRequired()
                         .HasColumnType("varchar(MAX)");
-
-                    b.Property<decimal>("BOPP_Stock")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("CatMP_Id")
                         .HasColumnType("int");
