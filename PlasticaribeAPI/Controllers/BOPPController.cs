@@ -87,13 +87,14 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult<BOPP> GetBoppAgrupado()
         {
             /** Consulta la tabla de BOPP Agrupa por descripción */
-            var bOPP = _context.BOPP.GroupBy(x => new {x.BOPP_Descripcion})
-            /** Selecciona los campos Descripción, Suma el Precio total, Suma los Kilos, Cuenta cantidad de cada BOPP */
+            var bOPP = _context.BOPP.GroupBy(x => new {x.BOPP_Descripcion, x.BOPP_CantidadMicras })
+            /** Selecciona los campos Descripción, Cantidad Micras, Suma el Precio total, Suma los Kilos, Cuenta cantidad de cada BOPP */
                                     .Select(bopp => new
                                     {
                                         bopp.Key.BOPP_Descripcion,
+                                        bopp.Key.BOPP_CantidadMicras,
                                         sumaPrecio = bopp.Sum(x => x.BOPP_Precio),
-                                        sumaKilos = bopp.Sum(x => x.BOPP_CantidadKg),                                        
+                                        sumaKilos = bopp.Sum(x => x.BOPP_Stock),                                        
                                         conteoDescripcion = bopp.Count() 
                                     })
                                     /** Lista el resultado agrupado */

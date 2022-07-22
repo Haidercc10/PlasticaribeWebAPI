@@ -23,7 +23,7 @@ namespace PlasticaribeAPI.Models
 
 
         [Precision(18, 2)]
-        public decimal BOPP_Cantidad { get; set; }
+        public decimal BOPP_CantidadMicras { get; set; } 
 
 
         [Column(TypeName = "varchar(10)")]
@@ -52,12 +52,16 @@ namespace PlasticaribeAPI.Models
 
 
         [Precision(18, 2)]
-        public decimal BOPP_CantidadKg { get; set; }
+        public decimal BOPP_Stock { get; set; }
 
 
         [Column(TypeName = "varchar(10)")]
         public string UndMed_Kg { get; set; } //Llave foranea Unidad_Medida           
         public Unidad_Medida? UndMed2 { get; set; } //Propiedad de Navegación Unidad_Medida
+
+        
+        [Precision(18, 2)] //
+        public decimal BOPP_CantidadInicialKg { get; set; } 
 
 
         //Lista requerida para relacion con BOPP en detalles asignaciones bopp

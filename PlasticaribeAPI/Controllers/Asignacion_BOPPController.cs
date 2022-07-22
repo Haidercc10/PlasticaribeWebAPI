@@ -72,16 +72,18 @@ namespace PlasticaribeAPI.Controllers
 
         /** Consulta el maximo ID de Asignaciones_BOPP (columna AsigBOPP_Id) */
         [HttpGet("AsignacionesXOrden/{AsigBOPP_OrdenTrabajo}")]
-        public ActionResult<Asignacion_BOPP> Get(int AsigBOPP_OrdenTrabajo)
+        public ActionResult<Asignacion_BOPP> GetAsignacionXOT(long AsigBOPP_OrdenTrabajo)
         {
             if (_context.Asignaciones_BOPP == null)
             {
                 return NotFound();
             }
-            long asignacion_BOPP = _context.Asignaciones_BOPP.Where(asgBopp => asgBopp.AsigBOPP_OrdenTrabajo == AsigBOPP_OrdenTrabajo)
-                                                                    .Select(x => x.AsigBOPP_Id)
-                                                                    .Max();
             
+            
+                var asignacion_BOPP = _context.Asignaciones_BOPP.Where(asgBopp => asgBopp.AsigBOPP_OrdenTrabajo == AsigBOPP_OrdenTrabajo)
+                                                                .Select(x => x.AsigBOPP_Id)
+                                                                .Max();
+
 
             if (asignacion_BOPP == 0)
             {
@@ -91,6 +93,8 @@ namespace PlasticaribeAPI.Controllers
             {
                 return Ok(asignacion_BOPP);
             }
+
+
         }
 
         // PUT: api/Asignacion_BOPP/5
