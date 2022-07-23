@@ -81,11 +81,12 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        /** Get para contar la cantidad de unidades que hay de cada BOPP según su descripción, 
-        precio total según existencias y cantidad en kilos agrupados */
+        /** Get para contar la cantidad de unidades, precio total segun existencias 
+y cantidad en Kilos agrupados BOPP por Nombre */
         [HttpGet("BoppAgrupado")]
         public ActionResult<BOPP> GetBoppAgrupado()
         {
+
             /** Consulta la tabla de BOPP Agrupa por descripción */
             var bOPP = _context.BOPP.GroupBy(x => new {x.BOPP_Descripcion, x.BOPP_CantidadMicras })
             /** Selecciona los campos Descripción, Cantidad Micras, Suma el Precio total, Suma los Kilos, Cuenta cantidad de cada BOPP */
@@ -98,9 +99,7 @@ namespace PlasticaribeAPI.Controllers
                                         sumaKilosActual = bopp.Sum(x => x.BOPP_Stock),
                                         conteoDescripcion = bopp.Count() 
                                     })
-                                    /** Lista el resultado agrupado */
                                     .ToList();
-
             if (bOPP == null)
             {
                 return NotFound();
@@ -111,6 +110,20 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        [HttpGet("fechas/")]
+        public ActionResult<BOPP> GetFechas(DateTime BOPP_FechaIngreso1, DateTime BOPP_FechaIngreso2)
+        {
+            var bOPP = _context.BOPP.Where(bopp => bopp.BOPP_FechaIngreso >= BOPP_FechaIngreso1 && bopp.BOPP_FechaIngreso <= BOPP_FechaIngreso2).ToList();
+
+            if (bOPP == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(bOPP);
+            }
+        }
 
         // PUT: api/BOPP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

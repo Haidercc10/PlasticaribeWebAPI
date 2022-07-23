@@ -70,9 +70,8 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        /** Consulta el maximo ID de Asignaciones_BOPP (columna AsigBOPP_Id) */
         [HttpGet("AsignacionesXOrden/{AsigBOPP_OrdenTrabajo}")]
-        public ActionResult<Asignacion_BOPP> GetAsignacionXOT(long AsigBOPP_OrdenTrabajo)
+        public ActionResult<Asignacion_BOPP> Get(int AsigBOPP_OrdenTrabajo)
         {
             if (_context.Asignaciones_BOPP == null)
             {
@@ -85,7 +84,7 @@ namespace PlasticaribeAPI.Controllers
                                                                 .Max();
 
 
-            if (asignacion_BOPP == 0)
+            if (asignacion_BOPP == null)
             {
                 return NotFound();
             }
@@ -93,8 +92,40 @@ namespace PlasticaribeAPI.Controllers
             {
                 return Ok(asignacion_BOPP);
             }
+        }
 
+        [HttpGet("fechas/")]
+        public ActionResult<Asignacion_BOPP> Getfechas(DateTime AsigBOPP_FechaEntrega1, DateTime AsigBOPP_FechaEntrega2)
+        {
+            if (_context.Asignaciones_BOPP == null)
+            {
+                return NotFound();
+            }
+            var asignacion_BOPP = _context.Asignaciones_BOPP.Where(asgBopp => asgBopp.AsigBOPP_FechaEntrega >= AsigBOPP_FechaEntrega1 && asgBopp.AsigBOPP_FechaEntrega <= AsigBOPP_FechaEntrega2).ToList();
 
+            if (asignacion_BOPP == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(asignacion_BOPP);
+            }
+        }
+
+        [HttpGet("ot/{AsigBOPP_OrdenTrabajo}")]
+        public ActionResult<Asignacion_BOPP> GetOT(long AsigBOPP_OrdenTrabajo)
+        {
+            var asignacion_BOPP = _context.Asignaciones_BOPP.Where(asgBopp => asgBopp.AsigBOPP_OrdenTrabajo == AsigBOPP_OrdenTrabajo).ToList();
+
+            if (asignacion_BOPP == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(asignacion_BOPP);
+            }
         }
 
        
