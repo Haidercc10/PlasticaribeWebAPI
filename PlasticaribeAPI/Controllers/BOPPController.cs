@@ -94,7 +94,8 @@ namespace PlasticaribeAPI.Controllers
                                         bopp.Key.BOPP_Descripcion,
                                         bopp.Key.BOPP_CantidadMicras,
                                         sumaPrecio = bopp.Sum(x => x.BOPP_Precio),
-                                        sumaKilos = bopp.Sum(x => x.BOPP_Stock),                                        
+                                        sumaKilosIngresados = bopp.Sum(x => x.BOPP_CantidadInicialKg),
+                                        sumaKilosActual = bopp.Sum(x => x.BOPP_Stock),
                                         conteoDescripcion = bopp.Count() 
                                     })
                                     /** Lista el resultado agrupado */

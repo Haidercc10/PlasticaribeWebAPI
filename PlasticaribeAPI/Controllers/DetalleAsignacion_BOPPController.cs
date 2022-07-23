@@ -65,6 +65,47 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        /** Consulta Serial de BOPP en asignaciones */
+        [HttpGet("AsignacionesXSerial/{BOPP_Serial}")]
+        public ActionResult<DetalleAsignacion_BOPP> GetAsignacionXSerial(string BOPP_Serial)
+        {
+            if (_context.Asignaciones_BOPP == null)
+            {
+                return NotFound();
+            }
+
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+                                                                      /** Consulta serial */
+            var asignacionXSerial = _context.DetallesAsignaciones_BOPP.Where(asgBopp => asgBopp.BOPP.BOPP_Serial == BOPP_Serial &&
+                                                                      /** Iguala Id Usuario para traer nombre */
+                                                                            asgBopp.AsigBOPP.Usua_Id == asgBopp.AsigBOPP.Usua.Usua_Id)
+                                                                      /** Consulta tabla usuario **/
+                                                                      .Include(u => u.AsigBOPP.Usua)
+                                                                      /** Select dichos campos */
+                                                                      .Select(x => new
+                                                                      {
+                                                                          x.AsigBOPP.AsigBOPP_OrdenTrabajo,
+                                                                          x.AsigBOPP.AsigBOPP_FechaEntrega,
+                                                                          x.AsigBOPP.Usua.Usua_Nombre,
+                                                                          x.BOPP.BOPP_Nombre,
+                                                                          x.DtAsigBOPP_Cantidad
+                                                                      })
+                                                                      /** Listalos */
+                                                                      .ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            ;
+            if (asignacionXSerial == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(asignacionXSerial);
+            }
+
+
+        }
+
 
         // PUT: api/DetalleAsignacion_BOPP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
