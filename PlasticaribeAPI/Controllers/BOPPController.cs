@@ -88,12 +88,13 @@ y cantidad en Kilos agrupados BOPP por Nombre */
         {
 
             /** Consulta la tabla de BOPP Agrupa por descripción */
-            var bOPP = _context.BOPP.GroupBy(x => new {x.BOPP_Descripcion, x.BOPP_CantidadMicras })
+            var bOPP = _context.BOPP.GroupBy(x => new {x.BOPP_Descripcion, x.BOPP_CantidadMicras, x.BOPP_Ancho})
             /** Selecciona los campos Descripción, Cantidad Micras, Suma el Precio total, Suma los Kilos, Cuenta cantidad de cada BOPP */
                                     .Select(bopp => new
                                     {
                                         bopp.Key.BOPP_Descripcion,
                                         bopp.Key.BOPP_CantidadMicras,
+                                        bopp.Key.BOPP_Ancho,
                                         sumaPrecio = bopp.Sum(x => x.BOPP_Precio),
                                         sumaKilos = bopp.Sum(x => x.BOPP_Stock),                                        
                                         conteoDescripcion = bopp.Count()

@@ -65,6 +65,21 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        [HttpGet("BOPP/{BOPP_Id}")]
+        public ActionResult<DetalleAsignacion_BOPP> GetBOPP(long BOPP_Id)
+        {
+            var detalleAsignacion_BOPP = _context.DetallesAsignaciones_BOPP.Where(dtAsg => dtAsg.BOPP_Id == BOPP_Id).ToList();
+
+            if (detalleAsignacion_BOPP == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(detalleAsignacion_BOPP);
+            }
+        }
+
 
         // PUT: api/DetalleAsignacion_BOPP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
