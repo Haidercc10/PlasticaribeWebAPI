@@ -77,9 +77,11 @@ namespace PlasticaribeAPI.Controllers
             {
                 return NotFound();
             }
-            var asignacion_BOPP = _context.Asignaciones_BOPP.Where(asgBopp => asgBopp.AsigBOPP_OrdenTrabajo == AsigBOPP_OrdenTrabajo)
-                                                                    .Select(x => x.AsigBOPP_Id)
-                                                                    .Max();
+            
+            
+                long asignacion_BOPP = _context.Asignaciones_BOPP.Where(asgBopp => asgBopp.AsigBOPP_OrdenTrabajo == AsigBOPP_OrdenTrabajo)
+                                                                .Select(x => x.AsigBOPP_Id)
+                                                                .Max();
 
 
             if (asignacion_BOPP == null)
@@ -126,6 +128,7 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+       
         // PUT: api/Asignacion_BOPP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

@@ -96,8 +96,9 @@ y cantidad en Kilos agrupados BOPP por Nombre */
                                         bopp.Key.BOPP_CantidadMicras,
                                         bopp.Key.BOPP_Ancho,
                                         sumaPrecio = bopp.Sum(x => x.BOPP_Precio),
-                                        sumaKilos = bopp.Sum(x => x.BOPP_Stock),                                        
-                                        conteoDescripcion = bopp.Count()
+                                        sumaKilosIngresados = bopp.Sum(x => x.BOPP_CantidadInicialKg),
+                                        sumaKilosActual = bopp.Sum(x => x.BOPP_Stock),
+                                        conteoDescripcion = bopp.Count() 
                                     })
                                     .ToList();
             if (bOPP == null)
