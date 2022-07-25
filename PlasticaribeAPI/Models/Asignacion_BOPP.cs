@@ -8,7 +8,7 @@ namespace PlasticaribeAPI.Models
         [Key]
         public long AsigBOPP_Id { get; set; }
 
-        public long AsigBOPP_OrdenTrabajo { get; set; }
+        //public long AsigBOPP_OrdenTrabajo { get; set; }
 
         [Column(TypeName = "Date")]
         public DateTime AsigBOPP_FechaEntrega { get; set; }
