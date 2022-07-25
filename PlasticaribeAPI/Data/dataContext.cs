@@ -230,7 +230,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Asignacion_BOPP>().HasOne(asgb => asgb.Usua).WithMany().HasForeignKey(asig => asig.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario
 
             //Relaciones DetalleAsignacion_BOPP
-            modelBuilder.Entity<DetalleAsignacion_BOPP>().HasKey(dat => new { dat.AsigBOPP_Id, dat.BOPP_Id }); //Llave Compuesta DetalleAsignacion_BOPP
+            //modelBuilder.Entity<DetalleAsignacion_BOPP>().HasKey(dat => new { dat.AsigBOPP_Id, dat.BOPP_Id }); //Llave Compuesta DetalleAsignacion_BOPP
             modelBuilder.Entity<DetalleAsignacion_BOPP>().HasOne<Asignacion_BOPP>(dasig => dasig.AsigBOPP).WithMany(das => das.DetAsigBOPP).HasForeignKey(dasigmp => dasigmp.AsigBOPP_Id); //Foranea Asignacion_BOPP
             modelBuilder.Entity<DetalleAsignacion_BOPP>().HasOne<BOPP>(dasig => dasig.BOPP).WithMany(das => das.DetAsigBOPP).HasForeignKey(dasigmp => dasigmp.BOPP_Id); //Foranea BOPP
             modelBuilder.Entity<DetalleAsignacion_BOPP>().HasOne(dat => dat.UndMed).WithMany().HasForeignKey(dat => dat.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //Foranea Unidad Medida

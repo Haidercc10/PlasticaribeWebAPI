@@ -6,7 +6,9 @@ namespace PlasticaribeAPI.Models
 {
     public class DetalleAsignacion_BOPP
     {
-       
+        [Key]
+        public long DtAsigBOPP_Id { get; set; }
+
         public long AsigBOPP_Id { get; set; }
         public Asignacion_BOPP? AsigBOPP { get; set; }
 
