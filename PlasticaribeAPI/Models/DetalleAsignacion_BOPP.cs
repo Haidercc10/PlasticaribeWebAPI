@@ -30,5 +30,7 @@ namespace PlasticaribeAPI.Models
         public string Proceso_Id { get; set; }
         public Proceso? Proceso { get; set; }
 
+        public long DtAsigBOPP_OrdenTrabajo { get; set; }
+
     }
 }
