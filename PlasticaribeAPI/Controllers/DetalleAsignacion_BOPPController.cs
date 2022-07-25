@@ -80,41 +80,56 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        /** Consulta Serial de BOPP en asignaciones */
-       /* [HttpGet("AsignacionesXSerial/{BOPP_Serial}")]
-        public ActionResult<DetalleAsignacion_BOPP> GetAsignacionXSerial(string BOPP_Serial)
+        [HttpGet("OT/{DtAsigBOPP_OrdenTrabajo}")]
+        public ActionResult<DetalleAsignacion_BOPP> GetOT(long DtAsigBOPP_OrdenTrabajo)
         {
-            if (_context.Asignaciones_BOPP == null)
-            {
-                return NotFound();
-            }
+            var detalleAsignacion_BOPP = _context.DetallesAsignaciones_BOPP.Where(dtAsg => dtAsg.DtAsigBOPP_OrdenTrabajo == DtAsigBOPP_OrdenTrabajo).ToList();
 
-
-            var asignacionXSerial = _context.DetallesAsignaciones_BOPP.Where(asgBopp => asgBopp.BOPP.BOPP_Serial == BOPP_Serial &&
-                                                                           
-                                                                            asgBopp.AsigBOPP.Usua_Id == asgBopp.AsigBOPP.Usua.Usua_Id)
-                                                                     
-                                                                      .Include(u => u.AsigBOPP.Usua)
-                                                                    
-                                                                      .Select(x => new
-                                                                      {
-                                                                          
-                                                                          x.AsigBOPP.AsigBOPP_FechaEntrega,
-                                                                          x.AsigBOPP.Usua.Usua_Nombre,
-                                                                          x.BOPP.BOPP_Nombre,
-                                                                          x.DtAsigBOPP_Cantidad
-                                                                      });                                                                   
-                                                                      .ToList();
-            ;
-            if (asignacionXSerial == null)
+            if (detalleAsignacion_BOPP == null)
             {
                 return NotFound();
             }
             else
             {
-                return Ok(asignacionXSerial);
+                return Ok(detalleAsignacion_BOPP);
             }
-        }*/
+        }
+
+        /** Consulta Serial de BOPP en asignaciones */
+        /* [HttpGet("AsignacionesXSerial/{BOPP_Serial}")]
+         public ActionResult<DetalleAsignacion_BOPP> GetAsignacionXSerial(string BOPP_Serial)
+         {
+             if (_context.Asignaciones_BOPP == null)
+             {
+                 return NotFound();
+             }
+
+
+             var asignacionXSerial = _context.DetallesAsignaciones_BOPP.Where(asgBopp => asgBopp.BOPP.BOPP_Serial == BOPP_Serial &&
+
+                                                                             asgBopp.AsigBOPP.Usua_Id == asgBopp.AsigBOPP.Usua.Usua_Id)
+
+                                                                       .Include(u => u.AsigBOPP.Usua)
+
+                                                                       .Select(x => new
+                                                                       {
+
+                                                                           x.AsigBOPP.AsigBOPP_FechaEntrega,
+                                                                           x.AsigBOPP.Usua.Usua_Nombre,
+                                                                           x.BOPP.BOPP_Nombre,
+                                                                           x.DtAsigBOPP_Cantidad
+                                                                       });                                                                   
+                                                                       .ToList();
+             ;
+             if (asignacionXSerial == null)
+             {
+                 return NotFound();
+             }
+             else
+             {
+                 return Ok(asignacionXSerial);
+             }
+         }*/
 
 
         // PUT: api/DetalleAsignacion_BOPP/5
