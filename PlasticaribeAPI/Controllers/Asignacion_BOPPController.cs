@@ -50,6 +50,46 @@ namespace PlasticaribeAPI.Controllers
             return asignacion_BOPP;
         }
 
+        // GET: api/Asignacion_BOPP/5
+        [HttpGet("fecha/{AsigBOPP_FechaEntrega}")]
+        public ActionResult<Asignacion_BOPP> Getfecha(DateTime AsigBOPP_FechaEntrega)
+        {
+            if (_context.Asignaciones_BOPP == null)
+            {
+                return NotFound();
+            }
+            var asignacion_BOPP = _context.Asignaciones_BOPP.Where(asgBopp => asgBopp.AsigBOPP_FechaEntrega == AsigBOPP_FechaEntrega).ToList();
+
+            if (asignacion_BOPP == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(asignacion_BOPP);
+            }
+        }
+
+        [HttpGet("fechas/")]
+        public ActionResult<Asignacion_BOPP> Getfechas(DateTime AsigBOPP_FechaEntrega1, DateTime AsigBOPP_FechaEntrega2)
+        {
+            if (_context.Asignaciones_BOPP == null)
+            {
+                return NotFound();
+            }
+            var asignacion_BOPP = _context.Asignaciones_BOPP.Where(asgBopp => asgBopp.AsigBOPP_FechaEntrega >= AsigBOPP_FechaEntrega1 && asgBopp.AsigBOPP_FechaEntrega <= AsigBOPP_FechaEntrega2).ToList();
+
+            if (asignacion_BOPP == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(asignacion_BOPP);
+            }
+        }
+
+        
         // PUT: api/Asignacion_BOPP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -115,6 +155,8 @@ namespace PlasticaribeAPI.Controllers
 
             return NoContent();
         }
+
+
 
         private bool Asignacion_BOPPExists(long id)
         {

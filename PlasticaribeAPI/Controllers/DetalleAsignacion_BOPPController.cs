@@ -212,6 +212,54 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        // DELETE: Eliminar Detalle de asignación de BOPP por OT y asignación. 
+        [HttpDelete("EliminarXOT_AsignacionBOPP")]
+        public ActionResult DeleteIdDetalleAsignacion_BOPP(long AsigBOPP_Id, long DtAsigBOPP_OrdenTrabajo)
+        {
+            if (_context.DetallesAsignaciones_BOPP == null)
+            {
+                return NotFound();
+            }
+            var detalleAsignacion_BOPP =  _context.DetallesAsignaciones_BOPP.Where(x => x.AsigBOPP_Id == AsigBOPP_Id &&
+                                                                                   x.DtAsigBOPP_OrdenTrabajo == DtAsigBOPP_OrdenTrabajo
+                                                                                   ).ToList();
+           
+            if (detalleAsignacion_BOPP == null)
+            {
+                return NotFound();
+            }
+
+            _context.DetallesAsignaciones_BOPP.RemoveRange(detalleAsignacion_BOPP);
+            _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
+        /** Eliminar Detalle de asignación de BOPP por Asignación y BOPP */
+        [HttpDelete("EliminarXAsignacion_BOPP")]
+        public ActionResult DeleteEnDetalleAsignacion_BOPP(long AsigBOPP_Id, long BOPP_Id)
+        {
+            if (_context.DetallesAsignaciones_BOPP == null)
+            {
+                return NotFound();
+            }
+            var detalleAsignacion_BOPP = _context.DetallesAsignaciones_BOPP.Where(x => x.AsigBOPP_Id == AsigBOPP_Id &&
+                                                                                  x.BOPP_Id == BOPP_Id
+                                                                                  ).ToList();
+
+            if (detalleAsignacion_BOPP == null)
+            {
+                return NotFound();
+            }
+
+            _context.DetallesAsignaciones_BOPP.RemoveRange(detalleAsignacion_BOPP);
+            _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
         private bool DetalleAsignacion_BOPPExists(long id)
         {
             return (_context.DetallesAsignaciones_BOPP?.Any(e => e.AsigBOPP_Id == id)).GetValueOrDefault();
