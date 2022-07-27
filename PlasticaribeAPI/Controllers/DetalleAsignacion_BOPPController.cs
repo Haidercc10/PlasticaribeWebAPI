@@ -131,6 +131,31 @@ namespace PlasticaribeAPI.Controllers
              }
          }*/
 
+       /* [HttpGet("MovimientosXEstados/{Estado_Id}")]
+        public ActionResult<DetalleAsignacion_BOPP> GetMovimientosXEstado(long Estado_Id)
+        {
+            var detalleAsignacion_BOPP = _context.DetallesAsignaciones_BOPP.Where(dtAsg => dtAsg.AsigBOPP.Estado_Id == Estado_Id 
+                                                                            && dtAsg.AsigBOPP.Usua_Id == dtAsg.AsigBOPP.Usua.Usua_Id
+                                                                            && dtAsg.AsigBOPP.Estado_Id == dtAsg.AsigBOPP.Estado.Estado_Id)
+                                                                           //.Include(u => u.AsigBOPP.Usua)
+                                                                           .Select(est => new
+                                                                           {
+                                                                               est.DtAsigBOPP_OrdenTrabajo,
+                                                                               est.AsigBOPP.AsigBOPP_FechaEntrega,
+                                                                               est.AsigBOPP.Usua.Usua_Nombre,
+                                                                               //est.BOPP.BOPP
+                                                                           })
+                                                                           .ToList();
+
+            if (detalleAsignacion_BOPP == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(detalleAsignacion_BOPP);
+            }
+        }*/
 
         // PUT: api/DetalleAsignacion_BOPP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
