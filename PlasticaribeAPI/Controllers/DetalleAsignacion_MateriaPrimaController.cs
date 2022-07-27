@@ -144,8 +144,6 @@ namespace PlasticaribeAPI.Controllers
             {
                 return Ok(DetAsignacion_MatPrima);
             }
-
-
         }
 
         [HttpGet("asignacion/{AsigMp_Id}")]
