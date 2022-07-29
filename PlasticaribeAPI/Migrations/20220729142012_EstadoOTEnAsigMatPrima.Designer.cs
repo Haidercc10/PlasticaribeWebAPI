@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220729142012_EstadoOTEnAsigMatPrima")]
+    partial class EstadoOTEnAsigMatPrima
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,7 +96,7 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Estado_Id")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Estado_OrdenTrabajo")
+                    b.Property<int>("Estado_OrdenTrabajo")
                         .HasColumnType("int");
 
                     b.Property<long>("Usua_Id")
@@ -393,9 +395,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("DtAsigBOPP_OrdenTrabajo")
                         .HasColumnType("bigint");
 
-                    b.Property<int?>("Estado_OrdenTrabajo")
-                        .HasColumnType("int");
-
                     b.Property<string>("Proceso_Id")
                         .IsRequired()
                         .HasColumnType("varchar(10)");
@@ -409,8 +408,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("AsigBOPP_Id");
 
                     b.HasIndex("BOPP_Id");
-
-                    b.HasIndex("Estado_OrdenTrabajo");
 
                     b.HasIndex("Proceso_Id");
 
@@ -1872,7 +1869,8 @@ namespace PlasticaribeAPI.Migrations
                     b.HasOne("PlasticaribeAPI.Models.Estado", "EstadoOT")
                         .WithMany()
                         .HasForeignKey("Estado_OrdenTrabajo")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "Usua")
                         .WithMany()
@@ -2035,11 +2033,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Estado", "EstadoOT")
-                        .WithMany()
-                        .HasForeignKey("Estado_OrdenTrabajo")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.Proceso", "Proceso")
                         .WithMany()
                         .HasForeignKey("Proceso_Id")
@@ -2055,8 +2048,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("AsigBOPP");
 
                     b.Navigation("BOPP");
-
-                    b.Navigation("EstadoOT");
 
                     b.Navigation("Proceso");
 

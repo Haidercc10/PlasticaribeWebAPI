@@ -132,6 +132,8 @@ namespace PlasticaribeAPI.Data
             //Relaciones Asignaciones_MatPrima
             modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Estado).WithMany().HasForeignKey(asigmp => asigmp.Estado_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado
             modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Usua).WithMany().HasForeignKey(asgmpr => asgmpr.Usua_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.EstadoOT).WithMany().HasForeignKey(asigmp => asigmp.Estado_OrdenTrabajo).OnDelete(DeleteBehavior.Restrict); //foranea estado OrdenTrabajo
+
 
             //Relaciones DetallesAsignaciones_MateriasPrimas
             modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasKey(damp => new { damp.AsigMp_Id, damp.MatPri_Id }); //Llave Compuesta DetalleAsignacion_MateriaPrima 
@@ -235,6 +237,8 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetalleAsignacion_BOPP>().HasOne<BOPP>(dasig => dasig.BOPP).WithMany(das => das.DetAsigBOPP).HasForeignKey(dasigmp => dasigmp.BOPP_Id); //Foranea BOPP
             modelBuilder.Entity<DetalleAsignacion_BOPP>().HasOne(dat => dat.UndMed).WithMany().HasForeignKey(dat => dat.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //Foranea Unidad Medida
             modelBuilder.Entity<DetalleAsignacion_BOPP>().HasOne(dat => dat.Proceso).WithMany().HasForeignKey(dat => dat.Proceso_Id).OnDelete(DeleteBehavior.Restrict); //Foranea Proceso
+            modelBuilder.Entity<DetalleAsignacion_BOPP>().HasOne(asgmp => asgmp.EstadoOT).WithMany().HasForeignKey(asigmp => asigmp.Estado_OrdenTrabajo).OnDelete(DeleteBehavior.Restrict); //foranea estado OrdenTrabajo
+
 
         }
 

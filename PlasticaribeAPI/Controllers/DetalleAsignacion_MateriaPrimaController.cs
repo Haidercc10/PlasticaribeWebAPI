@@ -119,7 +119,7 @@ namespace PlasticaribeAPI.Controllers
                 /** Agrupar por ciertos campos */
                 .GroupBy(da => new { da.MatPri_Id, da.MatPri.MatPri_Nombre, da.UndMed_Id, 
                                      da.MatPri.MatPri_Precio, da.Proceso.Proceso_Nombre, 
-                                     da.AsigMp.AsigMp_FechaEntrega, da.AsigMp.Usua.Usua_Nombre})
+                                     da.AsigMp.AsigMp_FechaEntrega, da.AsigMp.Usua.Usua_Nombre, da.AsigMp_Id })
                 /** Campos a mostrar */
                 .Select(agr => new
                 {

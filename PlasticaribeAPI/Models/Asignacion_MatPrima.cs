@@ -27,6 +27,10 @@ namespace PlasticaribeAPI.Models
 
         public int AsigMp_Maquina { get; set; } 
 
+        public int? Estado_OrdenTrabajo { get; set; } //Llave foranea de estado de la OT segun condiciones.
+        public Estado? EstadoOT { get; set; } //Propiedad de navegación estado de la OT segun condiciones.
+
+
         //Lista requerida para relación detalles asignacion - materias primas
         public IList<DetalleAsignacion_MateriaPrima>? DtAsigMatPri { get; set; }
 
