@@ -50,6 +50,62 @@ namespace PlasticaribeAPI.Controllers
             return detalleAsignacion_MateriaPrima;
         }
 
+        [HttpGet("estadoOT/{Estado_OrdenTrabajo}")]
+        public ActionResult<DetalleAsignacion_MateriaPrima> GetDetalleAsignacion_MateriaPrima(int Estado_OrdenTrabajo)
+        {
+
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var DetAsignacion_MatPrima = _context.DetallesAsignaciones_MateriasPrimas
+                /** Consulta OT */
+                .Where(da => da.AsigMp.Estado_OrdenTrabajo == Estado_OrdenTrabajo)
+                /** Relación con Materia Prima a través de la Prop. navegación */
+                .Include(da => da.MatPri)
+                /** Relación con Asignaciones_MatPrima a través de la Prop. navegación */
+                .Include(da => da.AsigMp)
+                /** Relación con Proceso a través de la Prop. navegación */
+                .Include(da => da.Proceso)
+                /** Agrupar por ciertos campos */
+                /** Agrupar por ciertos campos */
+                .GroupBy(da => new {
+                    da.MatPri_Id,
+                    da.MatPri.MatPri_Nombre,
+                    da.UndMed_Id,
+                    da.MatPri.MatPri_Precio,
+                    da.Proceso.Proceso_Nombre,
+                    da.AsigMp.AsigMp_FechaEntrega,
+                    da.AsigMp.Usua.Usua_Nombre,
+                    //da.AsigMp_Id,
+                    da.AsigMp.Estado_OrdenTrabajo,
+                    da.AsigMp.AsigMP_OrdenTrabajo
+                })
+                /** Campos a mostrar */
+                .Select(agr => new
+                {
+                    /** 'Key' hace referencia a los campos que están en el GroupBy */
+                    agr.Key.MatPri_Id,
+                    agr.Key.MatPri_Nombre,
+                    agr.Key.AsigMp_FechaEntrega,
+                    agr.Key.Usua_Nombre,
+                    Sum = agr.Sum(da => da.DtAsigMp_Cantidad),
+                    agr.Key.UndMed_Id,
+                    agr.Key.MatPri_Precio,
+                    agr.Key.Proceso_Nombre,
+                    agr.Key.Estado_OrdenTrabajo,
+                    agr.Key.AsigMP_OrdenTrabajo
+                }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+
+            if (DetAsignacion_MatPrima == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(DetAsignacion_MatPrima);
+            }
+        }
+
         /*Materia Prima agrupada */
         [HttpGet("AsignacionesAgrupadas/{AsigMP_OrdenTrabajo}")] 
         public IActionResult GetAsignacion_MatPrimaAgrupada(long AsigMP_OrdenTrabajo)
