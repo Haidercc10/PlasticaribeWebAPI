@@ -157,38 +157,6 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             return NoContent();
         }
 
-        /** Actualizar Estado de Ordenes */
-        [HttpPut("CambioStock/{BOPP_Id}")]
-        public IActionResult PutStockBOPP(int BOPP_Id, BOPP BOPP, long BOPP_CantidadInicialKg)
-        {
-            if (BOPP_Id != BOPP.BOPP_Id)
-            {
-                return BadRequest();
-            }
-
-            try
-            {
-                var Actualizado = _context.BOPP.Where(x => x.BOPP_Id == BOPP_Id).First<BOPP>();
-
-                Actualizado.BOPP_CantidadInicialKg = BOPP_CantidadInicialKg;
-
-                _context.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BOPPExists(BOPP_Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/BOPP
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
