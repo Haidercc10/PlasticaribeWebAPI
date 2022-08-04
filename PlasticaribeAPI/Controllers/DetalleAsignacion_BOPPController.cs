@@ -95,6 +95,64 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        [HttpGet("estadoOT/{Estado_OrdenTrabajo}")]
+        public ActionResult<DetalleAsignacion_BOPP> GetEstadoOT(int Estado_OrdenTrabajo)
+        {
+
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var DetalleAsignacion_BOPP = _context.DetallesAsignaciones_BOPP
+                /** Consulta Estado de la OT */
+                .Where(da => da.Estado_OrdenTrabajo == Estado_OrdenTrabajo)
+                /** Relación con BOPP a través de la Prop. navegación */
+                .Include(da => da.BOPP)
+                /* Relación con Asignaciones de BOPP a través de la Prop. navegación*/
+                .Include(da => da.AsigBOPP)
+                /** Relación con Proceso a través de la Prop. navegación */
+                .Include(da => da.Proceso)
+                /** Agrupar por ciertos campos */
+                /** Agrupar por ciertos campos */
+                .GroupBy(da => new {
+                    da.BOPP_Id,
+                    da.BOPP.BOPP_Nombre,
+                    da.UndMed_Id,
+                    da.BOPP.BOPP_Precio,
+                    da.Proceso.Proceso_Nombre,
+                    da.AsigBOPP.AsigBOPP_FechaEntrega,
+                    da.AsigBOPP.Usua.Usua_Nombre,
+                    da.AsigBOPP_Id,
+                    da.Estado_OrdenTrabajo,
+                    da.DtAsigBOPP_OrdenTrabajo
+                })
+                /** Campos a mostrar */
+                .Select(agr => new
+                {
+                    /** 'Key' hace referencia a los campos que están en el GroupBy */
+                    agr.Key.BOPP_Id,
+                    agr.Key.BOPP_Nombre,
+                    agr.Key.AsigBOPP_FechaEntrega,
+                    agr.Key.Usua_Nombre,
+                    Sum = agr.Sum(da => da.DtAsigBOPP_Cantidad),
+                    agr.Key.UndMed_Id,
+                    agr.Key.BOPP_Precio,
+                    agr.Key.Proceso_Nombre,
+                    agr.Key.AsigBOPP_Id,
+                    agr.Key.Estado_OrdenTrabajo,
+                    agr.Key.DtAsigBOPP_OrdenTrabajo
+                }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+
+            if (DetalleAsignacion_BOPP == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(DetalleAsignacion_BOPP);
+            }
+        }
+
+
         /** Consulta Serial de BOPP en asignaciones */
         /* [HttpGet("AsignacionesXSerial/{BOPP_Serial}")]
          public ActionResult<DetalleAsignacion_BOPP> GetAsignacionXSerial(string BOPP_Serial)

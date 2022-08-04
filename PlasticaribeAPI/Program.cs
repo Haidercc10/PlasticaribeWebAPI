@@ -17,9 +17,10 @@ builder.Services.AddDbContext<dataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
         sqlServerOptionsAction: SqlOptions =>
-        {
-            SqlOptions.EnableRetryOnFailure();
-        });
+       {
+           SqlOptions.EnableRetryOnFailure();
+       }
+    );
 
 });
 
