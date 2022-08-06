@@ -68,6 +68,16 @@ namespace PlasticaribeAPI.Controllers
             return Ok(factCompra);
         }
 
+        [HttpGet("MPFechaActual/{MatPri_Id}")]
+        public ActionResult materiaPrimaIdFechaActual(long MatPri_Id, DateTime Facco_FechaFactura)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var factCompra = _context.FacturasCompras_MateriaPrimas
+                .Where(f => f.MatPri_Id == MatPri_Id && f.Facco.Facco_FechaFactura == Facco_FechaFactura).ToList();
+
+            return Ok(factCompra);
+        }
+
         // PUT: api/FacturaCompra_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

@@ -89,6 +89,28 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        //Obtener el ultimo ID de asignacion de BOPP
+
+
+        [HttpGet("ultimoId/")]
+        public ActionResult<Asignacion_BOPP> GetUltimoId()
+        {
+            if (_context.Asignaciones_BOPP == null)
+            {
+                return NotFound();
+            }
+            var asignacion_BOPP = _context.Asignaciones_BOPP.OrderBy(asg => asg.AsigBOPP_Id).Last();
+
+            if (asignacion_BOPP == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(asignacion_BOPP);
+            }
+        }
+
         // PUT: api/Asignacion_BOPP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

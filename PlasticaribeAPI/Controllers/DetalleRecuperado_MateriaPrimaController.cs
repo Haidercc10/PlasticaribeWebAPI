@@ -66,6 +66,24 @@ namespace PlasticaribeAPI.Controllers
 
         }
 
+        [HttpGet("materiaPrimaFechaActual/{MatPri_Id}")]
+        public ActionResult<DetalleRecuperado_MateriaPrima> GetIdMateriaPrimaFechaActual(long MatPri_Id, DateTime RecMp_FechaIngreso)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var detalleRecuperado_MateriaPrima = _context.DetallesRecuperados_MateriasPrimas
+                .Where(dtR => dtR.MatPri_Id == MatPri_Id && dtR.RecMp.RecMp_FechaIngreso == RecMp_FechaIngreso).ToList();
+
+            if (detalleRecuperado_MateriaPrima == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(detalleRecuperado_MateriaPrima);
+            }
+
+        }
+
         [HttpGet("recuperado/{RecMp_Id}")]
         public ActionResult<DetalleRecuperado_MateriaPrima> GetRecuperado(long RecMp_Id)
         {

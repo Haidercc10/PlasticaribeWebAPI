@@ -232,6 +232,23 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        [HttpGet("matPriFechaActual/{MatPri_Id}")]
+        public ActionResult<DetalleAsignacion_MateriaPrima> GetIdMateriaPrimaFechaActual(long MatPri_Id, DateTime AsigMp_FechaEntrega)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var detallesAsignacion = _context.DetallesAsignaciones_MateriasPrimas
+                .Where(dtA => dtA.MatPri_Id == MatPri_Id && dtA.AsigMp.AsigMp_FechaEntrega == AsigMp_FechaEntrega).ToList();
+
+            if (detallesAsignacion == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(detallesAsignacion);
+            }
+        }
+
         // PUT: api/DetalleAsignacion_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

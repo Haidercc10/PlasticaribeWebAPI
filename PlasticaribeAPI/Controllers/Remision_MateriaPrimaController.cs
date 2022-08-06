@@ -68,6 +68,17 @@ namespace PlasticaribeAPI.Controllers
             return Ok(remCompra);
         }
 
+        //consulta por el Id de la materia prima
+        [HttpGet("MPFechaActual/{MatPri_Id}")]
+        public ActionResult MateriaPrimaIdFechaActual(long MatPri_Id, DateTime Rem_Fecha)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var remCompra = _context.Remisiones_MateriasPrimas
+                .Where(f => f.MatPri_Id == MatPri_Id && f.Rem.Rem_Fecha == Rem_Fecha).ToList();
+
+            return Ok(remCompra);
+        }
+
         // PUT: api/Remision_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

@@ -80,6 +80,23 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        [HttpGet("BOPPFechaActual/{BOPP_Id}")]
+        public ActionResult<DetalleAsignacion_BOPP> GetBOPPFechaActual(long BOPP_Id, DateTime AsigBOPP_FechaEntrega)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var detalleAsignacion_BOPP = _context.DetallesAsignaciones_BOPP
+                .Where(dtAsg => dtAsg.BOPP_Id == BOPP_Id && dtAsg.AsigBOPP.AsigBOPP_FechaEntrega == AsigBOPP_FechaEntrega).ToList();
+
+            if (detalleAsignacion_BOPP == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(detalleAsignacion_BOPP);
+            }
+        }
+
         [HttpGet("OT/{DtAsigBOPP_OrdenTrabajo}")]
         public ActionResult<DetalleAsignacion_BOPP> GetOT(long DtAsigBOPP_OrdenTrabajo)
         {
