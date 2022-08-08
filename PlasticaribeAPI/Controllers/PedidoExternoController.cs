@@ -52,32 +52,840 @@ namespace PlasticaribeAPI.Controllers
             return pedidoExterno;
         }
 
-        //[Route("PedidoExternoXEstado")]
-       /* [HttpGet("PedidoExternoXEstado")]
-        public  ActionResult<PedidoExterno> PedidoExternoXEstado([FromQuery]int Estado_Id)
+        [HttpGet("PedidoExterno/")]
+        public ActionResult<PedidoExterno> Get()
         {
-            if (_context.Pedidos_Externos == null)
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+                .GroupBy(pp => new
+                {
+                    pp.PedExt_Id,
+                    pp.PedExt_FechaCreacion,
+                    pp.PedExt_FechaEntrega,
+                    pp.SedeCli.Cli.Cli_Id,
+                    pp.SedeCli.Cli.Cli_Nombre,
+                    pp.Usua.Usua_Nombre,
+                    pp.Usua_Id,
+                    pp.Usua.RolUsu_Id,
+                    pp.PedExt_PrecioTotal,
+                    pp.Estado.Estado_Nombre
+                })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
+
+            if (pedido_Producto == null)
             {
                 return NotFound();
             }
-            var pedidoExterno = await _context.Pedidos_Externos.FindAsync(Estado_Id);
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
 
-            if (pedidoExterno == null)
+        [HttpGet("FechaCreacion/{PedExt_FechaCreacion}")]
+        public ActionResult<PedidoExterno> Get(DateTime PedExt_FechaCreacion)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.PedExt_FechaCreacion == PedExt_FechaCreacion)
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+                .GroupBy(pp => new
+                {
+                    pp.PedExt_Id,
+                    pp.PedExt_FechaCreacion,
+                    pp.PedExt_FechaEntrega,
+                    pp.SedeCli.Cli.Cli_Id,
+                    pp.SedeCli.Cli.Cli_Nombre,
+                    pp.Usua.Usua_Nombre,
+                    pp.Usua_Id,
+                    pp.Usua.RolUsu_Id,
+                    pp.PedExt_PrecioTotal,
+                    pp.Estado.Estado_Nombre
+                })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
+
+            if (pedido_Producto == null)
             {
                 return NotFound();
             }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
 
-            return pedidoExterno;*/
+        [HttpGet("FechaEntrega/{PedExt_FechaEntrega}")]
+        public ActionResult<PedidoExterno> GetFechaEntrga(DateTime PedExt_FechaEntrega)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.PedExt_FechaEntrega == PedExt_FechaEntrega)
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+                .GroupBy(pp => new
+                {
+                    pp.PedExt_Id,
+                    pp.PedExt_FechaCreacion,
+                    pp.PedExt_FechaEntrega,
+                    pp.SedeCli.Cli.Cli_Id,
+                    pp.SedeCli.Cli.Cli_Nombre,
+                    pp.Usua.Usua_Nombre,
+                    pp.Usua_Id,
+                    pp.Usua.RolUsu_Id,
+                    pp.PedExt_PrecioTotal,
+                    pp.Estado.Estado_Nombre
+                })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
 
-            /*var pedidoExterno = await _context.Pedidos_Externos.FindAsync(PedExt_FechaCreacion);
-
-            if (pedidoExterno == null)
+            if (pedido_Producto == null)
             {
                 return NotFound();
             }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
 
-            return PedidoExternoXEstado(Estado_Id);
-        }*/
+        [HttpGet("nombreCliente/{Cli_Nombre}")]
+        public ActionResult<PedidoExterno> Get(string Cli_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.SedeCli.Cli.Cli_Nombre == Cli_Nombre)
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+               .GroupBy(pp => new
+               {
+                   pp.PedExt_Id,
+                   pp.PedExt_FechaCreacion,
+                   pp.PedExt_FechaEntrega,
+                   pp.SedeCli.Cli.Cli_Id,
+                   pp.SedeCli.Cli.Cli_Nombre,
+                   pp.Usua.Usua_Nombre,
+                   pp.Usua_Id,
+                   pp.Usua.RolUsu_Id,
+                   pp.PedExt_PrecioTotal,
+                   pp.Estado.Estado_Nombre
+               })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
+
+            if (pedido_Producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
+
+        [HttpGet("idCliente/{Cli_Id}")]
+        public ActionResult<PedidoExterno> Get(long Cli_Id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.SedeCli.Cli.Cli_Id == Cli_Id)
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+               .GroupBy(pp => new
+               {
+                   pp.PedExt_Id,
+                   pp.PedExt_FechaCreacion,
+                   pp.PedExt_FechaEntrega,
+                   pp.SedeCli.Cli.Cli_Id,
+                   pp.SedeCli.Cli.Cli_Nombre,
+                   pp.Usua.Usua_Nombre,
+                   pp.Usua_Id,
+                   pp.Usua.RolUsu_Id,
+                   pp.PedExt_PrecioTotal,
+                   pp.Estado.Estado_Nombre
+               })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
+
+            if (pedido_Producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
+
+        [HttpGet("nomberVendeder/{Usua_Nombre}")]
+        public ActionResult<PedidoExterno> GetNombreVendeor(string Usua_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.Usua.Usua_Nombre == Usua_Nombre)
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+               .GroupBy(pp => new
+               {
+                   pp.PedExt_Id,
+                   pp.PedExt_FechaCreacion,
+                   pp.PedExt_FechaEntrega,
+                   pp.SedeCli.Cli.Cli_Id,
+                   pp.SedeCli.Cli.Cli_Nombre,
+                   pp.Usua.Usua_Nombre,
+                   pp.Usua_Id,
+                   pp.Usua.RolUsu_Id,
+                   pp.PedExt_PrecioTotal,
+                   pp.Estado.Estado_Nombre
+               })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
+
+            if (pedido_Producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
+
+        [HttpGet("idPedido/{PedExt_Id}")]
+        public ActionResult<PedidoExterno> Get(int PedExt_Id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.PedExt_Id == PedExt_Id)
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+                .GroupBy(pp => new
+                {
+                    pp.PedExt_Id,
+                    pp.PedExt_FechaCreacion,
+                    pp.PedExt_FechaEntrega,
+                    pp.SedeCli.Cli.Cli_Id,
+                    pp.SedeCli.Cli.Cli_Nombre,
+                    pp.Usua.Usua_Nombre,
+                    pp.Usua_Id,
+                    pp.Usua.RolUsu_Id,
+                    pp.PedExt_PrecioTotal,
+                    pp.Estado.Estado_Nombre
+                })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
+
+            if (pedido_Producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
+
+        [HttpGet("estadoNombre/{Estado_Nombre}")]
+        public ActionResult<PedidoExterno> GetEstado(string Estado_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.Estado.Estado_Nombre == Estado_Nombre)
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+               .GroupBy(pp => new
+               {
+                   pp.PedExt_Id,
+                   pp.PedExt_FechaCreacion,
+                   pp.PedExt_FechaEntrega,
+                   pp.SedeCli.Cli.Cli_Id,
+                   pp.SedeCli.Cli.Cli_Nombre,
+                   pp.Usua.Usua_Nombre,
+                   pp.Usua_Id,
+                   pp.Usua.RolUsu_Id,
+                   pp.PedExt_PrecioTotal,
+                   pp.Estado.Estado_Nombre
+               })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
+
+            if (pedido_Producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
+
+        [HttpGet("fechacreacion/{PedExt_FechaCreacion}/fechaEntrega{PedExt_FechaEntrega}")]
+        public ActionResult<PedidoExterno> GetFechas(DateTime PedExt_FechaCreacion, DateTime PedExt_FechaEntrega)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.PedExt_FechaCreacion == PedExt_FechaCreacion && pp.PedExt_FechaEntrega == PedExt_FechaEntrega)
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+               .GroupBy(pp => new
+               {
+                   pp.PedExt_Id,
+                   pp.PedExt_FechaCreacion,
+                   pp.PedExt_FechaEntrega,
+                   pp.SedeCli.Cli.Cli_Id,
+                   pp.SedeCli.Cli.Cli_Nombre,
+                   pp.Usua.Usua_Nombre,
+                   pp.Usua_Id,
+                   pp.Usua.RolUsu_Id,
+                   pp.PedExt_PrecioTotal,
+                   pp.Estado.Estado_Nombre
+               })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
+
+            if (pedido_Producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
+
+        [HttpGet("estadoUsuario/{Estado_Nombre}/{Usua_Nombre}")]
+        public ActionResult<PedidoExterno> Get(string Estado_Nombre, string Usua_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.Estado.Estado_Nombre == Estado_Nombre && pp.Usua.Usua_Nombre == Usua_Nombre)
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+               .GroupBy(pp => new
+               {
+                   pp.PedExt_Id,
+                   pp.PedExt_FechaCreacion,
+                   pp.PedExt_FechaEntrega,
+                   pp.SedeCli.Cli.Cli_Id,
+                   pp.SedeCli.Cli.Cli_Nombre,
+                   pp.Usua.Usua_Nombre,
+                   pp.Usua_Id,
+                   pp.Usua.RolUsu_Id,
+                   pp.PedExt_PrecioTotal,
+                   pp.Estado.Estado_Nombre
+               })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
+
+            if (pedido_Producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
+
+        [HttpGet("fechaEntregaUsuario/{PedExt_FechaEntrega}/{Usua_Nombre}")]
+        public ActionResult<PedidoExterno> Get(DateTime PedExt_FechaEntrega, string Usua_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.PedExt_FechaEntrega == PedExt_FechaEntrega && pp.Usua.Usua_Nombre == Usua_Nombre)
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+               .GroupBy(pp => new
+               {
+                   pp.PedExt_Id,
+                   pp.PedExt_FechaCreacion,
+                   pp.PedExt_FechaEntrega,
+                   pp.SedeCli.Cli.Cli_Id,
+                   pp.SedeCli.Cli.Cli_Nombre,
+                   pp.Usua.Usua_Nombre,
+                   pp.Usua_Id,
+                   pp.Usua.RolUsu_Id,
+                   pp.PedExt_PrecioTotal,
+                   pp.Estado.Estado_Nombre
+               })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
+
+            if (pedido_Producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
+
+        [HttpGet("fechaEntregaEstado/{PedExt_FechaEntrega}/{Estado_Nombre}")]
+        public ActionResult<PedidoExterno> GetFEE(DateTime PedExt_FechaEntrega, string Estado_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.PedExt_FechaEntrega == PedExt_FechaEntrega && pp.Estado.Estado_Nombre == Estado_Nombre)
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+               .GroupBy(pp => new
+               {
+                   pp.PedExt_Id,
+                   pp.PedExt_FechaCreacion,
+                   pp.PedExt_FechaEntrega,
+                   pp.SedeCli.Cli.Cli_Id,
+                   pp.SedeCli.Cli.Cli_Nombre,
+                   pp.Usua.Usua_Nombre,
+                   pp.Usua_Id,
+                   pp.Usua.RolUsu_Id,
+                   pp.PedExt_PrecioTotal,
+                   pp.Estado.Estado_Nombre
+               })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
+
+            if (pedido_Producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
+
+        [HttpGet("fechaCreacionUsuario/{PedExt_FechaCreacion}/{Usua_Nombre}")]
+        public ActionResult<PedidoExterno> GetfechaCreacion(DateTime PedExt_FechaCreacion, string Usua_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.PedExt_FechaCreacion == PedExt_FechaCreacion && pp.Usua.Usua_Nombre == Usua_Nombre)
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+               .GroupBy(pp => new
+               {
+                   pp.PedExt_Id,
+                   pp.PedExt_FechaCreacion,
+                   pp.PedExt_FechaEntrega,
+                   pp.SedeCli.Cli.Cli_Id,
+                   pp.SedeCli.Cli.Cli_Nombre,
+                   pp.Usua.Usua_Nombre,
+                   pp.Usua_Id,
+                   pp.Usua.RolUsu_Id,
+                   pp.PedExt_PrecioTotal,
+                   pp.Estado.Estado_Nombre
+               })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
+
+            if (pedido_Producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
+
+        [HttpGet("fechaCreacionEstado/{PedExt_FechaCreacion}/{Estado_Nombre}")]
+        public ActionResult<PedidoExterno> GetfechaCreacionEstado(DateTime PedExt_FechaCreacion, string Estado_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.PedExt_FechaCreacion == PedExt_FechaCreacion && pp.Estado.Estado_Nombre == Estado_Nombre)
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+               .GroupBy(pp => new
+               {
+                   pp.PedExt_Id,
+                   pp.PedExt_FechaCreacion,
+                   pp.PedExt_FechaEntrega,
+                   pp.SedeCli.Cli.Cli_Id,
+                   pp.SedeCli.Cli.Cli_Nombre,
+                   pp.Usua.Usua_Nombre,
+                   pp.Usua_Id,
+                   pp.Usua.RolUsu_Id,
+                   pp.PedExt_PrecioTotal,
+                   pp.Estado.Estado_Nombre
+               })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
+
+            if (pedido_Producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
+
+        [HttpGet("fechaEntregaEstadoVendedor/{PedExt_FechaEntrega}/{Estado_Nombre}/{Usua_Nombre}")]
+        public ActionResult<PedidoExterno> Get(DateTime PedExt_FechaEntrega, string Estado_Nombre, string Usua_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.PedExt_FechaEntrega == PedExt_FechaEntrega && pp.Estado.Estado_Nombre == Estado_Nombre && pp.Usua.Usua_Nombre == Usua_Nombre)
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+               .GroupBy(pp => new
+               {
+                   pp.PedExt_Id,
+                   pp.PedExt_FechaCreacion,
+                   pp.PedExt_FechaEntrega,
+                   pp.SedeCli.Cli.Cli_Id,
+                   pp.SedeCli.Cli.Cli_Nombre,
+                   pp.Usua.Usua_Nombre,
+                   pp.Usua_Id,
+                   pp.Usua.RolUsu_Id,
+                   pp.PedExt_PrecioTotal,
+                   pp.Estado.Estado_Nombre
+               })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
+
+            if (pedido_Producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
+
+        [HttpGet("fechaCreacionEstadoVendedor/{PedExt_FechaCreacion}/{Estado_Nombre}/{Usua_Nombre}")]
+        public ActionResult<PedidoExterno> Geto(DateTime PedExt_FechaCreacion, string Estado_Nombre, string Usua_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.PedExt_FechaCreacion == PedExt_FechaCreacion && pp.Estado.Estado_Nombre == Estado_Nombre && pp.Usua.Usua_Nombre == Usua_Nombre)
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+               .GroupBy(pp => new
+               {
+                   pp.PedExt_Id,
+                   pp.PedExt_FechaCreacion,
+                   pp.PedExt_FechaEntrega,
+                   pp.SedeCli.Cli.Cli_Id,
+                   pp.SedeCli.Cli.Cli_Nombre,
+                   pp.Usua.Usua_Nombre,
+                   pp.Usua_Id,
+                   pp.Usua.RolUsu_Id,
+                   pp.PedExt_PrecioTotal,
+                   pp.Estado.Estado_Nombre
+               })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
+
+            if (pedido_Producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
+
+        [HttpGet("fechasEstadoVendedor/{PedExt_FechaCreacion}/{PedExt_FechaEntrega}/{Estado_Nombre}/{Usua_Nombre}")]
+        public ActionResult<PedidoExterno> Get(DateTime PedExt_FechaCreacion, DateTime PedExt_FechaEntrega, string Estado_Nombre, string Usua_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.PedExt_FechaCreacion == PedExt_FechaCreacion 
+                        && pp.PedExt_FechaEntrega == PedExt_FechaEntrega 
+                        && pp.Estado.Estado_Nombre == Estado_Nombre 
+                        && pp.Usua.Usua_Nombre == Usua_Nombre)
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+               .GroupBy(pp => new
+               {
+                   pp.PedExt_Id,
+                   pp.PedExt_FechaCreacion,
+                   pp.PedExt_FechaEntrega,
+                   pp.SedeCli.Cli.Cli_Id,
+                   pp.SedeCli.Cli.Cli_Nombre,
+                   pp.Usua.Usua_Nombre,
+                   pp.Usua_Id,
+                   pp.Usua.RolUsu_Id,
+                   pp.PedExt_PrecioTotal,
+                   pp.Estado.Estado_Nombre
+               })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
+
+            if (pedido_Producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
+
+        [HttpGet("fechasEstado/{PedExt_FechaCreacion}/{PedExt_FechaEntrega}/{Estado_Nombre}")]
+        public ActionResult<PedidoExterno> Get(DateTime PedExt_FechaCreacion, DateTime PedExt_FechaEntrega, string Estado_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.PedExt_FechaCreacion == PedExt_FechaCreacion
+                        && pp.PedExt_FechaEntrega == PedExt_FechaEntrega
+                        && pp.Estado.Estado_Nombre == Estado_Nombre)
+                .Include(pp => pp.SedeCli.Cli)
+                .Include(pp => pp.Estado)
+                .Include(pp => pp.Usua)
+               .GroupBy(pp => new
+               {
+                   pp.PedExt_Id,
+                   pp.PedExt_FechaCreacion,
+                   pp.PedExt_FechaEntrega,
+                   pp.SedeCli.Cli.Cli_Id,
+                   pp.SedeCli.Cli.Cli_Nombre,
+                   pp.Usua.Usua_Nombre,
+                   pp.Usua_Id,
+                   pp.Usua.RolUsu_Id,
+                   pp.PedExt_PrecioTotal,
+                   pp.Estado.Estado_Nombre
+               })
+                .Select(pp => new
+                {
+                    pp.Key.PedExt_Id,
+                    pp.Key.PedExt_FechaCreacion,
+                    pp.Key.PedExt_FechaEntrega,
+                    pp.Key.Cli_Id,
+                    pp.Key.Cli_Nombre,
+                    pp.Key.Usua_Nombre,
+                    pp.Key.Usua_Id,
+                    pp.Key.RolUsu_Id,
+                    pp.Key.PedExt_PrecioTotal,
+                    pp.Key.Estado_Nombre
+                }).ToList();
+
+            if (pedido_Producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
+
+
+
 
 
         // PUT: api/PedidoExterno/5
