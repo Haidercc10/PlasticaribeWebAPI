@@ -52,6 +52,61 @@ namespace PlasticaribeAPI.Controllers
             return pedidoExterno;
         }
 
+        [HttpGet("idPedidoLlenarPDF/{PedExt_Id}")]
+        public ActionResult<PedidoExterno> GetLlenadoPDF(int PedExt_Id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos
+                .Where(pp => pp.PedExt_Id == PedExt_Id)
+                .Select(pp => new
+                {
+                    pp.PedExt_Id,
+                    pp.PedExt_FechaCreacion,
+                    pp.PedExt_FechaEntrega,
+                    pp.SedeCli.Cli.Cli_Id,
+                    pp.SedeCli.Cli.Cli_Nombre,
+                    pp.SedeCli.Cli.Usua.Usua_Nombre,
+                    pp.Usua_Id,
+                    pp.SedeCli.Cli.Usua.RolUsu_Id,
+                    pp.PedExt_PrecioTotal,
+                    pp.Estado.Estado_Nombre,
+                    pp.SedeCli.Cli.Usua.TipoIdentificacion_Id,
+                    pp.SedeCli.Cli.TPCli.TPCli_Nombre,
+                    pp.SedeCli.Cli.Cli_Telefono,
+                    pp.SedeCli.SedeCliente_Ciudad,
+                    pp.SedeCli.SedeCliente_Direccion,
+                    pp.SedeCli.SedeCli_CodPostal,
+                    pp.SedeCli.Cli.Cli_Email,
+                    pp.PedExt_Observacion
+                }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            if (pedido_Producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
+
+        [HttpGet("UltimoPedido/")]
+        public ActionResult<PedidoExterno> GetIdUltimoPedido()
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var pedido_Producto = _context.Pedidos_Externos.OrderByDescending(p => p.PedExt_Id).First();
+
+            if (pedido_Producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(pedido_Producto);
+            }
+        }
+
         [HttpGet("PedidoExterno/")]
         public ActionResult<PedidoExterno> Get()
         {

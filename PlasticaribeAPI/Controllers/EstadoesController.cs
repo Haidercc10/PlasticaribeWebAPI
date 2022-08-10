@@ -43,6 +43,30 @@ namespace PlasticaribeAPI.Controllers
             return estado;
         }
 
+        [HttpGet("nombreEstado/{Estado_Nombre}")]
+        public ActionResult<Estado> GetProductoPedido(string Estado_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            try
+            {
+                var estado = _context.Estados.Where(e => e.Estado_Nombre == Estado_Nombre).ToList();
+
+
+                if (estado == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(estado);
+                }
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+        }
+
         // PUT: api/Estadoes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

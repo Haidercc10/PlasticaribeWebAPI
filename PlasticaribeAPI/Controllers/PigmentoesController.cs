@@ -50,6 +50,30 @@ namespace PlasticaribeAPI.Controllers
             return pigmento;
         }
 
+        [HttpGet("nombrePigmento/{Pigmt_Nombre}")]
+        public ActionResult<Pigmento> GetProductoPedido(string Pigmt_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            try
+            {
+                var pigmento = _context.Pigmentos.Where(m => m.Pigmt_Nombre == Pigmt_Nombre).ToList();
+
+
+                if (pigmento == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(pigmento);
+                }
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+        }
+
         // PUT: api/Pigmentoes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

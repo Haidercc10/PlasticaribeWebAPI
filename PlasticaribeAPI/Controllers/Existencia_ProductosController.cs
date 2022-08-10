@@ -50,6 +50,88 @@ namespace PlasticaribeAPI.Controllers
             return existencia_Productos;
         }
 
+        [HttpGet("IdProducto/{Prod_Id}")]
+        public ActionResult<Existencia_Productos> GetNombreCliente(int Prod_Id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var producto = _context.Existencias_Productos.Where(p => p.Prod_Id == Prod_Id)
+                .Select(p => new
+                {
+                    p.ExProd_Id,
+                    p.Prod_Id,
+                    p.Prod.Prod_Nombre,
+                    p.Prod.Prod_Ancho,
+                    p.Prod.Prod_Fuelle,
+                    p.Prod.Prod_Calibre,
+                    p.Prod.Prod_Largo,
+                    p.Prod.UndMedACF,
+                    p.Prod.TpProd.TpProd_Nombre,
+                    p.Prod.MaterialMP.Material_Nombre,
+                    p.Prod.Pigmt.Pigmt_Nombre,
+                    p.UndMed_Id,
+                    p.ExProd_PrecioVenta,
+                    p.ExProd_Cantidad,
+                    p.Prod.Prod_Descripcion,
+                    p.TpMoneda_Id,
+                    p.Prod.Prod_Peso_Bruto,
+                    p.Prod.Prod_Peso_Neto,
+                    p.Prod.UndMedPeso,
+                    p.TpBod_Id,
+
+                })
+                .ToList();
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(producto);
+            }
+        }
+
+        [HttpGet("IdProductoPresentacion/{Prod_Id}/{UndMed_Id}")]
+        public ActionResult<Existencia_Productos> GetProductoPresentacion(int Prod_Id, string UndMed_Id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var producto = _context.Existencias_Productos.Where(p => p.Prod_Id == Prod_Id && p.UndMed_Id == UndMed_Id)
+                .Select(p => new
+                {
+                    p.ExProd_Id,
+                    p.Prod_Id,
+                    p.Prod.Prod_Nombre,
+                    p.Prod.Prod_Ancho,
+                    p.Prod.Prod_Fuelle,
+                    p.Prod.Prod_Calibre,
+                    p.Prod.Prod_Largo,
+                    p.Prod.UndMedACF,
+                    p.Prod.TpProd.TpProd_Nombre,
+                    p.Prod.MaterialMP.Material_Nombre,
+                    p.Prod.Pigmt.Pigmt_Nombre,
+                    p.UndMed_Id,
+                    p.ExProd_PrecioVenta,
+                    p.ExProd_Cantidad,
+                    p.Prod.Prod_Descripcion,
+                    p.TpMoneda_Id,
+                    p.Prod.Prod_Peso_Bruto,
+                    p.Prod.Prod_Peso_Neto,
+                    p.Prod.UndMedPeso,
+                    p.TpBod_Id,
+
+                })
+                .ToList();
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(producto);
+            }
+        }
+
         // PUT: api/Existencia_Productos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -69,6 +151,39 @@ namespace PlasticaribeAPI.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!Existencia_ProductosExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpPut("ActualizacionProducto/{Prod_Id}/{UndMed_Id}")]
+        public IActionResult PutEstadoClientesOt(int Prod_Id, string UndMed_Id, Existencia_Productos existencia_Productos)
+        {
+
+            if (Prod_Id != existencia_Productos.Prod_Id && UndMed_Id != existencia_Productos.UndMed_Id)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var Actualizado = _context.Existencias_Productos.Where(x => x.Prod_Id == Prod_Id && x.UndMed_Id == UndMed_Id).First<Existencia_Productos>();
+                Actualizado.ExProd_PrecioVenta = existencia_Productos.ExProd_PrecioVenta;
+                Actualizado.ExProd_Precio = existencia_Productos.ExProd_Precio;
+                Actualizado.TpMoneda_Id = existencia_Productos.TpMoneda_Id;
+
+                _context.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!Existencia_ProductosExists(Prod_Id, UndMed_Id))
                 {
                     return NotFound();
                 }
@@ -119,6 +234,12 @@ namespace PlasticaribeAPI.Controllers
         private bool Existencia_ProductosExists(long id)
         {
             return (_context.Existencias_Productos?.Any(e => e.ExProd_Id == id)).GetValueOrDefault();
+        }
+
+        //Actualizacion de existencia segun el id del producto y la presentacion de este mismo
+        private bool Existencia_ProductosExists(int prod_Id, string undMed_Id)
+        {
+            return (_context.Existencias_Productos?.Any(e => e.Prod_Id == prod_Id && e.UndMed_Id == undMed_Id)).GetValueOrDefault();
         }
     }
 }

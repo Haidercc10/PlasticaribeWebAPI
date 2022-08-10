@@ -50,6 +50,100 @@ namespace PlasticaribeAPI.Controllers
             return sedesClientes;
         }
 
+        [HttpGet("cliente/{Cli_Id}")]
+        public ActionResult<SedesClientes> Get(long Cli_Id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var clientes = _context.Sedes_Clientes
+                .Where(sc => sc.Cli_Id == Cli_Id)
+                .Include(sc => sc.Cli.Usua)
+                .Select(sc => new
+                {
+                    sc.SedeCli_Id,
+                    sc.SedeCliente_Ciudad,
+                    sc.SedeCliente_Direccion,
+                    sc.SedeCli_CodPostal,
+                    sc.Cli_Id,
+                    sc.Cli.Cli_Nombre,
+                    sc.Cli.usua_Id,
+                    sc.Cli.Usua.Usua_Nombre
+                }).ToList();
+
+            if (clientes == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(clientes);
+            }
+        }
+
+        [HttpGet("clienteNombre/{Cli_Nombre}")]
+        public ActionResult<SedesClientes> GetClienteSede(string Cli_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var clientes = _context.Sedes_Clientes
+                .Where(sc => sc.Cli.Cli_Nombre == Cli_Nombre)
+                .Include(sc => sc.Cli.Usua)
+                .Include(sc => sc.Cli.TPCli)
+                .Select(sc => new
+                {
+                    sc.SedeCli_Id,
+                    sc.SedeCliente_Ciudad,
+                    sc.SedeCliente_Direccion,
+                    sc.SedeCli_CodPostal,
+                    sc.Cli_Id,
+                    sc.Cli.Cli_Nombre,
+                    sc.Cli.usua_Id,
+                    sc.Cli.Usua.Usua_Nombre,
+                    sc.Cli.TPCli.TPCli_Nombre,
+                    sc.Cli.TPCli.TPCli_Id,
+                    sc.Cli.TipoIdentificacion_Id,
+                    sc.Cli.Cli_Telefono,
+                    sc.Cli.Cli_Email
+
+                }).ToList();
+
+            if (clientes == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(clientes);
+            }
+        }
+
+        [HttpGet("clienteSede/{Cli_Nombre}/{ciudad}/{direccion}")]
+        public ActionResult<SedesClientes> GetClienteSede(string Cli_Nombre, string ciudad, string direccion)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var clientes = _context.Sedes_Clientes
+                .Where(sc => sc.Cli.Cli_Nombre == Cli_Nombre && sc.SedeCliente_Ciudad == ciudad && sc.SedeCliente_Direccion == direccion)
+                .Include(sc => sc.Cli.Usua)
+                .Select(sc => new
+                {
+                    sc.SedeCli_Id,
+                    sc.SedeCliente_Ciudad,
+                    sc.SedeCliente_Direccion,
+                    sc.SedeCli_CodPostal,
+                    sc.Cli_Id,
+                    sc.Cli.Cli_Nombre,
+                    sc.Cli.usua_Id,
+                    sc.Cli.Usua.Usua_Nombre
+                }).ToList();
+
+            if (clientes == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(clientes);
+            }
+        }
+
         // PUT: api/SedesClientes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

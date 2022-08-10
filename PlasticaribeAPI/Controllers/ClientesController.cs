@@ -50,6 +50,38 @@ namespace PlasticaribeAPI.Controllers
             return clientes;
         }
 
+        [HttpGet("estadoId/{Estado_Id}")]
+        public ActionResult<Clientes> GetEstado(int Estado_Id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var clientes = _context.Clientes.Where(pp => pp.Estado_Id == Estado_Id).ToList();
+
+            if (clientes == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(clientes);
+            }
+        }
+
+        [HttpGet("nombreCliente/{Cli_Nombre}")]
+        public ActionResult<Clientes> GetNombreCliente(string Cli_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var clientes = _context.Clientes.Where(pp => pp.Cli_Nombre == Cli_Nombre).ToList();
+
+            if (clientes == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(clientes);
+            }
+        }
+
         // PUT: api/Clientes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

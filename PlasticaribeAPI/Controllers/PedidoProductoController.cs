@@ -50,6 +50,54 @@ namespace PlasticaribeAPI.Controllers
             return pedidoProducto;
         }
 
+        [HttpGet("IdProducto/{Prod_Id}")]
+        public ActionResult<PedidoProducto> GetNombreCliente(int Prod_Id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            try
+            {
+                var producto = _context.PedidosExternos_Productos.Where(p => p.Prod_Id == Prod_Id)
+                    .OrderByDescending(p => p.PedidoExt.PedExt_FechaCreacion).First();
+
+
+                if (producto == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(producto);
+                }
+            } catch (Exception ex)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet("IdProductoPedido/{PedExt_Id}")]
+        public ActionResult<PedidoProducto> GetProductoPedido(int PedExt_Id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            try
+            {
+                var producto = _context.PedidosExternos_Productos.Where(pp => pp.PedExt_Id == PedExt_Id).ToList();
+
+
+                if (producto == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(producto);
+                }
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+        }
+
         // PUT: api/PedidoProducto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

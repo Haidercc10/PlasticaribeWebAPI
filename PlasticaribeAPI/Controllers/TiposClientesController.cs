@@ -43,6 +43,30 @@ namespace PlasticaribeAPI.Controllers
             return tiposClientes;
         }
 
+        [HttpGet("nombreTipoCliente/{TPCli_Nombre}")]
+        public ActionResult<TiposClientes> GetProductoPedido(string TPCli_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            try
+            {
+                var tipoProducto = _context.Tipos_Clientes.Where(tp => tp.TPCli_Nombre == TPCli_Nombre).ToList();
+
+
+                if (tipoProducto == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(tipoProducto);
+                }
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+        }
+
         // PUT: api/TiposClientes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

@@ -50,6 +50,30 @@ namespace PlasticaribeAPI.Controllers
             return material_MatPrima;
         }
 
+        [HttpGet("nombreMaterial/{Material_Nombre}")]
+        public ActionResult<Material_MatPrima> GetProductoPedido(string Material_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            try
+            {
+                var material = _context.Materiales_MatPrima.Where(m => m.Material_Nombre == Material_Nombre).ToList();
+
+
+                if (material == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(material);
+                }
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+        }
+
         // PUT: api/Material_MatPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
