@@ -50,13 +50,13 @@ namespace PlasticaribeAPI.Controllers
             return pedidoProducto;
         }
 
-        [HttpGet("IdProducto/{Prod_Id}")]
-        public ActionResult<PedidoProducto> GetNombreCliente(int Prod_Id)
+        [HttpGet("IdProducto/{Prod_Id}/{UndMed_Id}")]
+        public ActionResult<PedidoProducto> GetNombreCliente(int Prod_Id, string UndMed_Id)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             try
             {
-                var producto = _context.PedidosExternos_Productos.Where(p => p.Prod_Id == Prod_Id)
+                var producto = _context.PedidosExternos_Productos.Where(p => p.Prod_Id == Prod_Id && p.UndMed_Id == UndMed_Id)
                     .OrderByDescending(p => p.PedidoExt.PedExt_FechaCreacion).First();
 
 
