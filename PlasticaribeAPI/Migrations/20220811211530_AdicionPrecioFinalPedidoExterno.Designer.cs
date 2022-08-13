@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220811211530_AdicionPrecioFinalPedidoExterno")]
+    partial class AdicionPrecioFinalPedidoExterno
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,7 +41,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("Area_Id");
 
-                    b.ToTable("Areas", (string)null);
+                    b.ToTable("Areas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Asignacion_BOPP", b =>
@@ -68,7 +70,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Usua_Id");
 
-                    b.ToTable("Asignaciones_BOPP", (string)null);
+                    b.ToTable("Asignaciones_BOPP");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Asignacion_MatPrima", b =>
@@ -108,7 +110,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Usua_Id");
 
-                    b.ToTable("Asignaciones_MatPrima", (string)null);
+                    b.ToTable("Asignaciones_MatPrima");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Asignacion_MatPrimaXTinta", b =>
@@ -152,7 +154,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Usua_Id");
 
-                    b.ToTable("Asignaciones_MatPrimasXTintas", (string)null);
+                    b.ToTable("Asignaciones_MatPrimasXTintas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.BOPP", b =>
@@ -221,7 +223,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("UndMed_Kg");
 
-                    b.ToTable("BOPP", (string)null);
+                    b.ToTable("BOPP");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.cajaCompensacion", b =>
@@ -260,7 +262,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("TipoIdentificacion_Id");
 
-                    b.ToTable("Cajas_Compensaciones", (string)null);
+                    b.ToTable("Cajas_Compensaciones");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Categoria_Insumo", b =>
@@ -284,7 +286,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("CatInsu_Id");
 
-                    b.ToTable("Categorias_Insumos", (string)null);
+                    b.ToTable("Categorias_Insumos");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Categoria_MatPrima", b =>
@@ -305,7 +307,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("CatMP_Id");
 
-                    b.ToTable("Categorias_MatPrima", (string)null);
+                    b.ToTable("Categorias_MatPrima");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Cliente_Producto", b =>
@@ -320,7 +322,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Cli_Id");
 
-                    b.ToTable("Clientes_Productos", (string)null);
+                    b.ToTable("Clientes_Productos");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Clientes", b =>
@@ -369,7 +371,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("usua_Id");
 
-                    b.ToTable("Clientes", (string)null);
+                    b.ToTable("Clientes");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.DetalleAsignacion_BOPP", b =>
@@ -416,7 +418,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("UndMed_Id");
 
-                    b.ToTable("DetallesAsignaciones_BOPP", (string)null);
+                    b.ToTable("DetallesAsignaciones_BOPP");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.DetalleAsignacion_MateriaPrima", b =>
@@ -447,7 +449,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("UndMed_Id");
 
-                    b.ToTable("DetallesAsignaciones_MateriasPrimas", (string)null);
+                    b.ToTable("DetallesAsignaciones_MateriasPrimas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.DetalleAsignacion_MatPrimaXTinta", b =>
@@ -478,7 +480,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("UndMed_Id");
 
-                    b.ToTable("DetallesAsignaciones_MatPrimasXTintas", (string)null);
+                    b.ToTable("DetallesAsignaciones_MatPrimasXTintas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.DetalleAsignacion_Tinta", b =>
@@ -509,7 +511,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("UndMed_Id");
 
-                    b.ToTable("DetalleAsignaciones_Tintas", (string)null);
+                    b.ToTable("DetalleAsignaciones_Tintas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.DetalleDevolucion_MateriaPrima", b =>
@@ -540,7 +542,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("UndMed_Id");
 
-                    b.ToTable("DetallesDevoluciones_MateriasPrimas", (string)null);
+                    b.ToTable("DetallesDevoluciones_MateriasPrimas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.DetalleRecuperado_MateriaPrima", b =>
@@ -571,7 +573,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("UndMed_Id");
 
-                    b.ToTable("DetallesRecuperados_MateriasPrimas", (string)null);
+                    b.ToTable("DetallesRecuperados_MateriasPrimas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Devolucion_MatPrima", b =>
@@ -598,7 +600,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Usua_Id");
 
-                    b.ToTable("Devoluciones_MatPrima", (string)null);
+                    b.ToTable("Devoluciones_MatPrima");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Empresa", b =>
@@ -643,7 +645,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("TipoIdentificacion_Id");
 
-                    b.ToTable("Empresas", (string)null);
+                    b.ToTable("Empresas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.EPS", b =>
@@ -688,7 +690,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("TipoIdentificacion_Id");
 
-                    b.ToTable("EPS", (string)null);
+                    b.ToTable("EPS");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Estado", b =>
@@ -713,7 +715,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("TpEstado_Id");
 
-                    b.ToTable("Estados", (string)null);
+                    b.ToTable("Estados");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Existencia_Productos", b =>
@@ -772,7 +774,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("UndMed_Id");
 
-                    b.ToTable("Existencias_Productos", (string)null);
+                    b.ToTable("Existencias_Productos");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Factura_Compra", b =>
@@ -822,7 +824,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Usua_Id");
 
-                    b.ToTable("Facturas_Compras", (string)null);
+                    b.ToTable("Facturas_Compras");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.FacturaCompra_MateriaPrima", b =>
@@ -851,7 +853,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("UndMed_Id");
 
-                    b.ToTable("FacturasCompras_MateriaPrimas", (string)null);
+                    b.ToTable("FacturasCompras_MateriaPrimas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.fondoPension", b =>
@@ -896,7 +898,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("TipoIdentificacion_Id");
 
-                    b.ToTable("FondosPensiones", (string)null);
+                    b.ToTable("FondosPensiones");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Insumo", b =>
@@ -929,7 +931,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("UndMed_Id");
 
-                    b.ToTable("Insumos", (string)null);
+                    b.ToTable("Insumos");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.InventarioInicialXDia_MatPrima", b =>
@@ -949,7 +951,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("UndMed_Id");
 
-                    b.ToTable("InventarioInicialXDias_MatPrima", (string)null);
+                    b.ToTable("InventarioInicialXDias_MatPrima");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Materia_Prima", b =>
@@ -994,7 +996,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("UndMed_Id");
 
-                    b.ToTable("Materias_Primas", (string)null);
+                    b.ToTable("Materias_Primas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Material_MatPrima", b =>
@@ -1015,7 +1017,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("Material_Id");
 
-                    b.ToTable("Materiales_MatPrima", (string)null);
+                    b.ToTable("Materiales_MatPrima");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.PedidoExterno", b =>
@@ -1082,7 +1084,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Usua_Id");
 
-                    b.ToTable("Pedidos_Externos", (string)null);
+                    b.ToTable("Pedidos_Externos");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.PedidoProducto", b =>
@@ -1111,7 +1113,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("UndMed_Id");
 
-                    b.ToTable("PedidosExternos_Productos", (string)null);
+                    b.ToTable("PedidosExternos_Productos");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Pigmento", b =>
@@ -1132,7 +1134,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("Pigmt_Id");
 
-                    b.ToTable("Pigmentos", (string)null);
+                    b.ToTable("Pigmentos");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Proceso", b =>
@@ -1156,7 +1158,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("Proceso_Id");
 
-                    b.ToTable("Procesos", (string)null);
+                    b.ToTable("Procesos");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Producto", b =>
@@ -1251,7 +1253,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("UndMedPeso");
 
-                    b.ToTable("Productos", (string)null);
+                    b.ToTable("Productos");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Provedor_MateriaPrima", b =>
@@ -1266,7 +1268,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("MatPri_Id");
 
-                    b.ToTable("Proveedores_MateriasPrimas", (string)null);
+                    b.ToTable("Proveedores_MateriasPrimas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Proveedor", b =>
@@ -1306,7 +1308,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("TpProv_Id");
 
-                    b.ToTable("Proveedores", (string)null);
+                    b.ToTable("Proveedores");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Recuperado_MatPrima", b =>
@@ -1336,7 +1338,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Usua_Id");
 
-                    b.ToTable("Recuperados_MatPrima", (string)null);
+                    b.ToTable("Recuperados_MatPrima");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Remision", b =>
@@ -1384,7 +1386,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Usua_Id");
 
-                    b.ToTable("Remisiones", (string)null);
+                    b.ToTable("Remisiones");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Remision_FacturaCompra", b =>
@@ -1399,7 +1401,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Rem_Id");
 
-                    b.ToTable("Remisiones_FacturasCompras", (string)null);
+                    b.ToTable("Remisiones_FacturasCompras");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Remision_MateriaPrima", b =>
@@ -1428,7 +1430,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("UndMed_Id");
 
-                    b.ToTable("Remisiones_MateriasPrimas", (string)null);
+                    b.ToTable("Remisiones_MateriasPrimas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Rol_Usuario", b =>
@@ -1448,7 +1450,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("RolUsu_Id");
 
-                    b.ToTable("Roles_Usuarios", (string)null);
+                    b.ToTable("Roles_Usuarios");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.SedesClientes", b =>
@@ -1480,7 +1482,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Cli_Id");
 
-                    b.ToTable("Sedes_Clientes", (string)null);
+                    b.ToTable("Sedes_Clientes");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tinta", b =>
@@ -1527,7 +1529,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("UndMed_Id");
 
-                    b.ToTable("Tintas", (string)null);
+                    b.ToTable("Tintas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tinta_MateriaPrima", b =>
@@ -1542,7 +1544,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("MatPri_Id");
 
-                    b.ToTable("Tintas_MateriasPrimas", (string)null);
+                    b.ToTable("Tintas_MateriasPrimas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Bodega", b =>
@@ -1568,7 +1570,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Area_Id");
 
-                    b.ToTable("Tipos_Bodegas", (string)null);
+                    b.ToTable("Tipos_Bodegas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Documento", b =>
@@ -1586,7 +1588,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("TpDoc_Id");
 
-                    b.ToTable("Tipos_Documentos", (string)null);
+                    b.ToTable("Tipos_Documentos");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Estado", b =>
@@ -1606,7 +1608,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("TpEstado_Id");
 
-                    b.ToTable("Tipos_Estados", (string)null);
+                    b.ToTable("Tipos_Estados");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Moneda", b =>
@@ -1626,7 +1628,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("TpMoneda_Id");
 
-                    b.ToTable("Tipos_Monedas", (string)null);
+                    b.ToTable("Tipos_Monedas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Producto", b =>
@@ -1647,7 +1649,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("TpProd_Id");
 
-                    b.ToTable("Tipos_Productos", (string)null);
+                    b.ToTable("Tipos_Productos");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Proveedor", b =>
@@ -1668,7 +1670,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("TpProv_Id");
 
-                    b.ToTable("Tipos_Proveedores", (string)null);
+                    b.ToTable("Tipos_Proveedores");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Recuperado", b =>
@@ -1685,7 +1687,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("TpRecu_Id");
 
-                    b.ToTable("Tipos_Recuperados", (string)null);
+                    b.ToTable("Tipos_Recuperados");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Usuario", b =>
@@ -1706,7 +1708,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("tpUsu_Id");
 
-                    b.ToTable("Tipos_Usuarios", (string)null);
+                    b.ToTable("Tipos_Usuarios");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.TipoIdentificacion", b =>
@@ -1729,7 +1731,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("TipoIdentificacion_Id");
 
-                    b.ToTable("TipoIdentificaciones", (string)null);
+                    b.ToTable("TipoIdentificaciones");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.TiposClientes", b =>
@@ -1749,7 +1751,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("TPCli_Id");
 
-                    b.ToTable("Tipos_Clientes", (string)null);
+                    b.ToTable("Tipos_Clientes");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Unidad_Medida", b =>
@@ -1773,7 +1775,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("UndMed_Id");
 
-                    b.ToTable("Unidades_Medidas", (string)null);
+                    b.ToTable("Unidades_Medidas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Usuario", b =>
@@ -1851,7 +1853,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("tpUsu_Id");
 
-                    b.ToTable("Usuarios", (string)null);
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Asignacion_BOPP", b =>

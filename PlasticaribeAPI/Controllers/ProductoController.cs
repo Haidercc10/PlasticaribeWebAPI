@@ -50,6 +50,41 @@ namespace PlasticaribeAPI.Controllers
             return producto;
         }
 
+        [HttpGet("IdProducto/{Prod_Id}")]
+        public ActionResult<Producto> GetNombreCliente(int Prod_Id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var producto = _context.Productos.Where(p => p.Prod_Id == Prod_Id)
+                .Select(p => new
+                {
+                    p.Prod_Id,
+                    p.Prod_Nombre,
+                    p.Prod_Ancho,
+                    p.Prod_Fuelle,
+                    p.Prod_Calibre,
+                    p.Prod_Largo,
+                    p.UndMedACF,
+                    p.TpProd.TpProd_Nombre,
+                    p.MaterialMP.Material_Nombre,
+                    p.Pigmt.Pigmt_Nombre,
+                    p.Prod_Descripcion,
+                    p.Prod_Peso_Bruto,
+                    p.Prod_Peso_Neto,
+                    p.UndMedPeso,
+
+                })
+                .ToList();
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(producto);
+            }
+        }
+
         // PUT: api/Producto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

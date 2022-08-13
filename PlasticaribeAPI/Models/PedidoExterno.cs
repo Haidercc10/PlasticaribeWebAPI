@@ -1,4 +1,4 @@
-﻿        using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -44,6 +44,15 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "binary(MAX)")]
         public int PedExt_Archivo { get; set; }
+
+        [Precision(18, 2)]
+        public int? PedExt_Descuento { get; set; } /* Porcentaje Descuento */
+
+        [Precision(18, 2)]
+        public decimal? PedExt_Iva { get; set; } /* Porcentaje IVA */
+
+        [Precision(18, 2)]
+        public decimal PedExt_PrecioTotalFinal { get; set; }
 
         public IList<PedidoProducto>? PedExtProd { get; set; }
 

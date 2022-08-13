@@ -196,6 +196,39 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        [HttpPut("ActualizacionExistencia/{exProd_Id}")]
+        public IActionResult Put(int ExProd_Id, Existencia_Productos existencia_Productos)
+        {
+
+            if (ExProd_Id != existencia_Productos.ExProd_Id)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var Actualizado = _context.Existencias_Productos.Where(x => x.ExProd_Id == ExProd_Id).First<Existencia_Productos>();
+                Actualizado.ExProd_PrecioVenta = existencia_Productos.ExProd_PrecioVenta;
+                Actualizado.ExProd_Cantidad = existencia_Productos.ExProd_Cantidad;
+                Actualizado.ExProd_PrecioExistencia = existencia_Productos.ExProd_PrecioExistencia;
+
+                _context.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!Existencia_ProductosExists(ExProd_Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
         // POST: api/Existencia_Productos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

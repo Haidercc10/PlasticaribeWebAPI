@@ -77,7 +77,10 @@ namespace PlasticaribeAPI.Controllers
                     pp.SedeCli.SedeCliente_Direccion,
                     pp.SedeCli.SedeCli_CodPostal,
                     pp.SedeCli.Cli.Cli_Email,
-                    pp.PedExt_Observacion
+                    pp.PedExt_Observacion,
+                    pp.PedExt_Descuento,
+                    pp.PedExt_Iva,
+                    pp.PedExt_PrecioTotalFinal
                 }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 

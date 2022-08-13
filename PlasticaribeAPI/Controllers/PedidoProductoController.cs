@@ -57,7 +57,7 @@ namespace PlasticaribeAPI.Controllers
             try
             {
                 var producto = _context.PedidosExternos_Productos.Where(p => p.Prod_Id == Prod_Id && p.UndMed_Id == UndMed_Id)
-                    .OrderByDescending(p => p.PedidoExt.PedExt_FechaCreacion).First();
+                    .OrderByDescending(p => p.PedidoExt.PedExt_Id).First();
 
 
                 if (producto == null)
