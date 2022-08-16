@@ -105,9 +105,9 @@ namespace PlasticaribeAPI.Controllers
 
         [HttpGet]
         [Route("/download/")]
-        public async Task<IActionResult> Download([FromQuery] string file)
+        public async Task<IActionResult> Download([FromQuery] string file, string? carpeta = "")
         {
-            var filePath = "C:\\Users\\SANDRA\\Documents\\Base de datos PlastiCaribe\\Archivos\\" + file;
+            var filePath = "C:\\ArchivosPlasticaribe\\" + carpeta + "\\" + file;
             if (!System.IO.File.Exists(filePath))
             {
                 return NotFound();
