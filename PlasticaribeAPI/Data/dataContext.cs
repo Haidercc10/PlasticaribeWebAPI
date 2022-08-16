@@ -239,7 +239,9 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetalleAsignacion_BOPP>().HasOne(dat => dat.Proceso).WithMany().HasForeignKey(dat => dat.Proceso_Id).OnDelete(DeleteBehavior.Restrict); //Foranea Proceso
             modelBuilder.Entity<DetalleAsignacion_BOPP>().HasOne(asgmp => asgmp.EstadoOT).WithMany().HasForeignKey(asigmp => asigmp.Estado_OrdenTrabajo).OnDelete(DeleteBehavior.Restrict); //foranea estado OrdenTrabajo
 
-
+            //Arcgivos
+            modelBuilder.Entity<Archivos>().HasOne(Arc => Arc.Categoria).WithMany().HasForeignKey(Arc => Arc.Categoria_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Archivos>().HasOne(Arc => Arc.Usuario).WithMany().HasForeignKey(Arc => Arc.Usua_Id).OnDelete(DeleteBehavior.Restrict);
         }
 
 
@@ -321,6 +323,9 @@ namespace PlasticaribeAPI.Data
         public DbSet<Models.Asignacion_BOPP> Asignaciones_BOPP { get; set; }
 
         public DbSet<Models.DetalleAsignacion_BOPP> DetallesAsignaciones_BOPP { get; set; }
+
+        public DbSet<Models.Archivos> Archivos { get; set; }
+        public DbSet<Models.Categorias_Archivos> Categorias_Archivos { get; set; }
     }
 
 }

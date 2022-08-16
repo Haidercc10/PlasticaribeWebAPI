@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,13 +12,14 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220816140945_adicionArchivos")]
+    partial class adicionArchivos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.8")
+                .HasAnnotation("ProductVersion", "6.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -43,14 +45,9 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<string>("Ubicacion")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("Usua_Id")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Categoria_Id");
-
-                    b.HasIndex("Usua_Id");
 
                     b.ToTable("Archivos");
                 });
@@ -358,7 +355,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("Categoria_Id");
 
-                    b.ToTable("Categorias_Archivos");
+                    b.ToTable("Categorias");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Cliente_Producto", b =>
@@ -1915,15 +1912,7 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("Usua_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Categoria");
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Asignacion_BOPP", b =>
