@@ -325,6 +325,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<Models.DetalleAsignacion_BOPP> DetallesAsignaciones_BOPP { get; set; }
 
         public DbSet<Models.Archivos> Archivos { get; set; }
+
         public DbSet<Models.Categorias_Archivos> Categorias_Archivos { get; set; }
     }
 

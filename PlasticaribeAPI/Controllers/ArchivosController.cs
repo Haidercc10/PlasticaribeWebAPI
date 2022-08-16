@@ -39,39 +39,21 @@ namespace PlasticaribeAPI.Controllers
         // POST: api/Archivos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public ActionResult PostArchivo([FromForm] List<IFormFile> archivo, DateTime Fecha, int categoria_Id, long usua_Id, string? carpeta = "")
+        public ActionResult PostArchivo([FromForm] List<IFormFile> archivo, DateTime Fecha, int categoria_Id, long usua_Id, string? filePath = "C:\\ArchivosAplicacion\\")
         {
             List<Archivos> archivos = new List<Archivos>();
-            try
+            if (filePath != null)
             {
-                var filePath = "C:\\ArchivosPlasticaribe\\" + carpeta;
-                if (!Directory.Exists(filePath))
+                try
                 {
-                    Directory.CreateDirectory(filePath);
-                }
-
-                if (archivo.Count > 0)
-                {
-                    foreach (var item in archivo)
+                    if (!Directory.Exists(filePath))
                     {
-                        
-                        if (carpeta == "")
-                        {
-                            var crearArchivo = filePath + item.FileName;
+                        Directory.CreateDirectory(filePath);
+                    }
 
-                            using (var stream = System.IO.File.Create(crearArchivo))
-                            {
-                                item.CopyToAsync(stream);
-                            }
-                            Archivos archivo2 = new Archivos();
-                            archivo2.Nombre = item.FileName;
-                            archivo2.Ubicacion = crearArchivo;
-                            archivo2.Fecha = Fecha;
-                            archivo2.Categoria_Id = categoria_Id;
-                            archivo2.Usua_Id = usua_Id;
-                            archivos.Add(archivo2);
-                        }
-                        else
+                    if (archivo.Count > 0)
+                    {
+                        foreach (var item in archivo)
                         {
                             var crearArchivo = filePath + "\\" + item.FileName;
 
@@ -87,27 +69,31 @@ namespace PlasticaribeAPI.Controllers
                             archivo2.Usua_Id = usua_Id;
                             archivos.Add(archivo2);
                         }
+                        _context.Archivos.AddRange(archivos);
+                        _context.SaveChanges();
                     }
-                    _context.Archivos.AddRange(archivos);
-                    _context.SaveChanges();
+                    else
+                    {
+                        return BadRequest();
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    return BadRequest();
+                    return BadRequest(ex.Message);
                 }
+                return Ok(archivo);
             }
-            catch (Exception ex)
+            else
             {
-                return BadRequest(ex.Message);
+                return BadRequest();
             }
-            return Ok(archivo);
         }
 
         [HttpGet]
         [Route("/download/")]
-        public async Task<IActionResult> Download([FromQuery] string file, string? carpeta = "")
+        public async Task<IActionResult> Download([FromQuery] string file)
         {
-            var filePath = "C:\\ArchivosPlasticaribe\\" + carpeta + "\\" + file;
+            var filePath = "C:\\ArchivosAplicacion\\" + file;
             if (!System.IO.File.Exists(filePath))
             {
                 return NotFound();

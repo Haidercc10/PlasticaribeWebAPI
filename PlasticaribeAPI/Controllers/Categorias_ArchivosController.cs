@@ -23,13 +23,16 @@ namespace PlasticaribeAPI.Controllers
 
         // GET: api/Categorias_Archivos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Categorias_Archivos>>> GetCategorias_Archivos()
+        public ActionResult get()
         {
-          if (_context.Categorias_Archivos == null)
-          {
-              return NotFound();
-          }
-            return await _context.Categorias_Archivos.ToListAsync();
+            try
+            {
+                return Ok(_context.Categorias_Archivos.ToList());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // GET: api/Categorias_Archivos/5

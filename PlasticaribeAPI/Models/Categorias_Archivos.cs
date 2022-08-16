@@ -12,6 +12,6 @@ namespace PlasticaribeAPI.Models
         public string Categoria_Name { get; set; }
 
         [Column(TypeName = "varchar(100)")]
-        public int? Categoria_Descricion { get; set; }
+        public string? Categoria_Descricion { get; set; }
     }
 }
