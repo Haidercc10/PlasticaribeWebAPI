@@ -46,7 +46,6 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("nombreUsuario/{Usua_Nombre}")]
         public ActionResult<Usuario> GetProductoPedido(string Usua_Nombre)
         {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             try
             {
                 var tipoProducto = _context.Usuarios.Where(tp => tp.Usua_Nombre == Usua_Nombre).ToList();
@@ -63,7 +62,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound();
+                return NotFound(ex);
             }
         }
 

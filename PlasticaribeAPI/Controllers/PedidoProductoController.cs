@@ -70,14 +70,13 @@ namespace PlasticaribeAPI.Controllers
                 }
             } catch (Exception ex)
             {
-                return NotFound();
+                return NotFound(ex);
             }
         }
 
         [HttpGet("IdProductoPedido/{PedExt_Id}")]
         public ActionResult<PedidoProducto> GetProductoPedido(int PedExt_Id)
         {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             try
             {
                 var producto = _context.PedidosExternos_Productos.Where(pp => pp.PedExt_Id == PedExt_Id).ToList();
@@ -94,7 +93,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound();
+                return NotFound(ex);
             }
         }
 

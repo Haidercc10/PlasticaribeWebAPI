@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 
+
 namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
@@ -24,7 +25,7 @@ namespace PlasticaribeAPI.Controllers
 
         // GET: api/Archivos
         [HttpGet]
-        public ActionResult get()
+        public ActionResult Get()
         {
             try
             {
@@ -39,9 +40,9 @@ namespace PlasticaribeAPI.Controllers
         // POST: api/Archivos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public ActionResult PostArchivo([FromForm] List<IFormFile> archivo, DateTime Fecha, int categoria_Id, long usua_Id, string? filePath = "C:\\ArchivosAplicacion\\")
+        public ActionResult PostArchivo([FromForm] List<IFormFile> archivo, DateTime Fecha, int categoria_Id, long usua_Id, string? filePath)
         {
-            List<Archivos> archivos = new List<Archivos>();
+            List<Archivos> archivos = new();
             if (filePath != null)
             {
                 try
@@ -50,31 +51,39 @@ namespace PlasticaribeAPI.Controllers
                     {
                         Directory.CreateDirectory(filePath);
                     }
-
-                    if (archivo.Count > 0)
+                    if (archivo != null)
                     {
-                        foreach (var item in archivo)
+                        if (archivo.Count > 0)
                         {
-                            var crearArchivo = filePath + "\\" + item.FileName;
-
-                            using (var stream = System.IO.File.Create(crearArchivo))
+                            foreach (var item in archivo)
                             {
-                                item.CopyToAsync(stream);
+                                var crearArchivo = filePath + "\\" + item.FileName;
+
+                                using (var stream = System.IO.File.Create(crearArchivo))
+                                {
+                                    item.CopyToAsync(stream);
+                                }
+                                Archivos archivo2 = new()
+                                {
+                                    Nombre = item.FileName,
+                                    Ubicacion = crearArchivo,
+                                    Fecha = Fecha,
+                                    Categoria_Id = categoria_Id,
+                                    Usua_Id = usua_Id
+                                };
+                                archivos.Add(archivo2);
                             }
-                            Archivos archivo2 = new Archivos();
-                            archivo2.Nombre = item.FileName;
-                            archivo2.Ubicacion = crearArchivo;
-                            archivo2.Fecha = Fecha;
-                            archivo2.Categoria_Id = categoria_Id;
-                            archivo2.Usua_Id = usua_Id;
-                            archivos.Add(archivo2);
+                            _context.Archivos.AddRange(archivos);
+                            _context.SaveChanges();
                         }
-                        _context.Archivos.AddRange(archivos);
-                        _context.SaveChanges();
+                        else
+                        {
+                            return BadRequest();
+                        }
                     }
                     else
                     {
-                        return BadRequest();
+                        return Ok(filePath);
                     }
                 }
                 catch (Exception ex)
@@ -89,11 +98,32 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        [HttpGet("/CrearCarpetas")]
+        public ActionResult CrearCarpetas(string? filePath)
+        {
+            if (filePath != null)
+            {
+                if (!Directory.Exists(filePath))
+                {
+                    Directory.CreateDirectory(filePath);
+                    return Ok();
+                }
+                else
+                {
+                    return Ok();
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpGet]
         [Route("/download/")]
-        public async Task<IActionResult> Download([FromQuery] string file)
+        public async Task<IActionResult> Download(string file, string filePath)
         {
-            var filePath = "C:\\ArchivosAplicacion\\" + file;
+            filePath = Path.Combine(filePath, file);
             if (!System.IO.File.Exists(filePath))
             {
                 return NotFound();
@@ -107,15 +137,149 @@ namespace PlasticaribeAPI.Controllers
             }
             memory.Position = 0;
             return File(memory, GetContentType(filePath), file);
-            
+
         }
 
-        private string GetContentType (string path)
+        [HttpGet("/Carpetas")]
+        public IActionResult Carpetas(string? filePath)
+        {
+            if (filePath == null)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                string[] folders = Directory.GetDirectories(filePath);
+                return Ok(folders);
+            }
+            catch (System.IO.IOException e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpGet("/Archivos")]
+        public IActionResult Archivos(string? filePath)
+        {
+            if (filePath == null)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                string[] files = Directory.GetFiles(filePath);
+                return Ok(files);
+            }
+            catch (System.IO.IOException e)
+            {
+                return NotFound(e);
+            }
+        }
+
+        [HttpGet("/EliminarArchivos")]
+        public IActionResult EliminarArchivos(string? filePath)
+        {
+            if (System.IO.File.Exists(filePath))
+            {
+                try
+                {
+                    System.IO.File.Delete(filePath);
+                    return Ok();
+                }
+                catch (System.IO.IOException e)
+                {
+                    return (IActionResult)e;
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet("/EliminarCarpeta")]
+        public IActionResult EliminarCarpeta(string? filePath)
+        {
+            if (System.IO.Directory.Exists(filePath))
+            {
+                try
+                {
+                    System.IO.Directory.Delete(filePath, true);
+                    return Ok();
+                }
+
+                catch (System.IO.IOException e)
+                {
+                    return BadRequest(e);
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet("/MoverArchivos")]
+        public IActionResult MoverArchivos(string filePathInicial, string filePathFinal)
+        {            
+            System.IO.File.Move(filePathInicial, filePathFinal);
+            return Ok();                
+        }
+
+        [HttpGet("/MoverCarpeta")]
+        public IActionResult MoverCarpeta(string filePathInicial, string filePathFinal)
+        {
+            System.IO.Directory.Move(filePathInicial, filePathFinal);
+            return Ok();
+        }
+
+        [HttpGet("/CopiarArchivos")]
+        public IActionResult CopiarArchivos(string filePathInicial, string filePathFinal)
+        {
+            System.IO.File.Copy(filePathInicial, filePathFinal, true);
+            return Ok();
+        }
+
+        [HttpGet("/CopiarCarpetas")]
+        public void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
+        {
+            // Get information about the source directory
+            var dir = new DirectoryInfo(sourceDir);
+
+            // Check if the source directory exists
+            if (!dir.Exists)
+                throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
+
+            // Cache directories before we start copying
+            DirectoryInfo[] dirs = dir.GetDirectories();
+
+            // Create the destination directory
+            Directory.CreateDirectory(destinationDir);
+
+            // Get the files in the source directory and copy to the destination directory
+            foreach (FileInfo file in dir.GetFiles())
+            {
+                string targetFilePath = Path.Combine(destinationDir, file.Name);
+                file.CopyTo(targetFilePath);
+            }
+
+            // If recursive and copying subdirectories, recursively call this method
+            if (recursive)
+            {
+                foreach (DirectoryInfo subDir in dirs)
+                {
+                    string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
+                    CopyDirectory(subDir.FullName, newDestinationDir, true);
+                }
+            }
+        }
+
+        private static string GetContentType (string path)
         {
             var provider = new FileExtensionContentTypeProvider();
-            string contentType;
 
-            if (!provider.TryGetContentType(path, out contentType)){
+            if (!provider.TryGetContentType(path, out string contentType))
+            {
                 contentType = "application/octet-stream";
             }
             return contentType;
