@@ -68,8 +68,8 @@ namespace PlasticaribeAPI.Controllers
                     p.MaterialMP.Material_Nombre,
                     p.Pigmt.Pigmt_Nombre,
                     p.Prod_Descripcion,
-                    p.Prod_Peso_Bruto,
-                    p.Prod_Peso_Neto,
+                    p.Prod_Peso_Millar,
+                    p.Prod_Peso,
                     p.UndMedPeso,
 
                 })

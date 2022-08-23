@@ -8,7 +8,7 @@ namespace PlasticaribeAPI.Models
         [Key]
         public int LamCapa_Id { get; set; }
 
-        [Column(TypeName = "Varchar(100)")]
+        [Column(TypeName = "varchar(100)")]
         public string LamCapa_Nombre { get; set; }
 
         [Column(TypeName = "text")]

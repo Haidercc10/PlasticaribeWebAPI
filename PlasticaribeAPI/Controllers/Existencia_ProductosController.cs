@@ -73,8 +73,8 @@ namespace PlasticaribeAPI.Controllers
                     p.ExProd_Cantidad,
                     p.Prod.Prod_Descripcion,
                     p.TpMoneda_Id,
-                    p.Prod.Prod_Peso_Bruto,
-                    p.Prod.Prod_Peso_Neto,
+                    p.Prod.Prod_Peso_Millar,
+                    p.Prod.Prod_Peso,
                     p.Prod.UndMedPeso,
                     p.TpBod_Id,
 
@@ -114,8 +114,8 @@ namespace PlasticaribeAPI.Controllers
                     p.ExProd_Cantidad,
                     p.Prod.Prod_Descripcion,
                     p.TpMoneda_Id,
-                    p.Prod.Prod_Peso_Bruto,
-                    p.Prod.Prod_Peso_Neto,
+                    p.Prod.Prod_Peso_Millar,
+                    p.Prod.Prod_Peso,
                     p.Prod.UndMedPeso,
                     p.TpBod_Id,
 

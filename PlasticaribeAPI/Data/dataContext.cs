@@ -41,12 +41,14 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Producto>().HasOne(prd => prd.UndMed1).WithMany().HasForeignKey(prd => prd.UndMedPeso).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto>().HasOne(prd => prd.UndMed2).WithMany().HasForeignKey(prd => prd.UndMedACF).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto>().HasOne(Prd => Prd.MaterialMP).WithMany().HasForeignKey(Prd => Prd.Material_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto>().HasOne(prd => prd.TiposSellados).WithMany().HasForeignKey(prd => prd.TpSellado_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto>().Property(c => c.Prod_Cod).UseIdentityColumn().ValueGeneratedOnAddOrUpdate();
 
             modelBuilder.Entity<Estado>().HasOne<Tipo_Estado>().WithMany().HasForeignKey(Est => Est.TpEstado_Id).OnDelete(DeleteBehavior.Restrict);
             //Sin propiedades de navegación, solo llave foranea. (Clave externa)
             modelBuilder.Entity<Insumo>().HasOne<Unidad_Medida>().WithMany().HasForeignKey(Ins => Ins.UndMed_Id);
             modelBuilder.Entity<Insumo>().HasOne<Categoria_Insumo>().WithMany().HasForeignKey(Ins2 => Ins2.CatInsu_Id);
+
             //Relaciones de usuarios
             modelBuilder.Entity<Usuario>().HasOne(Usu => Usu.TipoIdentificacion).WithMany().HasForeignKey(Usu => Usu.TipoIdentificacion_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Usuario>().HasOne(Usu => Usu.Area).WithMany().HasForeignKey(Usu => Usu.Area_Id).OnDelete(DeleteBehavior.Restrict);
@@ -242,6 +244,41 @@ namespace PlasticaribeAPI.Data
             //Arcgivos
             modelBuilder.Entity<Archivos>().HasOne(Arc => Arc.Categoria).WithMany().HasForeignKey(Arc => Arc.Categoria_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Archivos>().HasOne(Arc => Arc.Usuario).WithMany().HasForeignKey(Arc => Arc.Usua_Id).OnDelete(DeleteBehavior.Restrict);
+
+            //Orden de Trabajo
+            modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.SedeCli).WithMany().HasForeignKey(ot => ot.SedeCli_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.Prod).WithMany().HasForeignKey(ot => ot.Prod_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.Estado).WithMany().HasForeignKey(ot => ot.Estado_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.Usuario).WithMany().HasForeignKey(ot => ot.Usua_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.PedidoExterno).WithMany().HasForeignKey(ot => ot.PedExt_Id).OnDelete(DeleteBehavior.Restrict);
+
+            //OT_Extrusion
+            modelBuilder.Entity<OT_Extrusion>().HasOne(ot_ext => ot_ext.Orden_Trabajo).WithMany().HasForeignKey(ot_ext => ot_ext.Ot_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Extrusion>().HasOne(ot_ext => ot_ext.Materia_Prima).WithMany().HasForeignKey(ot_ext => ot_ext.Formato_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Extrusion>().HasOne(ot_ext => ot_ext.Formato).WithMany().HasForeignKey(ot_ext => ot_ext.Formato_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Extrusion>().HasOne(ot_ext => ot_ext.Pigmento).WithMany().HasForeignKey(ot_ext => ot_ext.Pigmt_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Extrusion>().HasOne(ot_ext => ot_ext.Tratado).WithMany().HasForeignKey(ot_ext => ot_ext.Tratado_Id).OnDelete(DeleteBehavior.Restrict);
+
+            //OT_Impresión
+            modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Orden_Trabajo).WithMany().HasForeignKey(ot_imp => ot_imp.Ot_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tipos_Impresion).WithMany().HasForeignKey(ot_imp => ot_imp.TpImpresion_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Rodillos).WithMany().HasForeignKey(ot_imp => ot_imp.Rodillo_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Pistas).WithMany().HasForeignKey(ot_imp => ot_imp.Pista_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tinta1).WithMany().HasForeignKey(ot_imp => ot_imp.Tinta1_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tinta2).WithMany().HasForeignKey(ot_imp => ot_imp.Tinta2_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tinta3).WithMany().HasForeignKey(ot_imp => ot_imp.Tinta3_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tinta4).WithMany().HasForeignKey(ot_imp => ot_imp.Tinta4_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tinta5).WithMany().HasForeignKey(ot_imp => ot_imp.Tinta5_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tinta6).WithMany().HasForeignKey(ot_imp => ot_imp.Tinta6_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tinta7).WithMany().HasForeignKey(ot_imp => ot_imp.Tinta7_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tinta7).WithMany().HasForeignKey(ot_imp => ot_imp.Tinta8_Id).OnDelete(DeleteBehavior.Restrict);
+
+            //OT_Laminado
+            modelBuilder.Entity<OT_Laminado>().HasOne(ot_lam => ot_lam.Orden_Trabajo).WithMany().HasForeignKey(ot_lam => ot_lam.OT_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Laminado>().HasOne(ot_lam => ot_lam.Laminado_Capa).WithMany().HasForeignKey(ot_lam => ot_lam.Capa_Id1).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Laminado>().HasOne(ot_lam => ot_lam.Laminado_Capa2).WithMany().HasForeignKey(ot_lam => ot_lam.Capa_Id2).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Laminado>().HasOne(ot_lam => ot_lam.Laminado_Capa3).WithMany().HasForeignKey(ot_lam => ot_lam.Capa_Id3).OnDelete(DeleteBehavior.Restrict);
+
         }
 
 

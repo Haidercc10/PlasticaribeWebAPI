@@ -8,7 +8,7 @@ namespace PlasticaribeAPI.Models
         [Key]
         public long Formato_Id { get; set; }
 
-        [Column(TypeName = "Varchar(100)")]
+        [Column(TypeName = "varchar(100)")]
         public string Formato_Nombre { get; set; }
 
         [Column(TypeName = "text")]

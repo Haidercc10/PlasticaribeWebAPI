@@ -8,7 +8,7 @@ namespace PlasticaribeAPI.Models
         [Key]
         public int Pista_Id { get; set; }
 
-        [Column(TypeName = "Varchar(100)")]
+        [Column(TypeName = "varchar(100)")]
         public string Pista_Nombre { get; set; }
 
         [Column(TypeName = "text")]

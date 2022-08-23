@@ -35,14 +35,14 @@ namespace PlasticaribeAPI.Models
 
         [Column(Order = 5)]
         [Precision(14, 2)]
-        public decimal Prod_Peso_Bruto { get; set; } /** PESOCONEMPAQUE | PtPesopt  */
+        public decimal Prod_Peso_Millar { get; set; } /** PESOCONEMPAQUE | PtPesopt  */
 
         [Column(Order = 6)]
         [Precision(14, 2)]
-        public decimal Prod_Peso_Neto { get; set; } /** PESO | PtPesopt */
+        public decimal Prod_Peso { get; set; } /** PESO | PtPesopt */
 
         [Column(Order = 7)]
-        public string UndMedPeso { get; set; } /** PRESENTACIÓN | PtPresentacionNom */
+        public string UndMedPeso { get; set; } /** Unidad de medida del peso */
         public Unidad_Medida? UndMed1 { get; set; } //Foranea unidades medidas
 
         [Column(Order = 8)]
@@ -80,29 +80,16 @@ namespace PlasticaribeAPI.Models
         [Column(Order = 16)]
         public int? Material_Id { get; set; } //Llave foranea Materiales_MatPrima
         public Material_MatPrima? MaterialMP { get; set; }
-
         public IList<PedidoProducto>? PedExtProd { get; set; }
-
         //Lista requerida para relación clientes-productos
-        public IList<Cliente_Producto>? CliProd { get; set; } 
-
-
-
-
-
-
+        public IList<Cliente_Producto>? CliProd { get; set; }
 
         public int TpSellado_Id { get; set; }
-        public Tipos_Sealldos? TiposSealldos { get; set; }
-        [Precision(14, 2)]
-        public decimal Prod_PesoMillar { get; set; }
+        public Tipos_Sellados? TiposSellados { get; set; }
+
         [Precision(14, 2)]
         public int Prod_CantBolsasPaquete { get; set; }
         [Precision(14, 2)]
         public int Prod_CantBolsasBulto { get; set; }
-
-
-
-
     }
 }

@@ -12,7 +12,7 @@ namespace PlasticaribeAPI.Models
         public Orden_Trabajo? Orden_Trabajo { get; set; }
         public int MatPri_Id { get; set; }
         public Materia_Prima? Materia_Prima { get; set; }
-        public int Formato_Id { get; set; }
+        public long Formato_Id { get; set; }
         public Formato? Formato { get; set; }
         public int Pigmt_Id { get; set; }
         public Pigmento? Pigmento { get; set; }

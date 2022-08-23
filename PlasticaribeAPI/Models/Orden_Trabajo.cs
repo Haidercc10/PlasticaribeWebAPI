@@ -7,7 +7,9 @@ namespace PlasticaribeAPI.Models
     public class Orden_Trabajo
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long Ot_Id { get; set; }
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Ot_Codigo { get; set; }
         public long SedeCli_Id { get; set; }
@@ -31,16 +33,22 @@ namespace PlasticaribeAPI.Models
         public decimal Ot_CantidadUnidades_Margen { get; set; }
 
         [Column(TypeName = "Date")]
-        public DateOnly Ot_FechaCreacion { get; set; }
+        public DateTime Ot_FechaCreacion { get; set; }
         public int Estado_Id { get; set; }
         public Estado? Estado { get; set; }
         public long Usua_Id { get; set; }
         public Usuario? Usuario { get; set; }
-        public int PedExt_Id { get; set; }
+        public long PedExt_Id { get; set; }
         public PedidoExterno? PedidoExterno { get; set; }
 
         [Column(TypeName = "text")]
         public string Ot_Observacion { get; set; }
-        public int Ot_Cyrel { get; set; } //Este Campo solo almacenará los numeros 1 y 0, 1 para Verdadero y 0 para falso
+
+        [Column(TypeName = "varchar(10)")]
+        public string Ot_Cyrel { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string Ot_Corte { get; set; }
+
     }
 }
