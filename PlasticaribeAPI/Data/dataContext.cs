@@ -41,7 +41,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Producto>().HasOne(prd => prd.UndMed1).WithMany().HasForeignKey(prd => prd.UndMedPeso).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto>().HasOne(prd => prd.UndMed2).WithMany().HasForeignKey(prd => prd.UndMedACF).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto>().HasOne(Prd => Prd.MaterialMP).WithMany().HasForeignKey(Prd => Prd.Material_Id).OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Producto>().HasOne(prd => prd.TiposSellados).WithMany().HasForeignKey(prd => prd.TpSellado_Id).OnDelete(DeleteBehavior.Restrict);
+            //modelBuilder.Entity<Producto>().HasOne(prd => prd.TiposSellados).WithMany().HasForeignKey(prd => prd.TpSellado_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto>().Property(c => c.Prod_Cod).UseIdentityColumn().ValueGeneratedOnAddOrUpdate();
 
             modelBuilder.Entity<Estado>().HasOne<Tipo_Estado>().WithMany().HasForeignKey(Est => Est.TpEstado_Id).OnDelete(DeleteBehavior.Restrict);
@@ -241,7 +241,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetalleAsignacion_BOPP>().HasOne(dat => dat.Proceso).WithMany().HasForeignKey(dat => dat.Proceso_Id).OnDelete(DeleteBehavior.Restrict); //Foranea Proceso
             modelBuilder.Entity<DetalleAsignacion_BOPP>().HasOne(asgmp => asgmp.EstadoOT).WithMany().HasForeignKey(asigmp => asigmp.Estado_OrdenTrabajo).OnDelete(DeleteBehavior.Restrict); //foranea estado OrdenTrabajo
 
-            //Arcgivos
+            //Archivos
             modelBuilder.Entity<Archivos>().HasOne(Arc => Arc.Categoria).WithMany().HasForeignKey(Arc => Arc.Categoria_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Archivos>().HasOne(Arc => Arc.Usuario).WithMany().HasForeignKey(Arc => Arc.Usua_Id).OnDelete(DeleteBehavior.Restrict);
 
@@ -364,6 +364,20 @@ namespace PlasticaribeAPI.Data
         public DbSet<Models.Archivos> Archivos { get; set; }
 
         public DbSet<Models.Categorias_Archivos> Categorias_Archivos { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Orden_Trabajo>? Orden_Trabajo { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Tratado>? Tratado { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Formato>? Formato { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Tipos_Impresion>? Tipos_Impresion { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Pistas>? Pistas { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Rodillos>? Rodillos { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Laminado_Capa>? Laminado_Capa { get; set; }
     }
 
 }

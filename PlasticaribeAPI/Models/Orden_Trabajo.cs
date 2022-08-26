@@ -7,11 +7,7 @@ namespace PlasticaribeAPI.Models
     public class Orden_Trabajo
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long Ot_Id { get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Ot_Codigo { get; set; }
         public long SedeCli_Id { get; set; }
         public SedesClientes? SedeCli { get; set; }
         public int Prod_Id { get; set; }
@@ -45,10 +41,10 @@ namespace PlasticaribeAPI.Models
         public string Ot_Observacion { get; set; }
 
         [Column(TypeName = "varchar(10)")]
-        public string Ot_Cyrel { get; set; }
+        public int Ot_Cyrel { get; set; }
 
         [Column(TypeName = "varchar(10)")]
-        public string Ot_Corte { get; set; }
+        public int Ot_Corte { get; set; }
 
     }
 }

@@ -942,13 +942,32 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        /*[HttpGet("PedidosSinOT/")]
+        public ActionResult<PedidoExterno> GetPedidosSinOT()
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var orden_Trabajo = _context.Pedidos_Externos
+                .Where(ot => ot.PedExt_Id != ot.orden_Trabajo.PedExt_Id)
+                .Select(ot => new
+                {
+                    ot.PedExt_Id
+                })
+                .ToList();
+
+            if (orden_Trabajo == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(orden_Trabajo);
+            }
+        }*/
 
 
-
-
-        // PUT: api/PedidoExterno/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+            // PUT: api/PedidoExterno/5
+            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+            [HttpPut("{id}")]
         public async Task<IActionResult> PutPedidoExterno(long id, PedidoExterno pedidoExterno)
         {
             if (id != pedidoExterno.PedExt_Id)
