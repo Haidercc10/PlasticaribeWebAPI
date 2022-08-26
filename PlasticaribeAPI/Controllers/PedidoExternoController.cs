@@ -942,12 +942,12 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        /*[HttpGet("PedidosSinOT/")]
+        [HttpGet("PedidosSinOT/")]
         public ActionResult<PedidoExterno> GetPedidosSinOT()
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
-            var orden_Trabajo = _context.Pedidos_Externos
-                .Where(ot => ot.PedExt_Id != ot.orden_Trabajo.PedExt_Id)
+            /*var orden_Trabajo = _context.Pedidos_Externos
+                .Where(ot => ot.PedExt_Id != otPedExt_Id)
                 .Select(ot => new
                 {
                     ot.PedExt_Id
@@ -961,8 +961,22 @@ namespace PlasticaribeAPI.Controllers
             else
             {
                 return Ok(orden_Trabajo);
-            }
-        }*/
+            }*/
+
+            var ot = from ordenTrabajo in _context.Set<Orden_Trabajo>()
+                     select ordenTrabajo.PedExt_Id;
+
+            var pedido = from pe in _context.Set<PedidoExterno>()
+                         where !ot.Contains(pe.PedExt_Id)
+                         select new { 
+                             pe.PedExt_Id,
+                             pe.SedeCli.Cli.Cli_Nombre,
+                             pe.SedeCli.Cli.Cli_Id
+                         };
+
+            return Ok(pedido);
+
+        }
 
 
             // PUT: api/PedidoExterno/5
