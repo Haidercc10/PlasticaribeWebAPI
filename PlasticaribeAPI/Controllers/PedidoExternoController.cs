@@ -945,23 +945,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("PedidosSinOT/")]
         public ActionResult<PedidoExterno> GetPedidosSinOT()
         {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
-            /*var orden_Trabajo = _context.Pedidos_Externos
-                .Where(ot => ot.PedExt_Id != otPedExt_Id)
-                .Select(ot => new
-                {
-                    ot.PedExt_Id
-                })
-                .ToList();
-
-            if (orden_Trabajo == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(orden_Trabajo);
-            }*/
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             var ot = from ordenTrabajo in _context.Set<Orden_Trabajo>()
                      select ordenTrabajo.PedExt_Id;
@@ -971,7 +955,8 @@ namespace PlasticaribeAPI.Controllers
                          select new { 
                              pe.PedExt_Id,
                              pe.SedeCli.Cli.Cli_Nombre,
-                             pe.SedeCli.Cli.Cli_Id
+                             pe.SedeCli.Cli.Cli_Id,
+                             pe.PedExt_FechaEntrega
                          };
 
             return Ok(pedido);
@@ -979,9 +964,9 @@ namespace PlasticaribeAPI.Controllers
         }
 
 
-            // PUT: api/PedidoExterno/5
-            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-            [HttpPut("{id}")]
+        // PUT: api/PedidoExterno/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutPedidoExterno(long id, PedidoExterno pedidoExterno)
         {
             if (id != pedidoExterno.PedExt_Id)

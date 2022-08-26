@@ -12,7 +12,7 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    [Migration("20220824192350_Inicio_OT")]
+    [Migration("20220826192218_Inicio_OT")]
     partial class Inicio_OT
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1564,6 +1564,14 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("decimal(14,2)")
                         .HasColumnOrder(11);
 
+                    b.Property<int?>("Prod_CantBolsasBulto")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Prod_CantBolsasPaquete")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("int");
+
                     b.Property<int>("Prod_Cod")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("int")
@@ -1604,6 +1612,9 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("int")
                         .HasColumnOrder(4);
 
+                    b.Property<int?>("TpSellado_Id")
+                        .HasColumnType("int");
+
                     b.Property<string>("UndMedACF")
                         .IsRequired()
                         .HasColumnType("varchar(10)")
@@ -1623,6 +1634,8 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Pigmt_Id");
 
                     b.HasIndex("TpProd_Id");
+
+                    b.HasIndex("TpSellado_Id");
 
                     b.HasIndex("UndMedACF");
 
@@ -2149,6 +2162,27 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("TpImpresion_Id");
 
                     b.ToTable("Tipos_Impresion");
+                });
+
+            modelBuilder.Entity("PlasticaribeAPI.Models.Tipos_Sellados", b =>
+                {
+                    b.Property<int>("TpSellado_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TpSellado_Id"), 1L, 1);
+
+                    b.Property<string>("TpSellado_Descripcion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TpSellados_Nombre")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("TpSellado_Id");
+
+                    b.ToTable("Tipos_Sellados");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.TiposClientes", b =>
@@ -3212,6 +3246,11 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("PlasticaribeAPI.Models.Tipos_Sellados", "TiposSellados")
+                        .WithMany()
+                        .HasForeignKey("TpSellado_Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "UndMed2")
                         .WithMany()
                         .HasForeignKey("UndMedACF")
@@ -3229,6 +3268,8 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("MaterialMP");
 
                     b.Navigation("Pigmt");
+
+                    b.Navigation("TiposSellados");
 
                     b.Navigation("TpProd");
 

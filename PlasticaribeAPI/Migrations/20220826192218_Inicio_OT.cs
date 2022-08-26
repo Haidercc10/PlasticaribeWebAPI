@@ -47,6 +47,28 @@ namespace PlasticaribeAPI.Migrations
                 .Annotation("Relational:ColumnOrder", 6)
                 .OldAnnotation("Relational:ColumnOrder", 5);
 
+            migrationBuilder.AddColumn<int>(
+                name: "Prod_CantBolsasBulto",
+                table: "Productos",
+                type: "int",
+                precision: 14,
+                scale: 2,
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "Prod_CantBolsasPaquete",
+                table: "Productos",
+                type: "int",
+                precision: 14,
+                scale: 2,
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "TpSellado_Id",
+                table: "Productos",
+                type: "int",
+                nullable: true);
+
             migrationBuilder.CreateTable(
                 name: "Formato",
                 columns: table => new
@@ -171,6 +193,20 @@ namespace PlasticaribeAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tipos_Impresion", x => x.TpImpresion_Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tipos_Sellados",
+                columns: table => new
+                {
+                    TpSellado_Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TpSellados_Nombre = table.Column<string>(type: "varchar(100)", nullable: false),
+                    TpSellado_Descripcion = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tipos_Sellados", x => x.TpSellado_Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -381,6 +417,11 @@ namespace PlasticaribeAPI.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Productos_TpSellado_Id",
+                table: "Productos",
+                column: "TpSellado_Id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orden_Trabajo_Estado_Id",
                 table: "Orden_Trabajo",
                 column: "Estado_Id");
@@ -504,10 +545,22 @@ namespace PlasticaribeAPI.Migrations
                 name: "IX_OT_Laminado_OT_Id",
                 table: "OT_Laminado",
                 column: "OT_Id");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Productos_Tipos_Sellados_TpSellado_Id",
+                table: "Productos",
+                column: "TpSellado_Id",
+                principalTable: "Tipos_Sellados",
+                principalColumn: "TpSellado_Id",
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Productos_Tipos_Sellados_TpSellado_Id",
+                table: "Productos");
+
             migrationBuilder.DropTable(
                 name: "OT_Extrusion");
 
@@ -516,6 +569,9 @@ namespace PlasticaribeAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "OT_Laminado");
+
+            migrationBuilder.DropTable(
+                name: "Tipos_Sellados");
 
             migrationBuilder.DropTable(
                 name: "Formato");
@@ -537,6 +593,22 @@ namespace PlasticaribeAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Orden_Trabajo");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Productos_TpSellado_Id",
+                table: "Productos");
+
+            migrationBuilder.DropColumn(
+                name: "Prod_CantBolsasBulto",
+                table: "Productos");
+
+            migrationBuilder.DropColumn(
+                name: "Prod_CantBolsasPaquete",
+                table: "Productos");
+
+            migrationBuilder.DropColumn(
+                name: "TpSellado_Id",
+                table: "Productos");
 
             migrationBuilder.RenameColumn(
                 name: "Prod_Peso_Millar",

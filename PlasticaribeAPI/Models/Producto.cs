@@ -84,12 +84,12 @@ namespace PlasticaribeAPI.Models
         //Lista requerida para relación clientes-productos
         public IList<Cliente_Producto>? CliProd { get; set; }
 
-        /*public int TpSellado_Id { get; set; }
+        public int? TpSellado_Id { get; set; }
         public Tipos_Sellados? TiposSellados { get; set; }
 
         [Precision(14, 2)]
-        public int Prod_CantBolsasPaquete { get; set; }
+        public int? Prod_CantBolsasPaquete { get; set; }
         [Precision(14, 2)]
-        public int Prod_CantBolsasBulto { get; set; }*/
+        public int? Prod_CantBolsasBulto { get; set; }
     }
 }

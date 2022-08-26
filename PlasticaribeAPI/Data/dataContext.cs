@@ -41,7 +41,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Producto>().HasOne(prd => prd.UndMed1).WithMany().HasForeignKey(prd => prd.UndMedPeso).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto>().HasOne(prd => prd.UndMed2).WithMany().HasForeignKey(prd => prd.UndMedACF).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto>().HasOne(Prd => Prd.MaterialMP).WithMany().HasForeignKey(Prd => Prd.Material_Id).OnDelete(DeleteBehavior.Restrict);
-            //modelBuilder.Entity<Producto>().HasOne(prd => prd.TiposSellados).WithMany().HasForeignKey(prd => prd.TpSellado_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto>().HasOne(prd => prd.TiposSellados).WithMany().HasForeignKey(prd => prd.TpSellado_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto>().Property(c => c.Prod_Cod).UseIdentityColumn().ValueGeneratedOnAddOrUpdate();
 
             modelBuilder.Entity<Estado>().HasOne<Tipo_Estado>().WithMany().HasForeignKey(Est => Est.TpEstado_Id).OnDelete(DeleteBehavior.Restrict);

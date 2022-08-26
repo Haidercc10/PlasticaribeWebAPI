@@ -77,6 +77,7 @@ namespace PlasticaribeAPI.Controllers
                     p.Prod.Prod_Peso,
                     p.Prod.UndMedPeso,
                     p.TpBod_Id,
+                    p.Prod.TiposSellados.TpSellados_Nombre
 
                 })
                 .ToList();

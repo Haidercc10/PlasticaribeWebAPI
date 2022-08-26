@@ -50,57 +50,52 @@ namespace PlasticaribeAPI.Controllers
             return orden_Trabajo;
         }
 
-        [HttpGet("PedidosSinOT/")]
-        public ActionResult<Orden_Trabajo> Get()
+        [HttpGet("NumeroOt/{Ot_Id}")]
+        public ActionResult<Orden_Trabajo> GetNumeroOt(long Ot_Id)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
-            var orden_Trabajo = _context.Orden_Trabajo
-                .Where(ot => ot.PedidoExterno.PedExt_Id != ot.PedExt_Id)
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+            var orden_trabajo = _context.Orden_Trabajo
+                .Where(ot => ot.Ot_Id == Ot_Id)
                 .Include(ot => ot.PedidoExterno)
-                .Select(ot => ot.PedidoExterno.PedExt_Id)
+                .Include(ot => ot.SedeCli)
+                .Include(ot => ot.SedeCli.Cli)
+                .Include(ot => ot.Estado)
+                .Select(ot => new
+                {
+                    ot.SedeCli.Cli_Id,
+                    ot.SedeCli.Cli.Cli_Nombre,
+                    ot.PedExt_Id,
+                    ot.PedidoExterno.Usua.Usua_Nombre,
+                    ot.Ot_FechaCreacion,
+                    ot.PedidoExterno.PedExt_FechaEntrega,
+                    ot.SedeCli.SedeCliente_Ciudad,
+                    ot.SedeCli.SedeCliente_Direccion,
+                    ot.Estado.Estado_Nombre,
+                    ot.Ot_Observacion,
+                    ot.Ot_MargenAdicional,
+                    ot.Ot_Cyrel,
+                    ot.Ot_Corte,
+                    ot.Prod_Id,
+                    ot.Ot_CantidadKilos
+                })
                 .ToList();
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
 
-            /*var PedidoOt = _context.Orden_Trabajo
-                .Where(ot => ot.PedidoExterno.PedExt_Id == ot.PedExt_Id)
-                .Include(ot => ot.PedidoExterno)
-                .Select(ot => new { ot.PedidoExterno.PedExt_Id })
-                .ToList();
-
-            var PedidosSinOt = _context.Pedidos_Externos
-                                .Where(pe => PedidoOt.Contains(pe.PedExt_Id))
-                                .Tolist();
-
-            return Ok(PedidosSinOt);*/
-
-            /*var ordenTrabajo = (from pe in _context.Pedidos_Externos
-                                join ot in _context.Orden_Trabajo
-                                on pe.PedExt_Id equals ot.PedExt_Id
-                                into pedidos from PedidoExterno in pedidos.DefaultIfEmpty()
-                                select new
-                                {
-                                    IdPedido = (pe.PedExt_Id != PedidoExterno.PedExt_Id)
-                                }).ToList();
-
-            return Ok(ordenTrabajo);*/
-
-            var ot = from Pedidos_Externos in _context.Set<PedidoExterno>()
-                     join Orden_Trabajo in _context.Set<Orden_Trabajo>()
-                     on Pedidos_Externos.PedExt_Id equals Orden_Trabajo.PedExt_Id
-                     where Pedidos_Externos.PedExt_Id != Orden_Trabajo.PedExt_Id
-                     select Orden_Trabajo.PedExt_Id;
-
-            return Ok(orden_Trabajo);
-
-            /*if (orden_Trabajo == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(orden_Trabajo);
-            }*/
+            return Ok(orden_trabajo);
         }
 
+        [HttpGet("NumeroPedido/{PedExt_Id}")]
+        public ActionResult<Orden_Trabajo> GetNumeroPedido(long PedExt_Id)
+        {
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+            var orden_trabajo = _context.Orden_Trabajo
+                .Where(ot => ot.PedExt_Id == PedExt_Id)
+                .ToList();
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
+
+            return Ok(orden_trabajo);
+        }
 
         // PUT: api/Orden_Trabajo/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
