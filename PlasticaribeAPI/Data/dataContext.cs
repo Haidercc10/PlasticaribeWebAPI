@@ -279,6 +279,29 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<OT_Laminado>().HasOne(ot_lam => ot_lam.Laminado_Capa2).WithMany().HasForeignKey(ot_lam => ot_lam.Capa_Id2).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<OT_Laminado>().HasOne(ot_lam => ot_lam.Laminado_Capa3).WithMany().HasForeignKey(ot_lam => ot_lam.Capa_Id3).OnDelete(DeleteBehavior.Restrict);
 
+            //Mezclas OT
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MaterialMP).WithMany().HasForeignKey(mez => mez.Material_Id).OnDelete(DeleteBehavior.Restrict); /** Llave Primaria Material_MatPrima*/
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP1C1).WithMany().HasForeignKey(mez => mez.MezMaterial_Id1xCapa1).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP1C2).WithMany().HasForeignKey(mez => mez.MezMaterial_Id1xCapa2).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP1C3).WithMany().HasForeignKey(mez => mez.MezMaterial_Id1xCapa3).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP2C1).WithMany().HasForeignKey(mez => mez.MezMaterial_Id2xCapa1).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP2C2).WithMany().HasForeignKey(mez => mez.MezMaterial_Id2xCapa2).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP2C3).WithMany().HasForeignKey(mez => mez.MezMaterial_Id2xCapa3).OnDelete(DeleteBehavior.Restrict); 
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP3C1).WithMany().HasForeignKey(mez => mez.MezMaterial_Id3xCapa1).OnDelete(DeleteBehavior.Restrict); /** Llave Primaria Mezcla_Material*/
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP3C2).WithMany().HasForeignKey(mez => mez.MezMaterial_Id3xCapa2).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP3C3).WithMany().HasForeignKey(mez => mez.MezMaterial_Id3xCapa3).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP4C1).WithMany().HasForeignKey(mez => mez.MezMaterial_Id4xCapa1).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP4C2).WithMany().HasForeignKey(mez => mez.MezMaterial_Id4xCapa2).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP4C3).WithMany().HasForeignKey(mez => mez.MezMaterial_Id4xCapa3).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento1C1).WithMany().HasForeignKey(mez => mez.MezPigmto_Id1xCapa1).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento1C2).WithMany().HasForeignKey(mez => mez.MezPigmto_Id1xCapa2).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento1C3).WithMany().HasForeignKey(mez => mez.MezPigmto_Id1xCapa3).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento2C1).WithMany().HasForeignKey(mez => mez.MezPigmto_Id2xCapa1).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento2C2).WithMany().HasForeignKey(mez => mez.MezPigmto_Id2xCapa2).OnDelete(DeleteBehavior.Restrict); /** Llave Primaria Mezcla_Pigmento*/
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento2C3).WithMany().HasForeignKey(mez => mez.MezPigmto_Id2xCapa3).OnDelete(DeleteBehavior.Restrict);            
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.Usua).WithMany().HasForeignKey(mez => mez.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario 
+
+
         }
 
 
@@ -378,6 +401,13 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.Rodillos>? Rodillos { get; set; }
 
         public DbSet<PlasticaribeAPI.Models.Laminado_Capa>? Laminado_Capa { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Mezcla_Material>? Mezclas_Materiales { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Mezcla_Pigmento>? Mezclas_Pigmentos { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Mezcla> Mezclas { get; set; }
+
     }
 
 }
