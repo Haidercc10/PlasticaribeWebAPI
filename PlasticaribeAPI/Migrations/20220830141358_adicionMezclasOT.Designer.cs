@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220830141358_adicionMezclasOT")]
+    partial class adicionMezclasOT
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1444,26 +1446,26 @@ namespace PlasticaribeAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Extrusion_Id"), 1L, 1);
 
-                    b.Property<decimal>("Extrusion_Ancho1")
+                    b.Property<int>("Extrusion_Ancho1")
                         .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("Extrusion_Ancho2")
+                    b.Property<int>("Extrusion_Ancho2")
                         .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("Extrusion_Ancho3")
+                    b.Property<int>("Extrusion_Ancho3")
                         .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("Extrusion_Calibre")
+                    b.Property<int>("Extrusion_Calibre")
                         .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
+                        .HasColumnType("int");
 
                     b.Property<long>("Formato_Id")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("Material_Id")
+                    b.Property<int>("MatPri_Id")
                         .HasColumnType("int");
 
                     b.Property<long>("Ot_Id")
@@ -1476,23 +1478,15 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(14, 2)
                         .HasColumnType("int");
 
-                    b.Property<string>("UndMed_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
                     b.HasKey("Extrusion_Id");
 
                     b.HasIndex("Formato_Id");
-
-                    b.HasIndex("Material_Id");
 
                     b.HasIndex("Ot_Id");
 
                     b.HasIndex("Pigmt_Id");
 
                     b.HasIndex("Tratado_Id");
-
-                    b.HasIndex("UndMed_Id");
 
                     b.ToTable("OT_Extrusion");
                 });
@@ -1535,6 +1529,9 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("Tinta7_Id")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("Tinta8Tinta_Id")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("Tinta8_Id")
                         .HasColumnType("bigint");
 
@@ -1544,6 +1541,10 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("Impresion_Id");
 
                     b.HasIndex("Ot_Id");
+
+                    b.HasIndex("Pista_Id");
+
+                    b.HasIndex("Rodillo_Id");
 
                     b.HasIndex("Tinta1_Id");
 
@@ -1557,7 +1558,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Tinta6_Id");
 
-                    b.HasIndex("Tinta7_Id");
+                    b.HasIndex("Tinta8Tinta_Id");
 
                     b.HasIndex("Tinta8_Id");
 
@@ -3416,9 +3417,9 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Material_MatPrima", "Material_MatPrima")
+                    b.HasOne("PlasticaribeAPI.Models.Materia_Prima", "Materia_Prima")
                         .WithMany()
-                        .HasForeignKey("Material_Id")
+                        .HasForeignKey("Formato_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -3440,23 +3441,15 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "Unidad_Medida")
-                        .WithMany()
-                        .HasForeignKey("UndMed_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Formato");
 
-                    b.Navigation("Material_MatPrima");
+                    b.Navigation("Materia_Prima");
 
                     b.Navigation("Orden_Trabajo");
 
                     b.Navigation("Pigmento");
 
                     b.Navigation("Tratado");
-
-                    b.Navigation("Unidad_Medida");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.OT_Impresion", b =>
@@ -3464,6 +3457,18 @@ namespace PlasticaribeAPI.Migrations
                     b.HasOne("PlasticaribeAPI.Models.Orden_Trabajo", "Orden_Trabajo")
                         .WithMany()
                         .HasForeignKey("Ot_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Pistas", "Pistas")
+                        .WithMany()
+                        .HasForeignKey("Pista_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Rodillos", "Rodillos")
+                        .WithMany()
+                        .HasForeignKey("Rodillo_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -3503,13 +3508,11 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Tinta", "Tinta7")
-                        .WithMany()
-                        .HasForeignKey("Tinta7_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.Tinta", "Tinta8")
+                        .WithMany()
+                        .HasForeignKey("Tinta8Tinta_Id");
+
+                    b.HasOne("PlasticaribeAPI.Models.Tinta", "Tinta7")
                         .WithMany()
                         .HasForeignKey("Tinta8_Id")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -3522,6 +3525,10 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Orden_Trabajo");
+
+                    b.Navigation("Pistas");
+
+                    b.Navigation("Rodillos");
 
                     b.Navigation("Tinta1");
 

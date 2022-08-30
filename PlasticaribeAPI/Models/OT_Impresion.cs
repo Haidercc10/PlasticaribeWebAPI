@@ -11,10 +11,14 @@ namespace PlasticaribeAPI.Models
         public Orden_Trabajo? Orden_Trabajo { get; set; }
         public int TpImpresion_Id { get; set; }
         public Tipos_Impresion? Tipos_Impresion { get; set; }
+
+        [Column(TypeName = "int")]
         public int Rodillo_Id { get; set; }
-        public Rodillos? Rodillos { get; set; }
+        //public Rodillos? Rodillos { get; set; }
+
+        [Column(TypeName = "int")]
         public int Pista_Id { get; set; }
-        public Pistas? Pistas { get; set; }
+        //public Pistas? Pistas { get; set; }
         public long Tinta1_Id  { get; set; }
         public Tinta? Tinta1 { get; set; }
         public long Tinta2_Id { get; set; }

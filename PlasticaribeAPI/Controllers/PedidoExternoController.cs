@@ -63,6 +63,7 @@ namespace PlasticaribeAPI.Controllers
                     pp.PedExt_Id,
                     pp.PedExt_FechaCreacion,
                     pp.PedExt_FechaEntrega,
+                    pp.SedeCli_Id,
                     pp.SedeCli.Cli.Cli_Id,
                     pp.SedeCli.Cli.Cli_Nombre,
                     pp.SedeCli.Cli.Usua.Usua_Nombre,
@@ -399,6 +400,7 @@ namespace PlasticaribeAPI.Controllers
                     pp.PedExt_Id,
                     pp.PedExt_FechaCreacion,
                     pp.PedExt_FechaEntrega,
+                    pp.SedeCli_Id,
                     pp.SedeCli.Cli.Cli_Id,
                     pp.SedeCli.Cli.Cli_Nombre,
                     pp.Usua.Usua_Nombre,
@@ -412,6 +414,7 @@ namespace PlasticaribeAPI.Controllers
                     pp.Key.PedExt_Id,
                     pp.Key.PedExt_FechaCreacion,
                     pp.Key.PedExt_FechaEntrega,
+                    pp.Key.SedeCli_Id,
                     pp.Key.Cli_Id,
                     pp.Key.Cli_Nombre,
                     pp.Key.Usua_Nombre,
@@ -950,13 +953,19 @@ namespace PlasticaribeAPI.Controllers
             var ot = from ordenTrabajo in _context.Set<Orden_Trabajo>()
                      select ordenTrabajo.PedExt_Id;
 
-            var pedido = from pe in _context.Set<PedidoExterno>()
+            var otProd = from ordenTrabajo in _context.Set<Orden_Trabajo>()
+                         where ot.Contains(ordenTrabajo.PedExt_Id)
+                         select ordenTrabajo.Prod_Id;
+
+            var pedido = from pe in _context.Set<PedidoProducto>()
                          where !ot.Contains(pe.PedExt_Id)
+                         orderby pe.PedExt_Id
                          select new { 
                              pe.PedExt_Id,
-                             pe.SedeCli.Cli.Cli_Nombre,
-                             pe.SedeCli.Cli.Cli_Id,
-                             pe.PedExt_FechaEntrega
+                             pe.Prod_Id,
+                             pe.PedidoExt.SedeCli.Cli.Cli_Nombre,
+                             pe.PedidoExt.SedeCli.Cli.Cli_Id,
+                             pe.PedidoExt.PedExt_FechaEntrega
                          };
 
             return Ok(pedido);
