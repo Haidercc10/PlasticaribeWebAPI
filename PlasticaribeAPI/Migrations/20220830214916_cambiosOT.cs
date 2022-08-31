@@ -4,7 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
-    public partial class cambiosOT_extrusion : Migration
+    public partial class cambiosOT : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -84,10 +84,30 @@ namespace PlasticaribeAPI.Migrations
                 oldPrecision: 14,
                 oldScale: 2);
 
+            migrationBuilder.AddColumn<string>(
+                name: "UndMed_Id",
+                table: "Orden_Trabajo",
+                type: "varchar(10)",
+                nullable: false,
+                defaultValue: "");
+
             migrationBuilder.CreateIndex(
                 name: "IX_OT_Impresion_Tinta7_Id",
                 table: "OT_Impresion",
                 column: "Tinta7_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orden_Trabajo_UndMed_Id",
+                table: "Orden_Trabajo",
+                column: "UndMed_Id");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Orden_Trabajo_Unidades_Medidas_UndMed_Id",
+                table: "Orden_Trabajo",
+                column: "UndMed_Id",
+                principalTable: "Unidades_Medidas",
+                principalColumn: "UndMed_Id",
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_OT_Impresion_Tintas_Tinta7_Id",
@@ -101,12 +121,24 @@ namespace PlasticaribeAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
+                name: "FK_Orden_Trabajo_Unidades_Medidas_UndMed_Id",
+                table: "Orden_Trabajo");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_OT_Impresion_Tintas_Tinta7_Id",
                 table: "OT_Impresion");
 
             migrationBuilder.DropIndex(
                 name: "IX_OT_Impresion_Tinta7_Id",
                 table: "OT_Impresion");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Orden_Trabajo_UndMed_Id",
+                table: "Orden_Trabajo");
+
+            migrationBuilder.DropColumn(
+                name: "UndMed_Id",
+                table: "Orden_Trabajo");
 
             migrationBuilder.AddColumn<long>(
                 name: "Tinta8Tinta_Id",

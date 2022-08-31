@@ -12,6 +12,8 @@ namespace PlasticaribeAPI.Models
         public SedesClientes? SedeCli { get; set; }
         public int Prod_Id { get; set; }
         public Producto? Prod { get; set; }
+        public string UndMed_Id { get; set; }
+        public Unidad_Medida? Unidad_Medida { get; set; }
 
         [Precision(14, 2)]
         public decimal Ot_CantidadKilos { get; set; }

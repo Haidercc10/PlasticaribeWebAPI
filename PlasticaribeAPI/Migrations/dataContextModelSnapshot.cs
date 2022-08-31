@@ -1416,6 +1416,10 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("SedeCli_Id")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("UndMed_Id")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)");
+
                     b.Property<long>("Usua_Id")
                         .HasColumnType("bigint");
 
@@ -1430,6 +1434,8 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Prod_Id");
 
                     b.HasIndex("SedeCli_Id");
+
+                    b.HasIndex("UndMed_Id");
 
                     b.HasIndex("Usua_Id");
 
@@ -3389,6 +3395,12 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "Unidad_Medida")
+                        .WithMany()
+                        .HasForeignKey("UndMed_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("Usua_Id")
@@ -3404,6 +3416,8 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Prod");
 
                     b.Navigation("SedeCli");
+
+                    b.Navigation("Unidad_Medida");
 
                     b.Navigation("Usuario");
                 });

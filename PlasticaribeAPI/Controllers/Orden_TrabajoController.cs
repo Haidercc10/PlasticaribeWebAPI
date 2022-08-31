@@ -117,6 +117,8 @@ namespace PlasticaribeAPI.Controllers
                           ot.SedeCli.Cli.Cli_Nombre,
                           ot.Prod_Id,
                           ot.Prod.Prod_Nombre,
+                          Presentacion_Id = ot.UndMed_Id,
+                          Presentacion_Nombre = ot.Unidad_Medida.UndMed_Nombre,
                           ot.Ot_CantidadKilos,
                           ot.Ot_CantidadUnidades,
                           ot.Ot_MargenAdicional,
@@ -145,6 +147,8 @@ namespace PlasticaribeAPI.Controllers
                           otExt.Extrusion_Ancho3,
 
                           //Informacion de impresion de la OT
+                          otImp.TpImpresion_Id,
+                          otImp.Tipos_Impresion.TpImpresion_Nombre,
                           otImp.Rodillo_Id,
                           otImp.Pista_Id,
                           otImp.Tinta1_Id,
@@ -168,12 +172,15 @@ namespace PlasticaribeAPI.Controllers
                           otLam.Capa_Id1,
                           lamCapa1_Nombre = otLam.Laminado_Capa.LamCapa_Nombre,
                           otLam.LamCapa_Calibre1,
+                          otLam.LamCapa_Cantidad1,
                           otLam.Capa_Id2,
                           lamCapa2_Nombre = otLam.Laminado_Capa2.LamCapa_Nombre,
                           otLam.LamCapa_Calibre2,
+                          otLam.LamCapa_Cantidad2,
                           otLam.Capa_Id3,
                           lamCapa3_Nombre = otLam.Laminado_Capa3.LamCapa_Nombre,
                           otLam.LamCapa_Calibre3,
+                          otLam.LamCapa_Cantidad3,
 
                           //Informacion detallada del Producto
                           ot.Prod.TpProd_Id,
