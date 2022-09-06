@@ -74,7 +74,8 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(MAX)")]
         public string EstProcOT_Observacion { get; set; }
 
-
+        [Column(TypeName = "date")]
+        public DateTime EstProcOT_FechaCreacion { get; set; }
 
 
     }

@@ -50,6 +50,34 @@ namespace PlasticaribeAPI.Controllers
             return estados_ProcesosOT;
         }
 
+        [HttpGet("consultaPorOT/{EstProcOT_OrdenTrabajo}")]
+        public ActionResult GetPorOT(long EstProcOT_OrdenTrabajo)
+        {
+            var ot = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == EstProcOT_OrdenTrabajo).ToList();
+            return Ok(ot);
+        }
+
+        [HttpGet("consultaPorFallas/{Falla_Id}")]
+        public ActionResult GetPorFallas(int Falla_Id)
+        {
+            var ot = _context.Estados_ProcesosOT.Where(epOT => epOT.Falla_Id == Falla_Id).ToList();
+            return Ok(ot);
+        }
+
+        [HttpGet("consultaPorFecha/{EstProcOT_FechaCreacion}")]
+        public ActionResult GetPorFecha(DateTime EstProcOT_FechaCreacion)
+        {
+            var ot = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_FechaCreacion == EstProcOT_FechaCreacion).ToList();
+            return Ok(ot);
+        }
+
+        [HttpGet("consultaPorFechas/")]
+        public ActionResult GetPorFechas(DateTime EstProcOT_FechaCreacion1, DateTime EstProcOT_FechaCreacion2)
+        {
+            var ot = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_FechaCreacion >= EstProcOT_FechaCreacion1 && epOT.EstProcOT_FechaCreacion <= EstProcOT_FechaCreacion2).ToList();
+            return Ok(ot);
+        }
+
         // PUT: api/Estados_ProcesosOT/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

@@ -97,6 +97,29 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        [HttpGet("IdProducto_Pedido/{Prod_Id}/{PedExt_Id}")]
+        public ActionResult<PedidoProducto> GetProductoPedido(int Prod_Id, int PedExt_Id)
+        {
+            try
+            {
+                var producto = _context.PedidosExternos_Productos.Where(pp => pp.PedExt_Id == PedExt_Id && pp.Prod_Id == Prod_Id).ToList();
+
+
+                if (producto == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(producto);
+                }
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex);
+            }
+        }
+
         // PUT: api/PedidoProducto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

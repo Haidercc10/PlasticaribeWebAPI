@@ -130,6 +130,8 @@ namespace PlasticaribeAPI.Controllers
                           ot.PedExt_Id,
                           ot.PedidoExterno.PedExt_FechaEntrega,
                           ot.Ot_Observacion,
+                          ot.Ot_Cyrel,
+                          ot.Ot_Corte,
 
                           //Informacion de extrusion de la OT
                           otExt.Material_Id,
