@@ -50,6 +50,25 @@ namespace PlasticaribeAPI.Controllers
             return laminado_Capa;
         }
 
+        [HttpGet("consultaLaminado/{LamCapa1_Nombre}/{LamCapa2_Nombre}/{LamCapa3_Nombre}")]
+        public ActionResult GetConsultaLaminado(string LamCapa1_Nombre, string LamCapa2_Nombre, string LamCapa3_Nombre)
+        {
+            var con = from c1 in _context.Set<Laminado_Capa>()
+                      from c2 in _context.Set<Laminado_Capa>()
+                      from c3 in _context.Set<Laminado_Capa>()
+                      where c1.LamCapa_Nombre == LamCapa1_Nombre
+                            && c2.LamCapa_Nombre == LamCapa2_Nombre
+                            && c3.LamCapa_Nombre == LamCapa3_Nombre
+                      select new
+                      {
+                          LamCapa1_Id = c1.LamCapa_Id,
+                          LamCapa2_Id = c2.LamCapa_Id,
+                          LamCapa3_Id = c3.LamCapa_Id
+                      };
+
+            return Ok(con);
+        }
+
         // PUT: api/Laminado_Capa/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

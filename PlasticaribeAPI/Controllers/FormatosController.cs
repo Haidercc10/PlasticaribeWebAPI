@@ -50,6 +50,29 @@ namespace PlasticaribeAPI.Controllers
             return formato;
         }
 
+        [HttpGet("consultaExtrusion/{Formato_Nombre}/{Material_Nombre}/{Pigmt_Nombre}/{Tratado_Nombre}")]
+        public ActionResult GetCaonsultaExtrusion(string Formato_Nombre, string Material_Nombre, string Pigmt_Nombre, string Tratado_Nombre)
+        {
+
+            var con = from f in _context.Set<Formato>()
+                      from m in _context.Set<Material_MatPrima>()
+                      from p in _context.Set<Pigmento>()
+                      from t in _context.Set<Tratado>()
+                      where f.Formato_Nombre == Formato_Nombre
+                            && m.Material_Nombre == Material_Nombre
+                            && p.Pigmt_Nombre == Pigmt_Nombre
+                            && t.Tratado_Nombre == Tratado_Nombre
+                      select new
+                      {
+                          f.Formato_Id,
+                          m.Material_Id,
+                          p.Pigmt_Id,
+                          t.Tratado_Id
+                      };
+
+            return Ok(con);
+        }
+
         // PUT: api/Formatos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

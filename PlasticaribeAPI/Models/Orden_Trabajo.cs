@@ -12,6 +12,8 @@ namespace PlasticaribeAPI.Models
         public SedesClientes? SedeCli { get; set; }
         public int Prod_Id { get; set; }
         public Producto? Prod { get; set; }
+        public string UndMed_Id { get; set; }
+        public Unidad_Medida? Unidad_Medida { get; set; }
 
         [Precision(14, 2)]
         public decimal Ot_CantidadKilos { get; set; }
@@ -41,10 +43,13 @@ namespace PlasticaribeAPI.Models
         public string Ot_Observacion { get; set; }
 
         [Column(TypeName = "varchar(10)")]
-        public int Ot_Cyrel { get; set; }
+        public string Ot_Cyrel { get; set; }
 
         [Column(TypeName = "varchar(10)")]
-        public int Ot_Corte { get; set; }
+        public string Ot_Corte { get; set; }
+
+        public long Mezcla_Id { get; set; }
+        public Mezcla? Mezcla { get; set; }
 
     }
 }

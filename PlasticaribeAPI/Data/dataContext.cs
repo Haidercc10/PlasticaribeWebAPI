@@ -248,22 +248,25 @@ namespace PlasticaribeAPI.Data
             //Orden de Trabajo
             modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.SedeCli).WithMany().HasForeignKey(ot => ot.SedeCli_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.Prod).WithMany().HasForeignKey(ot => ot.Prod_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.Unidad_Medida).WithMany().HasForeignKey(ot => ot.UndMed_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.Estado).WithMany().HasForeignKey(ot => ot.Estado_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.Usuario).WithMany().HasForeignKey(ot => ot.Usua_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.PedidoExterno).WithMany().HasForeignKey(ot => ot.PedExt_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.Mezcla).WithMany().HasForeignKey(ot => ot.Mezcla_Id).OnDelete(DeleteBehavior.Restrict);
 
             //OT_Extrusion
             modelBuilder.Entity<OT_Extrusion>().HasOne(ot_ext => ot_ext.Orden_Trabajo).WithMany().HasForeignKey(ot_ext => ot_ext.Ot_Id).OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<OT_Extrusion>().HasOne(ot_ext => ot_ext.Materia_Prima).WithMany().HasForeignKey(ot_ext => ot_ext.Formato_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Extrusion>().HasOne(ot_ext => ot_ext.Material_MatPrima).WithMany().HasForeignKey(ot_ext => ot_ext.Material_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<OT_Extrusion>().HasOne(ot_ext => ot_ext.Formato).WithMany().HasForeignKey(ot_ext => ot_ext.Formato_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<OT_Extrusion>().HasOne(ot_ext => ot_ext.Pigmento).WithMany().HasForeignKey(ot_ext => ot_ext.Pigmt_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<OT_Extrusion>().HasOne(ot_ext => ot_ext.Tratado).WithMany().HasForeignKey(ot_ext => ot_ext.Tratado_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Extrusion>().HasOne(ot_ext => ot_ext.Unidad_Medida).WithMany().HasForeignKey(ot_ext => ot_ext.UndMed_Id).OnDelete(DeleteBehavior.Restrict);
 
             //OT_Impresión
             modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Orden_Trabajo).WithMany().HasForeignKey(ot_imp => ot_imp.Ot_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tipos_Impresion).WithMany().HasForeignKey(ot_imp => ot_imp.TpImpresion_Id).OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Rodillos).WithMany().HasForeignKey(ot_imp => ot_imp.Rodillo_Id).OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Pistas).WithMany().HasForeignKey(ot_imp => ot_imp.Pista_Id).OnDelete(DeleteBehavior.Restrict);
+            /*modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Rodillos).WithMany().HasForeignKey(ot_imp => ot_imp.Rodillo_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Pistas).WithMany().HasForeignKey(ot_imp => ot_imp.Pista_Id).OnDelete(DeleteBehavior.Restrict);*/
             modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tinta1).WithMany().HasForeignKey(ot_imp => ot_imp.Tinta1_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tinta2).WithMany().HasForeignKey(ot_imp => ot_imp.Tinta2_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tinta3).WithMany().HasForeignKey(ot_imp => ot_imp.Tinta3_Id).OnDelete(DeleteBehavior.Restrict);
@@ -271,7 +274,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tinta5).WithMany().HasForeignKey(ot_imp => ot_imp.Tinta5_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tinta6).WithMany().HasForeignKey(ot_imp => ot_imp.Tinta6_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tinta7).WithMany().HasForeignKey(ot_imp => ot_imp.Tinta7_Id).OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tinta7).WithMany().HasForeignKey(ot_imp => ot_imp.Tinta8_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<OT_Impresion>().HasOne(ot_imp => ot_imp.Tinta8).WithMany().HasForeignKey(ot_imp => ot_imp.Tinta8_Id).OnDelete(DeleteBehavior.Restrict);
 
             //OT_Laminado
             modelBuilder.Entity<OT_Laminado>().HasOne(ot_lam => ot_lam.Orden_Trabajo).WithMany().HasForeignKey(ot_lam => ot_lam.OT_Id).OnDelete(DeleteBehavior.Restrict);
@@ -416,13 +419,6 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.Mezcla_Pigmento>? Mezclas_Pigmentos { get; set; }
 
         public DbSet<PlasticaribeAPI.Models.Mezcla> Mezclas { get; set; }
-
-        public DbSet<PlasticaribeAPI.Models.Estados_ProcesosOT> Estados_ProcesosOT { get; set; }
-
-        public DbSet<PlasticaribeAPI.Models.Falla_Tecnica> Fallas_Tecnicas { get; set; }
-
-        public DbSet<PlasticaribeAPI.Models.Tipo_FallaTecnica> Tipos_FallasTecnicas { get; set; }
-
 
     }
 

@@ -50,6 +50,43 @@ namespace PlasticaribeAPI.Controllers
             return tinta;
         }
 
+        [HttpGet("consultaImpresion/{TpImpresion_Nombre}/{Tinta_Nombre1}/{Tinta_Nombre2}/{Tinta_Nombre3}/{Tinta_Nombre4}/{Tinta_Nombre5}/{Tinta_Nombre6}/{Tinta_Nombre7}/{Tinta_Nombre8}")]
+        public ActionResult GetConsultaImpresion(string TpImpresion_Nombre, string Tinta_Nombre1, string Tinta_Nombre2, string Tinta_Nombre3, string Tinta_Nombre4, string Tinta_Nombre5, string Tinta_Nombre6, string Tinta_Nombre7, string Tinta_Nombre8)
+        {
+            var con = from tp in _context.Set<Tipos_Impresion>()
+                      from t1 in _context.Set<Tinta>()
+                      from t2 in _context.Set<Tinta>()
+                      from t3 in _context.Set<Tinta>()
+                      from t4 in _context.Set<Tinta>()
+                      from t5 in _context.Set<Tinta>()
+                      from t6 in _context.Set<Tinta>()
+                      from t7 in _context.Set<Tinta>()
+                      from t8 in _context.Set<Tinta>()
+                      where tp.TpImpresion_Nombre == TpImpresion_Nombre
+                            && t1.Tinta_Nombre == Tinta_Nombre1
+                            && t2.Tinta_Nombre == Tinta_Nombre2
+                            && t3.Tinta_Nombre == Tinta_Nombre3
+                            && t4.Tinta_Nombre == Tinta_Nombre4
+                            && t5.Tinta_Nombre == Tinta_Nombre5
+                            && t6.Tinta_Nombre == Tinta_Nombre6
+                            && t7.Tinta_Nombre == Tinta_Nombre7
+                            && t8.Tinta_Nombre == Tinta_Nombre8
+                      select new
+                      {
+                          tp.TpImpresion_Id,
+                          Tinta_Id1 = t1.Tinta_Id,
+                          Tinta_Id2 = t2.Tinta_Id,
+                          Tinta_Id3 = t3.Tinta_Id,
+                          Tinta_Id4 = t4.Tinta_Id,
+                          Tinta_Id5 = t5.Tinta_Id,
+                          Tinta_Id6 = t6.Tinta_Id,
+                          Tinta_Id7 = t7.Tinta_Id,
+                          Tinta_Id8 = t8.Tinta_Id,
+                      };
+
+            return Ok(con);
+        }
+
         // PUT: api/Tinta/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

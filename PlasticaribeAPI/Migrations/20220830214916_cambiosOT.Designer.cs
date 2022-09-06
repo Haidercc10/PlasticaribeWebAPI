@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220830214916_cambiosOT")]
+    partial class cambiosOT
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -769,86 +771,6 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Estados");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Estados_ProcesosOT", b =>
-                {
-                    b.Property<long>("EstProcOT_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("EstProcOT_Id"), 1L, 1);
-
-                    b.Property<decimal>("EstProcOT_CantidadPedida")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("EstProcOT_CorteKg")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("EstProcOT_DobladoKg")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("EstProcOT_ExtrusionKg")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("EstProcOT_ImpresionKg")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("EstProcOT_LaminadoKg")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("EstProcOT_Observacion")
-                        .IsRequired()
-                        .HasColumnType("varchar(MAX)");
-
-                    b.Property<long>("EstProcOT_OrdenTrabajo")
-                        .HasColumnType("bigint");
-
-                    b.Property<decimal>("EstProcOT_RotograbadoKg")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("EstProcOT_SelladoKg")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("EstProcOT_SelladoUnd")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("EstProcOT_WiketiadoKg")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("EstProcOT_WiketiadoUnd")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("Estado_Id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Falla_Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UndMed_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.HasKey("EstProcOT_Id");
-
-                    b.HasIndex("Estado_Id");
-
-                    b.HasIndex("Falla_Id");
-
-                    b.HasIndex("UndMed_Id");
-
-                    b.ToTable("Estados_ProcesosOT");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Existencia_Productos", b =>
                 {
                     b.Property<long>("ExProd_Id")
@@ -985,32 +907,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("UndMed_Id");
 
                     b.ToTable("FacturasCompras_MateriaPrimas");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Falla_Tecnica", b =>
-                {
-                    b.Property<int>("Falla_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Falla_Id"), 1L, 1);
-
-                    b.Property<string>("Falla_Descripcion")
-                        .IsRequired()
-                        .HasColumnType("varchar(MAX)");
-
-                    b.Property<string>("Falla_Nombre")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int>("TipoFalla_Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("Falla_Id");
-
-                    b.HasIndex("TipoFalla_Id");
-
-                    b.ToTable("Fallas_Tecnicas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.fondoPension", b =>
@@ -2381,27 +2277,6 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Tipos_Estados");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_FallaTecnica", b =>
-                {
-                    b.Property<int>("TipoFalla_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TipoFalla_Id"), 1L, 1);
-
-                    b.Property<string>("TipoFalla_Descripcion")
-                        .IsRequired()
-                        .HasColumnType("varchar(MAX)");
-
-                    b.Property<string>("TipoFalla_Nombre")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.HasKey("TipoFalla_Id");
-
-                    b.ToTable("Tipos_FallasTecnicas");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Moneda", b =>
                 {
                     b.Property<string>("TpMoneda_Id")
@@ -3167,33 +3042,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Estados_ProcesosOT", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Estado", "Estado_OT")
-                        .WithMany()
-                        .HasForeignKey("Estado_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Falla_Tecnica", "FallaTecnica")
-                        .WithMany()
-                        .HasForeignKey("Falla_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "UnidadMedida")
-                        .WithMany()
-                        .HasForeignKey("UndMed_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Estado_OT");
-
-                    b.Navigation("FallaTecnica");
-
-                    b.Navigation("UnidadMedida");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Existencia_Productos", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.Producto", "Prod")
@@ -3288,17 +3136,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("MatPri");
 
                     b.Navigation("UndMed");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Falla_Tecnica", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Tipo_FallaTecnica", "TipoFallaTecnica")
-                        .WithMany()
-                        .HasForeignKey("TipoFalla_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("TipoFallaTecnica");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.fondoPension", b =>
