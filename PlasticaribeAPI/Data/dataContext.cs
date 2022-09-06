@@ -420,6 +420,18 @@ namespace PlasticaribeAPI.Data
 
         public DbSet<PlasticaribeAPI.Models.Mezcla> Mezclas { get; set; }
 
+        public DbSet<PlasticaribeAPI.Models.OT_Extrusion>? OT_Extrusion { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.OT_Impresion> OT_Impresion { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.OT_Laminado> OT_Laminado { get; set; }
+      
+        public DbSet<PlasticaribeAPI.Models.Estados_ProcesosOT> Estados_ProcesosOT { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Falla_Tecnica> Fallas_Tecnicas { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Tipo_FallaTecnica> Tipos_FallasTecnicas { get; set; }
+
     }
 
 }
