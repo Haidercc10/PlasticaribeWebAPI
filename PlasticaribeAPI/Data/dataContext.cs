@@ -301,6 +301,15 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento2C3).WithMany().HasForeignKey(mez => mez.MezPigmto_Id2xCapa3).OnDelete(DeleteBehavior.Restrict);            
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.Usua).WithMany().HasForeignKey(mez => mez.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario 
 
+            //Relaciones EstadosProcesos_OT
+            modelBuilder.Entity<Estados_ProcesosOT>().HasOne(eOT => eOT.UnidadMedida).WithMany().HasForeignKey(eOT => eOT.UndMed_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Estados_ProcesosOT>().HasOne(eOT => eOT.FallaTecnica).WithMany().HasForeignKey(eOT => eOT.Falla_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Estados_ProcesosOT>().HasOne(eOT => eOT.Estado_OT).WithMany().HasForeignKey(eOT => eOT.Estado_Id).OnDelete(DeleteBehavior.Restrict);
+
+            //Relaciones Fallas_Tecnicas
+            modelBuilder.Entity<Falla_Tecnica>().HasOne(eOT => eOT.TipoFallaTecnica).WithMany().HasForeignKey(eOT => eOT.TipoFalla_Id).OnDelete(DeleteBehavior.Restrict);
+
+
 
         }
 
@@ -407,6 +416,13 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.Mezcla_Pigmento>? Mezclas_Pigmentos { get; set; }
 
         public DbSet<PlasticaribeAPI.Models.Mezcla> Mezclas { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Estados_ProcesosOT> Estados_ProcesosOT { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Falla_Tecnica> Fallas_Tecnicas { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Tipo_FallaTecnica> Tipos_FallasTecnicas { get; set; }
+
 
     }
 
