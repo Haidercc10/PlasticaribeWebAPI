@@ -38,6 +38,9 @@ namespace PlasticaribeAPI.Models
 
 
         [Precision(18, 2)]
+        public decimal EstProcOT_EmpaqueKg { get; set; }
+
+        [Precision(18, 2)]
         public decimal EstProcOT_SelladoKg { get; set; }
 
 

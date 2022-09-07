@@ -78,6 +78,67 @@ namespace PlasticaribeAPI.Controllers
             return Ok(ot);
         }
 
+        [HttpGet("consultaPorOtFalla/{EstProcOT_OrdenTrabajo}/{Falla_Id}")]
+        public ActionResult GetPorOtFallas(long EstProcOT_OrdenTrabajo, int Falla_Id)
+        {
+            var ot = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == EstProcOT_OrdenTrabajo && epOT.Falla_Id == Falla_Id).ToList();
+            return Ok(ot);
+        }
+
+        [HttpGet("consultaPorOtFecha/{EstProcOT_OrdenTrabajo}/{EstProcOT_FechaCreacion}")]
+        public ActionResult GetPorOtFecha(long EstProcOT_OrdenTrabajo, DateTime EstProcOT_FechaCreacion)
+        {
+            var ot = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == EstProcOT_OrdenTrabajo && epOT.EstProcOT_FechaCreacion == EstProcOT_FechaCreacion).ToList();
+            return Ok(ot);
+        }
+
+        [HttpGet("consultaPorOtFechas/{EstProcOT_OrdenTrabajo}")]
+        public ActionResult GetPorOtFechas(long EstProcOT_OrdenTrabajo, DateTime EstProcOT_FechaCreacion1, DateTime EstProcOT_FechaCreacion2)
+        {
+            var ot = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == EstProcOT_OrdenTrabajo && epOT.EstProcOT_FechaCreacion >= EstProcOT_FechaCreacion1 && epOT.EstProcOT_FechaCreacion <= EstProcOT_FechaCreacion2).ToList();
+            return Ok(ot);
+        }
+
+        [HttpGet("consultaPorFechasFallas/{Falla_Id}")]
+        public ActionResult GetPorFechasFallas(DateTime EstProcOT_FechaCreacion1, DateTime EstProcOT_FechaCreacion2, int Falla_Id)
+        {
+            var ot = _context.Estados_ProcesosOT.Where(epOT => epOT.Falla_Id == Falla_Id && epOT.EstProcOT_FechaCreacion >= EstProcOT_FechaCreacion1 && epOT.EstProcOT_FechaCreacion <= EstProcOT_FechaCreacion2).ToList();
+            return Ok(ot);
+        }
+
+        [HttpGet("consultaPorOtFechasFallas/{EstProcOT_OrdenTrabajo}/{Falla_Id}")]
+        public ActionResult Get(long EstProcOT_OrdenTrabajo, DateTime EstProcOT_FechaCreacion1, DateTime EstProcOT_FechaCreacion2, int Falla_Id)
+        {
+            var ot = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == EstProcOT_OrdenTrabajo && epOT.EstProcOT_FechaCreacion >= EstProcOT_FechaCreacion1 && epOT.EstProcOT_FechaCreacion <= EstProcOT_FechaCreacion2 && epOT.Falla_Id == Falla_Id).ToList();
+            return Ok(ot);
+        }
+
+        [HttpPut("ActualizacionFallaObservacion/{EstProcOT_OrdenTrabajo}")]
+        public IActionResult Put(long EstProcOT_OrdenTrabajo, Estados_ProcesosOT Estados_ProcesosOT)
+        {
+            try
+            {
+                var Actualizado = _context.Estados_ProcesosOT.Where(x => x.EstProcOT_OrdenTrabajo == EstProcOT_OrdenTrabajo).First<Estados_ProcesosOT>();
+                Actualizado.Falla_Id = Estados_ProcesosOT.Falla_Id;
+                Actualizado.EstProcOT_Observacion = Estados_ProcesosOT.EstProcOT_Observacion;
+
+                _context.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!Estados_ProcesosOTExists(EstProcOT_OrdenTrabajo))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
         // PUT: api/Estados_ProcesosOT/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
