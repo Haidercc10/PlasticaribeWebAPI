@@ -79,7 +79,8 @@ namespace PlasticaribeAPI.Controllers
                     p.TpBod_Id,
                     p.Prod.TiposSellados.TpSellados_Nombre,
                     p.Prod.Prod_CantBolsasPaquete,
-                    p.Prod.Prod_CantBolsasBulto
+                    p.Prod.Prod_CantBolsasBulto,
+                    p.ExProd_CantMinima
 
                 })
                 .ToList();
@@ -229,6 +230,34 @@ namespace PlasticaribeAPI.Controllers
                 }
             }
 
+            return NoContent();
+        }
+
+        [HttpPut("ActualizacionCantMinima/{Prod_Id}")]
+        public IActionResult PutCantMinima(int Prod_Id, Existencia_Productos existencia_Productos)
+        {
+            if (Prod_Id != existencia_Productos.Prod_Id)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var Actualizado = _context.Existencias_Productos.Where(x => x.Prod_Id == Prod_Id).First<Existencia_Productos>();
+                Actualizado.ExProd_CantMinima = existencia_Productos.ExProd_CantMinima;
+                _context.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!Existencia_ProductosExists(Prod_Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
             return NoContent();
         }
 

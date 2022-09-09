@@ -51,5 +51,8 @@ namespace PlasticaribeAPI.Models
         [Precision(18,2)]
         public decimal? ExProd_PrecioVenta { get; set; } /** PrecioVenta Tabla Articulo */
 
+        [Precision(18,2)]
+        public decimal ExProd_CantMinima { get; set; }
+
     }
 }

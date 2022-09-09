@@ -40,6 +40,9 @@ namespace PlasticaribeAPI.Models
         public int TpBod_Id { get; set; } //Llave foranea Tipo_Bodega
         public Tipo_Bodega? TpBod { get; set; } //Propiedad de Navegación Tipos_Bodegas
 
+        [Precision(18,2)]
+        public decimal Tinta_InvInicial { get; set; }
+
         public IList<Tinta_MateriaPrima>? TintaMatPri { get; set; }
 
         //Lista requerida para relación detalles asignacion_matpri - tintas
