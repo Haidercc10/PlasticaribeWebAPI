@@ -50,6 +50,15 @@ namespace PlasticaribeAPI.Controllers
             return asignacion_MatPrimaXTinta;
         }
 
+
+        [HttpGet("ultimoId/")]
+        public ActionResult<Asignacion_MatPrimaXTinta> GetUltimoId()
+        {
+            var asignacion = _context.Asignaciones_MatPrimasXTintas.OrderBy(asg => asg.AsigMPxTinta_Id).Last();
+
+            return Ok(asignacion);
+        }
+
         // PUT: api/Asignacion_MatPrimaXTinta/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

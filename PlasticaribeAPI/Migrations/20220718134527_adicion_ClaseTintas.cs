@@ -12,8 +12,7 @@ namespace PlasticaribeAPI.Migrations
                 name: "Tintas",
                 columns: table => new
                 {
-                    Tinta_Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Tinta_Id = table.Column<long>(type: "bigint", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
                     Tinta_Nombre = table.Column<string>(type: "varchar(MAX)", nullable: false),
                     Tinta_Descripcion = table.Column<string>(type: "varchar(MAX)", nullable: true),
                     Tinta_CodigoHexadecimal = table.Column<string>(type: "varchar(50)", nullable: true),

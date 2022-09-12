@@ -50,6 +50,14 @@ namespace PlasticaribeAPI.Controllers
             return devolucion_MatPrima;
         }
 
+        [HttpGet("ultimoId/")]
+        public ActionResult<Devolucion_MatPrima> GetUltimoId()
+        {
+            var asignacion = _context.Devoluciones_MatPrima.OrderBy(asg => asg.DevMatPri_Id).Last();
+
+            return Ok(asignacion);
+        }
+
         [HttpGet("fecha/{DevMatPri_Fecha}")]
         public ActionResult<Devolucion_MatPrima> Getfecha(DateTime DevMatPri_Fecha)
         {

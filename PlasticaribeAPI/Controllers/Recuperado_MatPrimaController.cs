@@ -50,6 +50,14 @@ namespace PlasticaribeAPI.Controllers
             return recuperado_MatPrima;
         }
 
+        [HttpGet("ultimoId/")]
+        public ActionResult<Recuperado_MatPrima> GetUltimoId()
+        {
+            var asignacion = _context.Recuperados_MatPrima.OrderBy(asg => asg.RecMp_Id).Last();
+
+            return Ok(asignacion);
+        }
+
         [HttpGet("fecha/{RecMp_FechaIngreso}")]
         public ActionResult<Recuperado_MatPrima> Getfecha(DateTime RecMp_FechaIngreso)
         {
