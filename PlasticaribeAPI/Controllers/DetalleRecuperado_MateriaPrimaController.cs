@@ -100,6 +100,88 @@ namespace PlasticaribeAPI.Controllers
 
         }
 
+        [HttpGet("consultaMovimientos0/{FechaInicial}")]
+        public ActionResult Get (DateTime FechaInicial)
+        {
+            var con = _context.DetallesRecuperados_MateriasPrimas
+                .Where(rec => rec.RecMp.RecMp_FechaIngreso == FechaInicial)
+                .Include(rec => rec.RecMp)
+                .Select(rec => new
+                {
+                    rec.RecMp_Id,
+                    rec.RecMp.RecMp_FechaIngreso,
+                    rec.RecMp.Usua_Id,
+                    rec.RecMp.Usua.Usua_Nombre,
+                    rec.MatPri_Id,
+                    rec.MatPri.MatPri_Nombre,
+                    rec.RecMatPri_Cantidad
+                })
+                .ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimiento1/{MatPri}/{fecha}")]
+        public ActionResult Get(int MatPri, DateTime Fecha)
+        {
+            var con = _context.DetallesRecuperados_MateriasPrimas
+                .Where(rec => rec.RecMp.RecMp_FechaIngreso == Fecha
+                       && rec.MatPri_Id == MatPri)
+                .Include(rec => rec.RecMp)
+                .Select(rec => new
+                {
+                    rec.RecMp_Id,
+                    rec.RecMp.RecMp_FechaIngreso,
+                    rec.RecMp.Usua_Id,
+                    rec.RecMp.Usua.Usua_Nombre,
+                    rec.MatPri_Id,
+                    rec.MatPri.MatPri_Nombre,
+                    rec.RecMatPri_Cantidad
+                })
+                .ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos2/{ot}")]
+        public ActionResult GetOT(int ot)
+        {
+            var con = _context.DetallesRecuperados_MateriasPrimas
+                .Where(rec => rec.RecMp_Id == ot)
+                .Include(rec => rec.RecMp)
+                .Select(rec => new
+                {
+                    rec.RecMp_Id,
+                    rec.RecMp.RecMp_FechaIngreso,
+                    rec.RecMp.Usua_Id,
+                    rec.RecMp.Usua.Usua_Nombre,
+                    rec.MatPri_Id,
+                    rec.MatPri.MatPri_Nombre,
+                    rec.RecMatPri_Cantidad
+                })
+                .ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos3/{FechaInicial}/{FechaFinal}")]
+        public ActionResult Get(DateTime FechaInicial, DateTime FechaFinal)
+        {
+            var con = _context.DetallesRecuperados_MateriasPrimas
+                .Where(rec => rec.RecMp.RecMp_FechaIngreso >= FechaInicial
+                       && rec.RecMp.RecMp_FechaIngreso <= FechaFinal)
+                .Include(rec => rec.RecMp)
+                .Select(rec => new
+                {
+                    rec.RecMp_Id,
+                    rec.RecMp.RecMp_FechaIngreso,
+                    rec.RecMp.Usua_Id,
+                    rec.RecMp.Usua.Usua_Nombre,
+                    rec.MatPri_Id,
+                    rec.MatPri.MatPri_Nombre,
+                    rec.RecMatPri_Cantidad
+                })
+                .ToList();
+            return Ok(con);
+        }
+
         // PUT: api/DetalleRecuperado_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

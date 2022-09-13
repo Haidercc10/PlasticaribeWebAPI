@@ -91,9 +91,111 @@ namespace PlasticaribeAPI.Controllers
             return Ok(detalleDevolucion_MateriaPrima);
         }
 
-        // PUT: api/DetalleDevolucion_MateriaPrima/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpGet("consultaMovimientos0/{FechaInicial}")]
+        public ActionResult Get(DateTime FechaInicial)
+        {
+            var con = _context.DetallesDevoluciones_MateriasPrimas
+                .Where(devMp => devMp.DevMatPri.DevMatPri_Fecha >= FechaInicial)
+                .Include(devMp => devMp.DevMatPri)
+                .Select(devMp => new
+                {
+                    devMp.DevMatPri.DevMatPri_OrdenTrabajo,
+                    devMp.DevMatPri.DevMatPri_Fecha,
+                    devMp.DevMatPri.Usua_Id,
+                    devMp.DevMatPri.Usua.Usua_Nombre,
+                    devMp.MatPri_Id,
+                    devMp.MatPri.MatPri_Nombre,
+                    devMp.DtDevMatPri_CantidadDevuelta
+                })
+                .ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos1/{MatPri}/{FechaInicial}")]
+        public ActionResult GetMatPri(int MatPri, DateTime FechaInicial)
+        {
+            var con = _context.DetallesDevoluciones_MateriasPrimas
+                .Where(devMp => devMp.MatPri_Id == MatPri
+                       && devMp.DevMatPri.DevMatPri_Fecha == FechaInicial)
+                .Include(devMp => devMp.DevMatPri)
+                .Select(devMp => new
+                {
+                    devMp.DevMatPri.DevMatPri_OrdenTrabajo,
+                    devMp.DevMatPri.DevMatPri_Fecha,
+                    devMp.DevMatPri.Usua_Id,
+                    devMp.DevMatPri.Usua.Usua_Nombre,
+                    devMp.MatPri_Id,
+                    devMp.MatPri.MatPri_Nombre,
+                    devMp.DtDevMatPri_CantidadDevuelta
+                }).ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos2/{ot}")]
+        public ActionResult GetOT(long ot)
+        {
+            var con = _context.DetallesDevoluciones_MateriasPrimas
+                .Where(devMp => devMp.DevMatPri.DevMatPri_OrdenTrabajo == ot)
+                .Include(devMp => devMp.DevMatPri)
+                .Select(devMp => new
+                {
+                    devMp.DevMatPri.DevMatPri_OrdenTrabajo,
+                    devMp.DevMatPri.DevMatPri_Fecha,
+                    devMp.DevMatPri.Usua_Id,
+                    devMp.DevMatPri.Usua.Usua_Nombre,
+                    devMp.MatPri_Id,
+                    devMp.MatPri.MatPri_Nombre,
+                    devMp.DtDevMatPri_CantidadDevuelta
+                }).ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos3/{FechaInicial}/{FechaFinal}")]
+        public ActionResult Get(DateTime FechaInicial, DateTime FechaFinal)
+        {
+            var con = _context.DetallesDevoluciones_MateriasPrimas
+                .Where(devMp => devMp.DevMatPri.DevMatPri_Fecha >= FechaInicial
+                       && devMp.DevMatPri.DevMatPri_Fecha <= FechaFinal)
+                .Include(devMp => devMp.DevMatPri)
+                .Select(devMp => new
+                {
+                    devMp.DevMatPri.DevMatPri_OrdenTrabajo,
+                    devMp.DevMatPri.DevMatPri_Fecha,
+                    devMp.DevMatPri.Usua_Id,
+                    devMp.DevMatPri.Usua.Usua_Nombre,
+                    devMp.MatPri_Id,
+                    devMp.MatPri.MatPri_Nombre,
+                    devMp.DtDevMatPri_CantidadDevuelta
+                }).ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos10/{Ot}/{FechaInicial}/{FechaFinal}/{MatPri}")]
+        public ActionResult Get(long Ot, DateTime FechaInicial, DateTime FechaFinal, int MatPri)
+        {
+            var con = _context.DetallesDevoluciones_MateriasPrimas
+                .Where(devMp => devMp.DevMatPri.DevMatPri_OrdenTrabajo == Ot
+                       && devMp.DevMatPri.DevMatPri_Fecha >= FechaInicial
+                       && devMp.DevMatPri.DevMatPri_Fecha <= FechaFinal
+                       && devMp.MatPri_Id == MatPri)
+                .Include(devMp => devMp.DevMatPri)
+                .Select(devMp => new
+                {
+                    devMp.DevMatPri.DevMatPri_OrdenTrabajo,
+                    devMp.DevMatPri.DevMatPri_Fecha,
+                    devMp.DevMatPri.Usua_Id,
+                    devMp.DevMatPri.Usua.Usua_Nombre,
+                    devMp.MatPri_Id,
+                    devMp.MatPri.MatPri_Nombre,
+                    devMp.DtDevMatPri_CantidadDevuelta
+                })
+                .ToList();
+            return Ok(con);
+        }
+
+            // PUT: api/DetalleDevolucion_MateriaPrima/5
+            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+            [HttpPut("{id}")]
         public async Task<IActionResult> PutDetalleDevolucion_MateriaPrima(long id, DetalleDevolucion_MateriaPrima detalleDevolucion_MateriaPrima)
         {
             if (id != detalleDevolucion_MateriaPrima.DevMatPri_Id)

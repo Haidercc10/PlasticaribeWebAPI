@@ -78,6 +78,92 @@ namespace PlasticaribeAPI.Controllers
             return Ok(factCompra);
         }
 
+        [HttpGet("consultaMovimiento0/{fecha}")]
+        public ActionResult Get (DateTime Fecha)
+        {
+            var con = _context.FacturasCompras_MateriaPrimas
+                .Where(fac => fac.Facco.Facco_FechaFactura == Fecha)
+                .Include(fac => fac.Facco)
+                .Select(fac => new
+                {
+                    fac.Facco.Facco_Id,
+                    fac.Facco.Facco_Codigo,
+                    fac.Facco.Facco_FechaFactura,
+                    fac.Facco.Usua_Id,
+                    fac.Facco.Usua.Usua_Nombre,
+                    fac.MatPri_Id,
+                    fac.MatPri.MatPri_Nombre,
+                    fac.FaccoMatPri_Cantidad
+                })
+                .ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimiento1/{MatPri}/{fecha}")]
+        public ActionResult Get(int MatPri, DateTime Fecha)
+        {
+            var con = _context.FacturasCompras_MateriaPrimas
+                .Where(fac => fac.Facco.Facco_FechaFactura == Fecha
+                       && fac.MatPri_Id == MatPri)
+                .Include(fac => fac.Facco)
+                .Select(fac => new
+                {
+                    fac.Facco.Facco_Id,
+                    fac.Facco.Facco_Codigo,
+                    fac.Facco.Facco_FechaFactura,
+                    fac.Facco.Usua_Id,
+                    fac.Facco.Usua.Usua_Nombre,
+                    fac.MatPri_Id,
+                    fac.MatPri.MatPri_Nombre,
+                    fac.FaccoMatPri_Cantidad
+                })
+                .ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos2/{ot}")]
+        public ActionResult GetOT(string ot)
+        {
+            var con = _context.FacturasCompras_MateriaPrimas
+                .Where(fac => fac.Facco.Facco_Codigo == ot)
+                .Include(fac => fac.Facco)
+                .Select(fac => new
+                {
+                    fac.Facco.Facco_Id,
+                    fac.Facco.Facco_Codigo,
+                    fac.Facco.Facco_FechaFactura,
+                    fac.Facco.Usua_Id,
+                    fac.Facco.Usua.Usua_Nombre,
+                    fac.MatPri_Id,
+                    fac.MatPri.MatPri_Nombre,
+                    fac.FaccoMatPri_Cantidad
+                })
+                .ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos3/{FechaInicial}/{FechaFinal}")]
+        public ActionResult Get(DateTime FechaInicial, DateTime FechaFinal)
+        {
+            var con = _context.FacturasCompras_MateriaPrimas
+                .Where(fac => fac.Facco.Facco_FechaFactura >= FechaInicial
+                       && fac.Facco.Facco_FechaFactura <= FechaFinal)
+                .Include(fac => fac.Facco)
+                .Select(fac => new
+                {
+                    fac.Facco.Facco_Id,
+                    fac.Facco.Facco_Codigo,
+                    fac.Facco.Facco_FechaFactura,
+                    fac.Facco.Usua_Id,
+                    fac.Facco.Usua.Usua_Nombre,
+                    fac.MatPri_Id,
+                    fac.MatPri.MatPri_Nombre,
+                    fac.FaccoMatPri_Cantidad
+                })
+                .ToList();
+            return Ok(con);
+        }
+
         // PUT: api/FacturaCompra_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

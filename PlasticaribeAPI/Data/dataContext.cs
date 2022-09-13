@@ -196,7 +196,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Tinta>().HasOne(tin => tin.UndMed).WithMany().HasForeignKey(tint => tint.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<Tinta>().HasOne(tin => tin.CatMP).WithMany().HasForeignKey(tint => tint.CatMP_Id).OnDelete(DeleteBehavior.Restrict); //foranea categorias matprima
             modelBuilder.Entity<Tinta>().HasOne(tin => tin.TpBod).WithMany().HasForeignKey(tint => tint.TpBod_Id).OnDelete(DeleteBehavior.Restrict); //foranea Tipo de bodega
-            //modelBuilder.Entity<Tinta>().Property(prop => prop.Tinta_Id).UseIdentityColumn(2000, 2000);
+            //modelBuilder.Entity<Tinta>().Property(prop => prop.Tinta_Id).UseIdentityColumn(2000, 1);
 
 
             //Relaciones Tintas_MateriasPrimas
