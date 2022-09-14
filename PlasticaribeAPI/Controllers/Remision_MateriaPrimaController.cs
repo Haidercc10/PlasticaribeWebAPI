@@ -165,6 +165,74 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("consultaMovimientos4/{FechaInicial}/{MatPri}")]
+        public ActionResult Get(DateTime FechaInicial, int MatPri)
+        {
+            var con = _context.Remisiones_MateriasPrimas
+                .Where(rem => rem.Rem.Rem_Fecha == FechaInicial
+                       && rem.MatPri_Id == MatPri)
+                .Include(rem => rem.Rem)
+                .Select(rem => new
+                {
+                    rem.Rem_Id,
+                    rem.Rem.Rem_Codigo,
+                    rem.Rem.Rem_Fecha,
+                    rem.Rem.Usua_Id,
+                    rem.Rem.Usua.Usua_Nombre,
+                    rem.MatPri_Id,
+                    rem.MatPri.MatPri_Nombre,
+                    rem.RemiMatPri_Cantidad
+                })
+                .ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos5/{Ot}/{FechaInicial}/{FechaFinal}")]
+        public ActionResult Get(string Ot, DateTime FechaInicial, DateTime FechaFinal)
+        {
+            var con = _context.Remisiones_MateriasPrimas
+                .Where(rem => rem.Rem.Rem_Codigo == Ot
+                       && rem.Rem.Rem_Fecha >= FechaInicial
+                       && rem.Rem.Rem_Fecha <= FechaFinal)
+                .Include(rem => rem.Rem)
+                .Select(rem => new
+                {
+                    rem.Rem_Id,
+                    rem.Rem.Rem_Codigo,
+                    rem.Rem.Rem_Fecha,
+                    rem.Rem.Usua_Id,
+                    rem.Rem.Usua.Usua_Nombre,
+                    rem.MatPri_Id,
+                    rem.MatPri.MatPri_Nombre,
+                    rem.RemiMatPri_Cantidad
+                })
+                .ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos6/{FechaInicial}/{FechaFinal}/{MatPri}")]
+        public ActionResult Get8(DateTime FechaInicial, DateTime FechaFinal, int MatPri)
+        {
+            var con = _context.Remisiones_MateriasPrimas
+                .Where(rem => rem.Rem.Rem_Fecha >= FechaInicial
+                       && rem.Rem.Rem_Fecha <= FechaFinal
+                       && rem.MatPri_Id == MatPri)
+                .Include(rem => rem.Rem)
+                .Select(rem => new
+                {
+                    rem.Rem_Id,
+                    rem.Rem.Rem_Codigo,
+                    rem.Rem.Rem_Fecha,
+                    rem.Rem.Usua_Id,
+                    rem.Rem.Usua.Usua_Nombre,
+                    rem.MatPri_Id,
+                    rem.MatPri.MatPri_Nombre,
+                    rem.RemiMatPri_Cantidad
+                })
+                .ToList();
+            return Ok(con);
+        }
+
         // PUT: api/Remision_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

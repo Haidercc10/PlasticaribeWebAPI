@@ -164,6 +164,74 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("consultaMovimientos4/{FechaInicial}/{MatPri}")]
+        public ActionResult Get(DateTime FechaInicial, int MatPri)
+        {
+            var con = _context.FacturasCompras_MateriaPrimas
+                .Where(fac => fac.Facco.Facco_FechaFactura == FechaInicial
+                       && fac.MatPri_Id == MatPri)
+                .Include(fac => fac.Facco)
+                .Select(fac => new
+                {
+                    fac.Facco.Facco_Id,
+                    fac.Facco.Facco_Codigo,
+                    fac.Facco.Facco_FechaFactura,
+                    fac.Facco.Usua_Id,
+                    fac.Facco.Usua.Usua_Nombre,
+                    fac.MatPri_Id,
+                    fac.MatPri.MatPri_Nombre,
+                    fac.FaccoMatPri_Cantidad
+                })
+                .ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos5/{Ot}/{FechaInicial}/{FechaFinal}")]
+        public ActionResult Get(string Ot, DateTime FechaInicial, DateTime FechaFinal)
+        {
+            var con = _context.FacturasCompras_MateriaPrimas
+                .Where(fac => fac.Facco.Facco_Codigo == Ot
+                       && fac.Facco.Facco_FechaFactura >= FechaInicial
+                       && fac.Facco.Facco_FechaFactura <= FechaFinal)
+                .Include(fac => fac.Facco)
+                .Select(fac => new
+                {
+                    fac.Facco.Facco_Id,
+                    fac.Facco.Facco_Codigo,
+                    fac.Facco.Facco_FechaFactura,
+                    fac.Facco.Usua_Id,
+                    fac.Facco.Usua.Usua_Nombre,
+                    fac.MatPri_Id,
+                    fac.MatPri.MatPri_Nombre,
+                    fac.FaccoMatPri_Cantidad
+                })
+                .ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos6/{FechaInicial}/{FechaFinal}/{MatPri}")]
+        public ActionResult Get8(DateTime FechaInicial, DateTime FechaFinal, int MatPri)
+        {
+            var con = _context.FacturasCompras_MateriaPrimas
+                .Where(fac => fac.Facco.Facco_FechaFactura >= FechaInicial
+                       && fac.Facco.Facco_FechaFactura <= FechaFinal
+                       && fac.MatPri_Id == MatPri)
+                .Include(fac => fac.Facco)
+                .Select(fac => new
+                {
+                    fac.Facco.Facco_Id,
+                    fac.Facco.Facco_Codigo,
+                    fac.Facco.Facco_FechaFactura,
+                    fac.Facco.Usua_Id,
+                    fac.Facco.Usua.Usua_Nombre,
+                    fac.MatPri_Id,
+                    fac.MatPri.MatPri_Nombre,
+                    fac.FaccoMatPri_Cantidad
+                })
+                .ToList();
+            return Ok(con);
+        }
+
         // PUT: api/FacturaCompra_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

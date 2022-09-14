@@ -361,6 +361,125 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("consultaMovimientos5/{FechaInicial}/{MatPri}")]
+        public ActionResult Get(DateTime FechaInicial, int MatPri)
+        {
+            var con = _context.DetallesAsignaciones_MateriasPrimas
+                .Where(dtAsg => dtAsg.AsigMp.AsigMp_FechaEntrega == FechaInicial
+                       && dtAsg.MatPri_Id == MatPri)
+                .Include(dtAsg => dtAsg.AsigMp)
+                .Select(dtAsg => new
+                {
+                    dtAsg.AsigMp_Id,
+                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
+                    dtAsg.AsigMp.AsigMp_FechaEntrega,
+                    dtAsg.AsigMp.Usua.Usua_Nombre,
+                    dtAsg.AsigMp.Usua_Id,
+                    dtAsg.MatPri.MatPri_Nombre,
+                    dtAsg.MatPri_Id,
+                    dtAsg.DtAsigMp_Cantidad,
+                    dtAsg.AsigMp.Estado_OrdenTrabajo,
+                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
+                }).ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos6/{Ot}/{FechaInicial}/{FechaFinal}")]
+        public ActionResult Get(long Ot, DateTime FechaInicial, DateTime FechaFinal)
+        {
+            var con = _context.DetallesAsignaciones_MateriasPrimas
+                .Where(dtAsg => dtAsg.AsigMp.AsigMP_OrdenTrabajo == Ot
+                       && dtAsg.AsigMp.AsigMp_FechaEntrega >= FechaInicial
+                       && dtAsg.AsigMp.AsigMp_FechaEntrega <= FechaFinal)
+                .Include(dtAsg => dtAsg.AsigMp)
+                .Select(dtAsg => new
+                {
+                    dtAsg.AsigMp_Id,
+                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
+                    dtAsg.AsigMp.AsigMp_FechaEntrega,
+                    dtAsg.AsigMp.Usua.Usua_Nombre,
+                    dtAsg.AsigMp.Usua_Id,
+                    dtAsg.MatPri.MatPri_Nombre,
+                    dtAsg.MatPri_Id,
+                    dtAsg.DtAsigMp_Cantidad,
+                    dtAsg.AsigMp.Estado_OrdenTrabajo,
+                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
+                }).ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos7/{FechaInicial}/{FechaFinal}/{estado}")]
+        public ActionResult Get(DateTime FechaInicial, DateTime FechaFinal, int estado)
+        {
+            var con = _context.DetallesAsignaciones_MateriasPrimas
+                .Where(dtAsg => dtAsg.AsigMp.AsigMp_FechaEntrega >= FechaInicial
+                       && dtAsg.AsigMp.AsigMp_FechaEntrega <= FechaFinal
+                       && dtAsg.AsigMp.Estado_OrdenTrabajo == estado)
+                .Include(dtAsg => dtAsg.AsigMp)
+                .Select(dtAsg => new
+                {
+                    dtAsg.AsigMp_Id,
+                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
+                    dtAsg.AsigMp.AsigMp_FechaEntrega,
+                    dtAsg.AsigMp.Usua.Usua_Nombre,
+                    dtAsg.AsigMp.Usua_Id,
+                    dtAsg.MatPri.MatPri_Nombre,
+                    dtAsg.MatPri_Id,
+                    dtAsg.DtAsigMp_Cantidad,
+                    dtAsg.AsigMp.Estado_OrdenTrabajo,
+                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
+                }).ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos8/{FechaInicial}/{FechaFinal}/{MatPri}")]
+        public ActionResult Get8(DateTime FechaInicial, DateTime FechaFinal, int MatPri)
+        {
+            var con = _context.DetallesAsignaciones_MateriasPrimas
+                .Where(dtAsg => dtAsg.AsigMp.AsigMp_FechaEntrega >= FechaInicial
+                       && dtAsg.AsigMp.AsigMp_FechaEntrega <= FechaFinal
+                       && dtAsg.MatPri_Id == MatPri)
+                .Include(dtAsg => dtAsg.AsigMp)
+                .Select(dtAsg => new
+                {
+                    dtAsg.AsigMp_Id,
+                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
+                    dtAsg.AsigMp.AsigMp_FechaEntrega,
+                    dtAsg.AsigMp.Usua.Usua_Nombre,
+                    dtAsg.AsigMp.Usua_Id,
+                    dtAsg.MatPri.MatPri_Nombre,
+                    dtAsg.MatPri_Id,
+                    dtAsg.DtAsigMp_Cantidad,
+                    dtAsg.AsigMp.Estado_OrdenTrabajo,
+                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
+                }).ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos9/{FechaInicial}/{FechaFinal}/{MatPri}/{estado}")]
+        public ActionResult Get(DateTime FechaInicial, DateTime FechaFinal, int MatPri, int estado)
+        {
+            var con = _context.DetallesAsignaciones_MateriasPrimas
+                .Where(dtAsg => dtAsg.AsigMp.AsigMp_FechaEntrega >= FechaInicial
+                       && dtAsg.AsigMp.AsigMp_FechaEntrega <= FechaFinal
+                       && dtAsg.MatPri_Id == MatPri
+                       && dtAsg.AsigMp.Estado_OrdenTrabajo == estado)
+                .Include(dtAsg => dtAsg.AsigMp)
+                .Select(dtAsg => new
+                {
+                    dtAsg.AsigMp_Id,
+                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
+                    dtAsg.AsigMp.AsigMp_FechaEntrega,
+                    dtAsg.AsigMp.Usua.Usua_Nombre,
+                    dtAsg.AsigMp.Usua_Id,
+                    dtAsg.MatPri.MatPri_Nombre,
+                    dtAsg.MatPri_Id,
+                    dtAsg.DtAsigMp_Cantidad,
+                    dtAsg.AsigMp.Estado_OrdenTrabajo,
+                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
+                }).ToList();
+            return Ok(con);
+        }
 
         [HttpGet("consultaMovimientos20/{Ot}/{FechaInicial}/{FechaFinal}/{MatPri}/{estado}")]
         public ActionResult Get (long Ot, DateTime FechaInicial, DateTime FechaFinal, int MatPri, int estado)
