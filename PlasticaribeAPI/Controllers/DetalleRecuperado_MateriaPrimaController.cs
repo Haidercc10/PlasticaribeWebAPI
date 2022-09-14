@@ -246,6 +246,30 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("pdfMovimientos/{id}")]
+        public ActionResult Get(int id)
+        {
+            var con = _context.DetallesRecuperados_MateriasPrimas
+                .Where(rec => rec.RecMp_Id == id)
+                .Include(rec => rec.RecMp)
+                .Select(rec => new
+                {
+                    rec.RecMp.RecMp_Id,
+                    rec.RecMp.RecMp_FechaIngreso,
+                    rec.RecMp.RecMp_Observacion,
+                    rec.RecMp.Usua_Id,
+                    rec.RecMp.Usua.Usua_Nombre,
+                    rec.MatPri_Id,
+                    rec.MatPri.MatPri_Nombre,
+                    rec.UndMed_Id,
+                    rec.RecMatPri_Cantidad,
+                    rec.RecMp.Proc_Id,
+                    rec.RecMp.Proceso.Proceso_Nombre
+                })
+                .ToList();
+            return Ok(con);
+        }
+
         // PUT: api/DetalleRecuperado_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

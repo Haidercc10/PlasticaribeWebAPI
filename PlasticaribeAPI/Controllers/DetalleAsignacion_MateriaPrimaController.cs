@@ -507,28 +507,29 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
-        [HttpGet("consultaMovimientos30/{Ot}/{FechaInicial}/{FechaFinal}/{MatPri}")]
-        public ActionResult Get(long Ot, DateTime FechaInicial, DateTime FechaFinal, int MatPri)
+        [HttpGet("pdfMovimientos/{Ot}")]
+        public ActionResult Get(long Ot)
         {
             var con = _context.DetallesAsignaciones_MateriasPrimas
-                .Where(dtAsg => dtAsg.AsigMp.AsigMP_OrdenTrabajo == Ot
-                       && dtAsg.AsigMp.AsigMp_FechaEntrega >= FechaInicial
-                       && dtAsg.AsigMp.AsigMp_FechaEntrega <= FechaFinal
-                       && dtAsg.MatPri_Id == MatPri)
+                .Where(dtAsg => dtAsg.AsigMp.AsigMP_OrdenTrabajo == Ot)
                 .Include(dtAsg => dtAsg.AsigMp)
                 .Select(dtAsg => new
                 {
-                    dtAsg.AsigMp_Id,
-                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
+                    dtAsg.AsigMp.AsigMp_Id,
                     dtAsg.AsigMp.AsigMp_FechaEntrega,
-                    dtAsg.AsigMp.Usua.Usua_Nombre,
+                    dtAsg.AsigMp.AsigMp_Observacion,
+                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
+                    dtAsg.AsigMp.AsigMp_Maquina,
                     dtAsg.AsigMp.Usua_Id,
-                    dtAsg.MatPri.MatPri_Nombre,
+                    dtAsg.AsigMp.Usua.Usua_Nombre,
                     dtAsg.MatPri_Id,
+                    dtAsg.MatPri.MatPri_Nombre,
+                    dtAsg.UndMed_Id,
                     dtAsg.DtAsigMp_Cantidad,
-                    dtAsg.AsigMp.Estado_OrdenTrabajo,
-                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
-                }).ToList();
+                    dtAsg.Proceso_Id,
+                    dtAsg.Proceso.Proceso_Nombre
+                })
+                .ToList();
             return Ok(con);
         }
 

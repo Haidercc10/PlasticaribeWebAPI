@@ -232,6 +232,37 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("pdfMovimientos/{codigo}")]
+        public ActionResult Get (string codigo)
+        {
+            var con = _context.FacturasCompras_MateriaPrimas
+                .Where(fac => fac.Facco.Facco_Codigo == codigo)
+                .Include(fac => fac.Facco)
+                .Select(fac => new
+                {
+                    fac.Facco.Facco_Id,
+                    fac.Facco.Facco_FechaFactura,
+                    fac.Facco.Facco_Observacion,
+                    fac.Facco.Facco_ValorTotal,
+                    fac.Facco.Prov_Id,
+                    fac.Facco.Prov.TipoIdentificacion_Id,
+                    fac.Facco.Prov.Prov_Nombre,
+                    fac.Facco.Prov.TpProv.TpProv_Nombre,
+                    fac.Facco.Prov.Prov_Telefono,
+                    fac.Facco.Prov.Prov_Email,
+                    fac.Facco.Prov.Prov_Ciudad,
+                    fac.Facco.Usua_Id,
+                    fac.Facco.Usua.Usua_Nombre,
+                    fac.MatPri_Id,
+                    fac.MatPri.MatPri_Nombre,
+                    fac.UndMed_Id,
+                    fac.FaccoMatPri_Cantidad,
+                    fac.FaccoMatPri_ValorUnitario
+                })
+                .ToList();
+            return Ok(con);
+        }
+
         // PUT: api/FacturaCompra_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

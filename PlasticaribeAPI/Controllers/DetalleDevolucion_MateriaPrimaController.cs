@@ -232,32 +232,32 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
-        [HttpGet("consultaMovimientos10/{Ot}/{FechaInicial}/{FechaFinal}/{MatPri}")]
-        public ActionResult Get(long Ot, DateTime FechaInicial, DateTime FechaFinal, int MatPri)
+        [HttpGet("pdfMovimientos/{ot}")]
+        public ActionResult Get(long ot)
         {
             var con = _context.DetallesDevoluciones_MateriasPrimas
-                .Where(devMp => devMp.DevMatPri.DevMatPri_OrdenTrabajo == Ot
-                       && devMp.DevMatPri.DevMatPri_Fecha >= FechaInicial
-                       && devMp.DevMatPri.DevMatPri_Fecha <= FechaFinal
-                       && devMp.MatPri_Id == MatPri)
+                .Where(devMp => devMp.DevMatPri.DevMatPri_OrdenTrabajo == ot)
                 .Include(devMp => devMp.DevMatPri)
                 .Select(devMp => new
                 {
+                    devMp.DevMatPri.DevMatPri_Id,
                     devMp.DevMatPri.DevMatPri_OrdenTrabajo,
                     devMp.DevMatPri.DevMatPri_Fecha,
+                    devMp.DevMatPri.DevMatPri_Motivo,
                     devMp.DevMatPri.Usua_Id,
                     devMp.DevMatPri.Usua.Usua_Nombre,
                     devMp.MatPri_Id,
                     devMp.MatPri.MatPri_Nombre,
+                    devMp.UndMed_Id,
                     devMp.DtDevMatPri_CantidadDevuelta
                 })
                 .ToList();
             return Ok(con);
         }
 
-            // PUT: api/DetalleDevolucion_MateriaPrima/5
-            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-            [HttpPut("{id}")]
+        // PUT: api/DetalleDevolucion_MateriaPrima/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutDetalleDevolucion_MateriaPrima(long id, DetalleDevolucion_MateriaPrima detalleDevolucion_MateriaPrima)
         {
             if (id != detalleDevolucion_MateriaPrima.DevMatPri_Id)
