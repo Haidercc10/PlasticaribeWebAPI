@@ -481,7 +481,7 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
-        [HttpGet("consultaMovimientos20/{Ot}/{FechaInicial}/{FechaFinal}/{MatPri}/{estado}")]
+        [HttpGet("consultaMovimientos10/{Ot}/{FechaInicial}/{FechaFinal}/{MatPri}/{estado}")]
         public ActionResult Get (long Ot, DateTime FechaInicial, DateTime FechaFinal, int MatPri, int estado)
         {
             var con = _context.DetallesAsignaciones_MateriasPrimas
