@@ -230,6 +230,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<BOPP>().HasOne(datB => datB.CatMP).WithMany().HasForeignKey(dat => dat.CatMP_Id).OnDelete(DeleteBehavior.Restrict); //Foranea Categorias
             modelBuilder.Entity<BOPP>().HasOne(datB => datB.TpBod).WithMany().HasForeignKey(dat => dat.TpBod_Id).OnDelete(DeleteBehavior.Restrict); //Foranea Tipos de bodega
             modelBuilder.Entity<BOPP>().HasOne(datB => datB.UndMed2).WithMany().HasForeignKey(dat => dat.UndMed_Kg).OnDelete(DeleteBehavior.Restrict); //Foranea Unidad Medida
+            modelBuilder.Entity<BOPP>().HasOne(datB => datB.Usua).WithMany().HasForeignKey(dat => dat.Usua_Id).OnDelete(DeleteBehavior.Restrict);
 
             //Relaciones Asignacion_BOPP
             modelBuilder.Entity<Asignacion_BOPP>().HasOne(asgb => asgb.Estado).WithMany().HasForeignKey(asig => asig.Estado_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado
