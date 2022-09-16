@@ -551,6 +551,43 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        [HttpPut("{id}/{ot}/{bopp}")]
+        public async Task<IActionResult> PutDetalleAsignacion_BOPP(long id, long ot, int bopp, DetalleAsignacion_BOPP detalleAsignacion_BOPP)
+        {
+            if (id != detalleAsignacion_BOPP.AsigBOPP_Id && ot != detalleAsignacion_BOPP.DtAsigBOPP_OrdenTrabajo && bopp != detalleAsignacion_BOPP.BOPP_Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(detalleAsignacion_BOPP).State = EntityState.Modified;
+
+            try
+            {
+                var actualizado = _context.DetallesAsignaciones_BOPP
+                    .Where(x => x.DtAsigBOPP_OrdenTrabajo == ot 
+                           && x.BOPP_Id == bopp 
+                           && x.AsigBOPP_Id == id)
+                    .First<DetalleAsignacion_BOPP>();
+                actualizado.DtAsigBOPP_Cantidad = detalleAsignacion_BOPP.DtAsigBOPP_Cantidad;
+
+                _context.DetallesAsignaciones_BOPP.Update(actualizado);
+                _context.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!DetalleAsignacion_BOPPExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
         // POST: api/DetalleAsignacion_BOPP
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

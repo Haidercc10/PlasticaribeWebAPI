@@ -12,7 +12,7 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    [Migration("20220915140954_AddUsuarioBOPP")]
+    [Migration("20220915214928_AddUsuarioBOPP")]
     partial class AddUsuarioBOPP
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
