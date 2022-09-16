@@ -63,6 +63,9 @@ namespace PlasticaribeAPI.Models
         [Precision(18, 2)] //
         public decimal BOPP_CantidadInicialKg { get; set; } 
 
+        public long Usua_Id { get; set; }
+        public Usuario? Usua { get; set; }
+
 
         //Lista requerida para relacion con BOPP en detalles asignaciones bopp
         public IList<DetalleAsignacion_BOPP>? DetAsigBOPP { get; set; }

@@ -126,6 +126,179 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             }
         }
 
+        [HttpGet("consultaMovimientos0/{FechaInicial}")]
+        public ActionResult Get(DateTime FechaInicial)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = _context.BOPP
+                .Where(BOPP => BOPP.BOPP_FechaIngreso == FechaInicial)
+                .Select(BOPP => new
+                {
+                    BOPP.BOPP_Id,
+                    BOPP.BOPP_Serial,
+                    BOPP.BOPP_FechaIngreso,
+                    BOPP.BOPP_Nombre,
+                    BOPP.Usua.Usua_Nombre,
+                    BOPP.Usua_Id,
+                    BOPP.BOPP_CantidadInicialKg
+                }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos1/{Bopp}/{FechaInicial}")]
+        public ActionResult GetMatPri(string Bopp, DateTime FechaInicial)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = _context.BOPP
+                .Where(dtAsg => dtAsg.BOPP_Serial == Bopp
+                       && dtAsg.BOPP_FechaIngreso == FechaInicial)
+                .Select(BOPP => new
+                {
+                    BOPP.BOPP_Id,
+                    BOPP.BOPP_Serial,
+                    BOPP.BOPP_FechaIngreso,
+                    BOPP.BOPP_Nombre,
+                    BOPP.Usua.Usua_Nombre,
+                    BOPP.Usua_Id,
+                    BOPP.BOPP_CantidadInicialKg
+                }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos2/{Bopp}")]
+        public ActionResult Get(string Bopp)
+        {
+            var con = _context.BOPP
+                .Where(dtAsg => dtAsg.BOPP_Serial == Bopp)
+                .Select(BOPP => new
+                {
+                    BOPP.BOPP_Id,
+                    BOPP.BOPP_Serial,
+                    BOPP.BOPP_FechaIngreso,
+                    BOPP.BOPP_Nombre,
+                    BOPP.Usua.Usua_Nombre,
+                    BOPP.Usua_Id,
+                    BOPP.BOPP_CantidadInicialKg
+                }).ToList();
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos3/{FechaInicial}/{FechaFinal}")]
+        public ActionResult Get(DateTime FechaInicial, DateTime FechaFinal)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = _context.BOPP
+                .Where(dtAsg => dtAsg.BOPP_FechaIngreso >= FechaInicial
+                       && dtAsg.BOPP_FechaIngreso <= FechaFinal)
+                .Select(BOPP => new
+                {
+                    BOPP.BOPP_Id,
+                    BOPP.BOPP_Serial,
+                    BOPP.BOPP_FechaIngreso,
+                    BOPP.BOPP_Nombre,
+                    BOPP.Usua.Usua_Nombre,
+                    BOPP.Usua_Id,
+                    BOPP.BOPP_CantidadInicialKg
+                }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos4/{Bopp}/{FechaInicial}/{FechaFinal}")]
+        public ActionResult Get(string Bopp, DateTime FechaInicial, DateTime FechaFinal)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = _context.BOPP
+                .Where(dtAsg => dtAsg.BOPP_Serial == Bopp
+                       && dtAsg.BOPP_FechaIngreso >= FechaInicial
+                       && dtAsg.BOPP_FechaIngreso <= FechaFinal)
+                .Select(BOPP => new
+                {
+                    BOPP.BOPP_Id,
+                    BOPP.BOPP_Serial,
+                    BOPP.BOPP_FechaIngreso,
+                    BOPP.BOPP_Nombre,
+                    BOPP.Usua.Usua_Nombre,
+                    BOPP.Usua_Id,
+                    BOPP.BOPP_CantidadInicialKg
+                }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        [HttpGet("consultaMovimientos5/{FechaInicial}/{FechaFinal}/{Bopp}")]
+        public ActionResult Get8(DateTime FechaInicial, DateTime FechaFinal, int Bopp)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = _context.BOPP
+                .Where(dtAsg => dtAsg.BOPP_FechaIngreso >= FechaInicial
+                       && dtAsg.BOPP_FechaIngreso <= FechaFinal
+                       && dtAsg.BOPP_Id == Bopp)
+                .Select(BOPP => new
+                {
+                    BOPP.BOPP_Id,
+                    BOPP.BOPP_Serial,
+                    BOPP.BOPP_FechaIngreso,
+                    BOPP.BOPP_Nombre,
+                    BOPP.Usua.Usua_Nombre,
+                    BOPP.Usua_Id,
+                    BOPP.BOPP_CantidadInicialKg
+                }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+
+        [HttpGet("consultaMovimientos6/{Bopp}/{FechaInicial}")]
+        public ActionResult Get9(int Bopp, DateTime FechaInicial)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = _context.BOPP
+                .Where(dtAsg => dtAsg.BOPP_Id == Bopp
+                       && dtAsg.BOPP_FechaIngreso == FechaInicial)
+                .Select(BOPP => new
+                {
+                    BOPP.BOPP_Id,
+                    BOPP.BOPP_Serial,
+                    BOPP.BOPP_FechaIngreso,
+                    BOPP.BOPP_Nombre,
+                    BOPP.Usua.Usua_Nombre,
+                    BOPP.Usua_Id,
+                    BOPP.BOPP_CantidadInicialKg
+                }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        /*[HttpGet("pdfMovimientos/{Ot}")]
+        public ActionResult Get(long Ot)
+        {
+            var con = _context.DetallesAsignaciones_MateriasPrimas
+                .Where(dtAsg => dtAsg.AsigMp.AsigMP_OrdenTrabajo == Ot)
+                .Include(dtAsg => dtAsg.AsigMp)
+                .Select(dtAsg => new
+                {
+                    dtAsg.AsigMp.AsigMp_Id,
+                    dtAsg.AsigMp.AsigMp_FechaEntrega,
+                    dtAsg.AsigMp.AsigMp_Observacion,
+                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
+                    dtAsg.AsigMp.AsigMp_Maquina,
+                    dtAsg.AsigMp.Usua_Id,
+                    dtAsg.AsigMp.Usua.Usua_Nombre,
+                    dtAsg.MatPri_Id,
+                    dtAsg.MatPri.MatPri_Nombre,
+                    dtAsg.UndMed_Id,
+                    dtAsg.DtAsigMp_Cantidad,
+                    dtAsg.Proceso_Id,
+                    dtAsg.Proceso.Proceso_Nombre
+                })
+                .ToList();
+            return Ok(con);
+        }
+        */
+
         // PUT: api/BOPP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
