@@ -361,29 +361,6 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
-        [HttpGet("consultaMovimientos5/{FechaInicial}/{MatPri}")]
-        public ActionResult Get(DateTime FechaInicial, int MatPri)
-        {
-            var con = _context.DetallesAsignaciones_MateriasPrimas
-                .Where(dtAsg => dtAsg.AsigMp.AsigMp_FechaEntrega == FechaInicial
-                       && dtAsg.MatPri_Id == MatPri)
-                .Include(dtAsg => dtAsg.AsigMp)
-                .Select(dtAsg => new
-                {
-                    dtAsg.AsigMp_Id,
-                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
-                    dtAsg.AsigMp.AsigMp_FechaEntrega,
-                    dtAsg.AsigMp.Usua.Usua_Nombre,
-                    dtAsg.AsigMp.Usua_Id,
-                    dtAsg.MatPri.MatPri_Nombre,
-                    dtAsg.MatPri_Id,
-                    dtAsg.DtAsigMp_Cantidad,
-                    dtAsg.AsigMp.Estado_OrdenTrabajo,
-                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
-                }).ToList();
-            return Ok(con);
-        }
-
         [HttpGet("consultaMovimientos6/{Ot}/{FechaInicial}/{FechaFinal}")]
         public ActionResult Get(long Ot, DateTime FechaInicial, DateTime FechaFinal)
         {
