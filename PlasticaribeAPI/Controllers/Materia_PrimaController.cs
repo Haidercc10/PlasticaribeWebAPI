@@ -50,6 +50,40 @@ namespace PlasticaribeAPI.Controllers
             return materia_Prima;
         }
 
+        [HttpGet("DatosMatPrimaxId/{MatPri_Id}")]
+        public ActionResult<Materia_Prima> GetDatosMatPrixId(long MatPri_Id)
+        {
+            if (_context.Materias_Primas == null)
+            {
+                return NotFound();
+            }
+
+            //var inv_materia_Prima = _context.InventarioInicialXDias_MatPrima.Where(mp => mp.MatPri_Id == MatPri_Id).Select(inv => new {  })
+
+            var materia_Prima = _context.Materias_Primas.Where(mp => mp.MatPri_Id == MatPri_Id)
+                .Include(rel => rel.CatMP)
+                .Include(rel => rel.TpBod)
+                .Select(agr => new
+                {
+                    agr.MatPri_Id,
+                    agr.MatPri_Nombre,
+                    agr.MatPri_Stock,
+                    agr.UndMed_Id,
+                    agr.MatPri_Precio,
+                    Subtotal = agr.MatPri_Stock * agr.MatPri_Precio,
+                    agr.CatMP.CatMP_Nombre
+                }).
+                First();
+
+            if (materia_Prima == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(materia_Prima);
+        }
+
+
         // GET: api/Materia_Prima/5
         [HttpGet("categoria/{CatMP_Id}")]
         public ActionResult<Materia_Prima> Getcaegoria(long CatMP_Id)
