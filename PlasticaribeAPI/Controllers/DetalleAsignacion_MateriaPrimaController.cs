@@ -510,6 +510,84 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("AsignacionesTotales/{ot}")]
+        public ActionResult GetAsignacionesTotales(long ot)
+        {
+            var conMp = (from Asgmp in _context.Set<DetalleAsignacion_MateriaPrima>()
+                        where Asgmp.AsigMp.AsigMP_OrdenTrabajo == ot
+                        group Asgmp by new { 
+                            Asgmp.MatPri_Id,
+                            Asgmp.MatPri.MatPri_Nombre,
+                            Asgmp.UndMed_Id,
+                            Asgmp.MatPri.MatPri_Precio,
+                            Asgmp.Proceso_Id,
+                            Asgmp.Proceso.Proceso_Nombre
+                        } into y
+                        select new
+                        {
+                            //Materia Prima
+                            MateriaPrima = y.Key.MatPri_Id,
+                            NombreMP = y.Key.MatPri_Nombre,
+                            CantMP = y.Sum(Asgmp => Asgmp.DtAsigMp_Cantidad),
+                            UndMedida = y.Key.UndMed_Id,
+                            Precio = y.Key.MatPri_Precio,
+                            SubTotal = y.Sum(Asgmp => Asgmp.DtAsigMp_Cantidad) * y.Key.MatPri_Precio,
+                            Proceso = y.Key.Proceso_Id,
+                            NombreProceso = y.Key.Proceso_Nombre
+                        });
+
+            var conTinta = (from AsgTinta in _context.Set<DetalleAsignacion_Tinta>()
+                            where AsgTinta.AsigMp.AsigMP_OrdenTrabajo == ot
+                            group AsgTinta by new
+                            {
+                                AsgTinta.Tinta_Id,
+                                AsgTinta.Tinta.Tinta_Nombre,
+                                AsgTinta.UndMed_Id,
+                                AsgTinta.Tinta.Tinta_Precio,
+                                AsgTinta.Proceso_Id,
+                                AsgTinta.Proceso.Proceso_Nombre
+                            } into y
+                            select new
+                            {
+                                //Tintas
+                                MateriaPrima = y.Key.Tinta_Id,
+                                NombreMP = y.Key.Tinta_Nombre,
+                                CantMP = y.Sum(AsgTinta => AsgTinta.DtAsigTinta_Cantidad),
+                                UndMedida = y.Key.UndMed_Id,
+                                Precio = y.Key.Tinta_Precio,
+                                SubTotal = y.Sum(AsgTinta => AsgTinta.DtAsigTinta_Cantidad) * y.Key.Tinta_Precio,
+                                Proceso = y.Key.Proceso_Id,
+                                NombreProceso = y.Key.Proceso_Nombre
+                            });
+
+            var conBopp = (from AsgBopp in _context.Set<DetalleAsignacion_BOPP>()
+                           where AsgBopp.DtAsigBOPP_OrdenTrabajo == ot
+                           group AsgBopp by new
+                           {
+                               AsgBopp.BOPP_Id,
+                               AsgBopp.BOPP.BOPP_Nombre,
+                               AsgBopp.UndMed_Id,
+                               AsgBopp.BOPP.BOPP_Precio,
+                               AsgBopp.Proceso_Id,
+                               AsgBopp.Proceso.Proceso_Nombre
+                           } into y
+                           select new
+                           {
+                               //BOPP
+                               MateriaPrima = y.Key.BOPP_Id,
+                               NombreMP = y.Key.BOPP_Nombre,
+                               CantMP = y.Sum(AsgBopp => AsgBopp.BOPP.BOPP_CantidadInicialKg),
+                               UndMedida = y.Key.UndMed_Id,
+                               Precio = y.Key.BOPP_Precio,
+                               SubTotal = y.Sum(AsgBopp => AsgBopp.BOPP.BOPP_CantidadInicialKg) * y.Key.BOPP_Precio,
+                               Proceso = y.Key.Proceso_Id,
+                               NombreProceso = y.Key.Proceso_Nombre
+                           });
+            var con = conMp.Concat(conTinta).Concat(conBopp);
+
+            return Ok(con);
+        }
+
         // PUT: api/DetalleAsignacion_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
