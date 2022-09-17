@@ -60,7 +60,7 @@ namespace PlasticaribeAPI.Models
         public Unidad_Medida? UndMed2 { get; set; } //Propiedad de Navegación Unidad_Medida
 
         
-        [Precision(18, 2)] //
+        [Precision(14, 2)] //
         public decimal BOPP_CantidadInicialKg { get; set; } 
 
         public long Usua_Id { get; set; }
