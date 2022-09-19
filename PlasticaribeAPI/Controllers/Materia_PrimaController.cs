@@ -59,8 +59,13 @@ namespace PlasticaribeAPI.Controllers
 
             var matPrima = (from mp in _context.Set<Materia_Prima>()
                          from invIni in _context.Set<InventarioInicialXDia_MatPrima>()
+                         from asgmp in _context.Set<Asignacion_MatPrima>() 
+                         from dasgmp in _context.Set<DetalleAsignacion_MateriaPrima>()
                          where mp.MatPri_Id == Id
                          && mp.MatPri_Id == invIni.MatPri_Id
+                         && dasgmp.AsigMp_Id == asgmp.AsigMp_Id
+                         && dasgmp.MatPri_Id == mp.MatPri_Id
+                         
                          select new
                          {
                              ID = mp.MatPri_Id,
