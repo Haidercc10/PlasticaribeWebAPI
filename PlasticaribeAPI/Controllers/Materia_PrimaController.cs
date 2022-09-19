@@ -50,37 +50,151 @@ namespace PlasticaribeAPI.Controllers
             return materia_Prima;
         }
 
-        [HttpGet("DatosMatPrimaxId/{MatPri_Id}")]
-        public ActionResult<Materia_Prima> GetDatosMatPrixId(long MatPri_Id)
+        /** Consultar */
+        [HttpGet("DatosMatPrimaxId/{Id}")]
+        public ActionResult GetDatosMatPrixId(long Id)
         {
-            if (_context.Materias_Primas == null)
+
+            //var queryInvInicial = _context.InventarioInicialXDias_MatPrima.Where(mp => mp.MatPri_Id == Id).Select(inv => new { inv.InvInicial_Stock });
+
+            var matPrima = (from mp in _context.Set<Materia_Prima>()
+                         from invIni in _context.Set<InventarioInicialXDia_MatPrima>()
+                         where mp.MatPri_Id == Id
+                         && mp.MatPri_Id == invIni.MatPri_Id
+                         select new
+                         {
+                             ID = mp.MatPri_Id,
+                             Nombre = mp.MatPri_Nombre,
+                             Stock = mp.MatPri_Stock,
+                             Medida = mp.UndMed_Id,
+                             Precio = mp.MatPri_Precio,
+                             Subtotal = mp.MatPri_Stock * mp.MatPri_Precio,
+                             Categoria = mp.CatMP.CatMP_Nombre, 
+                             Stock_Inicial = invIni.InvInicial_Stock
+                         });
+
+            var tinta = (from tnt in _context.Set<Tinta>()
+                         where tnt.Tinta_Id == Id
+                         select new
+                         {
+                             ID = tnt.Tinta_Id,
+                             Nombre = tnt.Tinta_Nombre,
+                             Stock = tnt.Tinta_Stock,
+                             Medida = tnt.UndMed_Id,
+                             Precio = tnt.Tinta_Precio,
+                             Subtotal = tnt.Tinta_Stock * tnt.Tinta_Precio,
+                             Categoria = tnt.CatMP.CatMP_Nombre,
+                             Stock_Inicial = tnt.Tinta_InvInicial
+                         });
+
+            var BOPP = (from bopp in _context.Set<BOPP>()
+                         where bopp.BOPP_Id == Id
+                         select new
+                         {
+                             ID = bopp.BOPP_Id,
+                             Nombre = bopp.BOPP_Nombre,
+                             Stock = bopp.BOPP_Stock,
+                             Medida = bopp.UndMed_Id,
+                             Precio = bopp.BOPP_Precio,
+                             Subtotal = bopp.BOPP_Stock * bopp.BOPP_Precio,
+                             Categoria = bopp.CatMP.CatMP_Nombre,
+                             Stock_Inicial = bopp.BOPP_CantidadInicialKg
+                         });
+            
+            var Query = matPrima.Concat(tinta).Concat(BOPP);
+
+            return Ok(Query);
+
+            /*into y
+            select new
             {
-                return NotFound();
-            }
+                //Materia Prima
+                MateriaPrima = y.Key.MatPri_Id,
+                NombreMP = y.Key.MatPri_Nombre,
+                CantMP = y.Sum(Asgmp => Asgmp.DtAsigMp_Cantidad),
+                UndMedida = y.Key.UndMed_Id,
+                Precio = y.Key.MatPri_Precio,
+                SubTotal = y.Sum(Asgmp => Asgmp.DtAsigMp_Cantidad) * y.Key.MatPri_Precio,
+                Proceso = y.Key.Proceso_Id,
+                NombreProceso = y.Key.Proceso_Nombre
+            });
+
+var conTinta = (from AsgTinta in _context.Set<DetalleAsignacion_Tinta>()
+               where AsgTinta.AsigMp.AsigMP_OrdenTrabajo == ot
+               group AsgTinta by new
+               {
+                   AsgTinta.Tinta_Id,
+                   AsgTinta.Tinta.Tinta_Nombre,
+                   AsgTinta.UndMed_Id,
+                   AsgTinta.Tinta.Tinta_Precio,
+                   AsgTinta.Proceso_Id,
+                   AsgTinta.Proceso.Proceso_Nombre
+               } into y
+               select new
+               {
+                   //Tintas
+                   MateriaPrima = y.Key.Tinta_Id,
+                   NombreMP = y.Key.Tinta_Nombre,
+                   CantMP = y.Sum(AsgTinta => AsgTinta.DtAsigTinta_Cantidad),
+                   UndMedida = y.Key.UndMed_Id,
+                   Precio = y.Key.Tinta_Precio,
+                   SubTotal = y.Sum(AsgTinta => AsgTinta.DtAsigTinta_Cantidad) * y.Key.Tinta_Precio,
+                   Proceso = y.Key.Proceso_Id,
+                   NombreProceso = y.Key.Proceso_Nombre
+               });
+
+var conBopp = (from AsgBopp in _context.Set<DetalleAsignacion_BOPP>()
+              where AsgBopp.DtAsigBOPP_OrdenTrabajo == ot
+              group AsgBopp by new
+              {
+                  AsgBopp.BOPP_Id,
+                  AsgBopp.BOPP.BOPP_Nombre,
+                  AsgBopp.UndMed_Id,
+                  AsgBopp.BOPP.BOPP_Precio,
+                  AsgBopp.Proceso_Id,
+                  AsgBopp.Proceso.Proceso_Nombre
+              } into y
+              select new
+              {
+                  //BOPP
+                  MateriaPrima = y.Key.BOPP_Id,
+                  NombreMP = y.Key.BOPP_Nombre,
+                  CantMP = y.Sum(AsgBopp => AsgBopp.BOPP.BOPP_CantidadInicialKg),
+                  UndMedida = y.Key.UndMed_Id,
+                  Precio = y.Key.BOPP_Precio,
+                  SubTotal = y.Sum(AsgBopp => AsgBopp.BOPP.BOPP_CantidadInicialKg) * y.Key.BOPP_Precio,
+                  Proceso = y.Key.Proceso_Id,
+                  NombreProceso = y.Key.Proceso_Nombre
+              });
+
+var con = conMp.Concat(conTinta).Concat(conBopp);*/
+
 
             //var inv_materia_Prima = _context.InventarioInicialXDias_MatPrima.Where(mp => mp.MatPri_Id == MatPri_Id).Select(inv => new {  })
 
-            var materia_Prima = _context.Materias_Primas.Where(mp => mp.MatPri_Id == MatPri_Id)
-                .Include(rel => rel.CatMP)
-                .Include(rel => rel.TpBod)
-                .Select(agr => new
-                {
-                    agr.MatPri_Id,
-                    agr.MatPri_Nombre,
-                    agr.MatPri_Stock,
-                    agr.UndMed_Id,
-                    agr.MatPri_Precio,
-                    Subtotal = agr.MatPri_Stock * agr.MatPri_Precio,
-                    agr.CatMP.CatMP_Nombre
-                }).
-                First();
+            /** var materia_Prima = _context.Materias_Primas.Where(mp => mp.MatPri_Id == MatPri_Id)
+                 .Include(rel => rel.CatMP)
+                 .Include(rel => rel.TpBod)
+                 .Select(agr => new
+                 {
+                     agr.MatPri_Id,
+                     agr.MatPri_Nombre,
+                     agr.MatPri_Stock,
+                     agr.UndMed_Id,
+                     agr.MatPri_Precio,
+                     Subtotal = agr.MatPri_Stock * agr.MatPri_Precio,
+                     agr.CatMP.CatMP_Nombre
+                 }).
+                 First(); */
 
-            if (materia_Prima == null)
+            /*if (matPrima == null)
             {
                 return NotFound();
-            }
+            }*/
 
-            return Ok(materia_Prima);
+            //return Ok(matPrima);
+
+
         }
 
 
