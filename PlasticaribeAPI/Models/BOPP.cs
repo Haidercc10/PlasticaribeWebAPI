@@ -17,9 +17,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(MAX)")]
         public string? BOPP_Descripcion { get; set; }
 
-
-        [Column(TypeName = "varchar(MAX)")]
-        public string BOPP_Serial { get; set; }
+        public long BOPP_Serial { get; set; }
 
 
         [Precision(18, 2)]
