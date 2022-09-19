@@ -50,6 +50,7 @@ namespace PlasticaribeAPI.Controllers
             return materia_Prima;
         }
 
+        //
         [HttpGet("ConsultaInventario/{fecha1}/{fecha2}/{id}/{categoria}")]
         public ActionResult Get(DateTime fecha1, DateTime fecha2, long id, long categoria)
         {
@@ -112,6 +113,7 @@ namespace PlasticaribeAPI.Controllers
                                {
                                    Id = x.Key.MatPri_Id,
                                    Nombre = x.Key.MatPri_Nombre,
+                                   Ancho = x.Key.InvInicial_Stock,
                                    Inicial = x.Key.InvInicial_Stock,
                                    Entrada = entrada,
                                    Salida = conAsg,
@@ -130,12 +132,87 @@ namespace PlasticaribeAPI.Controllers
                        && asg.AsigBOPP.AsigBOPP_FechaEntrega >= fecha1
                        && asg.AsigBOPP.AsigBOPP_FechaEntrega <= fecha2).Sum(asg => asg.BOPP.BOPP_CantidadInicialKg);
 
-            //var con = 
+            //Entrada de BOPP
+            var conBopp = (from bopp in _context.Set<BOPP>()
+                           where bopp.BOPP_Id == id 
+                                 && bopp.CatMP_Id == categoria
+                                 && bopp.BOPP_FechaIngreso >= fecha1
+                                 && bopp.BOPP_FechaIngreso <= fecha2
+                           select new
+                           {
+                               Id = bopp.BOPP_Id,
+                               Nombre = bopp.BOPP_Nombre,
+                               Ancho = bopp.BOPP_Ancho,
+                               Inicial = bopp.BOPP_CantidadInicialKg,
+                               Entrada = bopp.BOPP_CantidadInicialKg,
+                               Salida = conAsgBopp,
+                               Stock = bopp.BOPP_Stock,
+                               Diferencia = bopp.BOPP_CantidadInicialKg - bopp.BOPP_Stock,
+                               Presentacion = bopp.UndMed_Id,
+                               Precio = bopp.BOPP_Precio,
+                               SubTotal = bopp.BOPP_Stock * bopp.BOPP_Precio,
+                               Categoria = bopp.CatMP.CatMP_Nombre,
+                           });
 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
 
-            return Ok(con);
+            return Ok(con.Concat(conBopp));
+        }
+
+        [HttpGet("DatosMatPrimaxId/{Id}")]
+        public ActionResult GetDatosMatPrixId(long Id)
+        {
+
+            //var queryInvInicial = _context.InventarioInicialXDias_MatPrima.Where(mp => mp.MatPri_Id == Id).Select(inv => new { inv.InvInicial_Stock });
+
+            var matPrima = (from mp in _context.Set<Materia_Prima>()
+                            from invIni in _context.Set<InventarioInicialXDia_MatPrima>()
+                            where mp.MatPri_Id == Id
+                            && mp.MatPri_Id == invIni.MatPri_Id
+                            select new
+                            {
+                                ID = mp.MatPri_Id,
+                                Nombre = mp.MatPri_Nombre,
+                                Stock = mp.MatPri_Stock,
+                                Medida = mp.UndMed_Id,
+                                Precio = mp.MatPri_Precio,
+                                Subtotal = mp.MatPri_Stock * mp.MatPri_Precio,
+                                Categoria = mp.CatMP.CatMP_Nombre,
+                                Stock_Inicial = invIni.InvInicial_Stock
+                            });
+
+            var tinta = (from tnt in _context.Set<Tinta>()
+                         where tnt.Tinta_Id == Id
+                         select new
+                         {
+                             ID = tnt.Tinta_Id,
+                             Nombre = tnt.Tinta_Nombre,
+                             Stock = tnt.Tinta_Stock,
+                             Medida = tnt.UndMed_Id,
+                             Precio = tnt.Tinta_Precio,
+                             Subtotal = tnt.Tinta_Stock * tnt.Tinta_Precio,
+                             Categoria = tnt.CatMP.CatMP_Nombre,
+                             Stock_Inicial = tnt.Tinta_InvInicial
+                         });
+
+            var BOPP = (from bopp in _context.Set<BOPP>()
+                        where bopp.BOPP_Id == Id
+                        select new
+                        {
+                            ID = bopp.BOPP_Id,
+                            Nombre = bopp.BOPP_Nombre,
+                            Stock = bopp.BOPP_Stock,
+                            Medida = bopp.UndMed_Id,
+                            Precio = bopp.BOPP_Precio,
+                            Subtotal = bopp.BOPP_Stock * bopp.BOPP_Precio,
+                            Categoria = bopp.CatMP.CatMP_Nombre,
+                            Stock_Inicial = bopp.BOPP_CantidadInicialKg
+                        });
+
+            var Query = matPrima.Concat(tinta).Concat(BOPP);
+
+            return Ok(Query);
         }
 
         // GET: api/Materia_Prima/5

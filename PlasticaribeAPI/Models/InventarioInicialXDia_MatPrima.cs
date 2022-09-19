@@ -11,7 +11,7 @@ namespace PlasticaribeAPI.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long MatPri_Id { get; set; }
 
-        [Precision(18, 2)]
+        [Precision(14, 2)]
         public decimal InvInicial_Stock { get; set; }
 
         [Column(TypeName = "varchar(10)")]
