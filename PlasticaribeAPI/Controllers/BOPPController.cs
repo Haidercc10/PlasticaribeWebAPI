@@ -52,7 +52,7 @@ namespace PlasticaribeAPI.Controllers
 
         /** Obtener BOPP consultado por serial */
         [HttpGet("serial/{BOPP_Serial}")]
-        public ActionResult<BOPP> GetSerial(string BOPP_Serial)
+        public ActionResult<BOPP> GetSerial(long BOPP_Serial)
         {
             var bOPP = _context.BOPP.Where(bopp => bopp.BOPP_Serial == BOPP_Serial).ToList();
 
@@ -147,7 +147,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
         }
 
         [HttpGet("consultaMovimientos1/{Bopp}/{FechaInicial}")]
-        public ActionResult GetMatPri(string Bopp, DateTime FechaInicial)
+        public ActionResult GetMatPri(long Bopp, DateTime FechaInicial)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.BOPP
@@ -168,7 +168,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
         }
 
         [HttpGet("consultaMovimientos2/{Bopp}")]
-        public ActionResult Get(string Bopp)
+        public ActionResult Get(long Bopp)
         {
             var con = _context.BOPP
                 .Where(dtAsg => dtAsg.BOPP_Serial == Bopp)
@@ -207,7 +207,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
         }
 
         [HttpGet("consultaMovimientos4/{Bopp}/{FechaInicial}/{FechaFinal}")]
-        public ActionResult Get(string Bopp, DateTime FechaInicial, DateTime FechaFinal)
+        public ActionResult Get(long Bopp, DateTime FechaInicial, DateTime FechaFinal)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.BOPP

@@ -219,7 +219,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("consultaMovimientos2/{Bopp}/{FechaInicial}")]
-        public ActionResult GetMatPri(string Bopp, DateTime FechaInicial)
+        public ActionResult GetMatPri(long Bopp, DateTime FechaInicial)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.DetallesAsignaciones_BOPP
