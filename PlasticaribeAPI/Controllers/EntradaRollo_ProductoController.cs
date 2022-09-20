@@ -42,6 +42,13 @@ namespace PlasticaribeAPI.Controllers
             return entradaRollo_Producto;
         }
 
+        [HttpGet("UltumoID")]
+        public ActionResult Get()
+        {
+            var con = _context.EntradasRollos_Productos.OrderByDescending(ent => ent.EntRolloProd_Id).First();
+            return Ok(con);
+        }
+
         // PUT: api/EntradaRollo_Producto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
