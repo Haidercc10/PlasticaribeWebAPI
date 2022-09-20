@@ -66,6 +66,29 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        [HttpGet("UsuarioConductor/{ID}")]
+        public ActionResult<Usuario> GetConductor(long ID)
+        {
+            try
+            {
+                var conductor = _context.Usuarios.Where(tp => tp.Usua_Id == ID && tp.tpUsu_Id == 7).ToList();
+
+
+                if (conductor == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(conductor);
+                }
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex);
+            }
+        }
+
         // PUT: api/Usuarios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

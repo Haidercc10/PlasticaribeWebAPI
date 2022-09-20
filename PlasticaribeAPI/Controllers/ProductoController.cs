@@ -85,9 +85,71 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        // PUT: api/Producto/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpGet("ConsultaProductoExistencia/{Prod_Id}")]
+        public ActionResult<Producto> GetProductoPresentacion(int Prod_Id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var producto = (from E in _context.Set<Existencia_Productos>()
+                            from P in _context.Set<Producto>()
+                            where P.Prod_Id == Prod_Id 
+                            && E.Prod_Id == Prod_Id
+                            && E.Prod_Id == P.Prod_Id
+                            select new
+                            {
+                                E.Prod_Id,
+                                P.Prod_Nombre,
+                                E.ExProd_Cantidad, 
+                                E.ExProd_PrecioVenta,
+                                E.TpMoneda_Id,
+                                E.UndMed_Id
+                            })
+                            .ToList();
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(producto);
+            }
+
+        }
+
+       /* [HttpGet("ConsultaProductoExistencia/{Prod_Id}")]
+        public ActionResult<Producto> GetProductoPresentacion(int Prod_Id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var producto = (from E in _context.Set<Existencia_Productos>()
+                            from P in _context.Set<Producto>()
+                            where P.Prod_Id == Prod_Id 
+                            && E.Prod_Id == Prod_Id
+                            && E.Prod_Id == P.Prod_Id
+                            select new
+                            {
+                                E.Prod_Id,
+                                P.Prod_Nombre,
+                                E.ExProd_Cantidad, 
+                                E.ExProd_PrecioVenta,
+                                E.TpMoneda_Id,
+                                E.UndMed_Id
+                            })
+                            .ToList();
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(producto);
+            }
+
+        }*/
+
+            // PUT: api/Producto/5
+            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+            [HttpPut("{id}")]
         public async Task<IActionResult> PutProducto(int id, Producto producto)
         {
             if (id != producto.Prod_Id)
