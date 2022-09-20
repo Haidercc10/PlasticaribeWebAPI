@@ -42,6 +42,13 @@ namespace PlasticaribeAPI.Controllers
             return detalleEntradaRollo_Producto;
         }
 
+        [HttpGet("VerificarRollo/{id}")]
+        public ActionResult Get (long id)
+        {
+            var con = _context.DetallesEntradasRollos_Productos.Where(x => x.Rollo_Id == id).ToList();
+            return Ok(con);
+        }
+
         // PUT: api/DetalleEntradaRollo_Producto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

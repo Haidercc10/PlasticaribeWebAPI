@@ -16,6 +16,7 @@ namespace PlasticaribeAPI.Models
         public int Prod_Id { get; set; }
         public Producto? Prod { get; set; }
 
+        public long Rollo_Id { get; set; }
 
         [Precision(14, 2)]
         public decimal DtAsigProdFV_Cantidad { get; set; }
