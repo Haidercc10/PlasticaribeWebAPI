@@ -91,5 +91,9 @@ namespace PlasticaribeAPI.Models
         public int? Prod_CantBolsasPaquete { get; set; }
         [Precision(14, 2)]
         public int? Prod_CantBolsasBulto { get; set; }
+
+        public IList<DetallesAsignacionProducto_FacturaVenta>? DtAsigProd_FVTA { get; set; }
+
+        public IList<DetalleDevolucion_ProductoFacturado>? DtDevProd_Fact { get; set; }
     }
 }

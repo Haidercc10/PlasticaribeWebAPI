@@ -161,53 +161,117 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("DatosMatPrimaxId/{Id}")]
-        public ActionResult GetDatosMatPrixId(long Id)
+        public ActionResult GetDatosMatPrixId(long Id, DateTime date)
         {
 
+            //DateTime dt = new DateTime();
+            //DateTime date = dt.Date;
+
             //var queryInvInicial = _context.InventarioInicialXDias_MatPrima.Where(mp => mp.MatPri_Id == Id).Select(inv => new { inv.InvInicial_Stock });
+            var asig_MatPrima = (_context.DetallesAsignaciones_MateriasPrimas.
+                                Where(mp => mp.MatPri_Id == Id
+                                && mp.AsigMp.AsigMp_FechaEntrega == date));
+
+           /** var Recu_MatPrima = (_context..
+                                Where(mp => mp.MatPri_Id == Id
+                                && mp.AsigMp.AsigMp_FechaEntrega == date)); */
+
 
             var matPrima = (from mp in _context.Set<Materia_Prima>()
                          from invIni in _context.Set<InventarioInicialXDia_MatPrima>()
+                         from asmp in _context.Set<Asignacion_MatPrima>()
+                         from dasmp in _context.Set<DetalleAsignacion_MateriaPrima>()
                          where mp.MatPri_Id == Id
                          && mp.MatPri_Id == invIni.MatPri_Id
-                         select new
+                         && dasmp.MatPri_Id == mp.MatPri_Id
+                         && dasmp.AsigMp_Id == asmp.AsigMp_Id
+                         && asmp.AsigMp_FechaEntrega == date
+                         group dasmp by new
                          {
-                             ID = mp.MatPri_Id,
-                             Nombre = mp.MatPri_Nombre,
-                             Stock = mp.MatPri_Stock,
-                             Medida = mp.UndMed_Id,
-                             Precio = mp.MatPri_Precio,
-                             Subtotal = mp.MatPri_Stock * mp.MatPri_Precio,
-                             Categoria = mp.CatMP.CatMP_Nombre, 
-                             Stock_Inicial = invIni.InvInicial_Stock
+                             mp.MatPri_Id,
+                             mp.MatPri_Nombre,
+                             invIni.InvInicial_Stock,
+                             mp.MatPri_Stock,
+                             mp.UndMed_Id,
+                             mp.MatPri_Precio,
+                             mp.CatMP.CatMP_Nombre,                            
+                         } into ASG 
+                           select new
+                         {
+                             ID = ASG.Key.MatPri_Id,
+                             Nombre = ASG.Key.MatPri_Nombre,
+                             Stock_Inicial = ASG.Key.InvInicial_Stock,
+                             Cantidad_Asignada = ASG.Sum(dta => dta.DtAsigMp_Cantidad),
+                             Stock = ASG.Key.MatPri_Stock,
+                             Medida = ASG.Key.UndMed_Id,
+                             Precio = ASG.Key.MatPri_Precio,
+                             Subtotal = ASG.Key.MatPri_Stock * ASG.Key.MatPri_Precio,
+                             Categoria = ASG.Key.CatMP_Nombre                             
                          });
 
             var tinta = (from tnt in _context.Set<Tinta>()
+                         from asmp in _context.Set<Asignacion_MatPrima>()
+                         from dastnt in _context.Set<DetalleAsignacion_Tinta>()
+                         from ent_tinta in _context.Set<Entrada_Tintas>()
+                         from detent_tinta in _context.Set<Detalles_EntradaTintas>()
                          where tnt.Tinta_Id == Id
+                         && dastnt.Tinta_Id == tnt.Tinta_Id
+                         && dastnt.AsigMp_Id == asmp.AsigMp_Id
+                         && ent_tinta.EntTinta_Id == detent_tinta.EntTinta_Id
+                         && detent_tinta.Tinta_Id == tnt.Tinta_Id
+                         && ent_tinta.entTinta_FechaEntrada == date
+                         group dastnt by new
+                         {
+                             tnt.Tinta_Id,
+                             tnt.Tinta_Nombre,
+                             tnt.Tinta_InvInicial,
+                             tnt.Tinta_Stock,
+                             tnt.UndMed_Id,
+                             tnt.Tinta_Precio,
+                             tnt.CatMP.CatMP_Nombre,
+                         } into ASG
                          select new
                          {
-                             ID = tnt.Tinta_Id,
-                             Nombre = tnt.Tinta_Nombre,
-                             Stock = tnt.Tinta_Stock,
-                             Medida = tnt.UndMed_Id,
-                             Precio = tnt.Tinta_Precio,
-                             Subtotal = tnt.Tinta_Stock * tnt.Tinta_Precio,
-                             Categoria = tnt.CatMP.CatMP_Nombre,
-                             Stock_Inicial = tnt.Tinta_InvInicial
+                             ID = ASG.Key.Tinta_Id,
+                             Nombre = ASG.Key.Tinta_Nombre,
+                             Stock_Inicial = ASG.Key.Tinta_InvInicial,
+                             Cantidad_Asignada = ASG.Sum(dta => dta.DtAsigTinta_Cantidad),
+                             Stock = ASG.Key.Tinta_Stock,
+                             Medida = ASG.Key.UndMed_Id,
+                             Precio = ASG.Key.Tinta_Precio,
+                             Subtotal = ASG.Key.Tinta_Stock * ASG.Key.Tinta_Precio,
+                             Categoria = ASG.Key.CatMP_Nombre,
+                             
                          });
 
             var BOPP = (from bopp in _context.Set<BOPP>()
+                        from asb in _context.Set<Asignacion_BOPP>()
+                        from dasb in _context.Set<DetalleAsignacion_BOPP>()
                         where bopp.BOPP_Id == Id
+                        && dasb.BOPP_Id == bopp.BOPP_Id
+                        && dasb.AsigBOPP_Id == asb.AsigBOPP_Id
+                        && asb.AsigBOPP_FechaEntrega == date
+                        group dasb by new
+                        {
+                            bopp.BOPP_Id,
+                            bopp.BOPP_Nombre,
+                            bopp.BOPP_CantidadInicialKg,
+                            bopp.BOPP_Stock,
+                            bopp.UndMed_Id,
+                            bopp.BOPP_Precio,
+                            bopp.CatMP.CatMP_Nombre,
+                        } into ASG
                         select new
                         {
-                            ID = bopp.BOPP_Id,
-                            Nombre = bopp.BOPP_Nombre,
-                            Stock = bopp.BOPP_Stock,
-                            Medida = bopp.UndMed_Id,
-                            Precio = bopp.BOPP_Precio,
-                            Subtotal = bopp.BOPP_Stock * bopp.BOPP_Precio,
-                            Categoria = bopp.CatMP.CatMP_Nombre,
-                            Stock_Inicial = bopp.BOPP_CantidadInicialKg
+                            ID = ASG.Key.BOPP_Id,
+                            Nombre = ASG.Key.BOPP_Nombre,
+                            Stock_Inicial = ASG.Key.BOPP_CantidadInicialKg,
+                            Cantidad_Asignada = ASG.Sum(dta => dta.DtAsigBOPP_Cantidad),
+                            Stock = ASG.Key.BOPP_Stock,
+                            Medida = ASG.Key.UndMed_Id,
+                            Precio = ASG.Key.BOPP_Precio,
+                            Subtotal = ASG.Key.BOPP_Stock * ASG.Key.BOPP_Precio,
+                            Categoria = ASG.Key.CatMP_Nombre,
                         });
 
             var Query = matPrima.Concat(tinta).Concat(BOPP);
