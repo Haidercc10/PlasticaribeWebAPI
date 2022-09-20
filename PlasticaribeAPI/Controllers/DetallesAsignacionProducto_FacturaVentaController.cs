@@ -42,6 +42,31 @@ namespace PlasticaribeAPI.Controllers
             return detallesAsignacionProducto_FacturaVenta;
         }
 
+        [HttpGet("CodigoFactura/{cod}")]
+        public ActionResult Get(string cod)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from ent in _context.Set<DetalleEntradaRollo_Producto>()
+                      from dtAFac in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
+                      where dtAFac.AsigProducto_FV.FacturaVta_Id == cod
+                            && ent.Rollo_Id == dtAFac.Rollo_Id
+                      select new
+                      {
+                          dtAFac.AsigProducto_FV.FacturaVta_Id,
+                          dtAFac.AsigProdFV_Id,
+                          dtAFac.Prod_Id,
+                          dtAFac.Prod.Prod_Nombre,
+                          dtAFac.DtAsigProdFV_Cantidad,
+                          dtAFac.Rollo_Id,
+                          dtAFac.UndMed_Id,
+                          dtAFac.AsigProducto_FV.Cliente.Cli_Nombre,
+                          dtAFac.AsigProducto_FV.Cli_Id,
+                          ent.Estado_Id
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
         // PUT: api/DetallesAsignacionProducto_FacturaVenta/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

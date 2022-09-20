@@ -42,6 +42,13 @@ namespace PlasticaribeAPI.Controllers
             return devolucion_ProductoFacturado;
         }
 
+        [HttpGet("UltimoId")]
+        public ActionResult Get()
+        {
+            var con = _context.Devoluciones_ProductosFacturados.OrderByDescending(x => x.DevProdFact_Id).First();
+            return Ok(con);
+        }
+
         // PUT: api/Devolucion_ProductoFacturado/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
