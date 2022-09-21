@@ -110,9 +110,40 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
-        // PUT: api/DetallesAsignacionProducto_FacturaVenta/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpGet("FiltroFechas/{FechaIni}/{FechaFin}")]
+        public ActionResult GetFiltroFechas(DateTime FechaIni, DateTime FechaFin)
+        {
+
+            var QueryXFechas = from fact in _context.Set<AsignacionProducto_FacturaVenta>()
+                         from detfact in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
+                         where fact.AsigProdFV_Fecha >= FechaIni
+                         && fact.AsigProdFV_Fecha <= FechaFin
+                         && fact.AsigProdFV_Id == detfact.AsigProdFV_Id
+                         select new
+                         {
+                             fact.FacturaVta_Id,
+                             fact.AsigProdFV_Fecha,
+                             detfact.Prod_Id,
+                             detfact.Rollo_Id,
+                             detfact.DtAsigProdFV_Cantidad,
+                             detfact.UndMed_Id
+                         };
+
+            
+
+            if (QueryXFechas == null)
+            {
+                return NotFound();
+            } else
+            {
+                return Ok(QueryXFechas);
+            }
+            
+        }
+
+            // PUT: api/DetallesAsignacionProducto_FacturaVenta/5
+            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+            [HttpPut("{id}")]
         public async Task<IActionResult> PutDetallesAsignacionProducto_FacturaVenta(long id, DetallesAsignacionProducto_FacturaVenta detallesAsignacionProducto_FacturaVenta)
         {
             if (id != detallesAsignacionProducto_FacturaVenta.AsigProdFV_Id)
