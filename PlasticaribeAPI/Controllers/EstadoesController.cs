@@ -66,6 +66,30 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        /** Llenar solo estados de rollos */
+        [HttpGet("cargarEstadosRollos")]
+        public ActionResult<Estado> GetEstadoRollo()
+        {
+            try
+            {
+                var estado = _context.Estados.Where(e => e.TpEstado_Id == 5).ToList();
+
+
+                if (estado == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(estado);
+                }
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex);
+            }
+        }
+
         // PUT: api/Estadoes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
