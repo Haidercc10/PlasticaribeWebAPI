@@ -49,6 +49,27 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("consultarProducto/{id}")]
+        public ActionResult GetConsultarProd (long id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = _context.DetallesEntradasRollos_Productos
+                .Where(x => x.EntRollo_Producto.Prod_Id == id)
+                .Select(x => new
+                {
+                    x.EntRolloProd_Id,
+                    x.EntRollo_Producto.Prod_Id,
+                    x.EntRollo_Producto.Prod.Prod_Nombre,
+                    x.Estado_Id,
+                    x.Rollo_Id,
+                    x.DtEntRolloProd_Cantidad,
+                    x.UndMed_Id
+                })
+                .ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
         // PUT: api/DetalleEntradaRollo_Producto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

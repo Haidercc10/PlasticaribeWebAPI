@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20220921144208_AddDtAsgProdFacutraNull")]
+    partial class AddDtAsgProdFacutraNull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -646,29 +648,21 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.DetalleDevolucion_ProductoFacturado", b =>
                 {
-                    b.Property<int>("DtDevProdFact_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DtDevProdFact_Id"), 1L, 1);
-
                     b.Property<long>("DevProdFact_Id")
                         .HasColumnType("bigint");
+
+                    b.Property<int>("Prod_Id")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("DtDevProdFact_Cantidad")
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
 
-                    b.Property<int>("Prod_Id")
-                        .HasColumnType("int");
-
                     b.Property<string>("UndMed_Id")
                         .IsRequired()
                         .HasColumnType("varchar(10)");
 
-                    b.HasKey("DtDevProdFact_Id");
-
-                    b.HasIndex("DevProdFact_Id");
+                    b.HasKey("DevProdFact_Id", "Prod_Id");
 
                     b.HasIndex("Prod_Id");
 
@@ -771,21 +765,15 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.DetallesAsignacionProducto_FacturaVenta", b =>
                 {
-                    b.Property<long>("DtAsigProdFV_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("DtAsigProdFV_Id"), 1L, 1);
-
                     b.Property<long>("AsigProdFV_Id")
                         .HasColumnType("bigint");
+
+                    b.Property<int>("Prod_Id")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("DtAsigProdFV_Cantidad")
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
-
-                    b.Property<int>("Prod_Id")
-                        .HasColumnType("int");
 
                     b.Property<long>("Rollo_Id")
                         .HasColumnType("bigint");
@@ -794,9 +782,7 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(10)");
 
-                    b.HasKey("DtAsigProdFV_Id");
-
-                    b.HasIndex("AsigProdFV_Id");
+                    b.HasKey("AsigProdFV_Id", "Prod_Id");
 
                     b.HasIndex("Prod_Id");
 

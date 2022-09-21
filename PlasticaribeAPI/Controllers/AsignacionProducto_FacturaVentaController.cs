@@ -42,6 +42,13 @@ namespace PlasticaribeAPI.Controllers
             return asignacionProducto_FacturaVenta;
         }
 
+        [HttpGet("UltimoId")]
+        public ActionResult Get()
+        {
+            var con = _context.AsignacionesProductos_FacturasVentas.OrderByDescending(x => x.AsigProdFV_Id).First();
+            return Ok(con);
+        }
+
         // PUT: api/AsignacionProducto_FacturaVenta/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

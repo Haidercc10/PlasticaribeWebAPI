@@ -7,11 +7,11 @@ namespace PlasticaribeAPI.Models
     public class DetallesAsignacionProducto_FacturaVenta
     {
 
-        /*[Key]
-        public long DtAsigProdFV_Codigo { get; set; }*/
+        [Key]
+        public long DtAsigProdFV_Id { get; set; }
 
         public long AsigProdFV_Id { get; set; }
-        public AsignacionProducto_FacturaVenta AsigProducto_FV { get; set; }
+        public AsignacionProducto_FacturaVenta? AsigProducto_FV { get; set; }
 
         public int Prod_Id { get; set; }
         public Producto? Prod { get; set; }
