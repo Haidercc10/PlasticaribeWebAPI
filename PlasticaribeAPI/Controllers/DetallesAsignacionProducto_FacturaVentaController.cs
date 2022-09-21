@@ -67,6 +67,49 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("CrearPdf/{factura}")]
+        public ActionResult GetCrearPdf (string factura)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from dtAsg in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
+                      from rollo in _context.Set<DetalleEntradaRollo_Producto>()
+                      from emp in _context.Set<Empresa>()
+                      where dtAsg.AsigProducto_FV.FacturaVta_Id == factura
+                            && rollo.Rollo_Id == dtAsg.Rollo_Id
+                      select new
+                      {
+                          dtAsg.AsigProdFV_Id,
+                          dtAsg.Prod_Id,
+                          dtAsg.Prod.Prod_Nombre,
+                          dtAsg.AsigProducto_FV.Cli_Id,
+                          dtAsg.AsigProducto_FV.Cliente.Cli_Nombre,
+                          dtAsg.AsigProducto_FV.Cliente.Cli_Email,
+                          dtAsg.AsigProducto_FV.Cliente.Cli_Telefono,
+                          dtAsg.AsigProducto_FV.Cliente.TPCli.TPCli_Nombre,
+                          dtAsg.AsigProducto_FV.Cliente.TipoIdentificacion.TipoIdentificacion_Nombre,
+                          dtAsg.Rollo_Id,
+                          dtAsg.UndMed_Id,
+                          dtAsg.DtAsigProdFV_Cantidad,
+                          dtAsg.AsigProducto_FV.AsigProdFV_Fecha,
+                          Creador = dtAsg.AsigProducto_FV.Usua_Id,
+                          NombreCreador = dtAsg.AsigProducto_FV.Usua.Usua_Nombre,
+                          Conductor = dtAsg.AsigProducto_FV.Usua_Conductor,
+                          NombreConductor = dtAsg.AsigProducto_FV.Usuario.Usua_Nombre,
+                          dtAsg.AsigProducto_FV.AsigProdFV_Observacion,
+                          dtAsg.AsigProducto_FV.AsigProdFV_PlacaCamion,
+                          dtAsg.AsigProducto_FV.NotaCredito_Id,
+                          emp.Empresa_Id,
+                          emp.Empresa_Ciudad,
+                          emp.Empresa_COdigoPostal,
+                          emp.Empresa_Correo,
+                          emp.Empresa_Direccion,
+                          emp.Empresa_Telefono,
+                          emp.Empresa_Nombre
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
         // PUT: api/DetallesAsignacionProducto_FacturaVenta/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
