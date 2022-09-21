@@ -16,6 +16,9 @@ namespace PlasticaribeAPI.Models
         public Producto? Prod { get; set; }
 
 
+        public long Rollo_Id { get; set; }
+
+
         [Precision(14, 2)]
         public decimal DtDevProdFact_Cantidad { get; set; }
 
@@ -23,6 +26,8 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string UndMed_Id { get; set; }
         public Unidad_Medida? UndMedida { get; set; }
+
+
 
     }
 }

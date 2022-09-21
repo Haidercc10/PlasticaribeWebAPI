@@ -116,20 +116,26 @@ namespace PlasticaribeAPI.Controllers
 
             var QueryXFechas = from fact in _context.Set<AsignacionProducto_FacturaVenta>()
                          from detfact in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
+                         from prd in _context.Set<Producto>()
                          where fact.AsigProdFV_Fecha >= FechaIni
                          && fact.AsigProdFV_Fecha <= FechaFin
                          && fact.AsigProdFV_Id == detfact.AsigProdFV_Id
+                         && prd.Prod_Id == detfact.Prod_Id
                          select new
                          {
-                             fact.FacturaVta_Id,
-                             fact.AsigProdFV_Fecha,
-                             detfact.Prod_Id,
-                             detfact.Rollo_Id,
-                             detfact.DtAsigProdFV_Cantidad,
-                             detfact.UndMed_Id
+                             Documento = fact.FacturaVta_Id,
+                             ProductoID = detfact.Prod_Id,
+                             Nombre = prd.Prod_Nombre,
+                             Rollo = detfact.Rollo_Id,
+                             Cantidad = detfact.DtAsigProdFV_Cantidad,
+                             Unidad = detfact.UndMed_Id,
+                             Fecha = fact.AsigProdFV_Fecha
                          };
 
             
+
+
+
 
             if (QueryXFechas == null)
             {

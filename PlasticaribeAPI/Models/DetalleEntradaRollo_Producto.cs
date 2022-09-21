@@ -12,6 +12,7 @@ namespace PlasticaribeAPI.Models
         public long EntRolloProd_Id { get; set; }
         public EntradaRollo_Producto? EntRollo_Producto { get; set; }
 
+        [Column(Order = 3)]
         public long Rollo_Id { get; set; }
 
 
