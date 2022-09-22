@@ -114,7 +114,10 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetFiltroFechas(DateTime FechaIni, DateTime FechaFin)
         {
 
-            var QueryXFechas = (from fact in _context.Set<AsignacionProducto_FacturaVenta>()
+           
+
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var QueryAsignacion = (from fact in _context.Set<AsignacionProducto_FacturaVenta>()
                                from detfact in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
                                from rollo in _context.Set<DetalleEntradaRollo_Producto>()
                                where fact.AsigProdFV_Fecha >= FechaIni
@@ -125,15 +128,16 @@ namespace PlasticaribeAPI.Controllers
                          {
                              Documento = Convert.ToString(fact.FacturaVta_Id),
                              Fecha = fact.AsigProdFV_Fecha,
-                             IDProducto = detfact.Prod_Id,
-                             Nombre = detfact.Prod.Prod_Nombre,
+                             Prod_Id = detfact.Prod_Id,
+                             Prod_Nombre = detfact.Prod.Prod_Nombre,
                              Rollo = detfact.Rollo_Id,
                              Cantidad = detfact.DtAsigProdFV_Cantidad,
-                             Unidad = detfact.UndMed_Id,
+                             Presentacion = detfact.UndMed_Id,
                              Estado_Rollo = rollo.Estado.Estado_Nombre,
-                         });
+                             Tipo = "ASIGPRODFV",
+                               });
 
-            var QueryXFechas2 = (from ent in _context.Set<EntradaRollo_Producto>()
+            var QueryEntrada = (from ent in _context.Set<EntradaRollo_Producto>()
                                 from dent in _context.Set<DetalleEntradaRollo_Producto>()                                 
                                 where ent.EntRolloProd_Fecha >= FechaIni
                                 && ent.EntRolloProd_Fecha <= FechaFin                                
@@ -142,18 +146,35 @@ namespace PlasticaribeAPI.Controllers
                                 {
                                     Documento = Convert.ToString(ent.EntRolloProd_OT),
                                     Fecha = ent.EntRolloProd_Fecha,
-                                    IDProducto = ent.Prod_Id,
-                                    Nombre = ent.Prod.Prod_Nombre,
+                                    Prod_Id = ent.Prod_Id,
+                                    Prod_Nombre = ent.Prod.Prod_Nombre,
                                     Rollo = dent.Rollo_Id,
                                     Cantidad = dent.DtEntRolloProd_Cantidad,
-                                    Unidad = dent.UndMed_Id,
+                                    Presentacion = dent.UndMed_Id,
                                     Estado_Rollo = dent.Estado.Estado_Nombre,
-                                    
+                                    Tipo = "ENTROLLO",
                                 });
-           
-            return Ok(QueryXFechas.Concat(QueryXFechas2));
 
-            
+            var QueryDevolucion = (from dev in _context.Set<DetalleDevolucion_ProductoFacturado>()
+                      from rollo in _context.Set<DetalleEntradaRollo_Producto>()
+                      where dev.DevolucionProdFact.DevProdFact_Fecha >= FechaIni
+                            && dev.DevolucionProdFact.DevProdFact_Fecha <= FechaFin
+                            && dev.Rollo_Id == rollo.Rollo_Id
+                      select new
+                      {
+                          Documento = Convert.ToString(dev.DevolucionProdFact.FacturaVta_Id),
+                          Fecha = dev.DevolucionProdFact.DevProdFact_Fecha,
+                          Prod_Id = dev.Prod_Id,
+                          Prod_Nombre = dev.Prod.Prod_Nombre,
+                          Rollo =  dev.Rollo_Id,
+                          Cantidad = dev.DtDevProdFact_Cantidad,
+                          Presentacion = dev.UndMed_Id,
+                          Estado_Rollo = rollo.Estado.Estado_Nombre,
+                          Tipo = "DEVPRODFAC",
+                      });
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+          
+                return Ok(QueryAsignacion.Concat(QueryEntrada).Concat(QueryDevolucion));                    
         }
 
             // PUT: api/DetallesAsignacionProducto_FacturaVenta/5

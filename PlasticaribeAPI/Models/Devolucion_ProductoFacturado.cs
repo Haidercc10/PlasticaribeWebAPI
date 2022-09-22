@@ -29,5 +29,8 @@ namespace PlasticaribeAPI.Models
         public TipoDevolucion_ProductoFacturado? TipoDevolucionPF { get; set; }
 
         public IList<DetalleDevolucion_ProductoFacturado>? DtDevProd_Fact { get; set; }
+
+        public long Usua_Id {get; set;}
+        public Usuario? Usua { get; set; }
     }
 }
