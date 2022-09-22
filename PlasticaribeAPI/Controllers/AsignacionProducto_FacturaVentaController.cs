@@ -49,6 +49,13 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("CodigoFactura/{factura}")]
+        public ActionResult Get(string factura)
+        {
+            var con = _context.AsignacionesProductos_FacturasVentas.Where(x => x.FacturaVta_Id == factura).ToList();
+            return Ok(con);
+        }
+
         // PUT: api/AsignacionProducto_FacturaVenta/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -75,6 +82,35 @@ namespace PlasticaribeAPI.Controllers
                 {
                     throw;
                 }
+            }
+
+            return NoContent();
+        }
+
+        [HttpPut("ActualizacionFactura/{FacturaVta_Id}")]
+        public IActionResult Put(string FacturaVta_Id, AsignacionProducto_FacturaVenta asignacionProducto_FacturaVenta)
+        {
+
+            if (FacturaVta_Id != asignacionProducto_FacturaVenta.FacturaVta_Id)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var Actualizado = _context.AsignacionesProductos_FacturasVentas
+                    .Where(x => x.FacturaVta_Id == FacturaVta_Id)
+                    .First<AsignacionProducto_FacturaVenta>();
+
+                Actualizado.AsigProdFV_FechaEnvio = asignacionProducto_FacturaVenta.AsigProdFV_FechaEnvio;
+                Actualizado.Usua_Conductor = asignacionProducto_FacturaVenta.Usua_Conductor;
+                Actualizado.AsigProdFV_PlacaCamion = asignacionProducto_FacturaVenta.AsigProdFV_PlacaCamion;
+
+                _context.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return NotFound();
             }
 
             return NoContent();

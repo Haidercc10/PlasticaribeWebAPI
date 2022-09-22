@@ -41,5 +41,8 @@ namespace PlasticaribeAPI.Models
 
         public IList<DetallesAsignacionProducto_FacturaVenta>? DtAsigProd_FVTA { get; set; }
 
+        [Column(TypeName = "date")]
+        public DateTime AsigProdFV_FechaEnvio { get; set; }
+
     }
 }
