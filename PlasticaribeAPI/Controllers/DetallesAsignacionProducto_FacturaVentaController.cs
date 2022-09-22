@@ -114,34 +114,45 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetFiltroFechas(DateTime FechaIni, DateTime FechaFin)
         {
 
-            var QueryXFechas = from fact in _context.Set<AsignacionProducto_FacturaVenta>()
+            var QueryXFechas = (from fact in _context.Set<AsignacionProducto_FacturaVenta>()
                                from detfact in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
                                from rollo in _context.Set<DetalleEntradaRollo_Producto>()
                                where fact.AsigProdFV_Fecha >= FechaIni
                                      && fact.AsigProdFV_Fecha <= FechaFin
                                      && fact.AsigProdFV_Id == detfact.AsigProdFV_Id
                                      && rollo.Rollo_Id == detfact.Rollo_Id
-                               select new
+                               select new 
                          {
-                             fact.FacturaVta_Id,
-                             fact.AsigProdFV_Fecha,
-                             detfact.Prod_Id,
-                             detfact.Prod.Prod_Nombre,
-                             detfact.Rollo_Id,
-                             detfact.DtAsigProdFV_Cantidad,
-                             detfact.UndMed_Id,
-                             rollo.Estado.Estado_Nombre,
-                         };
+                             Documento = Convert.ToString(fact.FacturaVta_Id),
+                             Fecha = fact.AsigProdFV_Fecha,
+                             IDProducto = detfact.Prod_Id,
+                             Nombre = detfact.Prod.Prod_Nombre,
+                             Rollo = detfact.Rollo_Id,
+                             Cantidad = detfact.DtAsigProdFV_Cantidad,
+                             Unidad = detfact.UndMed_Id,
+                             Estado_Rollo = rollo.Estado.Estado_Nombre,
+                         });
 
-            
+            var QueryXFechas2 = (from ent in _context.Set<EntradaRollo_Producto>()
+                                from dent in _context.Set<DetalleEntradaRollo_Producto>()                                 
+                                where ent.EntRolloProd_Fecha >= FechaIni
+                                && ent.EntRolloProd_Fecha <= FechaFin                                
+                                && ent.EntRolloProd_Id == dent.EntRolloProd_Id
+                                select new 
+                                {
+                                    Documento = Convert.ToString(ent.EntRolloProd_OT),
+                                    Fecha = ent.EntRolloProd_Fecha,
+                                    IDProducto = ent.Prod_Id,
+                                    Nombre = ent.Prod.Prod_Nombre,
+                                    Rollo = dent.Rollo_Id,
+                                    Cantidad = dent.DtEntRolloProd_Cantidad,
+                                    Unidad = dent.UndMed_Id,
+                                    Estado_Rollo = dent.Estado.Estado_Nombre,
+                                    
+                                });
+           
+            return Ok(QueryXFechas.Concat(QueryXFechas2));
 
-            if (QueryXFechas == null)
-            {
-                return NotFound();
-            } else
-            {
-                return Ok(QueryXFechas);
-            }
             
         }
 
