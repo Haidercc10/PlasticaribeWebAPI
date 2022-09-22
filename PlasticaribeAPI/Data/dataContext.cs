@@ -349,6 +349,7 @@ namespace PlasticaribeAPI.Data
             //Relaciones Devolucion_ProductoFacturado
             modelBuilder.Entity<Devolucion_ProductoFacturado>().HasOne(erp => erp.Cliente).WithMany().HasForeignKey(erp => erp.Cli_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Devolucion_ProductoFacturado>().HasOne(erp => erp.TipoDevolucionPF).WithMany().HasForeignKey(erp => erp.TipoDevProdFact_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Devolucion_ProductoFacturado>().HasOne(x => x.Usua).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
 
             //Relaciones DetalleDevolucion_ProductoFacturado

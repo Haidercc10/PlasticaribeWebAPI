@@ -42,6 +42,51 @@ namespace PlasticaribeAPI.Controllers
             return detalleDevolucion_ProductoFacturado;
         }
 
+        [HttpGet("CrearPdf/{factura}")]
+        public ActionResult GetCrearPdf(string factura)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from dtDev in _context.Set<DetalleDevolucion_ProductoFacturado>()
+                      from dtAsg in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
+                      from rollo in _context.Set<DetalleEntradaRollo_Producto>()
+                      from emp in _context.Set<Empresa>()
+                      where dtDev.DevolucionProdFact.FacturaVta_Id == factura
+                            && rollo.Rollo_Id == dtDev.Rollo_Id
+                            && dtAsg.Rollo_Id == dtDev.Rollo_Id
+                      select new
+                      {
+                          dtDev.DevProdFact_Id,
+                          dtDev.Prod_Id,
+                          dtDev.Prod.Prod_Nombre,
+                          dtAsg.AsigProducto_FV.Cli_Id,
+                          dtAsg.AsigProducto_FV.Cliente.Cli_Nombre,
+                          dtAsg.AsigProducto_FV.Cliente.Cli_Email,
+                          dtAsg.AsigProducto_FV.Cliente.Cli_Telefono,
+                          dtAsg.AsigProducto_FV.Cliente.TPCli.TPCli_Nombre,
+                          dtAsg.AsigProducto_FV.Cliente.TipoIdentificacion.TipoIdentificacion_Nombre,
+                          dtDev.Rollo_Id,
+                          dtDev.UndMed_Id,
+                          dtDev.DtDevProdFact_Cantidad,
+                          dtDev.DevolucionProdFact.DevProdFact_Fecha,
+                          Creador = dtDev.DevolucionProdFact.Usua_Id,
+                          NombreCreador = dtDev.DevolucionProdFact.Usua.Usua_Nombre,
+                          Conductor = dtAsg.AsigProducto_FV.Usua_Conductor,
+                          NombreConductor = dtAsg.AsigProducto_FV.Usuario.Usua_Nombre,
+                          dtDev.DevolucionProdFact.DevProdFact_Observacion,
+                          dtAsg.AsigProducto_FV.AsigProdFV_PlacaCamion,
+                          dtAsg.AsigProducto_FV.NotaCredito_Id,
+                          emp.Empresa_Id,
+                          emp.Empresa_Ciudad,
+                          emp.Empresa_COdigoPostal,
+                          emp.Empresa_Correo,
+                          emp.Empresa_Direccion,
+                          emp.Empresa_Telefono,
+                          emp.Empresa_Nombre
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
         // PUT: api/DetalleDevolucion_ProductoFacturado/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

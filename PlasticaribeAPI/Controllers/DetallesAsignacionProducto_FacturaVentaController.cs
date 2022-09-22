@@ -114,6 +114,7 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetFiltroFechas(DateTime FechaIni, DateTime FechaFin)
         {
 
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var QueryXFechas = from fact in _context.Set<AsignacionProducto_FacturaVenta>()
                                from detfact in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
                                from rollo in _context.Set<DetalleEntradaRollo_Producto>()
@@ -123,24 +124,42 @@ namespace PlasticaribeAPI.Controllers
                                      && rollo.Rollo_Id == detfact.Rollo_Id
                                select new
                          {
-                             fact.FacturaVta_Id,
-                             fact.AsigProdFV_Fecha,
-                             detfact.Prod_Id,
-                             detfact.Prod.Prod_Nombre,
-                             detfact.Rollo_Id,
-                             detfact.DtAsigProdFV_Cantidad,
-                             detfact.UndMed_Id,
-                             rollo.Estado.Estado_Nombre,
+                             Codigo = fact.FacturaVta_Id,
+                             Fecha = fact.AsigProdFV_Fecha,
+                             Prod_Id = detfact.Prod_Id,
+                             Prod_Nombre = detfact.Prod.Prod_Nombre,
+                             Rollo = detfact.Rollo_Id,
+                             Cantidad = detfact.DtAsigProdFV_Cantidad,
+                             Presentacion = detfact.UndMed_Id,
+                             Estado_Rollo = rollo.Estado.Estado_Nombre,
+                             Tipo = "ASIGPRODFV",
                          };
 
-            
+            var Dev = from dev in _context.Set<DetalleDevolucion_ProductoFacturado>()
+                      from rollo in _context.Set<DetalleEntradaRollo_Producto>()
+                      where dev.DevolucionProdFact.DevProdFact_Fecha >= FechaIni
+                            && dev.DevolucionProdFact.DevProdFact_Fecha <= FechaFin
+                            && dev.Rollo_Id == rollo.Rollo_Id
+                      select new
+                      {
+                          Codigo = dev.DevolucionProdFact.FacturaVta_Id,
+                          Fecha = dev.DevolucionProdFact.DevProdFact_Fecha,
+                          Prod_Id = dev.Prod_Id,
+                          Prod_Nombre = dev.Prod.Prod_Nombre,
+                          Rollo =  dev.Rollo_Id,
+                          Cantidad = dev.DtDevProdFact_Cantidad,
+                          Presentacion = dev.UndMed_Id,
+                          Estado_Rollo = rollo.Estado.Estado_Nombre,
+                          Tipo = "DEVPRODFAC",
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             if (QueryXFechas == null)
             {
                 return NotFound();
             } else
             {
-                return Ok(QueryXFechas);
+                return Ok(QueryXFechas.Concat(Dev));
             }
             
         }

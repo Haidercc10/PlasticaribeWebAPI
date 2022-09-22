@@ -70,6 +70,36 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("CrearPdf/{ot}")]
+        public ActionResult GetCrearPdf(long ot)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from rollo in _context.Set<DetalleEntradaRollo_Producto>()
+                      from emp in _context.Set<Empresa>()
+                      where rollo.EntRollo_Producto.EntRolloProd_OT == ot
+                      select new
+                      {
+                          rollo.EntRollo_Producto.EntRolloProd_Id,
+                          rollo.EntRollo_Producto.Prod_Id,
+                          rollo.EntRollo_Producto.Prod.Prod_Nombre,
+                          rollo.Rollo_Id,
+                          rollo.UndMed_Id,
+                          rollo.DtEntRolloProd_Cantidad,
+                          rollo.EntRollo_Producto.EntRolloProd_Fecha,
+                          Creador = rollo.EntRollo_Producto.Usua_Id,
+                          NombreCreador = rollo.EntRollo_Producto.Usua.Usua_Nombre,
+                          emp.Empresa_Id,
+                          emp.Empresa_Ciudad,
+                          emp.Empresa_COdigoPostal,
+                          emp.Empresa_Correo,
+                          emp.Empresa_Direccion,
+                          emp.Empresa_Telefono,
+                          emp.Empresa_Nombre
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
         // PUT: api/DetalleEntradaRollo_Producto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
