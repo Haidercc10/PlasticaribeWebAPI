@@ -8,23 +8,9 @@ namespace PlasticaribeAPI.Models
         [Key]
         public long PreEntRollo_Id { get; set; }
 
-        public long PreEntRollo_OT { get; set; }
-
 
         [Column(TypeName = "date")]
         public DateTime PreEntRollo_Fecha { get; set; }
-
-
-        public long Cli_Id { get; set; }
-        public Clientes? Cliente { get; set; }
-
-        public int Prod_Id { get; set; }
-        public Producto? Prod { get; set; }
-
-
-        [Column(TypeName = "varchar(10)")]
-        public string UndMed_Id { get; set; }
-        public Unidad_Medida? UndMedida { get; set; }
 
 
         [Column(TypeName = "text")]

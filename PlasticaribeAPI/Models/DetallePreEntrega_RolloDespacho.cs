@@ -14,6 +14,26 @@ namespace PlasticaribeAPI.Models
         public long PreEntRollo_Id { get; set; }
         public PreEntrega_RolloDespacho? PreEntregaRollo { get; set; }
 
+
+        [Column(Order = 2)]
+        public long DtlPreEntRollo_OT { get; set; }
+
+
+        [Column(Order = 3)]
+        public int Prod_Id { get; set; }
+        public Producto? Prod { get; set; }
+
+        
+        [Column(TypeName = "varchar(10)", Order = 4)]
+        public string UndMed_Producto { get; set; }
+        public Unidad_Medida? UndMedidaProducto { get; set; }
+
+
+        [Column(Order = 5)]
+        public long Cli_Id { get; set; }
+        public Clientes? Cliente { get; set; }
+
+
         public long Rollo_Id { get; set; }
 
 
@@ -22,12 +42,13 @@ namespace PlasticaribeAPI.Models
 
 
         [Column(TypeName = "varchar(10)")]
-        public string UndMed_Id { get; set; }
-        public Unidad_Medida? UndMedida { get; set; }
+        public string UndMed_Rollo { get; set; }
+        public Unidad_Medida? UndMedidaRollo { get; set; }
 
 
         [Column(TypeName = "varchar(10)")]
         public string Proceso_Id { get; set; }
         public Proceso? Proceso { get; set; }
+       
     }
 }
