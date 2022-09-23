@@ -114,8 +114,6 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetFiltroFechas(DateTime FechaIni, DateTime FechaFin)
         {
 
-           
-
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var QueryAsignacion = (from fact in _context.Set<AsignacionProducto_FacturaVenta>()
                                from detfact in _context.Set<DetallesAsignacionProducto_FacturaVenta>()

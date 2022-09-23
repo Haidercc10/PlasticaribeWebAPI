@@ -358,8 +358,17 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetalleDevolucion_ProductoFacturado>().HasOne<Producto>(dapfv => dapfv.Prod).WithMany(remmp => remmp.DtDevProd_Fact).HasForeignKey(dapfv => dapfv.Prod_Id);
             modelBuilder.Entity<DetalleDevolucion_ProductoFacturado>().HasOne(erp => erp.UndMedida).WithMany().HasForeignKey(erp => erp.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            //Relaciones PreEntrega_RolloDespacho
+            modelBuilder.Entity<PreEntrega_RolloDespacho>().HasOne(erp => erp.Cliente).WithMany().HasForeignKey(erp => erp.Cli_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<PreEntrega_RolloDespacho>().HasOne(erp => erp.Prod).WithMany().HasForeignKey(erp => erp.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<PreEntrega_RolloDespacho>().HasOne(erp => erp.UndMedida).WithMany().HasForeignKey(erp => erp.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<PreEntrega_RolloDespacho>().HasOne(erp => erp.Usuario).WithMany().HasForeignKey(erp => erp.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
-
+            //Relaciones PreEntrega_RolloDespacho
+            modelBuilder.Entity<DetallePreEntrega_RolloDespacho>().HasOne(erp => erp.PreEntregaRollo).WithMany().HasForeignKey(erp => erp.PreEntRollo_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<DetallePreEntrega_RolloDespacho>().HasOne(erp => erp.Proceso).WithMany().HasForeignKey(erp => erp.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<DetallePreEntrega_RolloDespacho>().HasOne(erp => erp.UndMedida).WithMany().HasForeignKey(erp => erp.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+           
         }
 
 
@@ -491,6 +500,10 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.DetalleDevolucion_ProductoFacturado> DetallesDevoluciones_ProductosFacturados { get; set; }
 
         public DbSet<PlasticaribeAPI.Models.TipoDevolucion_ProductoFacturado> TiposDevoluciones_ProductosFacturados { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.PreEntrega_RolloDespacho> PreEntrega_RollosDespacho { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.DetallePreEntrega_RolloDespacho> DetallesPreEntrega_RollosDespacho { get; set; }
     }
 
 }
