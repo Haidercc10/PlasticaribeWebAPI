@@ -116,34 +116,38 @@ namespace PlasticaribeAPI.Controllers
 
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var QueryAsignacion = (from fact in _context.Set<AsignacionProducto_FacturaVenta>()
-                               from detfact in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
-                               from rollo in _context.Set<DetalleEntradaRollo_Producto>()
-                               where fact.AsigProdFV_Fecha >= FechaIni
-                                     && fact.AsigProdFV_Fecha <= FechaFin
-                                     && fact.AsigProdFV_Id == detfact.AsigProdFV_Id
-                                     && rollo.Rollo_Id == detfact.Rollo_Id
-                               select new 
-                         {
-                             Documento = Convert.ToString(fact.FacturaVta_Id),
-                             Fecha = fact.AsigProdFV_Fecha,
-                             Prod_Id = detfact.Prod_Id,
-                             Prod_Nombre = detfact.Prod.Prod_Nombre,
-                             Rollo = detfact.Rollo_Id,
-                             Cantidad = detfact.DtAsigProdFV_Cantidad,
-                             Presentacion = detfact.UndMed_Id,
-                             Estado_Rollo = rollo.Estado.Estado_Nombre,
-                             Tipo = "ASIGPRODFV",
-                               });
+                                   from detfact in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
+                                   from rollo in _context.Set<DetalleEntradaRollo_Producto>()
+                                   where fact.AsigProdFV_Fecha >= FechaIni
+                                         && fact.AsigProdFV_Fecha <= FechaFin
+                                         && fact.AsigProdFV_Id == detfact.AsigProdFV_Id
+                                         && rollo.Rollo_Id == detfact.Rollo_Id
+                                   select new
+                                   {
+                                       Documento = Convert.ToString(fact.FacturaVta_Id),
+                                       Fecha = fact.AsigProdFV_Fecha,
+                                       Cli_Id = Convert.ToString(fact.Cli_Id),
+                                       Cli_Nombre = Convert.ToString(fact.Cliente.Cli_Nombre),
+                                       Prod_Id = detfact.Prod_Id,
+                                       Prod_Nombre = detfact.Prod.Prod_Nombre,
+                                       Rollo = detfact.Rollo_Id,
+                                       Cantidad = detfact.DtAsigProdFV_Cantidad,
+                                       Presentacion = detfact.UndMed_Id,
+                                       Estado_Rollo = rollo.Estado.Estado_Nombre,
+                                       Tipo = "ASIGPRODFV",
+                                   });
 
             var QueryEntrada = (from ent in _context.Set<EntradaRollo_Producto>()
-                                from dent in _context.Set<DetalleEntradaRollo_Producto>()                                 
+                                from dent in _context.Set<DetalleEntradaRollo_Producto>()
                                 where ent.EntRolloProd_Fecha >= FechaIni
-                                && ent.EntRolloProd_Fecha <= FechaFin                                
+                                && ent.EntRolloProd_Fecha <= FechaFin
                                 && ent.EntRolloProd_Id == dent.EntRolloProd_Id
-                                select new 
+                                select new
                                 {
                                     Documento = Convert.ToString(ent.EntRolloProd_OT),
                                     Fecha = ent.EntRolloProd_Fecha,
+                                    Cli_Id = Convert.ToString(""),
+                                    Cli_Nombre = Convert.ToString(""),
                                     Prod_Id = ent.Prod_Id,
                                     Prod_Nombre = ent.Prod.Prod_Nombre,
                                     Rollo = dent.Rollo_Id,
@@ -162,6 +166,8 @@ namespace PlasticaribeAPI.Controllers
                       {
                           Documento = Convert.ToString(dev.DevolucionProdFact.FacturaVta_Id),
                           Fecha = dev.DevolucionProdFact.DevProdFact_Fecha,
+                          Cli_Id = Convert.ToString(dev.DevolucionProdFact.Cli_Id),
+                          Cli_Nombre = Convert.ToString(dev.DevolucionProdFact.Cliente.Cli_Nombre),
                           Prod_Id = dev.Prod_Id,
                           Prod_Nombre = dev.Prod.Prod_Nombre,
                           Rollo =  dev.Rollo_Id,
@@ -172,12 +178,81 @@ namespace PlasticaribeAPI.Controllers
                       });
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
           
-                return Ok(QueryAsignacion.Concat(QueryEntrada).Concat(QueryDevolucion));                    
+            return Ok(QueryAsignacion.Concat(QueryEntrada).Concat(QueryDevolucion));                    
         }
 
-            // PUT: api/DetallesAsignacionProducto_FacturaVenta/5
-            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-            [HttpPut("{id}")]
+        [HttpGet("FiltroFactura/{factura}/{ot}")]
+        public ActionResult GetFiltroFactura(string factura, string ot)
+        {
+
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var QueryAsignacion = (from fact in _context.Set<AsignacionProducto_FacturaVenta>()
+                                   from detfact in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
+                                   from rollo in _context.Set<DetalleEntradaRollo_Producto>()
+                                   where fact.FacturaVta_Id == factura
+                                         && fact.AsigProdFV_Id == detfact.AsigProdFV_Id
+                                         && rollo.Rollo_Id == detfact.Rollo_Id
+                                   select new
+                                   {
+                                       Documento = Convert.ToString(fact.FacturaVta_Id),
+                                       Fecha = fact.AsigProdFV_Fecha,
+                                       Cli_Id = Convert.ToString(fact.Cli_Id),
+                                       Cli_Nombre = Convert.ToString(fact.Cliente.Cli_Nombre),
+                                       Prod_Id = detfact.Prod_Id,
+                                       Prod_Nombre = detfact.Prod.Prod_Nombre,
+                                       Rollo = detfact.Rollo_Id,
+                                       Cantidad = detfact.DtAsigProdFV_Cantidad,
+                                       Presentacion = detfact.UndMed_Id,
+                                       Estado_Rollo = rollo.Estado.Estado_Nombre,
+                                       Tipo = "ASIGPRODFV",
+                                   });
+
+            var QueryEntrada = (from ent in _context.Set<EntradaRollo_Producto>()
+                                from dent in _context.Set<DetalleEntradaRollo_Producto>()
+                                where Convert.ToString(ent.EntRolloProd_OT) == ot
+                                && ent.EntRolloProd_Id == dent.EntRolloProd_Id
+                                select new
+                                {
+                                    Documento = Convert.ToString(ent.EntRolloProd_OT),
+                                    Fecha = ent.EntRolloProd_Fecha,
+                                    Cli_Id = Convert.ToString(""),
+                                    Cli_Nombre = Convert.ToString(""),
+                                    Prod_Id = ent.Prod_Id,
+                                    Prod_Nombre = ent.Prod.Prod_Nombre,
+                                    Rollo = dent.Rollo_Id,
+                                    Cantidad = dent.DtEntRolloProd_Cantidad,
+                                    Presentacion = dent.UndMed_Id,
+                                    Estado_Rollo = dent.Estado.Estado_Nombre,
+                                    Tipo = "ENTROLLO",
+                                });
+
+            var QueryDevolucion = (from dev in _context.Set<DetalleDevolucion_ProductoFacturado>()
+                                   from rollo in _context.Set<DetalleEntradaRollo_Producto>()
+                                   where dev.DevolucionProdFact.FacturaVta_Id == factura
+                                         && dev.Rollo_Id == rollo.Rollo_Id
+                                   select new
+                                   {
+                                       Documento = Convert.ToString(dev.DevolucionProdFact.FacturaVta_Id),
+                                       Fecha = dev.DevolucionProdFact.DevProdFact_Fecha,
+                                       Cli_Id = Convert.ToString(dev.DevolucionProdFact.Cli_Id),
+                                       Cli_Nombre = Convert.ToString(dev.DevolucionProdFact.Cliente.Cli_Nombre),
+                                       Prod_Id = dev.Prod_Id,
+                                       Prod_Nombre = dev.Prod.Prod_Nombre,
+                                       Rollo = dev.Rollo_Id,
+                                       Cantidad = dev.DtDevProdFact_Cantidad,
+                                       Presentacion = dev.UndMed_Id,
+                                       Estado_Rollo = rollo.Estado.Estado_Nombre,
+                                       Tipo = "DEVPRODFAC",
+                                   });
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            return Ok(QueryAsignacion.Concat(QueryEntrada).Concat(QueryDevolucion));
+        }
+
+
+        // PUT: api/DetallesAsignacionProducto_FacturaVenta/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutDetallesAsignacionProducto_FacturaVenta(long id, DetallesAsignacionProducto_FacturaVenta detallesAsignacionProducto_FacturaVenta)
         {
             if (id != detallesAsignacionProducto_FacturaVenta.AsigProdFV_Id)
