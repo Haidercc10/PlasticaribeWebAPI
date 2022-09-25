@@ -136,6 +136,35 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+
+        [HttpGet("InventarioProductos")]
+        public ActionResult<Existencia_Productos> GetInventarioProductos()
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var producto = _context.Existencias_Productos.Where(p => p.Prod_Id == p.Prod.Prod_Id && p.ExProd_Cantidad >= 1)
+                .Include(p => p.Prod)
+                .Select(p => new
+                {                    
+                    p.Prod_Id,
+                    p.Prod.Prod_Nombre, 
+                    p.ExProd_PrecioVenta,
+                    p.ExProd_Cantidad,
+                    p.UndMed_Id,
+                    p.ExProd_CantMinima
+                })
+                .ToList();
+
+            
+            if (producto == null)
+            {
+                return NotFound();
+            }
+            else 
+            {
+                return Ok(producto);
+            }
+        }
+
         // PUT: api/Existencia_Productos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
