@@ -144,15 +144,15 @@ namespace PlasticaribeAPI.Controllers
                                 && ent.EntRolloProd_Id == dent.EntRolloProd_Id
                                 select new
                                 {
-                                    Documento = Convert.ToString(ent.EntRolloProd_OT),
+                                    Documento = Convert.ToString(dent.DtEntRolloProd_OT),
                                     Fecha = ent.EntRolloProd_Fecha,
                                     Cli_Id = Convert.ToString(""),
                                     Cli_Nombre = Convert.ToString(""),
-                                    Prod_Id = ent.Prod_Id,
-                                    Prod_Nombre = ent.Prod.Prod_Nombre,
+                                    Prod_Id = dent.Prod_Id,
+                                    Prod_Nombre = dent.Prod.Prod_Nombre,
                                     Rollo = dent.Rollo_Id,
                                     Cantidad = dent.DtEntRolloProd_Cantidad,
-                                    Presentacion = dent.UndMed_Id,
+                                    Presentacion = dent.UndMed_Rollo,
                                     Estado_Rollo = dent.Estado.Estado_Nombre,
                                     Tipo = "ENTROLLO",
                                 });
@@ -209,19 +209,19 @@ namespace PlasticaribeAPI.Controllers
 
             var QueryEntrada = (from ent in _context.Set<EntradaRollo_Producto>()
                                 from dent in _context.Set<DetalleEntradaRollo_Producto>()
-                                where Convert.ToString(ent.EntRolloProd_OT) == ot
+                                where Convert.ToString(dent.DtEntRolloProd_OT) == ot
                                 && ent.EntRolloProd_Id == dent.EntRolloProd_Id
                                 select new
                                 {
-                                    Documento = Convert.ToString(ent.EntRolloProd_OT),
+                                    Documento = Convert.ToString(dent.DtEntRolloProd_OT),
                                     Fecha = ent.EntRolloProd_Fecha,
                                     Cli_Id = Convert.ToString(""),
                                     Cli_Nombre = Convert.ToString(""),
-                                    Prod_Id = ent.Prod_Id,
-                                    Prod_Nombre = ent.Prod.Prod_Nombre,
+                                    Prod_Id = dent.Prod_Id,
+                                    Prod_Nombre = dent.Prod.Prod_Nombre,
                                     Rollo = dent.Rollo_Id,
                                     Cantidad = dent.DtEntRolloProd_Cantidad,
-                                    Presentacion = dent.UndMed_Id,
+                                    Presentacion = dent.UndMed_Rollo,
                                     Estado_Rollo = dent.Estado.Estado_Nombre,
                                     Tipo = "ENTROLLO",
                                 });

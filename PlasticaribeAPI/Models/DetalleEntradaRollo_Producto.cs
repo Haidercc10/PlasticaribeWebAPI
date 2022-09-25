@@ -21,11 +21,21 @@ namespace PlasticaribeAPI.Models
 
 
         [Column(TypeName = "varchar(10)")]
-        public string UndMed_Id { get; set; }
-        public Unidad_Medida? UndMedida { get; set; }
+        public string UndMed_Rollo { get; set; }
+        public Unidad_Medida? UndMedida_Rollo { get; set; }
         
 
         public int Estado_Id { get; set; }
         public Estado? Estado { get; set; }
+
+        public long DtEntRolloProd_OT { get; set; }
+
+        public int Prod_Id { get; set; }
+        public Producto? Prod { get; set; }
+
+
+        [Column(TypeName = "varchar(10)")]
+        public string UndMed_Prod { get; set; }
+        public Unidad_Medida? UndMedida_Prod { get; set; }
     }
 }

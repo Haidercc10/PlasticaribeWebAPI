@@ -54,16 +54,16 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.DetallesEntradasRollos_Productos
-                .Where(x => x.EntRollo_Producto.Prod_Id == id)
+                .Where(x => x.Prod_Id == id)
                 .Select(x => new
                 {
                     x.EntRolloProd_Id,
-                    x.EntRollo_Producto.Prod_Id,
-                    x.EntRollo_Producto.Prod.Prod_Nombre,
+                    x.Prod_Id,
+                    x.Prod.Prod_Nombre,
                     x.Estado_Id,
                     x.Rollo_Id,
                     x.DtEntRolloProd_Cantidad,
-                    x.UndMed_Id
+                    x.UndMed_Rollo
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -76,14 +76,46 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from rollo in _context.Set<DetalleEntradaRollo_Producto>()
                       from emp in _context.Set<Empresa>()
-                      where rollo.EntRollo_Producto.EntRolloProd_OT == ot
+                      where rollo.DtEntRolloProd_OT == ot
                       select new
                       {
                           rollo.EntRollo_Producto.EntRolloProd_Id,
-                          rollo.EntRollo_Producto.Prod_Id,
-                          rollo.EntRollo_Producto.Prod.Prod_Nombre,
+                          rollo.Prod_Id,
+                          rollo.Prod.Prod_Nombre,
                           rollo.Rollo_Id,
-                          rollo.UndMed_Id,
+                          rollo.UndMed_Rollo,
+                          rollo.DtEntRolloProd_Cantidad,
+                          rollo.EntRollo_Producto.EntRolloProd_Fecha,
+                          Creador = rollo.EntRollo_Producto.Usua_Id,
+                          NombreCreador = rollo.EntRollo_Producto.Usua.Usua_Nombre,
+                          emp.Empresa_Id,
+                          emp.Empresa_Ciudad,
+                          emp.Empresa_COdigoPostal,
+                          emp.Empresa_Correo,
+                          emp.Empresa_Direccion,
+                          emp.Empresa_Telefono,
+                          emp.Empresa_Nombre
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        [HttpGet("CrearPDFUltimoID/{id}")]
+        public ActionResult GetCrearPDF(long id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from rollo in _context.Set<DetalleEntradaRollo_Producto>()
+                      from emp in _context.Set<Empresa>()
+                      where rollo.EntRollo_Producto.EntRolloProd_Id == id
+                      orderby rollo.EntRollo_Producto.EntRolloProd_Id
+                      select new
+                      {
+                          rollo.DtEntRolloProd_OT,
+                          rollo.EntRollo_Producto.EntRolloProd_Id,
+                          rollo.Prod_Id,
+                          rollo.Prod.Prod_Nombre,
+                          rollo.Rollo_Id,
+                          rollo.UndMed_Rollo,
                           rollo.DtEntRolloProd_Cantidad,
                           rollo.EntRollo_Producto.EntRolloProd_Fecha,
                           Creador = rollo.EntRollo_Producto.Usua_Id,

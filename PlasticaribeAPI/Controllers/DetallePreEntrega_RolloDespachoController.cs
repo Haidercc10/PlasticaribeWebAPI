@@ -42,6 +42,42 @@ namespace PlasticaribeAPI.Controllers
             return detallePreEntrega_RolloDespacho;
         }
 
+        [HttpGet("CrearPDFUltimoID/{id}")]
+        public ActionResult Get(long id )
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from dt in _context.Set<DetallePreEntrega_RolloDespacho>()
+                      from emp in _context.Set<Empresa>()
+                      where dt.PreEntregaRollo.PreEntRollo_Id == id
+                      orderby dt.PreEntregaRollo.PreEntRollo_Id
+                      select new {
+                          dt.PreEntRollo_Id,
+                          dt.PreEntregaRollo.PreEntRollo_Fecha,
+                          dt.PreEntregaRollo.PreEntRollo_Observacion,
+                          dt.PreEntregaRollo.Usua_Id,
+                          dt.PreEntregaRollo.Usuario.Usua_Nombre,
+                          dt.Rollo_Id,
+                          dt.Prod_Id,
+                          dt.Prod.Prod_Nombre,
+                          dt.UndMed_Rollo,
+                          dt.DtlPreEntRollo_Cantidad,
+                          dt.DtlPreEntRollo_OT,
+                          dt.Cli_Id,
+                          dt.Cliente.Cli_Nombre,
+                          dt.Proceso_Id,
+                          dt.Proceso.Proceso_Nombre,
+                          emp.Empresa_Id,
+                          emp.Empresa_Ciudad,
+                          emp.Empresa_COdigoPostal,
+                          emp.Empresa_Correo,
+                          emp.Empresa_Direccion,
+                          emp.Empresa_Telefono,
+                          emp.Empresa_Nombre
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
         // PUT: api/DetallePreEntrega_RolloDespacho/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
