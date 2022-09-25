@@ -8,17 +8,6 @@ namespace PlasticaribeAPI.Models
         [Key]
         public long EntRolloProd_Id { get; set; }
 
-        public long EntRolloProd_OT { get; set; }
-
-        public int Prod_Id { get; set; }        
-        public Producto? Prod { get; set; }
-
-
-        [Column(TypeName = "varchar(10)")]
-        public string UndMed_Id { get; set; }
-        public Unidad_Medida? UndMedida { get; set; }
-
-
         [Column(TypeName = "date")]
         public DateTime EntRolloProd_Fecha { get; set; }    
 
