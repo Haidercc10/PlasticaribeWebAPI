@@ -110,6 +110,28 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("CrearPdf2/{factura}")]
+        public ActionResult GetCrearPdf2(string factura)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = _context.DetallesAsignacionesProductos_FacturasVentas.Where(x => x.AsigProducto_FV.FacturaVta_Id == factura)
+                .GroupBy(x => new
+                {
+                    x.Prod.Prod_Nombre,
+                    x.Prod_Id,
+                    x.UndMed_Id,
+                })
+                .Select(x => new
+                {
+                    x.Key.Prod_Id,
+                    x.Key.Prod_Nombre,
+                    x.Key.UndMed_Id,
+                    Suma = x.Sum(y => y.DtAsigProdFV_Cantidad)
+                });
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
         [HttpGet("FiltroFechas/{FechaIni}/{FechaFin}")]
         public ActionResult GetFiltroFechas(DateTime FechaIni, DateTime FechaFin)
         {
@@ -248,7 +270,6 @@ namespace PlasticaribeAPI.Controllers
 
             return Ok(QueryAsignacion.Concat(QueryEntrada).Concat(QueryDevolucion));
         }
-
 
         // PUT: api/DetallesAsignacionProducto_FacturaVenta/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
