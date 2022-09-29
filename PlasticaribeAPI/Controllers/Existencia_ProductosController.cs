@@ -95,6 +95,34 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        /** Compara ID Producto de PBDD con Codigo Articulo de Zeus. */
+        [HttpGet("IdProductoPBDDXCodigoArticuloZeus/{Prod_Id}")]
+        public ActionResult<Existencia_Productos> GetCompararProductos(int Prod_Id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var producto = _context.Existencias_Productos.Where(p => p.Prod_Id == Prod_Id)
+                .Select(p => new
+                {
+                    p.Prod_Id,
+                    p.Prod.Prod_Nombre,
+                    p.ExProd_PrecioVenta,
+                    p.ExProd_Cantidad,
+                    p.UndMed_Id,
+                    p.ExProd_CantMinima
+
+                })
+                .ToList();
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(producto);
+            }
+        }
+
         [HttpGet("IdProductoPresentacion/{Prod_Id}/{UndMed_Id}")]
         public ActionResult<Existencia_Productos> GetProductoPresentacion(int Prod_Id, string UndMed_Id)
         {
