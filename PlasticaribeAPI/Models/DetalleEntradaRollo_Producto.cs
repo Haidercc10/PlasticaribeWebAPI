@@ -37,5 +37,10 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string UndMed_Prod { get; set; }
         public Unidad_Medida? UndMedida_Prod { get; set; }
+
+        [Precision(14, 2)]
+        public int Prod_CantBolsasPaquete { get; set; }
+        [Precision(14, 2)]
+        public int Prod_CantBolsasBulto { get; set; }
     }
 }

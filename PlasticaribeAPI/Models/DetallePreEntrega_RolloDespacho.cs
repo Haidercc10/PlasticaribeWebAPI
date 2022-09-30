@@ -49,6 +49,12 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string Proceso_Id { get; set; }
         public Proceso? Proceso { get; set; }
-       
+
+        [Precision(14, 2)]
+        public int Prod_CantBolsasPaquete { get; set; }
+
+        [Precision(14, 2)]
+        public int Prod_CantBolsasBulto { get; set; }
+
     }
 }

@@ -26,6 +26,10 @@ namespace PlasticaribeAPI.Models
         public string UndMed_Id { get; set; }
         public Unidad_Medida? UndMedida { get; set; }
 
+        [Precision(14, 2)]
+        public int Prod_CantBolsasPaquete { get; set; }
+        [Precision(14, 2)]
+        public int Prod_CantBolsasBulto { get; set; }
 
 
 
