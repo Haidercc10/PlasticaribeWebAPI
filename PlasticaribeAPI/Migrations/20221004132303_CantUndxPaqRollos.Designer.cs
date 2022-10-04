@@ -12,8 +12,8 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    [Migration("20220929162746_AddCantPaquete_Bulto")]
-    partial class AddCantPaquete_Bulto
+    [Migration("20221004132303_CantUndxPaqRollos")]
+    partial class CantUndxPaqRollos
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -706,13 +706,25 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Estado_Id")
                         .HasColumnType("int");
 
-                    b.Property<int>("Prod_CantBolsasBulto")
+                    b.Property<decimal>("Prod_CantBolsasBulto")
                         .HasPrecision(14, 2)
-                        .HasColumnType("int");
+                        .HasColumnType("decimal(14,2)");
 
-                    b.Property<int>("Prod_CantBolsasPaquete")
+                    b.Property<decimal>("Prod_CantBolsasFacturadas")
                         .HasPrecision(14, 2)
-                        .HasColumnType("int");
+                        .HasColumnType("decimal(14,2)");
+
+                    b.Property<decimal>("Prod_CantBolsasPaquete")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("decimal(14,2)");
+
+                    b.Property<decimal>("Prod_CantBolsasRestates")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("decimal(14,2)");
+
+                    b.Property<decimal>("Prod_CantPaquetesRestantes")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("decimal(14,2)");
 
                     b.Property<int>("Prod_Id")
                         .HasColumnType("int");
@@ -770,14 +782,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<string>("Proceso_Id")
                         .IsRequired()
                         .HasColumnType("varchar(10)");
-
-                    b.Property<int>("Prod_CantBolsasBulto")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("int");
-
-                    b.Property<int>("Prod_CantBolsasPaquete")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("int");
 
                     b.Property<int>("Prod_Id")
                         .HasColumnType("int")
@@ -883,13 +887,9 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
 
-                    b.Property<int>("Prod_CantBolsasBulto")
+                    b.Property<decimal>("Prod_CantidadUnidades")
                         .HasPrecision(14, 2)
-                        .HasColumnType("int");
-
-                    b.Property<int>("Prod_CantBolsasPaquete")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("int");
+                        .HasColumnType("decimal(14,2)");
 
                     b.Property<int>("Prod_Id")
                         .HasColumnType("int");
@@ -1234,14 +1234,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ExProd_Id"), 1L, 1);
-
-                    b.Property<int>("ExProd_CantBolsasBulto")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("int");
-
-                    b.Property<int>("ExProd_CantBolsasPaquete")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("int");
 
                     b.Property<decimal>("ExProd_CantMinima")
                         .HasPrecision(18, 2)

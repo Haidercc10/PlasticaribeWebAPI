@@ -29,14 +29,15 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // GET: api/DetallePreEntrega_RolloDespacho/5
-        [HttpGet("{id}")]
-
         [HttpGet("VerificarRollo/{id}")]
         public ActionResult GetVerificarRollo(long id)
         {
             var con = _context.DetallesPreEntrega_RollosDespacho.Where(x => x.Rollo_Id == id).ToList();
             return Ok(con);
         }
+
+
+        [HttpGet("{id}")]
         public async Task<ActionResult<DetallePreEntrega_RolloDespacho>> GetDetallePreEntrega_RolloDespacho(long id)
         {
             var detallePreEntrega_RolloDespacho = await _context.DetallesPreEntrega_RollosDespacho.FindAsync(id);

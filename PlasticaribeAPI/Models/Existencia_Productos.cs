@@ -54,11 +54,11 @@ namespace PlasticaribeAPI.Models
         [Precision(18,2)]
         public decimal ExProd_CantMinima { get; set; }
 
-        [Precision(14, 2)]
+        /*[Precision(14, 2)]
         public int ExProd_CantBolsasPaquete { get; set; }
 
         [Precision(14, 2)]
-        public int ExProd_CantBolsasBulto { get; set; }
+        public int ExProd_CantBolsasBulto { get; set; }*/
 
     }
 }

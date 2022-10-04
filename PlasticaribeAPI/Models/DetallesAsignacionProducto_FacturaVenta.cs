@@ -21,17 +21,11 @@ namespace PlasticaribeAPI.Models
         [Precision(14, 2)]
         public decimal DtAsigProdFV_Cantidad { get; set; }
 
-
         [Column(TypeName = "varchar(10)")]
         public string UndMed_Id { get; set; }
         public Unidad_Medida? UndMedida { get; set; }
 
         [Precision(14, 2)]
-        public int Prod_CantBolsasPaquete { get; set; }
-        [Precision(14, 2)]
-        public int Prod_CantBolsasBulto { get; set; }
-
-
-
+        public decimal Prod_CantidadUnidades { get; set; }
     }
 }
