@@ -25,8 +25,5 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string TpRecu_Id { get; set; } 
         public Tipo_Recuperado? TpRecu { get; set; }
-
-
-
     }
 }

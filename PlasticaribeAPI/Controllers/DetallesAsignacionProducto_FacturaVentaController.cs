@@ -68,7 +68,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("CrearPdf/{factura}")]
-        public ActionResult GetCrearPdf (string factura)
+        public ActionResult GetCrearPdf(string factura)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from dtAsg in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
@@ -90,6 +90,7 @@ namespace PlasticaribeAPI.Controllers
                           dtAsg.Rollo_Id,
                           dtAsg.UndMed_Id,
                           dtAsg.DtAsigProdFV_Cantidad,
+                          dtAsg.Prod_CantidadUnidades,
                           dtAsg.AsigProducto_FV.AsigProdFV_Fecha,
                           Creador = dtAsg.AsigProducto_FV.Usua_Id,
                           NombreCreador = dtAsg.AsigProducto_FV.Usua.Usua_Nombre,
@@ -126,7 +127,8 @@ namespace PlasticaribeAPI.Controllers
                     x.Key.Prod_Id,
                     x.Key.Prod_Nombre,
                     x.Key.UndMed_Id,
-                    Suma = x.Sum(y => y.DtAsigProdFV_Cantidad)
+                    Suma = x.Sum(y => y.DtAsigProdFV_Cantidad),
+                    SumaUnd = x.Sum(y => y.Prod_CantidadUnidades),
                 });
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
@@ -180,27 +182,27 @@ namespace PlasticaribeAPI.Controllers
                                 });
 
             var QueryDevolucion = (from dev in _context.Set<DetalleDevolucion_ProductoFacturado>()
-                      from rollo in _context.Set<DetalleEntradaRollo_Producto>()
-                      where dev.DevolucionProdFact.DevProdFact_Fecha >= FechaIni
-                            && dev.DevolucionProdFact.DevProdFact_Fecha <= FechaFin
-                            && dev.Rollo_Id == rollo.Rollo_Id
-                      select new
-                      {
-                          Documento = Convert.ToString(dev.DevolucionProdFact.FacturaVta_Id),
-                          Fecha = dev.DevolucionProdFact.DevProdFact_Fecha,
-                          Cli_Id = Convert.ToString(dev.DevolucionProdFact.Cli_Id),
-                          Cli_Nombre = Convert.ToString(dev.DevolucionProdFact.Cliente.Cli_Nombre),
-                          Prod_Id = dev.Prod_Id,
-                          Prod_Nombre = dev.Prod.Prod_Nombre,
-                          Rollo =  dev.Rollo_Id,
-                          Cantidad = dev.DtDevProdFact_Cantidad,
-                          Presentacion = dev.UndMed_Id,
-                          Estado_Rollo = rollo.Estado.Estado_Nombre,
-                          Tipo = "DEVPRODFAC",
-                      });
+                                   from rollo in _context.Set<DetalleEntradaRollo_Producto>()
+                                   where dev.DevolucionProdFact.DevProdFact_Fecha >= FechaIni
+                                         && dev.DevolucionProdFact.DevProdFact_Fecha <= FechaFin
+                                         && dev.Rollo_Id == rollo.Rollo_Id
+                                   select new
+                                   {
+                                       Documento = Convert.ToString(dev.DevolucionProdFact.FacturaVta_Id),
+                                       Fecha = dev.DevolucionProdFact.DevProdFact_Fecha,
+                                       Cli_Id = Convert.ToString(dev.DevolucionProdFact.Cli_Id),
+                                       Cli_Nombre = Convert.ToString(dev.DevolucionProdFact.Cliente.Cli_Nombre),
+                                       Prod_Id = dev.Prod_Id,
+                                       Prod_Nombre = dev.Prod.Prod_Nombre,
+                                       Rollo = dev.Rollo_Id,
+                                       Cantidad = dev.DtDevProdFact_Cantidad,
+                                       Presentacion = dev.UndMed_Id,
+                                       Estado_Rollo = rollo.Estado.Estado_Nombre,
+                                       Tipo = "DEVPRODFAC",
+                                   });
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-          
-            return Ok(QueryAsignacion.Concat(QueryEntrada).Concat(QueryDevolucion));                    
+
+            return Ok(QueryAsignacion.Concat(QueryEntrada).Concat(QueryDevolucion));
         }
 
         [HttpGet("FiltroFactura/{factura}/{ot}")]

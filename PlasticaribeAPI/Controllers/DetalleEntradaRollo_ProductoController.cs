@@ -43,14 +43,14 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("VerificarRollo/{id}")]
-        public ActionResult Get (long id)
+        public ActionResult Get(long id)
         {
             var con = _context.DetallesEntradasRollos_Productos.Where(x => x.Rollo_Id == id).ToList();
             return Ok(con);
         }
 
         [HttpGet("consultarProducto/{id}")]
-        public ActionResult GetConsultarProd (long id)
+        public ActionResult GetConsultarProd(long id)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.DetallesEntradasRollos_Productos
@@ -63,7 +63,10 @@ namespace PlasticaribeAPI.Controllers
                     x.Estado_Id,
                     x.Rollo_Id,
                     x.DtEntRolloProd_Cantidad,
-                    x.UndMed_Rollo
+                    x.UndMed_Rollo,
+                    x.Prod_CantBolsasPaquete,
+                    x.Prod_CantBolsasRestates,
+                    x.Prod_CantPaquetesRestantes
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.

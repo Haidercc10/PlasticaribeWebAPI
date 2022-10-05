@@ -16,14 +16,14 @@ namespace PlasticaribeAPI.Models
         public long Rollo_Id { get; set; }
 
 
-        [Precision(14,2)]
+        [Precision(14, 2)]
         public decimal DtEntRolloProd_Cantidad { get; set; }
 
 
         [Column(TypeName = "varchar(10)")]
         public string UndMed_Rollo { get; set; }
         public Unidad_Medida? UndMedida_Rollo { get; set; }
-        
+
 
         public int Estado_Id { get; set; }
         public Estado? Estado { get; set; }
@@ -39,8 +39,18 @@ namespace PlasticaribeAPI.Models
         public Unidad_Medida? UndMedida_Prod { get; set; }
 
         [Precision(14, 2)]
-        public int Prod_CantBolsasPaquete { get; set; }
+        public decimal Prod_CantPaquetesRestantes { get; set; }
+
         [Precision(14, 2)]
-        public int Prod_CantBolsasBulto { get; set; }
+        public decimal Prod_CantBolsasPaquete { get; set; }
+
+        [Precision(14, 2)]
+        public decimal Prod_CantBolsasBulto { get; set; }
+
+        [Precision(14, 2)]
+        public decimal Prod_CantBolsasRestates { get; set; }
+
+        [Precision(14, 2)]
+        public decimal Prod_CantBolsasFacturadas { get; set; }
     }
 }
