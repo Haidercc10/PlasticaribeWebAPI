@@ -57,8 +57,8 @@ namespace PlasticaribeAPI.Models
         //[Precision(14, 2)]
         //public int ExProd_CantBolsasPaquete { get; set; }
 
-        [Precision(14, 2)]
-        public int ExProd_CantBolsasBulto { get; set; }
+        //[Precision(14, 2)]
+        //public int ExProd_CantBolsasBulto { get; set; }
 
     }
 }
