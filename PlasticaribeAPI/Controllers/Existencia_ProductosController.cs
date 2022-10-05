@@ -105,11 +105,16 @@ namespace PlasticaribeAPI.Controllers
                 {
                     p.Prod_Id,
                     p.Prod.Prod_Nombre,
-                    p.ExProd_PrecioVenta,
                     p.ExProd_Cantidad,
-                    p.UndMed_Id,
+                    p.UndMed_Id,                  
+                    p.ExProd_Id,
+                    p.ExProd_Precio,
+                    p.ExProd_PrecioExistencia,
+                    p.ExProd_PrecioSinInflacion,
+                    p.TpMoneda_Id,
+                    p.ExProd_PrecioVenta,
                     p.ExProd_CantMinima
-
+                    
                 })
                 .ToList();
 
