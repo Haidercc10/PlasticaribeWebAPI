@@ -559,8 +559,6 @@ namespace PlasticaribeAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(detalleAsignacion_BOPP).State = EntityState.Modified;
-
             try
             {
                 var actualizado = _context.DetallesAsignaciones_BOPP
@@ -569,8 +567,6 @@ namespace PlasticaribeAPI.Controllers
                            && x.AsigBOPP_Id == id)
                     .First<DetalleAsignacion_BOPP>();
                 actualizado.DtAsigBOPP_Cantidad = detalleAsignacion_BOPP.DtAsigBOPP_Cantidad;
-
-                _context.DetallesAsignaciones_BOPP.Update(actualizado);
                 _context.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
