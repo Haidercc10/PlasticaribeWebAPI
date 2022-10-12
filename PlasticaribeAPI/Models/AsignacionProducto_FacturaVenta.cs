@@ -44,5 +44,8 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "date")]
         public DateTime AsigProdFV_FechaEnvio { get; set; }
 
-    }
+        [Column(TypeName = "varchar(10)")]
+        public string AsigProdFV_FechaHora { get; set; }
+
+}
 }
