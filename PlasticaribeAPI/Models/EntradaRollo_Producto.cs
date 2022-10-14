@@ -19,8 +19,8 @@ namespace PlasticaribeAPI.Models
         public long Usua_Id { get; set; }
         public Usuario? Usua { get; set; }
 
-        [Column(TypeName = "varchar(10)")]
-        public string EntRolloProd_Hora { get; set; }
+        //[Column(TypeName = "varchar(10)")]
+        //public string EntRolloProd_Hora { get; set; }
 
     }
 }
