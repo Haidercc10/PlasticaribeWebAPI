@@ -82,5 +82,13 @@ namespace PlasticaribeAPI.Models
         public long? Usua_Id { get; set; }
         public Usuario? Usuario { get; set; }
 
+        /** Fecha en que se inició y finalizó la OT */
+        [Column(TypeName = "date")]
+        public DateTime EstProcOT_FechaInicio { get; set; }
+
+
+        [Column(TypeName = "date")]
+        public DateTime EstProcOT_FechaFinal { get; set; }
+
     }
 }
