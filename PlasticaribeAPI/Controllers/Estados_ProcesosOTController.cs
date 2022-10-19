@@ -79,7 +79,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 });
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
@@ -114,7 +116,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -150,7 +154,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -186,7 +192,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -222,7 +230,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -258,7 +268,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -294,7 +306,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -331,7 +345,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -368,7 +384,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -405,7 +423,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -441,7 +461,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -478,7 +500,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -515,7 +539,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -551,7 +577,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -587,7 +615,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -623,7 +653,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -664,7 +696,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.UndMed_Id,
                     estOt.UnidadMedida.UndMed_Nombre,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
             return Ok(ot);
@@ -704,7 +738,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.UndMed_Id,
                     estOt.UnidadMedida.UndMed_Nombre,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -745,7 +781,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.UndMed_Id,
                     estOt.UnidadMedida.UndMed_Nombre,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -786,7 +824,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.UndMed_Id,
                     estOt.UnidadMedida.UndMed_Nombre,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -828,7 +868,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.UndMed_Id,
                     estOt.UnidadMedida.UndMed_Nombre,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -869,7 +911,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.UndMed_Id,
                     estOt.UnidadMedida.UndMed_Nombre,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -908,7 +952,9 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
