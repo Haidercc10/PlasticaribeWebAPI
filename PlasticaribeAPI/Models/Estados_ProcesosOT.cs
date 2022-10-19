@@ -84,11 +84,11 @@ namespace PlasticaribeAPI.Models
 
         /** Fecha en que se inició y finalizó la OT */
         [Column(TypeName = "date")]
-        public DateTime EstProcOT_FechaInicio { get; set; }
+        public DateTime? EstProcOT_FechaInicio { get; set; } 
 
 
         [Column(TypeName = "date")]
-        public DateTime EstProcOT_FechaFinal { get; set; }
+        public DateTime? EstProcOT_FechaFinal { get; set; } 
 
     }
 }

@@ -222,8 +222,8 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaCreacion,
                     estOt.EstProcOT_CantidadPedida,
                     estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre
-                })
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
