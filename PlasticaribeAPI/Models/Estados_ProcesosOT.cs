@@ -88,7 +88,11 @@ namespace PlasticaribeAPI.Models
 
 
         [Column(TypeName = "date")]
-        public DateTime? EstProcOT_FechaFinal { get; set; } 
+        public DateTime? EstProcOT_FechaFinal { get; set; }
+
+        /** Cantidad pedida en Unidades */
+        [Precision(18, 2)]
+        public decimal? EstProcOT_CantidadPedidaUnd { get; set; }
 
     }
 }
