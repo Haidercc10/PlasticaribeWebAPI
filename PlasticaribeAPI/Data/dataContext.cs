@@ -313,6 +313,8 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Estados_ProcesosOT>().HasOne(eOT => eOT.FallaTecnica).WithMany().HasForeignKey(eOT => eOT.Falla_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Estados_ProcesosOT>().HasOne(eOT => eOT.Estado_OT).WithMany().HasForeignKey(eOT => eOT.Estado_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Estados_ProcesosOT>().HasOne(eOT => eOT.Usuario).WithMany().HasForeignKey(eOT => eOT.Usua_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Estados_ProcesosOT>().HasOne(eOT => eOT.Producto).WithMany().HasForeignKey(eOT => eOT.Prod_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Estados_ProcesosOT>().HasOne(eOT => eOT.Clientes).WithMany().HasForeignKey(eOT => eOT.Cli_Id).OnDelete(DeleteBehavior.Restrict);
 
             //Relaciones Fallas_Tecnicas
             modelBuilder.Entity<Falla_Tecnica>().HasOne(eOT => eOT.TipoFallaTecnica).WithMany().HasForeignKey(eOT => eOT.TipoFalla_Id).OnDelete(DeleteBehavior.Restrict);

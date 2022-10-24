@@ -50,6 +50,7 @@ namespace PlasticaribeAPI.Controllers
             return estados_ProcesosOT;
         }
 
+        //Consulta Todo
         [HttpGet("consultaGeneral")]
         public ActionResult Get()
         {
@@ -84,12 +85,17 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 });
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
         }
 
+        //Consulta por OT
         [HttpGet("consultaPorOT/{EstProcOT_OrdenTrabajo}")]
         public ActionResult GetPorOT(long EstProcOT_OrdenTrabajo)
         {
@@ -99,6 +105,7 @@ namespace PlasticaribeAPI.Controllers
                 .Include(estOT => estOT.Estado_OT)
                 .Include(estOt => estOt.UnidadMedida)
                 .Select(estOt => new {
+                    estOt.EstProcOT_Id,
                     estOt.EstProcOT_OrdenTrabajo,
                     estOt.EstProcOT_ExtrusionKg,
                     estOt.EstProcOT_ImpresionKg,
@@ -124,13 +131,18 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
         }
 
+        //Consulta por fallas
         [HttpGet("consultaPorFallas/{Falla_Id}")]
         public ActionResult GetPorFallas(int Falla_Id)
         {
@@ -165,13 +177,18 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
         }
 
+        //Consulta por la fecha de crecion de la orden de trabajo
         [HttpGet("consultaPorFecha/{EstProcOT_FechaCreacion}")]
         public ActionResult GetPorFecha(DateTime EstProcOT_FechaCreacion)
         {
@@ -206,13 +223,18 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
         }
 
+        //Consulta todos los registros de la orden de trabajo entre 2 fechas
         [HttpGet("consultaPorFechas/")]
         public ActionResult GetPorFechas(DateTime EstProcOT_FechaCreacion1, DateTime EstProcOT_FechaCreacion2)
         {
@@ -247,13 +269,18 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
         }
 
+        //Consulta por OT y por falals
         [HttpGet("consultaPorOtFalla/{EstProcOT_OrdenTrabajo}/{Falla_Id}")]
         public ActionResult GetPorOtFallas(long EstProcOT_OrdenTrabajo, int Falla_Id)
         {
@@ -288,13 +315,18 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
         }
 
+        //Consulta por OT y por fecha de creacion
         [HttpGet("consultaPorOtFecha/{EstProcOT_OrdenTrabajo}/{EstProcOT_FechaCreacion}")]
         public ActionResult GetPorOtFecha(long EstProcOT_OrdenTrabajo, DateTime EstProcOT_FechaCreacion)
         {
@@ -329,13 +361,18 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
         }
 
+        //Consulta por OT y 2 fechas
         [HttpGet("consultaPorOtFechas/{EstProcOT_OrdenTrabajo}")]
         public ActionResult GetPorOtFechas(long EstProcOT_OrdenTrabajo, DateTime EstProcOT_FechaCreacion1, DateTime EstProcOT_FechaCreacion2)
         {
@@ -371,13 +408,18 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
         }
 
+        //Consulta por 2 fechas y la falla
         [HttpGet("consultaPorFechasFallas/{Falla_Id}")]
         public ActionResult GetPorFechasFallas(DateTime EstProcOT_FechaCreacion1, DateTime EstProcOT_FechaCreacion2, int Falla_Id)
         {
@@ -413,13 +455,18 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
         }
 
+        //Consulta por OT, 2 fechas y falla
         [HttpGet("consultaPorOtFechasFallas/{EstProcOT_OrdenTrabajo}/{Falla_Id}")]
         public ActionResult Get(long EstProcOT_OrdenTrabajo, DateTime EstProcOT_FechaCreacion1, DateTime EstProcOT_FechaCreacion2, int Falla_Id)
         {
@@ -455,13 +502,18 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
         }
 
+        //Consulta por falla y fecha de creacion
         [HttpGet("consultaPorOtFechsFalla/{EstProcOT_FechaCreacion}/{Falla_Id}")]
         public ActionResult Get(int Falla_Id, DateTime EstProcOT_FechaCreacion)
         {
@@ -496,7 +548,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -504,6 +560,7 @@ namespace PlasticaribeAPI.Controllers
             return Ok(ot);
         }
 
+        //Consulta por el estado de la orden de trabajo
         [HttpGet("consultarPorEstados/{Estado_Id}")]
         public ActionResult Get(int Estado_Id)
         {
@@ -538,7 +595,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -546,6 +607,7 @@ namespace PlasticaribeAPI.Controllers
             return Ok(ot);
         }
 
+        //Consulta por el estado de la orden de trabajo y por la falla
         [HttpGet("consultaPorEstadosFallas/{Estado_Id}/{Falla_Id}")]
         public ActionResult Get(int Estado_Id, int Falla_Id)
         {
@@ -580,13 +642,18 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
         }
 
+        //Consulta por la fecha de creacion de la orden de trabajo, estado y falla
         [HttpGet("consultaPorFechaEstadoFalla/{EstProcOT_FechaCreacion}/{Estado_Id}/{Falla_Id}")]
         public ActionResult Get(DateTime EstProcOT_FechaCreacion, int Estado_Id, int Falla_Id)
         {
@@ -621,13 +688,18 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
         }
 
+        //Consulta por 2 fechas de creacionpor estados
         [HttpGet("consultaPorFechasEstado/{EstProcOT_FechaCreacion1}/{EstProcOT_FechaCreacion2}/{Estado_Id}")]
         public ActionResult Get(DateTime EstProcOT_FechaCreacion1, DateTime EstProcOT_FechaCreacion2, int Estado_Id)
         {
@@ -662,13 +734,18 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
         }
 
+        //Consulta por fechas de creacion, estados y fallas
         [HttpGet("consultaPorFechasEstadoFallas/{EstProcOT_FechaCreacion1}/{EstProcOT_FechaCreacion2}/{Estado_Id}/{Falla_Id}")]
         public ActionResult Get(DateTime EstProcOT_FechaCreacion1, DateTime EstProcOT_FechaCreacion2, int Estado_Id, int Falla_Id)
         {
@@ -703,7 +780,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
                     estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -749,7 +830,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaInicio,
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
-                    
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
+
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -793,7 +878,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Usuario.Usua_Nombre,
                     estOt.EstProcOT_FechaInicio,
                     estOt.EstProcOT_FechaFinal,
-                    estOt.EstProcOT_CantidadPedidaUnd
+                    estOt.EstProcOT_CantidadPedidaUnd,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -837,7 +926,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Usuario.Usua_Nombre,
                     estOt.EstProcOT_FechaInicio,
                     estOt.EstProcOT_FechaFinal,
-                    estOt.EstProcOT_CantidadPedidaUnd
+                    estOt.EstProcOT_CantidadPedidaUnd,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -881,7 +974,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Usuario.Usua_Nombre,
                     estOt.EstProcOT_FechaInicio,
                     estOt.EstProcOT_FechaFinal,
-                    estOt.EstProcOT_CantidadPedidaUnd
+                    estOt.EstProcOT_CantidadPedidaUnd,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -926,7 +1023,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Usuario.Usua_Nombre,
                     estOt.EstProcOT_FechaInicio,
                     estOt.EstProcOT_FechaFinal,
-                    estOt.EstProcOT_CantidadPedidaUnd
+                    estOt.EstProcOT_CantidadPedidaUnd,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -970,7 +1071,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Usuario.Usua_Nombre,
                     estOt.EstProcOT_FechaInicio,
                     estOt.EstProcOT_FechaFinal,
-                    estOt.EstProcOT_CantidadPedidaUnd
+                    estOt.EstProcOT_CantidadPedidaUnd,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1012,7 +1117,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.UnidadMedida.UndMed_Nombre,
                     estOt.EstProcOT_FechaInicio,
                     estOt.EstProcOT_FechaFinal,
-                    estOt.EstProcOT_CantidadPedidaUnd
+                    estOt.EstProcOT_CantidadPedidaUnd,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1029,6 +1138,7 @@ namespace PlasticaribeAPI.Controllers
                 var Actualizado = _context.Estados_ProcesosOT.Where(x => x.EstProcOT_OrdenTrabajo == EstProcOT_OrdenTrabajo).First<Estados_ProcesosOT>();
                 Actualizado.Falla_Id = Estados_ProcesosOT.Falla_Id;
                 Actualizado.EstProcOT_Observacion = Estados_ProcesosOT.EstProcOT_Observacion;
+                Actualizado.Estado_Id = Estados_ProcesosOT.Estado_Id;
 
                 _context.SaveChanges();
             }

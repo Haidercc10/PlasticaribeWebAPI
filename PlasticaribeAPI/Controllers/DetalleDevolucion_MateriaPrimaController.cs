@@ -95,7 +95,7 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult Get(DateTime FechaInicial)
         {
             var con = _context.DetallesDevoluciones_MateriasPrimas
-                .Where(devMp => devMp.DevMatPri.DevMatPri_Fecha >= FechaInicial)
+                .Where(devMp => devMp.DevMatPri.DevMatPri_Fecha == FechaInicial)
                 .Include(devMp => devMp.DevMatPri)
                 .Select(devMp => new
                 {

@@ -105,5 +105,12 @@ namespace PlasticaribeAPI.Models
 
         /** Diferencia de dias desde que inició */
         public int? EstProcOT_DiffDiasInicio_Fin { get; set; }
+
+        public long Cli_Id { get; set; }
+        public Clientes? Clientes { get; set; }
+
+        public int Prod_Id { get; set; }
+        public Producto? Producto { get; set; }
+
     }
 }

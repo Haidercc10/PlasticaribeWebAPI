@@ -576,10 +576,10 @@ namespace PlasticaribeAPI.Controllers
                                //BOPP
                                MateriaPrima = y.Key.BOPP_Id,
                                NombreMP = y.Key.BOPP_Nombre,
-                               CantMP = y.Sum(AsgBopp => AsgBopp.BOPP.BOPP_CantidadInicialKg),
+                               CantMP = y.Sum(AsgBopp => AsgBopp.DtAsigBOPP_Cantidad),
                                UndMedida = y.Key.UndMed_Id,
                                Precio = y.Key.BOPP_Precio,
-                               SubTotal = y.Sum(AsgBopp => AsgBopp.BOPP.BOPP_CantidadInicialKg) * y.Key.BOPP_Precio,
+                               SubTotal = y.Sum(AsgBopp => AsgBopp.DtAsigBOPP_Cantidad) * y.Key.BOPP_Precio,
                                Proceso = y.Key.Proceso_Id,
                                NombreProceso = y.Key.Proceso_Nombre
                            });

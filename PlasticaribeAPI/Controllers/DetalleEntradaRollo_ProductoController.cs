@@ -158,10 +158,11 @@ namespace PlasticaribeAPI.Controllers
                        from Salida in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
                        where Entrada.DtEntRolloProd_OT == ot && Entrada.Rollo_Id == Salida.Rollo_Id
                        group Entrada by Entrada.DtEntRolloProd_OT
-                       into Entrada
+                       into Salida
                        select new
                        {
-                           Sum = Entrada.Sum(x => x.DtEntRolloProd_Cantidad)
+                           SumTotal = Salida.Sum(x => x.DtEntRolloProd_Cantidad),
+                           SumPqt = Salida.Sum(x => x.DtEntRolloProd_Cantidad) - Salida.Sum(x => x.Prod_CantPaquetesRestantes)
                        };
 
             return Ok(con2);
