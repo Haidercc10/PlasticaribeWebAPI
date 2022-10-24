@@ -85,6 +85,18 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        [HttpGet("consultaGeneral")]
+        public ActionResult Get()
+        {
+            var productos = from p in _context.Set<Producto>()
+                            select new
+                            {
+                                p.Prod_Id,
+                                p.Prod_Nombre,
+                            };
+            return Ok(productos);
+        }
+
         [HttpGet("ConsultaProductoExistencia/{Prod_Id}")]
         public ActionResult<Producto> GetProductoPresentacion(int Prod_Id)
         {
