@@ -106,11 +106,20 @@ namespace PlasticaribeAPI.Models
         /** Diferencia de dias desde que inició */
         public int? EstProcOT_DiffDiasInicio_Fin { get; set; }
 
-        public long Cli_Id { get; set; }
+        public long? Cli_Id { get; set; }
         public Clientes? Clientes { get; set; }
 
         public int Prod_Id { get; set; }
         public Producto? Producto { get; set; }
+
+
+        /* Cantidad Producto Ingresada y facturada */
+        [Precision(18, 2)]
+        public decimal EstProcOT_CantProdIngresada { get; set; }
+
+
+        [Precision(18, 2)]
+        public decimal EstProcOT_CantProdFacturada { get; set; }
 
     }
 }

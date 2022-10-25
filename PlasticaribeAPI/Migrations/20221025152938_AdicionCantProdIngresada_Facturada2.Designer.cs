@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20221025152938_AdicionCantProdIngresada_Facturada2")]
+    partial class AdicionCantProdIngresada_Facturada2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1152,7 +1154,7 @@ namespace PlasticaribeAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("EstProcOT_Id"), 1L, 1);
 
-                    b.Property<long?>("Cli_Id")
+                    b.Property<long>("Cli_Id")
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("EstProcOT_CantProdFacturada")
@@ -3916,7 +3918,8 @@ namespace PlasticaribeAPI.Migrations
                     b.HasOne("PlasticaribeAPI.Models.Clientes", "Clientes")
                         .WithMany()
                         .HasForeignKey("Cli_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("PlasticaribeAPI.Models.Estado", "Estado_OT")
                         .WithMany()
