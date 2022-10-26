@@ -791,7 +791,7 @@ namespace PlasticaribeAPI.Controllers
             return Ok(ot);
         }
 
-        /** Metodos para Estados OT por Vendedores */
+        /** Metodos para Estados OT por Vendedores **/
 
         /*1 POR OT Y VENDEDOR */
         [HttpGet("consultaPorOTVendedor/{EstProcOT_OrdenTrabajo}/{Vendedor}")]
@@ -1034,7 +1034,6 @@ namespace PlasticaribeAPI.Controllers
             return Ok(ot);
         }
 
-
         /*6 Por Estados y vendedor*/
         [HttpGet("consultarPorEstadosVendedor/{Estado_Id}/{Vendedor}")]
         public ActionResult GetXEstado(int Estado_Id, int Vendedor)
@@ -1163,6 +1162,8 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaInicio,
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
+                    estOt.Usua_Id,
+                    estOt.Usuario.Usua_Nombre,
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
@@ -1208,6 +1209,8 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_FechaInicio,
                     estOt.EstProcOT_FechaFinal,
                     estOt.EstProcOT_CantidadPedidaUnd,
+                    estOt.Usua_Id,
+                    estOt.Usuario.Usua_Nombre,
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
@@ -1267,7 +1270,7 @@ namespace PlasticaribeAPI.Controllers
 
         //Consulta por Estado y Cliente
         [HttpGet("consultaEstadoCliente/{cli}/{estado}")]
-        public ActionResult getTodo(long cli, int estado)
+        public ActionResult get(long cli, int estado)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.Estados_ProcesosOT.Where(epOT => epOT.Cli_Id == cli && epOT.Estado_Id == estado)
@@ -1310,6 +1313,1507 @@ namespace PlasticaribeAPI.Controllers
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
+        }
+
+        //Consulta por Estado y Producto
+        [HttpGet("consultaProductoEstado/{prod}/{estado}")]
+        public ActionResult get(int prod, int estado)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = _context.Estados_ProcesosOT.Where(epOT => epOT.Prod_Id == prod && epOT.Estado_Id == estado)
+                .Include(estOT => estOT.FallaTecnica)
+                .Include(estOT => estOT.Estado_OT)
+                .Include(estOt => estOt.UnidadMedida)
+                .Select(estOt => new {
+                    estOt.EstProcOT_Id,
+                    estOt.EstProcOT_OrdenTrabajo,
+                    estOt.EstProcOT_ExtrusionKg,
+                    estOt.EstProcOT_ImpresionKg,
+                    estOt.EstProcOT_RotograbadoKg,
+                    estOt.EstProcOT_LaminadoKg,
+                    estOt.EstProcOT_DobladoKg,
+                    estOt.EstProcOT_CorteKg,
+                    estOt.EstProcOT_EmpaqueKg,
+                    estOt.EstProcOT_SelladoKg,
+                    estOt.EstProcOT_SelladoUnd,
+                    estOt.EstProcOT_WiketiadoKg,
+                    estOt.EstProcOT_WiketiadoUnd,
+                    estOt.Falla_Id,
+                    estOt.FallaTecnica.Falla_Nombre,
+                    estOt.Estado_Id,
+                    estOt.Estado_OT.Estado_Nombre,
+                    estOt.EstProcOT_Observacion,
+                    estOt.EstProcOT_FechaCreacion,
+                    estOt.EstProcOT_CantidadPedida,
+                    estOt.UndMed_Id,
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal,
+                    estOt.EstProcOT_CantidadPedidaUnd,
+                    estOt.Usua_Id,
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
+                })
+                .ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        //Consulta por Cliente, vendedor
+        [HttpGet("consultaVendedorCliente/{cli}/{vendedor}")]
+        public ActionResult get(long cli, long vendedor)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = _context.Estados_ProcesosOT.Where(epOT => epOT.Cli_Id == cli && epOT.Usua_Id == vendedor)
+                .Include(estOT => estOT.FallaTecnica)
+                .Include(estOT => estOT.Estado_OT)
+                .Include(estOt => estOt.UnidadMedida)
+                .Select(estOt => new {
+                    estOt.EstProcOT_Id,
+                    estOt.EstProcOT_OrdenTrabajo,
+                    estOt.EstProcOT_ExtrusionKg,
+                    estOt.EstProcOT_ImpresionKg,
+                    estOt.EstProcOT_RotograbadoKg,
+                    estOt.EstProcOT_LaminadoKg,
+                    estOt.EstProcOT_DobladoKg,
+                    estOt.EstProcOT_CorteKg,
+                    estOt.EstProcOT_EmpaqueKg,
+                    estOt.EstProcOT_SelladoKg,
+                    estOt.EstProcOT_SelladoUnd,
+                    estOt.EstProcOT_WiketiadoKg,
+                    estOt.EstProcOT_WiketiadoUnd,
+                    estOt.Falla_Id,
+                    estOt.FallaTecnica.Falla_Nombre,
+                    estOt.Estado_Id,
+                    estOt.Estado_OT.Estado_Nombre,
+                    estOt.EstProcOT_Observacion,
+                    estOt.EstProcOT_FechaCreacion,
+                    estOt.EstProcOT_CantidadPedida,
+                    estOt.UndMed_Id,
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal,
+                    estOt.EstProcOT_CantidadPedidaUnd,
+                    estOt.Usua_Id,
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
+                })
+                .ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        //Consulta por Cliente, vendedor
+        [HttpGet("consultaVendedorProducto/{prod}/{vendedor}")]
+        public ActionResult get(int prod, long vendedor)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = _context.Estados_ProcesosOT.Where(epOT => epOT.Prod_Id == prod && epOT.Usua_Id == vendedor)
+                .Include(estOT => estOT.FallaTecnica)
+                .Include(estOT => estOT.Estado_OT)
+                .Include(estOt => estOt.UnidadMedida)
+                .Select(estOt => new {
+                    estOt.EstProcOT_Id,
+                    estOt.EstProcOT_OrdenTrabajo,
+                    estOt.EstProcOT_ExtrusionKg,
+                    estOt.EstProcOT_ImpresionKg,
+                    estOt.EstProcOT_RotograbadoKg,
+                    estOt.EstProcOT_LaminadoKg,
+                    estOt.EstProcOT_DobladoKg,
+                    estOt.EstProcOT_CorteKg,
+                    estOt.EstProcOT_EmpaqueKg,
+                    estOt.EstProcOT_SelladoKg,
+                    estOt.EstProcOT_SelladoUnd,
+                    estOt.EstProcOT_WiketiadoKg,
+                    estOt.EstProcOT_WiketiadoUnd,
+                    estOt.Falla_Id,
+                    estOt.FallaTecnica.Falla_Nombre,
+                    estOt.Estado_Id,
+                    estOt.Estado_OT.Estado_Nombre,
+                    estOt.EstProcOT_Observacion,
+                    estOt.EstProcOT_FechaCreacion,
+                    estOt.EstProcOT_CantidadPedida,
+                    estOt.UndMed_Id,
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal,
+                    estOt.EstProcOT_CantidadPedidaUnd,
+                    estOt.Usua_Id,
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre
+                })
+                .ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        //Consulta por Cliente, Producto, OT, Fechas, fallas, estado, vendedor
+        [HttpGet("consulta/")]
+        public ActionResult get(long? ot, long? cli, int? prod, DateTime? fecha1, DateTime? fecha2, int? falla, int? estado, long? vendedor)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            if (ot != null && cli != null && prod != null && fecha1 != null && fecha2 != null && falla != null && estado != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Estado_Id == estado
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (cli != null && prod != null && fecha1 != null && fecha2 != null && falla != null && estado != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Estado_Id == estado
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && prod != null && fecha1 != null && fecha2 != null && falla != null && estado != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Estado_Id == estado
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && cli != null && fecha1 != null && fecha2 != null && falla != null && estado != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Estado_Id == estado
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && cli != null && prod != null && fecha1 != null && falla != null && estado != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion == fecha1
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Estado_Id == estado
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && cli != null && prod != null && fecha1 != null && fecha2 != null && estado != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Estado_Id == estado
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && cli != null && prod != null && fecha1 != null && fecha2 != null && falla != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && cli != null && prod != null && fecha1 != null && fecha2 != null && falla != null && estado != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Estado_Id == estado)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && cli != null && prod != null && fecha1 != null && fecha2 != null && falla != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Falla_Id == falla)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && cli != null && prod != null && fecha1 != null && fecha2 != null && estado != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Estado_Id == estado)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && cli != null && prod != null && fecha1 != null && fecha2 != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && cli != null && prod != null && fecha1 != null && falla != null && estado != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion == fecha1
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Estado_Id == estado)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && cli != null && prod != null && fecha1 != null && falla != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion == fecha1
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && cli != null && prod != null && fecha1 != null && estado != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion == fecha1
+                                                      && epOT.Estado_Id == estado
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && cli != null && prod != null && falla != null && estado != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Estado_Id == estado
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && cli != null && fecha1 != null && fecha2 != null && falla != null && estado != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Estado_Id == estado)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && cli != null && fecha1 != null && fecha2 != null && estado != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Estado_Id == estado
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && prod != null && fecha1 != null && fecha2 != null && falla != null && estado != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Estado_Id == estado)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && prod != null && fecha1 != null && fecha2 != null && estado != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Estado_Id == estado
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (cli != null && prod != null && fecha1 != null && fecha2 != null && falla != null && estado != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Estado_Id == estado)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (cli != null && prod != null && fecha1 != null && fecha2 != null && falla != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (cli != null && prod != null && fecha1 != null && fecha2 != null && estado != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Estado_Id == estado
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (cli != null && prod != null && fecha1 != null && falla != null && estado != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion == fecha1
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Estado_Id == estado
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (cli != null && fecha1 != null && fecha2 != null && falla != null && estado != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.Cli_Id == cli
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Estado_Id == estado
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (prod != null && fecha1 != null && fecha2 != null && falla != null && estado != null && vendedor != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Estado_Id == estado
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && cli != null && prod != null && fecha1 != null && fecha2 != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else if (ot != null && cli != null && prod != null && fecha1 != null && falla != null)
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_OrdenTrabajo == ot
+                                                      && epOT.Cli_Id == cli
+                                                      && epOT.Prod_Id == prod
+                                                      && epOT.EstProcOT_FechaCreacion >= fecha1
+                                                      && epOT.EstProcOT_FechaCreacion <= fecha2
+                                                      && epOT.Falla_Id == falla
+                                                      && epOT.Estado_Id == estado
+                                                      && epOT.Usua_Id == vendedor)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+            else
+            {
+                var con = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_FechaCreacion == fecha1)
+                    .Include(estOT => estOT.FallaTecnica)
+                    .Include(estOT => estOT.Estado_OT)
+                    .Include(estOt => estOt.UnidadMedida)
+                    .Select(estOt => new
+                    {
+                        estOt.EstProcOT_Id,
+                        estOt.EstProcOT_OrdenTrabajo,
+                        estOt.EstProcOT_ExtrusionKg,
+                        estOt.EstProcOT_ImpresionKg,
+                        estOt.EstProcOT_RotograbadoKg,
+                        estOt.EstProcOT_LaminadoKg,
+                        estOt.EstProcOT_DobladoKg,
+                        estOt.EstProcOT_CorteKg,
+                        estOt.EstProcOT_EmpaqueKg,
+                        estOt.EstProcOT_SelladoKg,
+                        estOt.EstProcOT_SelladoUnd,
+                        estOt.EstProcOT_WiketiadoKg,
+                        estOt.EstProcOT_WiketiadoUnd,
+                        estOt.Falla_Id,
+                        estOt.FallaTecnica.Falla_Nombre,
+                        estOt.Estado_Id,
+                        estOt.Estado_OT.Estado_Nombre,
+                        estOt.EstProcOT_Observacion,
+                        estOt.EstProcOT_FechaCreacion,
+                        estOt.EstProcOT_CantidadPedida,
+                        estOt.UndMed_Id,
+                        estOt.UnidadMedida.UndMed_Nombre,
+                        estOt.EstProcOT_FechaInicio,
+                        estOt.EstProcOT_FechaFinal,
+                        estOt.EstProcOT_CantidadPedidaUnd,
+                        estOt.Usua_Id,
+                        estOt.Usuario.Usua_Nombre,
+                        estOt.Cli_Id,
+                        estOt.Clientes.Cli_Nombre,
+                        estOt.Prod_Id,
+                        estOt.Producto.Prod_Nombre
+                    })
+                    .ToList();
+                return Ok(con);
+            }
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
         }
 
         /** Fin Consultas por vendedor */
