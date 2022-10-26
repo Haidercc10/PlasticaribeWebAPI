@@ -270,6 +270,531 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+
+        /** Mostrar Consultas para reporte de Recuperado MP*/
+
+        /** Fecha Inicial */
+        [HttpGet("MostrarMPRecuperada/")]
+        public ActionResult GetMPRecuperada(DateTime? FechaEntregaInicial, DateTime? FechaEntregaFinal, long? Operario, string? Turno, long? IDPeletizado)
+        {
+            //var con;
+            DateTime Hoy = DateTime.Today;
+
+                 if (FechaEntregaInicial != null && FechaEntregaFinal != null && Operario != null && Turno != null && IDPeletizado != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                    rec => rec.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial &&
+                    rec.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal && 
+                    rec.RecMp.Usua_Operador == Operario && 
+                    rec.MatPri_Id == IDPeletizado &&
+                    rec.RecMp.Turno_Id == Turno
+                    )
+                    .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                {
+                    rec.Key.RecMp_FechaIngreso,
+                    rec.Key.Usua_Id,
+                    rec.Key.Usua_Nombre,
+                    rec.Key.MatPri_Id,
+                    rec.Key.MatPri_Nombre,
+                    SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                    rec.Key.UndMed_Id 
+                    })
+                .ToList();
+
+                return Ok(con);
+
+            } 
+            else if (FechaEntregaInicial != null && FechaEntregaFinal != null && Operario != null && Turno != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                    rec => rec.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial &&
+                    rec.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal &&
+                    rec.RecMp.Usua_Operador == Operario &&
+                    rec.RecMp.Turno_Id == Turno
+                    )
+                    .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+
+            } 
+            else if (FechaEntregaInicial != null && FechaEntregaFinal != null && Operario != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                    rec => rec.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial &&
+                    rec.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal &&
+                    rec.RecMp.Usua_Operador == Operario
+                    )
+                    .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+
+            }
+            else if (FechaEntregaInicial != null && FechaEntregaFinal != null && Turno != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                    rec => rec.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial &&
+                    rec.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal &&
+                    rec.RecMp.Turno_Id == Turno
+                    )
+                     .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+
+            }
+            else if (FechaEntregaInicial != null && FechaEntregaFinal != null && IDPeletizado != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                    rec => rec.RecMp.RecMp_FechaEntrega == FechaEntregaInicial &&
+                    rec.RecMp.RecMp_FechaEntrega == FechaEntregaFinal &&
+                    rec.MatPri_Id == IDPeletizado
+                    )
+                     .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+
+            }
+            else if (FechaEntregaInicial != null && FechaEntregaFinal != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                    rec => rec.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial &&
+                    rec.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal
+                    )
+                     .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+            }
+            else if (FechaEntregaInicial != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                    rec => rec.RecMp.RecMp_FechaEntrega == FechaEntregaInicial
+                    )
+                     .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+            }
+
+            else if (FechaEntregaInicial != null && Operario != null && Turno != null && IDPeletizado != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                    rec => rec.RecMp.RecMp_FechaEntrega == FechaEntregaInicial &&
+                    rec.RecMp.Usua_Operador == Operario &&
+                    rec.MatPri_Id == IDPeletizado &&
+                    rec.RecMp.Turno_Id == Turno
+                    )
+                     .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+
+            }
+            else if (FechaEntregaInicial != null && Operario != null && Turno != null) 
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                   rec => rec.RecMp.RecMp_FechaEntrega == FechaEntregaInicial &&
+                   rec.RecMp.Usua_Operador == Operario &&
+                   rec.RecMp.Turno_Id == Turno
+                   )
+                    .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+            }
+            else if (FechaEntregaInicial != null && Operario != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                   rec => rec.RecMp.RecMp_FechaEntrega == FechaEntregaInicial &&
+                   rec.RecMp.Usua_Operador == Operario
+                   )
+                    .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+            }
+            
+            else if (FechaEntregaInicial != null && Turno != null && IDPeletizado != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                    rec => rec.RecMp.RecMp_FechaEntrega == FechaEntregaInicial &&
+                    rec.MatPri_Id == IDPeletizado &&
+                    rec.RecMp.Turno_Id == Turno
+                    )
+                     .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+
+            }
+            else if (FechaEntregaInicial != null && Turno != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                   rec => rec.RecMp.RecMp_FechaEntrega == FechaEntregaInicial &&
+                   rec.RecMp.Turno_Id == Turno
+                   )
+                    .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+            }
+            else if (FechaEntregaInicial != null && IDPeletizado != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                   rec => rec.RecMp.RecMp_FechaEntrega == FechaEntregaInicial &&
+                   rec.MatPri_Id == IDPeletizado
+                   )
+                    .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+            }
+
+            else if (Operario != null && Turno != null && IDPeletizado != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                    rec => rec.RecMp.Usua_Operador == Operario &&
+                    rec.MatPri_Id == IDPeletizado &&
+                    rec.RecMp.Turno_Id == Turno
+                    )
+                     .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+
+            }
+            else if (Operario != null && Turno != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                    rec => rec.RecMp.Usua_Operador == Operario &&
+                    rec.RecMp.Turno_Id == Turno
+                    )
+                     .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+
+            }
+            else if (Operario != null && IDPeletizado != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                    rec => rec.RecMp.Usua_Operador == Operario &&
+                    rec.MatPri_Id == IDPeletizado
+                    )
+                     .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+
+            }
+            else if (Operario != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                    rec => rec.RecMp.Usua_Operador == Operario
+                    )
+                     .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+
+            }
+
+            else if (Turno != null && IDPeletizado != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                    rec => rec.MatPri_Id == IDPeletizado &&
+                    rec.RecMp.Turno_Id == Turno
+                    )
+                     .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+
+            }
+            else if (Turno != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                    rec => rec.RecMp.Turno_Id == Turno
+                    )
+                     .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+
+            }
+
+            else if (IDPeletizado != null)
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                    rec => rec.MatPri_Id == IDPeletizado
+                    )
+                    .Include(rec => rec.RecMp)
+                    .Include(recu => recu.RecMp.UsuaOperador)
+                    .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                    .Select(rec => new
+                    {
+                        rec.Key.RecMp_FechaIngreso,
+                        rec.Key.Usua_Id,
+                        rec.Key.Usua_Nombre,
+                        rec.Key.MatPri_Id,
+                        rec.Key.MatPri_Nombre,
+                        SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                        rec.Key.UndMed_Id
+                    })
+                .ToList();
+
+                return Ok(con);
+
+            }
+
+            else
+            {
+                var con = _context.DetallesRecuperados_MateriasPrimas.Where(
+                  rec => rec.RecMp.RecMp_FechaEntrega == Hoy
+                  )
+                  .Include(rec => rec.RecMp)
+                  .Include(recu => recu.RecMp.UsuaOperador)
+                  .GroupBy(agr => new { agr.MatPri_Id, agr.MatPri.MatPri_Nombre, agr.RecMp.Usua_Id, agr.RecMp.Usua.Usua_Nombre, agr.RecMp.RecMp_FechaIngreso, agr.UndMed_Id })
+                  .Select(rec => new
+                  {
+                      rec.Key.RecMp_FechaIngreso,
+                      rec.Key.Usua_Id,
+                      rec.Key.Usua_Nombre,
+                      rec.Key.MatPri_Id,
+                      rec.Key.MatPri_Nombre,
+                      SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
+                      rec.Key.UndMed_Id
+                  })
+              .ToList();
+
+                return Ok(con);
+            }
+
+
+        }
+
         // PUT: api/DetalleRecuperado_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
