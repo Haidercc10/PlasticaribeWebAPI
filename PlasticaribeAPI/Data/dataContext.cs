@@ -170,6 +170,8 @@ namespace PlasticaribeAPI.Data
             //Relaciones Recuperado_MatPrima
             modelBuilder.Entity<Recuperado_MatPrima>().HasOne(rmp => rmp.Usua).WithMany().HasForeignKey(rmp => rmp.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario
             modelBuilder.Entity<Recuperado_MatPrima>().HasOne(rmp => rmp.Proceso).WithMany().HasForeignKey(rmp => rmp.Proc_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
+            modelBuilder.Entity<Recuperado_MatPrima>().HasOne(rmp => rmp.TurnoRecMP).WithMany().HasForeignKey(rmp => rmp.Turno_Id).OnDelete(DeleteBehavior.Restrict); //foranea turno
+            modelBuilder.Entity<Recuperado_MatPrima>().HasOne(rmp => rmp.UsuaOperador).WithMany().HasForeignKey(rmp => rmp.Usua_Operador).OnDelete(DeleteBehavior.Restrict); //foranea operador
 
 
             //Relaciones DetallesRecuperados_MateriasPrimas
@@ -508,6 +510,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.PreEntrega_RolloDespacho> PreEntrega_RollosDespacho { get; set; }
 
         public DbSet<PlasticaribeAPI.Models.DetallePreEntrega_RolloDespacho> DetallesPreEntrega_RollosDespacho { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Turno> Turnos { get; set; }
     }
 
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20221026145424_Turnos2")]
+    partial class Turnos2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2524,42 +2526,20 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(10)");
 
-                    b.Property<DateTime>("RecMp_FechaEntrega")
-                        .HasColumnType("date");
-
                     b.Property<DateTime>("RecMp_FechaIngreso")
                         .HasColumnType("date");
-
-                    b.Property<string>("RecMp_HoraIngreso")
-                        .IsRequired()
-                        .HasColumnType("varchar(20)")
-                        .HasColumnOrder(2);
-
-                    b.Property<int>("RecMp_Maquina")
-                        .HasColumnType("int");
 
                     b.Property<string>("RecMp_Observacion")
                         .HasColumnType("text");
 
-                    b.Property<string>("Turno_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
                     b.Property<long>("Usua_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Usua_Operador")
                         .HasColumnType("bigint");
 
                     b.HasKey("RecMp_Id");
 
                     b.HasIndex("Proc_Id");
 
-                    b.HasIndex("Turno_Id");
-
                     b.HasIndex("Usua_Id");
-
-                    b.HasIndex("Usua_Operador");
 
                     b.ToTable("Recuperados_MatPrima");
                 });
@@ -4733,31 +4713,15 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Turno", "TurnoRecMP")
-                        .WithMany()
-                        .HasForeignKey("Turno_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "Usua")
                         .WithMany()
                         .HasForeignKey("Usua_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "UsuaOperador")
-                        .WithMany()
-                        .HasForeignKey("Usua_Operador")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Proceso");
 
-                    b.Navigation("TurnoRecMP");
-
                     b.Navigation("Usua");
-
-                    b.Navigation("UsuaOperador");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Remision", b =>
