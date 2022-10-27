@@ -274,13 +274,14 @@ namespace PlasticaribeAPI.Controllers
         /** Mostrar Consultas para reporte de Recuperado MP*/
 
         /** Fecha Inicial */
-        [HttpGet("MostrarMPRecuperada/")]
-        public ActionResult GetMPRecuperada(DateTime? FechaEntregaInicial, DateTime? FechaEntregaFinal, long? Operario, string? Turno, long? IDPeletizado)
+        [HttpGet("MostrarMPRecuperada/{FechaEntregaInicial}/{FechaEntregaFinal}/{Operario}/{Turno}/{IDPeletizado}")]
+        public ActionResult GetMPRecuperada(DateTime FechaEntregaInicial, DateTime FechaEntregaFinal, long Operario = 0, string Turno = "NE", long IDPeletizado = 0)
         {
             //var con;
             DateTime Hoy = DateTime.Today;
 
-                 if (FechaEntregaInicial != null && FechaEntregaFinal != null && Operario != null && Turno != null && IDPeletizado != null)
+#pragma warning disable CS8073 // El resultado de la expresión siempre es el mismo ya que un valor de este tipo siempre es igual a "null"
+            if (FechaEntregaInicial != null && FechaEntregaFinal != null && Operario != 0 && Turno != "NE" && IDPeletizado != 0)
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                     rec => rec.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial &&
@@ -307,7 +308,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(con);
 
             } 
-            else if (FechaEntregaInicial != null && FechaEntregaFinal != null && Operario != null && Turno != null)
+            else if (FechaEntregaInicial != null && FechaEntregaFinal != null && Operario != 0 && Turno != "NE")
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                     rec => rec.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial &&
@@ -333,7 +334,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(con);
 
             } 
-            else if (FechaEntregaInicial != null && FechaEntregaFinal != null && Operario != null)
+            else if (FechaEntregaInicial != null && FechaEntregaFinal != null && Operario != 0)
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                     rec => rec.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial &&
@@ -358,7 +359,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(con);
 
             }
-            else if (FechaEntregaInicial != null && FechaEntregaFinal != null && Turno != null)
+            else if (FechaEntregaInicial != null && FechaEntregaFinal != null && Turno != "NE")
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                     rec => rec.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial &&
@@ -383,7 +384,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(con);
 
             }
-            else if (FechaEntregaInicial != null && FechaEntregaFinal != null && IDPeletizado != null)
+            else if (FechaEntregaInicial != null && FechaEntregaFinal != null && IDPeletizado != 0)
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                     rec => rec.RecMp.RecMp_FechaEntrega == FechaEntregaInicial &&
@@ -454,7 +455,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(con);
             }
 
-            else if (FechaEntregaInicial != null && Operario != null && Turno != null && IDPeletizado != null)
+            else if (FechaEntregaInicial != null && Operario != 0 && Turno != "NE" && IDPeletizado != 0)
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                     rec => rec.RecMp.RecMp_FechaEntrega == FechaEntregaInicial &&
@@ -480,7 +481,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(con);
 
             }
-            else if (FechaEntregaInicial != null && Operario != null && Turno != null) 
+            else if (FechaEntregaInicial != null && Operario != 0 && Turno != "NE") 
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                    rec => rec.RecMp.RecMp_FechaEntrega == FechaEntregaInicial &&
@@ -504,7 +505,7 @@ namespace PlasticaribeAPI.Controllers
 
                 return Ok(con);
             }
-            else if (FechaEntregaInicial != null && Operario != null)
+            else if (FechaEntregaInicial != null && Operario != 0)
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                    rec => rec.RecMp.RecMp_FechaEntrega == FechaEntregaInicial &&
@@ -528,7 +529,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(con);
             }
             
-            else if (FechaEntregaInicial != null && Turno != null && IDPeletizado != null)
+            else if (FechaEntregaInicial != null && Turno != "NE" && IDPeletizado != 0)
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                     rec => rec.RecMp.RecMp_FechaEntrega == FechaEntregaInicial &&
@@ -553,7 +554,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(con);
 
             }
-            else if (FechaEntregaInicial != null && Turno != null)
+            else if (FechaEntregaInicial != null && Turno != "NE")
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                    rec => rec.RecMp.RecMp_FechaEntrega == FechaEntregaInicial &&
@@ -576,7 +577,7 @@ namespace PlasticaribeAPI.Controllers
 
                 return Ok(con);
             }
-            else if (FechaEntregaInicial != null && IDPeletizado != null)
+            else if (FechaEntregaInicial != null && IDPeletizado != 0)
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                    rec => rec.RecMp.RecMp_FechaEntrega == FechaEntregaInicial &&
@@ -600,7 +601,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(con);
             }
 
-            else if (Operario != null && Turno != null && IDPeletizado != null)
+            else if (Operario != 0 && Turno != "NE" && IDPeletizado != 0)
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                     rec => rec.RecMp.Usua_Operador == Operario &&
@@ -625,7 +626,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(con);
 
             }
-            else if (Operario != null && Turno != null)
+            else if (Operario != 0 && Turno != "NE")
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                     rec => rec.RecMp.Usua_Operador == Operario &&
@@ -649,7 +650,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(con);
 
             }
-            else if (Operario != null && IDPeletizado != null)
+            else if (Operario != 0 && IDPeletizado != 0)
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                     rec => rec.RecMp.Usua_Operador == Operario &&
@@ -673,7 +674,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(con);
 
             }
-            else if (Operario != null)
+            else if (Operario != 0)
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                     rec => rec.RecMp.Usua_Operador == Operario
@@ -697,7 +698,7 @@ namespace PlasticaribeAPI.Controllers
 
             }
 
-            else if (Turno != null && IDPeletizado != null)
+            else if (Turno != "NE" && IDPeletizado != 0)
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                     rec => rec.MatPri_Id == IDPeletizado &&
@@ -721,7 +722,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(con);
 
             }
-            else if (Turno != null)
+            else if (Turno != "NE")
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                     rec => rec.RecMp.Turno_Id == Turno
@@ -745,7 +746,7 @@ namespace PlasticaribeAPI.Controllers
 
             }
 
-            else if (IDPeletizado != null)
+            else if (IDPeletizado != 0)
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                     rec => rec.MatPri_Id == IDPeletizado
@@ -791,6 +792,7 @@ namespace PlasticaribeAPI.Controllers
 
                 return Ok(con);
             }
+#pragma warning restore CS8073 // El resultado de la expresión siempre es el mismo ya que un valor de este tipo siempre es igual a "null"
 
 
         }
