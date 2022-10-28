@@ -130,6 +130,7 @@ namespace PlasticaribeAPI.Controllers
                     x.Key.UndMed_Id,
                     Suma = x.Sum(y => y.DtAsigProdFV_Cantidad),
                     SumaUnd = x.Sum(y => y.Prod_CantidadUnidades),
+                    cantRollos = x.Count()
                 });
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
@@ -158,8 +159,8 @@ namespace PlasticaribeAPI.Controllers
                                        Rollo = detfact.Rollo_Id,
                                        Cantidad = detfact.DtAsigProdFV_Cantidad,
                                        Presentacion = detfact.UndMed_Id,
-                                       Estado_Rollo = rollo.Estado.Estado_Nombre,
-                                       Tipo = "ASIGPRODFV",
+                                       Estado_Rollo = Convert.ToString(rollo.Estado.Estado_Nombre),
+                                       Tipo = Convert.ToString("ASIGPRODFV"),
                                    });
 
             var QueryEntrada = (from ent in _context.Set<EntradaRollo_Producto>()
@@ -178,8 +179,8 @@ namespace PlasticaribeAPI.Controllers
                                     Rollo = dent.Rollo_Id,
                                     Cantidad = dent.DtEntRolloProd_Cantidad,
                                     Presentacion = dent.UndMed_Rollo,
-                                    Estado_Rollo = dent.Estado.Estado_Nombre,
-                                    Tipo = "ENTROLLO",
+                                    Estado_Rollo = Convert.ToString(dent.Estado.Estado_Nombre),
+                                    Tipo = Convert.ToString("ENTROLLO"),
                                 });
 
             var QueryDevolucion = (from dev in _context.Set<DetalleDevolucion_ProductoFacturado>()
@@ -198,12 +199,30 @@ namespace PlasticaribeAPI.Controllers
                                        Rollo = dev.Rollo_Id,
                                        Cantidad = dev.DtDevProdFact_Cantidad,
                                        Presentacion = dev.UndMed_Id,
-                                       Estado_Rollo = rollo.Estado.Estado_Nombre,
-                                       Tipo = "DEVPRODFAC",
+                                       Estado_Rollo = Convert.ToString(rollo.Estado.Estado_Nombre),
+                                       Tipo = Convert.ToString("DEVPRODFAC"),
                                    });
+
+            var QueryPreCargue = (from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
+                                  where pre.PreEntregaRollo.PreEntRollo_Fecha >= FechaIni
+                                        && pre.PreEntregaRollo.PreEntRollo_Fecha <= FechaFin
+                                  select new
+                                  {
+                                      Documento = Convert.ToString(pre.DtlPreEntRollo_OT),
+                                      Fecha = pre.PreEntregaRollo.PreEntRollo_Fecha,
+                                      Cli_Id = Convert.ToString(""),
+                                      Cli_Nombre = Convert.ToString(""),
+                                      Prod_Id = pre.Prod_Id,
+                                      Prod_Nombre = pre.Prod.Prod_Nombre,
+                                      Rollo = pre.Rollo_Id,
+                                      Cantidad = pre.DtlPreEntRollo_Cantidad,
+                                      Presentacion = pre.UndMed_Rollo,
+                                      Estado_Rollo = Convert.ToString("Pre Ingresado"),
+                                      Tipo = Convert.ToString(pre.Proceso.Proceso_Nombre),
+                                  });
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
-            return Ok(QueryAsignacion.Concat(QueryEntrada).Concat(QueryDevolucion));
+            return Ok(QueryAsignacion.Concat(QueryEntrada).Concat(QueryDevolucion).Concat(QueryPreCargue));
         }
 
         [HttpGet("FiltroFactura/{factura}/{ot}")]
@@ -228,8 +247,8 @@ namespace PlasticaribeAPI.Controllers
                                        Rollo = detfact.Rollo_Id,
                                        Cantidad = detfact.DtAsigProdFV_Cantidad,
                                        Presentacion = detfact.UndMed_Id,
-                                       Estado_Rollo = rollo.Estado.Estado_Nombre,
-                                       Tipo = "ASIGPRODFV",
+                                       Estado_Rollo = Convert.ToString(rollo.Estado.Estado_Nombre),
+                                       Tipo = Convert.ToString("ASIGPRODFV"),
                                    });
 
             var QueryEntrada = (from ent in _context.Set<EntradaRollo_Producto>()
@@ -247,8 +266,8 @@ namespace PlasticaribeAPI.Controllers
                                     Rollo = dent.Rollo_Id,
                                     Cantidad = dent.DtEntRolloProd_Cantidad,
                                     Presentacion = dent.UndMed_Rollo,
-                                    Estado_Rollo = dent.Estado.Estado_Nombre,
-                                    Tipo = "ENTROLLO",
+                                    Estado_Rollo = Convert.ToString(dent.Estado.Estado_Nombre),
+                                    Tipo = Convert.ToString("ENTROLLO"),
                                 });
 
             var QueryDevolucion = (from dev in _context.Set<DetalleDevolucion_ProductoFacturado>()
@@ -266,12 +285,29 @@ namespace PlasticaribeAPI.Controllers
                                        Rollo = dev.Rollo_Id,
                                        Cantidad = dev.DtDevProdFact_Cantidad,
                                        Presentacion = dev.UndMed_Id,
-                                       Estado_Rollo = rollo.Estado.Estado_Nombre,
-                                       Tipo = "DEVPRODFAC",
+                                       Estado_Rollo = Convert.ToString(rollo.Estado.Estado_Nombre),
+                                       Tipo = Convert.ToString("DEVPRODFAC"),
                                    });
+
+            var QueryPreCargue = (from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
+                                  where Convert.ToString(pre.DtlPreEntRollo_OT) == ot
+                                  select new
+                                  {
+                                      Documento = Convert.ToString(pre.DtlPreEntRollo_OT),
+                                      Fecha = pre.PreEntregaRollo.PreEntRollo_Fecha,
+                                      Cli_Id = Convert.ToString(""),
+                                      Cli_Nombre = Convert.ToString(""),
+                                      Prod_Id = pre.Prod_Id,
+                                      Prod_Nombre = pre.Prod.Prod_Nombre,
+                                      Rollo = pre.Rollo_Id,
+                                      Cantidad = pre.DtlPreEntRollo_Cantidad,
+                                      Presentacion = pre.UndMed_Rollo,
+                                      Estado_Rollo = Convert.ToString("Pre Ingresado"),
+                                      Tipo = Convert.ToString(pre.Proceso.Proceso_Nombre),
+                                  });
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
-            return Ok(QueryAsignacion.Concat(QueryEntrada).Concat(QueryDevolucion));
+            return Ok(QueryAsignacion.Concat(QueryEntrada).Concat(QueryDevolucion).Concat(QueryPreCargue));
         }
 
         // PUT: api/DetallesAsignacionProducto_FacturaVenta/5

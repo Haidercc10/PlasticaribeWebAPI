@@ -29,8 +29,6 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // GET: api/DetallePreEntrega_RolloDespacho/5
-       
-
         [HttpGet("VerificarRollo/{id}")]
         public ActionResult GetVerificarRollo(long id)
         {
@@ -52,8 +50,96 @@ namespace PlasticaribeAPI.Controllers
             return detallePreEntrega_RolloDespacho;
         }
 
+        //Funcion que va a buscar la informacion que aparecerá en el PDF
+        [HttpGet("crearPdf/{ot}/{proceso}")]
+        public ActionResult crearPdf(long ot, string proceso)
+        {
+            var con = from rollo in _context.Set<DetallePreEntrega_RolloDespacho>()
+                      from emp in _context.Set<Empresa>()
+                      where rollo.DtlPreEntRollo_OT == ot && rollo.Proceso.Proceso_Nombre == proceso
+                      group rollo by new {
+                          rollo.PreEntregaRollo.PreEntRollo_Id,
+                          rollo.Prod_Id,
+                          rollo.Prod.Prod_Nombre,
+                          rollo.Rollo_Id,
+                          rollo.UndMed_Rollo,
+                          rollo.DtlPreEntRollo_Cantidad,
+                          rollo.PreEntregaRollo.PreEntRollo_Fecha,
+                          rollo.PreEntregaRollo.Usua_Id,
+                          rollo.PreEntregaRollo.Usuario.Usua_Nombre,
+                          emp.Empresa_Id,
+                          emp.Empresa_Ciudad,
+                          emp.Empresa_COdigoPostal,
+                          emp.Empresa_Correo,
+                          emp.Empresa_Direccion,
+                          emp.Empresa_Telefono,
+                          emp.Empresa_Nombre,
+                      }
+                      into rollos
+                      select new
+                      {
+                          rollos.Key.PreEntRollo_Id,
+                          rollos.Key.Prod_Id,
+                          rollos.Key.Prod_Nombre,
+                          rollos.Key.Rollo_Id,
+                          rollos.Key.UndMed_Rollo,
+                          rollos.Key.DtlPreEntRollo_Cantidad,
+                          rollos.Key.PreEntRollo_Fecha,
+                          Creador = rollos.Key.Usua_Id,
+                          NombreCreador = rollos.Key.Usua_Nombre,
+                          cantRollos = rollos.Count(),
+                          rollos.Key.Empresa_Id,
+                          rollos.Key.Empresa_Ciudad,
+                          rollos.Key.Empresa_COdigoPostal,
+                          rollos.Key.Empresa_Correo,
+                          rollos.Key.Empresa_Direccion,
+                          rollos.Key.Empresa_Telefono,
+                          rollos.Key.Empresa_Nombre
+                      };
+            return Ok(con);
+        }
 
+        //Funcion que va a buscar la informacion que aparecerá en el PDF
+        [HttpGet("crearPdf2/{ot}/{proceso}")]
+        public ActionResult crearPdf2(long ot, string proceso)
+        {
+            var con = _context.DetallesPreEntrega_RollosDespacho.Where(x => x.DtlPreEntRollo_OT == ot && x.Proceso.Proceso_Nombre == proceso)
+                .GroupBy(x => new
+                {
+                    x.Prod_Id,
+                    x.Prod.Prod_Nombre,
+                    x.UndMed_Producto
+                })
+                .Select(x => new
+                {
+                    x.Key.Prod_Id,
+                    x.Key.Prod_Nombre,
+                    x.Key.UndMed_Producto,
+                    suma = x.Sum(x => x.DtlPreEntRollo_Cantidad),
+                    cantRollos = x.Count()
+                });
+            return Ok(con);
+        }
 
+        //Funcion que va a buscar la informacion que aparecerá en el PDF
+        [HttpGet("cantidadRollosPorOT/{ot}/{proceso}")]
+        public ActionResult cantidadRollosPorOT(long ot, string proceso)
+        {
+            var con = from rollo in _context.Set<DetallePreEntrega_RolloDespacho>()
+                      from emp in _context.Set<Empresa>()
+                      where rollo.DtlPreEntRollo_OT == ot && rollo.Proceso.Proceso_Nombre == proceso
+                      group rollo by new
+                      {
+                          rollo.Prod_Id,
+                          rollo.Prod.Prod_Nombre,
+                      }
+                      into rollos
+                      select new
+                      {
+                          cantRollos = rollos.Count(),
+                      };
+            return Ok(con);
+        }
 
         [HttpGet("CrearPDFUltimoID/{id}")]
         public ActionResult Get(long id )
