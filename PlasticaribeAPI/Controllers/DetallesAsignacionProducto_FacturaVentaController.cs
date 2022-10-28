@@ -61,7 +61,8 @@ namespace PlasticaribeAPI.Controllers
                           dtAFac.UndMed_Id,
                           dtAFac.AsigProducto_FV.Cliente.Cli_Nombre,
                           dtAFac.AsigProducto_FV.Cli_Id,
-                          ent.Estado_Id
+                          ent.Estado_Id,
+                          dtAFac.AsigProducto_FV.AsigProdFV_PlacaCamion,
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
