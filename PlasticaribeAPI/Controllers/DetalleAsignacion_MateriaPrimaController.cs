@@ -231,7 +231,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(detallesAsignacion);
             }
         }
-
+        
         [HttpGet("matPriFechaActual/{MatPri_Id}")]
         public ActionResult<DetalleAsignacion_MateriaPrima> GetIdMateriaPrimaFechaActual(long MatPri_Id, DateTime AsigMp_FechaEntrega)
         {
@@ -249,6 +249,7 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        //Aplica RRMP
         [HttpGet("consultaMovimientos0/{FechaInicial}")]
         public ActionResult Get(DateTime FechaInicial)
         {
@@ -292,7 +293,8 @@ namespace PlasticaribeAPI.Controllers
                 }).ToList();
             return Ok(con);
         }
-
+        
+        //Aplica RRMP
         [HttpGet("consultaMovimientos2/{MatPri}/{FechaInicial}")]
         public ActionResult GetMatPri(int MatPri, DateTime FechaInicial)
         {
@@ -338,6 +340,7 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        //Aplica RRMP
         [HttpGet("consultaMovimientos4/{FechaInicial}/{FechaFinal}")]
         public ActionResult Get(DateTime FechaInicial, DateTime FechaFinal)
         {
@@ -408,7 +411,8 @@ namespace PlasticaribeAPI.Controllers
                 }).ToList();
             return Ok(con);
         }
-
+        
+        //Aplica RRMP 
         [HttpGet("consultaMovimientos8/{FechaInicial}/{FechaFinal}/{MatPri}")]
         public ActionResult Get8(DateTime FechaInicial, DateTime FechaFinal, int MatPri)
         {
@@ -589,6 +593,30 @@ namespace PlasticaribeAPI.Controllers
         }
 
 
+        /** CONSULTA PARA REPORTE DE RECUPERADO */
+        [HttpGet("ReporteRecuperadoMP/{FechaInicial}/{FechaFinal}/{MatPri}/{estado}")]
+        public ActionResult Get2(DateTime FechaInicial, DateTime FechaFinal, int MatPri)
+        {
+            var con = _context.DetallesAsignaciones_MateriasPrimas
+                .Where(dtAsg => dtAsg.AsigMp.AsigMp_FechaEntrega >= FechaInicial
+                       && dtAsg.AsigMp.AsigMp_FechaEntrega <= FechaFinal
+                       && dtAsg.MatPri_Id == MatPri)
+                .Include(dtAsg => dtAsg.AsigMp)
+                .Select(dtAsg => new
+                {
+                    dtAsg.AsigMp_Id,
+                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
+                    dtAsg.AsigMp.AsigMp_FechaEntrega,
+                    dtAsg.AsigMp.Usua.Usua_Nombre,
+                    dtAsg.AsigMp.Usua_Id,
+                    dtAsg.MatPri.MatPri_Nombre,
+                    dtAsg.MatPri_Id,
+                    dtAsg.DtAsigMp_Cantidad,
+                    dtAsg.AsigMp.Estado_OrdenTrabajo,
+                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
+                }).ToList();
+            return Ok(con);
+        }
 
         // PUT: api/DetalleAsignacion_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

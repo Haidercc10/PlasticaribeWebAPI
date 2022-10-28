@@ -38,7 +38,7 @@ namespace PlasticaribeAPI.Models
         public Estado? Estado { get; set; } //Propiedad de navegación estado
 
         //Lista requerida para relación Asignacion_MatPrimaXTinta - materias primas
-        public IList<DetalleAsignacion_MatPrimaXTinta>? DetAsigMPxTinta { get; set; }
+        //public IList<DetalleAsignacion_MatPrimaXTinta>? DetAsigMPxTinta { get; set; }
 
     }
 }
