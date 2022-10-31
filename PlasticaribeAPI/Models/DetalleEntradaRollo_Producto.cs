@@ -15,15 +15,12 @@ namespace PlasticaribeAPI.Models
         [Column(Order = 3)]
         public long Rollo_Id { get; set; }
 
-
         [Precision(14, 2)]
         public decimal DtEntRolloProd_Cantidad { get; set; }
-
 
         [Column(TypeName = "varchar(10)")]
         public string UndMed_Rollo { get; set; }
         public Unidad_Medida? UndMedida_Rollo { get; set; }
-
 
         public int Estado_Id { get; set; }
         public Estado? Estado { get; set; }
@@ -32,7 +29,6 @@ namespace PlasticaribeAPI.Models
 
         public int Prod_Id { get; set; }
         public Producto? Prod { get; set; }
-
 
         [Column(TypeName = "varchar(10)")]
         public string UndMed_Prod { get; set; }
@@ -52,5 +48,8 @@ namespace PlasticaribeAPI.Models
 
         [Precision(14, 2)]
         public decimal Prod_CantBolsasFacturadas { get; set; }
+
+        public string? Proceso_Id { get; set; }
+        public Proceso? Proceso { get; set; }
     }
 }

@@ -42,10 +42,19 @@ namespace PlasticaribeAPI.Controllers
             return detalleEntradaRollo_Producto;
         }
 
+        //Funcion que va a consultar la informacion de un Rollo
         [HttpGet("VerificarRollo/{id}")]
         public ActionResult Get(long id)
         {
             var con = _context.DetallesEntradasRollos_Productos.Where(x => x.Rollo_Id == id).ToList();
+            return Ok(con);
+        }
+
+        //Consulta que va a traer la información de los rollos ingresados en el proceso que sea consultado.
+        [HttpGet("GetRollosProceso/{proceso}")]
+        public ActionResult GetRollosProceso(string proceso)
+        {
+            var con = _context.DetallesEntradasRollos_Productos.Where(x => x.Proceso_Id == proceso).Select(x => x.Rollo_Id).ToList();
             return Ok(con);
         }
 
