@@ -7,8 +7,10 @@ namespace PlasticaribeAPI.Models
     public class DetalleAsignacion_MatPrimaXTinta
     {
         [Key]
+        public long DtAsigMPxTinta_Codigo { get; set; } /* Primaria */
+        
         public long AsigMPxTinta_Id { get; set; } //Llave foranea de Asignacion_MatPrimaXTinta
-        //public Asignacion_MatPrimaXTinta? AsigMPxTinta { get; set; } //Propiedad de navegación de Asignacion_MatPrimaXTinta
+        public Asignacion_MatPrimaXTinta? AsigMPxTinta { get; set; } //Propiedad de navegación de Asignacion_MatPrimaXTinta
 
         public long MatPri_Id { get; set; }         //Llave foranea de materia prima      
         public Materia_Prima? MatPri { get; set; }   //Propiedad de navegación de materia prima

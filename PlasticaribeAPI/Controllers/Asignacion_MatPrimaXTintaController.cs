@@ -54,10 +54,88 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("ultimoId/")]
         public ActionResult<Asignacion_MatPrimaXTinta> GetUltimoId()
         {
-            var asignacion = _context.Asignaciones_MatPrimasXTintas.OrderBy(asg => asg.AsigMPxTinta_Id).Last();
+            var asignacion = _context.Asignaciones_MatPrimasXTintas.OrderBy(asg => asg.AsigMPxTinta_Id).Select(agr => new
+            {
+                agr.AsigMPxTinta_Id
+            }).Last();
 
             return Ok(asignacion);
         }
+
+        /** Cargar Tintas y Materias Primas */
+        [HttpGet("CargarTintas_MatPrimas/")]
+        public ActionResult GetTinta_MaPrima()
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var matPrima = (from mp in _context.Set<Materia_Prima>()
+                            select new
+                            {
+                                MatPrima = mp.MatPri_Id,
+                                NombreMP = mp.MatPri_Nombre,
+                                Stock = mp.MatPri_Stock,
+                                Unidad = mp.UndMed_Id,
+                                IDCategoria = mp.CatMP_Id,
+                                NombreCategoria = mp.CatMP.CatMP_Nombre
+                            });
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var tinta = (from tnt in _context.Set<Tinta>()
+                         where tnt.CatMP_Id == 8
+                         select new
+                         {
+                             MatPrima = tnt.Tinta_Id,
+                             NombreMP = tnt.Tinta_Nombre,
+                             Stock = tnt.Tinta_Stock,
+                             Unidad = tnt.UndMed_Id,
+                             IDCategoria = tnt.CatMP_Id,
+                             NombreCategoria = tnt.CatMP.CatMP_Nombre
+                         });
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            var Query = tinta.Concat(matPrima);
+
+            return Ok(Query);
+        }
+
+        /**/
+        [HttpGet("CargarMatPrimasXId/{Id_MatPrima}")]
+        public ActionResult GetTinta_MaPrima(long Id_MatPrima)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var matPrima = (from mp in _context.Set<Materia_Prima>()
+                            where mp.MatPri_Id == Id_MatPrima
+                            select new
+                            {
+                                MatPrima = mp.MatPri_Id,
+                                NombreMP = mp.MatPri_Nombre,
+                                Stock = mp.MatPri_Stock,
+                                Unidad = mp.UndMed_Id,
+                                IDCategoria = mp.CatMP_Id,
+                                NombreCategoria = mp.CatMP.CatMP_Nombre
+                            });
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var tinta = (from tnt in _context.Set<Tinta>()
+                         where tnt.CatMP_Id == 8 && 
+                         tnt.Tinta_Id == Id_MatPrima
+                         select new
+                         {
+                             MatPrima = tnt.Tinta_Id,
+                             NombreMP = tnt.Tinta_Nombre,
+                             Stock = tnt.Tinta_Stock,
+                             Unidad = tnt.UndMed_Id,
+                             IDCategoria = tnt.CatMP_Id,
+                             NombreCategoria = tnt.CatMP.CatMP_Nombre
+                         });
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            var Query = tinta.Concat(matPrima);
+
+            return Ok(Query);
+        }
+
 
         // PUT: api/Asignacion_MatPrimaXTinta/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -89,6 +167,7 @@ namespace PlasticaribeAPI.Controllers
 
             return NoContent();
         }
+
 
         // POST: api/Asignacion_MatPrimaXTinta
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

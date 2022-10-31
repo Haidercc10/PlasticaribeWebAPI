@@ -50,6 +50,26 @@ namespace PlasticaribeAPI.Controllers
             return tinta;
         }
 
+        [HttpGet("TintasColores")]
+        public ActionResult GetTintaColor()
+        {
+            if (_context.Tintas == null)
+            {
+                return NotFound();
+            }
+            var tinta = _context.Tintas.Where(tnt => tnt.CatMP_Id == 7);
+
+            if (tinta == null)
+            {
+                return NotFound();
+            } else
+            {
+                return Ok(tinta);
+            }
+
+            //return tinta;
+        }
+
         [HttpGet("consultaImpresion/{TpImpresion_Nombre}/{Tinta_Nombre1}/{Tinta_Nombre2}/{Tinta_Nombre3}/{Tinta_Nombre4}/{Tinta_Nombre5}/{Tinta_Nombre6}/{Tinta_Nombre7}/{Tinta_Nombre8}")]
         public ActionResult GetConsultaImpresion(string TpImpresion_Nombre, string Tinta_Nombre1, string Tinta_Nombre2, string Tinta_Nombre3, string Tinta_Nombre4, string Tinta_Nombre5, string Tinta_Nombre6, string Tinta_Nombre7, string Tinta_Nombre8)
         {

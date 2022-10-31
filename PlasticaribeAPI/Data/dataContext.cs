@@ -217,6 +217,7 @@ namespace PlasticaribeAPI.Data
             //modelBuilder.Entity<DetalleAsignacion_MatPrimaXTinta>().HasKey(dampxt => new { dampxt.AsigMPxTinta_Id, dampxt.MatPri_Id }); //Llave Compuesta DetalleAsignacion_MateriaPrimaXTinta 
             //modelBuilder.Entity<DetalleAsignacion_MatPrimaXTinta>().HasOne<Asignacion_MatPrimaXTinta>(dampxt => dampxt.AsigMPxTinta).WithMany(dampxti => dampxti.DetAsigMPxTinta).HasForeignKey(dampxt => dampxt.AsigMPxTinta_Id); //Foranea Asignacion_matpri
             //modelBuilder.Entity<DetalleAsignacion_MatPrimaXTinta>().HasOne<Materia_Prima>(ddmp => ddmp.MatPri).WithMany(ddmp => ddmp.DetAsigMPxTinta).HasForeignKey(ddmp => ddmp.MatPri_Id); //Foranea materiaprima
+            modelBuilder.Entity<DetalleAsignacion_MatPrimaXTinta>().HasOne(ddmp => ddmp.AsigMPxTinta).WithMany().HasForeignKey(damp => damp.AsigMPxTinta_Id).OnDelete(DeleteBehavior.Restrict); //foranea Materia Prima
             modelBuilder.Entity<DetalleAsignacion_MatPrimaXTinta>().HasOne(ddmp => ddmp.MatPri).WithMany().HasForeignKey(damp => damp.MatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea Materia Prima
             modelBuilder.Entity<DetalleAsignacion_MatPrimaXTinta>().HasOne(ddmp => ddmp.TintasDAMPxT).WithMany().HasForeignKey(damp => damp.Tinta_Id).OnDelete(DeleteBehavior.Restrict); //foranea Tinta
             modelBuilder.Entity<DetalleAsignacion_MatPrimaXTinta>().HasOne(ddmp => ddmp.UndMed).WithMany().HasForeignKey(damp => damp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
