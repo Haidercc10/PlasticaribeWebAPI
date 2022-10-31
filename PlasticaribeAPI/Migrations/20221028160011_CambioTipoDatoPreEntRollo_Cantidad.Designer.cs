@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20221028160011_CambioTipoDatoPreEntRollo_Cantidad")]
+    partial class CambioTipoDatoPreEntRollo_Cantidad
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -562,48 +564,29 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.DetalleAsignacion_MatPrimaXTinta", b =>
                 {
-
-                    b.Property<long>("DtAsigMPxTinta_Codigo")
-                        .ValueGeneratedOnAdd()
+                    b.Property<long>("AsigMPxTinta_Id")
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("DtAsigMPxTinta_Codigo"), 1L, 1);
-
-                    b.Property<long>("AsigMPxTinta_Id")
+                    b.Property<long>("MatPri_Id")
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("DetAsigMPxTinta_Cantidad")
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
 
-                    b.Property<long>("MatPri_Id")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Proceso_Id")
                         .IsRequired()
                         .HasColumnType("varchar(10)");
-
-                    b.Property<long>("Tinta_Id")
-                        .HasColumnType("bigint")
-                        .HasColumnOrder(2);
 
                     b.Property<string>("UndMed_Id")
                         .IsRequired()
                         .HasColumnType("varchar(10)");
 
-
-                    b.HasKey("DtAsigMPxTinta_Codigo");
-
-                    b.HasIndex("AsigMPxTinta_Id");
-
-                    b.HasKey("AsigMPxTinta_Id");
-
+                    b.HasKey("AsigMPxTinta_Id", "MatPri_Id");
 
                     b.HasIndex("MatPri_Id");
 
                     b.HasIndex("Proceso_Id");
-
-                    b.HasIndex("Tinta_Id");
 
                     b.HasIndex("UndMed_Id");
 
@@ -729,9 +712,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Estado_Id")
                         .HasColumnType("int");
 
-                    b.Property<string>("Proceso_Id")
-                        .HasColumnType("varchar(10)");
-
                     b.Property<decimal>("Prod_CantBolsasBulto")
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
@@ -772,8 +752,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("EntRolloProd_Id");
 
                     b.HasIndex("Estado_Id");
-
-                    b.HasIndex("Proceso_Id");
 
                     b.HasIndex("Prod_Id");
 
@@ -3570,28 +3548,21 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.DetalleAsignacion_MatPrimaXTinta", b =>
                 {
-
                     b.HasOne("PlasticaribeAPI.Models.Asignacion_MatPrimaXTinta", "AsigMPxTinta")
-                        .WithMany()
+                        .WithMany("DetAsigMPxTinta")
                         .HasForeignKey("AsigMPxTinta_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PlasticaribeAPI.Models.Materia_Prima", "MatPri")
-                        .WithMany()
+                        .WithMany("DetAsigMPxTinta")
                         .HasForeignKey("MatPri_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PlasticaribeAPI.Models.Proceso", "Proceso")
                         .WithMany()
                         .HasForeignKey("Proceso_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Tinta", "TintasDAMPxT")
-                        .WithMany()
-                        .HasForeignKey("Tinta_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -3601,11 +3572,11 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("AsigMPxTinta");
+
                     b.Navigation("MatPri");
 
                     b.Navigation("Proceso");
-
-                    b.Navigation("TintasDAMPxT");
 
                     b.Navigation("UndMed");
                 });
@@ -3721,11 +3692,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Proceso", "Proceso")
-                        .WithMany()
-                        .HasForeignKey("Proceso_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.Producto", "Prod")
                         .WithMany()
                         .HasForeignKey("Prod_Id")
@@ -3747,8 +3713,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("EntRollo_Producto");
 
                     b.Navigation("Estado");
-
-                    b.Navigation("Proceso");
 
                     b.Navigation("Prod");
 
@@ -5034,6 +4998,11 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("DtAsigMatPri");
                 });
 
+            modelBuilder.Entity("PlasticaribeAPI.Models.Asignacion_MatPrimaXTinta", b =>
+                {
+                    b.Navigation("DetAsigMPxTinta");
+                });
+
             modelBuilder.Entity("PlasticaribeAPI.Models.AsignacionProducto_FacturaVenta", b =>
                 {
                     b.Navigation("DtAsigProd_FVTA");
@@ -5068,6 +5037,8 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Materia_Prima", b =>
                 {
+                    b.Navigation("DetAsigMPxTinta");
+
                     b.Navigation("DetDevMatPri");
 
                     b.Navigation("DetRecMatPri");

@@ -42,10 +42,19 @@ namespace PlasticaribeAPI.Controllers
             return detalleEntradaRollo_Producto;
         }
 
+        //Funcion que va a consultar la informacion de un Rollo
         [HttpGet("VerificarRollo/{id}")]
         public ActionResult Get(long id)
         {
             var con = _context.DetallesEntradasRollos_Productos.Where(x => x.Rollo_Id == id).ToList();
+            return Ok(con);
+        }
+
+        //Consulta que va a traer la información de los rollos ingresados en el proceso que sea consultado.
+        [HttpGet("GetRollosProceso/{proceso}")]
+        public ActionResult GetRollosProceso(string proceso)
+        {
+            var con = _context.DetallesEntradasRollos_Productos.Where(x => x.Proceso_Id == proceso).Select(x => x.Rollo_Id).ToList();
             return Ok(con);
         }
 
@@ -99,6 +108,28 @@ namespace PlasticaribeAPI.Controllers
                           emp.Empresa_Telefono,
                           emp.Empresa_Nombre
                       };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        [HttpGet("CrearPdf2/{ot}")]
+        public ActionResult GetCrearPdf2(long ot)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = _context.DetallesEntradasRollos_Productos.Where(x => x.DtEntRolloProd_OT == ot)
+                    .GroupBy(x => new
+                    {
+                        x.Prod_Id,
+                        x.Prod.Prod_Nombre,
+                        x.UndMed_Prod
+                    }).Select(x => new
+                    {
+                        x.Key.Prod_Id,
+                        x.Key.Prod_Nombre,
+                        suma = x.Sum(x => x.DtEntRolloProd_Cantidad),
+                        x.Key.UndMed_Prod,
+                        cantRollos = x.Count()
+                    }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }

@@ -37,7 +37,7 @@ namespace PlasticaribeAPI.Models
         public long Rollo_Id { get; set; }
 
 
-        [Precision(18,2)]
+        [Precision(14,2)]
         public decimal DtlPreEntRollo_Cantidad { get; set; }
 
 
