@@ -42,7 +42,7 @@ namespace PlasticaribeAPI.Controllers
             return detalleEntradaRollo_Producto;
         }
 
-        //Funcion que va a consultar la informacion de un Rollo
+        //Consulta que va a traer la informacion de un Rollo
         [HttpGet("VerificarRollo/{id}")]
         public ActionResult Get(long id)
         {
@@ -58,6 +58,7 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        //Consulta que va a traer la informacion de los rollos que esten asociados a un producto, el cual será consultado
         [HttpGet("consultarProducto/{id}")]
         public ActionResult GetConsultarProd(long id)
         {
@@ -82,6 +83,7 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        //Consulta que nos permitirá crear un archivo pdf a base de dala informacion pedida
         [HttpGet("CrearPdf/{ot}")]
         public ActionResult GetCrearPdf(long ot)
         {

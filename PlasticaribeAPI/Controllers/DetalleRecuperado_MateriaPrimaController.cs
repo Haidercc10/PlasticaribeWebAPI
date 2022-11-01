@@ -555,7 +555,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(con);
 
             }
-            else if (FechaEntregaInicial != null && FechaEntregaFinal != null)
+            else if (FechaEntregaInicial != null && FechaEntregaFinal != null && Turno == "NE")
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                     rec => rec.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial &&

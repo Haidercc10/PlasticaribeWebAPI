@@ -79,34 +79,67 @@ namespace PlasticaribeAPI.Controllers
             }
 
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
-            var tinta_Asignada = _context.DetalleAsignaciones_Tintas
-                
-                .Where(da => da.AsigMp.AsigMP_OrdenTrabajo == AsigMP_OrdenTrabajo)               
-                .Include(da => da.Tinta)              
-                .Include(da => da.AsigMp)                
-                .Include(da => da.Proceso)              
-                .GroupBy(da => new { da.Tinta_Id, da.Tinta.Tinta_Nombre, da.UndMed_Id, da.Tinta.Tinta_Precio, da.Proceso.Proceso_Nombre }) 
-                .Select(agr => new
-                {
-                    /** 'Key' hace referencia a los campos que están en el GroupBy */
-                    agr.Key.Tinta_Id,
-                    agr.Key.Tinta_Nombre,
-                    Sum = agr.Sum(da => da.DtAsigTinta_Cantidad),
-                    agr.Key.UndMed_Id,
-                    agr.Key.Tinta_Precio,
-                    agr.Key.Proceso_Nombre
-                
-                }).ToList();
+            var asig = from asg in _context.Set<DetalleAsignacion_Tinta>()
+                      where asg.AsigMp.AsigMP_OrdenTrabajo == AsigMP_OrdenTrabajo
+                      group asg by new
+                      {
+                          asg.Tinta_Id,
+                          asg.Tinta.Tinta_Nombre,
+                          asg.UndMed_Id,
+                          asg.Tinta.Tinta_Precio,
+                          asg.Proceso.Proceso_Nombre,
+                      } into asg
+                      select new
+                      {
+                          Tinta = asg.Key.Tinta_Id,
+                          Tinta2 = asg.Key.Tinta_Id,
+                          NombreTinta = asg.Key.Tinta_Nombre,
+                          NombreTinta2 = asg.Key.Tinta_Nombre,
+                          Suma = asg.Sum(x => x.DtAsigTinta_Cantidad),
+                          Presentacion = asg.Key.UndMed_Id,
+                          PrecioTinta = asg.Key.Tinta_Precio,
+                          Proceso = asg.Key.Proceso_Nombre,
+                          Materia_Prima = asg.Key.Tinta_Id,
+                          Nombre_MateriaPrima = asg.Key.Tinta_Nombre
+                      };
+
+            var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
+                           where cr.AsigMPxTinta.Tinta_Id == AsigMP_OrdenTrabajo
+                           group cr by new
+                           {
+                               cr.AsigMPxTinta.Tinta_Id,
+                               cr.AsigMPxTinta.Tinta.Tinta_Nombre,
+                               cr.UndMed_Id,
+                               cr.AsigMPxTinta.Tinta.Tinta_Precio,
+                               cr.Proceso.Proceso_Nombre,
+                               Tinta2 = cr.Tinta_Id,
+                               Tinta2_Nombre = cr.TintasDAMPxT.Tinta_Nombre,
+                               cr.MatPri_Id,
+                               cr.MatPri.MatPri_Nombre,
+                           } into cr
+                           select new
+                           {
+                               Tinta = cr.Key.Tinta_Id,
+                               Tinta2 = cr.Key.Tinta2,
+                               NombreTinta = cr.Key.Tinta_Nombre,
+                               NombreTinta2 = cr.Key.Tinta2_Nombre,
+                               Suma = cr.Sum(x => x.DetAsigMPxTinta_Cantidad),
+                               Presentacion = cr.Key.UndMed_Id,
+                               PrecioTinta = cr.Key.Tinta_Precio,
+                               Proceso = cr.Key.Proceso_Nombre,
+                               Materia_Prima = cr.Key.MatPri_Id,
+                               Nombre_MateriaPrima = cr.Key.MatPri_Nombre,
+                           };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
 
-            if (tinta_Asignada == null)
+            if (asig == null || creacion == null)
             {
                 return NotFound();
             }
             else
             {
-                return Ok(tinta_Asignada);
+                return Ok(asig.Concat(creacion));
             }
         }
 
@@ -135,24 +168,51 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("MovTintasxFechaEntrega/{FechaInicial}")]
         public ActionResult Get(DateTime FechaInicial)
         {
-            var con = _context.DetalleAsignaciones_Tintas
-                .Where(dtAsg => dtAsg.AsigMp.AsigMp_FechaEntrega == FechaInicial)
-                .Include(dtAsg => dtAsg.AsigMp)
-                .Select(dtAsg => new
-                {
-                    dtAsg.AsigMp_Id,
-                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
-                    dtAsg.AsigMp.AsigMp_FechaEntrega,
-                    dtAsg.AsigMp.Usua.Usua_Nombre,
-                    dtAsg.AsigMp.Usua_Id,
-                    dtAsg.Tinta.Tinta_Nombre,
-                    dtAsg.Tinta_Id,
-                    dtAsg.DtAsigTinta_Cantidad,
-                    dtAsg.AsigMp.Estado_OrdenTrabajo,
-                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
-                }).ToList();
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var asig = from asg in _context.Set<DetalleAsignacion_Tinta>()
+                       where asg.AsigMp.AsigMp_FechaEntrega == FechaInicial
+                       select new
+                       {
+                           OT = asg.AsigMp.AsigMP_OrdenTrabajo,
+                           Fecha = asg.AsigMp.AsigMp_FechaEntrega,
+                           Usuario = asg.AsigMp.Usua_Id,
+                           Usuario_Nombre = asg.AsigMp.Usua.Usua_Nombre,
+                           Tinta = asg.Tinta_Id,
+                           NombreTinta = asg.Tinta.Tinta_Nombre,
+                           Cantidad = asg.DtAsigTinta_Cantidad,
+                           Presentacion = asg.UndMed_Id,
+                           PrecioTinta = asg.Tinta.Tinta_Precio,
+                           Tinta2 = asg.Tinta_Id,
+                           Nombre_Tinta2 = asg.Tinta.Tinta_Nombre,
+                           MateriaPrima = asg.Tinta_Id,
+                           Nombre_MateriaPrima = asg.Tinta.Tinta_Nombre,
+                           CantidadAsignada = asg.DtAsigTinta_Cantidad,
+                           Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
+                       };
+
+            var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
+                           where cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega == FechaInicial
+                           select new
+                           {
+                               OT = cr.AsigMPxTinta.Tinta_Id,
+                               Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
+                               Usuario = cr.AsigMPxTinta.Usua_Id,
+                               Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
+                               Tinta = cr.AsigMPxTinta.Tinta_Id,
+                               NombreTinta = cr.AsigMPxTinta.Tinta.Tinta_Nombre,
+                               Cantidad = cr.DetAsigMPxTinta_Cantidad,
+                               Presentacion = cr.UndMed_Id,
+                               PrecioTinta = cr.TintasDAMPxT.Tinta_Precio,
+                               Tinta2 = cr.Tinta_Id,
+                               Nombre_Tinta2 = cr.TintasDAMPxT.Tinta_Nombre,
+                               MateriaPrima = cr.MatPri_Id,
+                               Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
+                               CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
+                               Estado = cr.Proceso.Proceso_Nombre,
+                           };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             
-            return Ok(con);
+            return Ok(asig.Concat(creacion));
         }
 
 
@@ -160,153 +220,311 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("MovTintasxEstado/{estado}")]
         public ActionResult Get(int estado)
         {
-            var con = _context.DetalleAsignaciones_Tintas
-                .Where(dtAsg => dtAsg.AsigMp.Estado_OrdenTrabajo == estado)
-                .Include(dtAsg => dtAsg.AsigMp)
-                .Select(dtAsg => new
-                {
-                    dtAsg.AsigMp_Id,
-                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
-                    dtAsg.AsigMp.AsigMp_FechaEntrega,
-                    dtAsg.AsigMp.Usua.Usua_Nombre,
-                    dtAsg.AsigMp.Usua_Id,
-                    dtAsg.Tinta.Tinta_Nombre,
-                    dtAsg.Tinta_Id,
-                    dtAsg.DtAsigTinta_Cantidad,
-                    dtAsg.AsigMp.Estado_OrdenTrabajo,
-                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
-                }).ToList();
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var asig = from asg in _context.Set<DetalleAsignacion_Tinta>()
+                       where asg.AsigMp.Estado_OrdenTrabajo == estado
+                       select new
+                       {
+                           OT = asg.AsigMp.AsigMP_OrdenTrabajo,
+                           Fecha = asg.AsigMp.AsigMp_FechaEntrega,
+                           Usuario = asg.AsigMp.Usua_Id,
+                           Usuario_Nombre = asg.AsigMp.Usua.Usua_Nombre,
+                           Tinta = asg.Tinta_Id,
+                           NombreTinta = asg.Tinta.Tinta_Nombre,
+                           Cantidad = asg.DtAsigTinta_Cantidad,
+                           Presentacion = asg.UndMed_Id,
+                           PrecioTinta = asg.Tinta.Tinta_Precio,
+                           Tinta2 = asg.Tinta_Id,
+                           Nombre_Tinta2 = asg.Tinta.Tinta_Nombre,
+                           MateriaPrima = asg.Tinta_Id,
+                           Nombre_MateriaPrima = asg.Tinta.Tinta_Nombre,
+                           CantidadAsignada = asg.DtAsigTinta_Cantidad,
+                           Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
+                       };
 
-            return Ok(con);
+            /*var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
+                           where cr. == estado
+                           select new
+                           {
+                               OT = cr.AsigMPxTinta.Tinta_Id,
+                               Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
+                               Usuario = cr.AsigMPxTinta.Usua_Id,
+                               Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
+                               Tinta = cr.AsigMPxTinta.Tinta_Id,
+                               NombreTinta = cr.AsigMPxTinta.Tinta.Tinta_Nombre,
+                               Cantidad = cr.DetAsigMPxTinta_Cantidad,
+                               Presentacion = cr.UndMed_Id,
+                               PrecioTinta = cr.TintasDAMPxT.Tinta_Precio,
+                               Tinta2 = cr.Tinta_Id,
+                               Nombre_Tinta2 = cr.TintasDAMPxT.Tinta_Nombre,
+                               MateriaPrima = cr.MatPri_Id,
+                               Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
+                               CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
+                               Estado = cr.Proceso.Proceso_Nombre,
+                           };*/
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            return Ok(asig);
         }
 
 
         /** Consulta por Tinta y Fecha Inicial */
-        [HttpGet("MovTintasxIdxFechaEntrega/{nTinta}/{FechaInicial}")]
-        public ActionResult GetMatPri(int nTinta, DateTime FechaInicial)
+        [HttpGet("MovTintasxIdxFechaEntrega/{FechaInicial}/{nTinta}")]
+        public ActionResult GetMatPri(DateTime FechaInicial, int nTinta)
         {
-            var con = _context.DetalleAsignaciones_Tintas
-                .Where(dtAsg => dtAsg.Tinta_Id == nTinta
-                       && dtAsg.AsigMp.AsigMp_FechaEntrega == FechaInicial)
-                .Include(dtAsg => dtAsg.AsigMp)
-                .Select(dtAsg => new
-                {
-                    dtAsg.AsigMp_Id,
-                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
-                    dtAsg.AsigMp.AsigMp_FechaEntrega,
-                    dtAsg.AsigMp.Usua.Usua_Nombre,
-                    dtAsg.AsigMp.Usua_Id,
-                    dtAsg.Tinta.Tinta_Nombre,
-                    dtAsg.Tinta_Id,
-                    dtAsg.DtAsigTinta_Cantidad,
-                    dtAsg.AsigMp.Estado_OrdenTrabajo,
-                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
-                }).ToList();
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var asig = from asg in _context.Set<DetalleAsignacion_Tinta>()
+                       where asg.AsigMp.AsigMp_FechaEntrega == FechaInicial && asg.Tinta_Id == nTinta
+                       select new
+                       {
+                           OT = asg.AsigMp.AsigMP_OrdenTrabajo,
+                           Fecha = asg.AsigMp.AsigMp_FechaEntrega,
+                           Usuario = asg.AsigMp.Usua_Id,
+                           Usuario_Nombre = asg.AsigMp.Usua.Usua_Nombre,
+                           Tinta = asg.Tinta_Id,
+                           NombreTinta = asg.Tinta.Tinta_Nombre,
+                           Cantidad = asg.DtAsigTinta_Cantidad,
+                           Presentacion = asg.UndMed_Id,
+                           PrecioTinta = asg.Tinta.Tinta_Precio,
+                           Tinta2 = asg.Tinta_Id,
+                           Nombre_Tinta2 = asg.Tinta.Tinta_Nombre,
+                           MateriaPrima = asg.Tinta_Id,
+                           Nombre_MateriaPrima = asg.Tinta.Tinta_Nombre,
+                           CantidadAsignada = asg.DtAsigTinta_Cantidad,
+                           Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
+                       };
 
-            return Ok(con);
+            var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
+                           where cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega == FechaInicial && cr.AsigMPxTinta.Tinta_Id == nTinta
+                           select new
+                           {
+                               OT = cr.AsigMPxTinta.Tinta_Id,
+                               Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
+                               Usuario = cr.AsigMPxTinta.Usua_Id,
+                               Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
+                               Tinta = cr.AsigMPxTinta.Tinta_Id,
+                               NombreTinta = cr.AsigMPxTinta.Tinta.Tinta_Nombre,
+                               Cantidad = cr.DetAsigMPxTinta_Cantidad,
+                               Presentacion = cr.UndMed_Id,
+                               PrecioTinta = cr.TintasDAMPxT.Tinta_Precio,
+                               Tinta2 = cr.Tinta_Id,
+                               Nombre_Tinta2 = cr.TintasDAMPxT.Tinta_Nombre,
+                               MateriaPrima = cr.MatPri_Id,
+                               Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
+                               CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
+                               Estado = cr.Proceso.Proceso_Nombre,
+                           };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            return Ok(asig.Concat(creacion));
         }
-
 
         /** Consulta por OT */
         [HttpGet("MovTintasxOT/{ot}")]
         public ActionResult GetOT(long ot)
         {
-            var con = _context.DetalleAsignaciones_Tintas
-                .Where(dtAsg => dtAsg.AsigMp.AsigMP_OrdenTrabajo == ot)
-                .Include(dtAsg => dtAsg.AsigMp)
-                .Select(dtAsg => new
-                {
-                    dtAsg.AsigMp_Id,
-                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
-                    dtAsg.AsigMp.AsigMp_FechaEntrega,
-                    dtAsg.AsigMp.Usua.Usua_Nombre,
-                    dtAsg.AsigMp.Usua_Id,
-                    dtAsg.Tinta.Tinta_Nombre,
-                    dtAsg.Tinta_Id,
-                    dtAsg.DtAsigTinta_Cantidad,
-                    dtAsg.AsigMp.Estado_OrdenTrabajo,
-                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
-                }).ToList();
-            
-            return Ok(con);
-        }
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var asig = from asg in _context.Set<DetalleAsignacion_Tinta>()
+                       where asg.AsigMp.AsigMP_OrdenTrabajo == ot
+                       select new
+                       {
+                           OT = asg.AsigMp.AsigMP_OrdenTrabajo,
+                           Fecha = asg.AsigMp.AsigMp_FechaEntrega,
+                           Usuario = asg.AsigMp.Usua_Id,
+                           Usuario_Nombre = asg.AsigMp.Usua.Usua_Nombre,
+                           Tinta = asg.Tinta_Id,
+                           NombreTinta = asg.Tinta.Tinta_Nombre,
+                           Cantidad = asg.DtAsigTinta_Cantidad,
+                           Presentacion = asg.UndMed_Id,
+                           PrecioTinta = asg.Tinta.Tinta_Precio,
+                           Tinta2 = asg.Tinta_Id,
+                           Nombre_Tinta2 = asg.Tinta.Tinta_Nombre,
+                           MateriaPrima = asg.Tinta_Id,
+                           Nombre_MateriaPrima = asg.Tinta.Tinta_Nombre,
+                           CantidadAsignada = asg.DtAsigTinta_Cantidad,
+                           Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
+                       };
 
+            var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
+                           where cr.AsigMPxTinta.Tinta_Id == ot
+                           select new
+                           {
+                               OT = cr.AsigMPxTinta.Tinta_Id,
+                               Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
+                               Usuario = cr.AsigMPxTinta.Usua_Id,
+                               Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
+                               Tinta = cr.AsigMPxTinta.Tinta_Id,
+                               NombreTinta = cr.AsigMPxTinta.Tinta.Tinta_Nombre,
+                               Cantidad = cr.DetAsigMPxTinta_Cantidad,
+                               Presentacion = cr.UndMed_Id,
+                               PrecioTinta = cr.TintasDAMPxT.Tinta_Precio,
+                               Tinta2 = cr.Tinta_Id,
+                               Nombre_Tinta2 = cr.TintasDAMPxT.Tinta_Nombre,
+                               MateriaPrima = cr.MatPri_Id,
+                               Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
+                               CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
+                               Estado = cr.Proceso.Proceso_Nombre,
+                           };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(asig.Concat(creacion));
+        }
 
         /** Consulta por Fechas */
         [HttpGet("MovTintasxFechas/{FechaInicial}/{FechaFinal}")]
         public ActionResult Get(DateTime FechaInicial, DateTime FechaFinal)
         {
-            var con = _context.DetalleAsignaciones_Tintas
-                .Where(dtAsg => dtAsg.AsigMp.AsigMp_FechaEntrega >= FechaInicial
-                       && dtAsg.AsigMp.AsigMp_FechaEntrega <= FechaFinal)
-                .Include(dtAsg => dtAsg.AsigMp)
-                .Select(dtAsg => new
-                {
-                    dtAsg.AsigMp_Id,
-                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
-                    dtAsg.AsigMp.AsigMp_FechaEntrega,
-                    dtAsg.AsigMp.Usua.Usua_Nombre,
-                    dtAsg.AsigMp.Usua_Id,
-                    dtAsg.Tinta.Tinta_Nombre,
-                    dtAsg.Tinta_Id,
-                    dtAsg.DtAsigTinta_Cantidad,
-                    dtAsg.AsigMp.Estado_OrdenTrabajo,
-                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
-                }).ToList();
-            
-            return Ok(con);
-        }
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var asig = from asg in _context.Set<DetalleAsignacion_Tinta>()
+                       where asg.AsigMp.AsigMp_FechaEntrega >= FechaInicial 
+                             && asg.AsigMp.AsigMp_FechaEntrega <= FechaFinal
+                       select new
+                       {
+                           OT = asg.AsigMp.AsigMP_OrdenTrabajo,
+                           Fecha = asg.AsigMp.AsigMp_FechaEntrega,
+                           Usuario = asg.AsigMp.Usua_Id,
+                           Usuario_Nombre = asg.AsigMp.Usua.Usua_Nombre,
+                           Tinta = asg.Tinta_Id,
+                           NombreTinta = asg.Tinta.Tinta_Nombre,
+                           Cantidad = asg.DtAsigTinta_Cantidad,
+                           Presentacion = asg.UndMed_Id,
+                           PrecioTinta = asg.Tinta.Tinta_Precio,
+                           Tinta2 = asg.Tinta_Id,
+                           Nombre_Tinta2 = asg.Tinta.Tinta_Nombre,
+                           MateriaPrima = asg.Tinta_Id,
+                           Nombre_MateriaPrima = asg.Tinta.Tinta_Nombre,
+                           CantidadAsignada = asg.DtAsigTinta_Cantidad,
+                           Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
+                       };
 
+            var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
+                           where cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega >= FechaInicial
+                                 && cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= FechaInicial
+                           select new
+                           {
+                               OT = cr.AsigMPxTinta.Tinta_Id,
+                               Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
+                               Usuario = cr.AsigMPxTinta.Usua_Id,
+                               Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
+                               Tinta = cr.AsigMPxTinta.Tinta_Id,
+                               NombreTinta = cr.AsigMPxTinta.Tinta.Tinta_Nombre,
+                               Cantidad = cr.DetAsigMPxTinta_Cantidad,
+                               Presentacion = cr.UndMed_Id,
+                               PrecioTinta = cr.TintasDAMPxT.Tinta_Precio,
+                               Tinta2 = cr.Tinta_Id,
+                               Nombre_Tinta2 = cr.TintasDAMPxT.Tinta_Nombre,
+                               MateriaPrima = cr.MatPri_Id,
+                               Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
+                               CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
+                               Estado = cr.Proceso.Proceso_Nombre,
+                           };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(asig.Concat(creacion));
+        }
 
         /** Consulta por OT y Fechas */
         [HttpGet("MovTintasxOTxFechas/{Ot}/{FechaInicial}/{FechaFinal}")]
         public ActionResult Get(long Ot, DateTime FechaInicial, DateTime FechaFinal)
         {
-            var con = _context.DetalleAsignaciones_Tintas
-                .Where(dtAsg => dtAsg.AsigMp.AsigMP_OrdenTrabajo == Ot
-                       && dtAsg.AsigMp.AsigMp_FechaEntrega >= FechaInicial
-                       && dtAsg.AsigMp.AsigMp_FechaEntrega <= FechaFinal)
-                .Include(dtAsg => dtAsg.AsigMp)
-                .Select(dtAsg => new
-                {
-                    dtAsg.AsigMp_Id,
-                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
-                    dtAsg.AsigMp.AsigMp_FechaEntrega,
-                    dtAsg.AsigMp.Usua.Usua_Nombre,
-                    dtAsg.AsigMp.Usua_Id,
-                    dtAsg.Tinta.Tinta_Nombre,
-                    dtAsg.Tinta_Id,
-                    dtAsg.DtAsigTinta_Cantidad,
-                    dtAsg.AsigMp.Estado_OrdenTrabajo,
-                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
-                }).ToList();
-            return Ok(con);
-        }
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var asig = from asg in _context.Set<DetalleAsignacion_Tinta>()
+                       where asg.AsigMp.AsigMP_OrdenTrabajo == Ot
+                             && asg.AsigMp.AsigMp_FechaEntrega >= FechaInicial
+                             && asg.AsigMp.AsigMp_FechaEntrega <= FechaFinal
+                       select new
+                       {
+                           OT = asg.AsigMp.AsigMP_OrdenTrabajo,
+                           Fecha = asg.AsigMp.AsigMp_FechaEntrega,
+                           Usuario = asg.AsigMp.Usua_Id,
+                           Usuario_Nombre = asg.AsigMp.Usua.Usua_Nombre,
+                           Tinta = asg.Tinta_Id,
+                           NombreTinta = asg.Tinta.Tinta_Nombre,
+                           Cantidad = asg.DtAsigTinta_Cantidad,
+                           Presentacion = asg.UndMed_Id,
+                           PrecioTinta = asg.Tinta.Tinta_Precio,
+                           Tinta2 = asg.Tinta_Id,
+                           Nombre_Tinta2 = asg.Tinta.Tinta_Nombre,
+                           MateriaPrima = asg.Tinta_Id,
+                           Nombre_MateriaPrima = asg.Tinta.Tinta_Nombre,
+                           CantidadAsignada = asg.DtAsigTinta_Cantidad,
+                           Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
+                       };
 
+            var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
+                           where cr.AsigMPxTinta.Tinta_Id == Ot
+                                 && cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega >= FechaInicial
+                                 && cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= FechaFinal
+                           select new
+                           {
+                               OT = cr.AsigMPxTinta.Tinta_Id,
+                               Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
+                               Usuario = cr.AsigMPxTinta.Usua_Id,
+                               Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
+                               Tinta = cr.AsigMPxTinta.Tinta_Id,
+                               NombreTinta = cr.AsigMPxTinta.Tinta.Tinta_Nombre,
+                               Cantidad = cr.DetAsigMPxTinta_Cantidad,
+                               Presentacion = cr.UndMed_Id,
+                               PrecioTinta = cr.TintasDAMPxT.Tinta_Precio,
+                               Tinta2 = cr.Tinta_Id,
+                               Nombre_Tinta2 = cr.TintasDAMPxT.Tinta_Nombre,
+                               MateriaPrima = cr.MatPri_Id,
+                               Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
+                               CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
+                               Estado = cr.Proceso.Proceso_Nombre,
+                           };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(asig.Concat(creacion));
+        }
 
         /** Consulta por Estado y Fechas */
         [HttpGet("MovTintasxFechasxEstado/{FechaInicial}/{FechaFinal}/{estado}")]
         public ActionResult Get(DateTime FechaInicial, DateTime FechaFinal, int estado)
         {
-            var con = _context.DetalleAsignaciones_Tintas
-                .Where(dtAsg => dtAsg.AsigMp.AsigMp_FechaEntrega >= FechaInicial
-                       && dtAsg.AsigMp.AsigMp_FechaEntrega <= FechaFinal
-                       && dtAsg.AsigMp.Estado_OrdenTrabajo == estado)
-                .Include(dtAsg => dtAsg.AsigMp)
-                .Select(dtAsg => new
-                {
-                    dtAsg.AsigMp_Id,
-                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
-                    dtAsg.AsigMp.AsigMp_FechaEntrega,
-                    dtAsg.AsigMp.Usua.Usua_Nombre,
-                    dtAsg.AsigMp.Usua_Id,
-                    dtAsg.Tinta.Tinta_Nombre,
-                    dtAsg.Tinta_Id,
-                    dtAsg.DtAsigTinta_Cantidad,
-                    dtAsg.AsigMp.Estado_OrdenTrabajo,
-                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
-                }).ToList();
-            return Ok(con);
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var asig = from asg in _context.Set<DetalleAsignacion_Tinta>()
+                       where asg.AsigMp.Estado_OrdenTrabajo == estado
+                             && asg.AsigMp.AsigMp_FechaEntrega >= FechaInicial
+                             && asg.AsigMp.AsigMp_FechaEntrega <= FechaFinal
+                       select new
+                       {
+                           OT = asg.AsigMp.AsigMP_OrdenTrabajo,
+                           Fecha = asg.AsigMp.AsigMp_FechaEntrega,
+                           Usuario = asg.AsigMp.Usua_Id,
+                           Usuario_Nombre = asg.AsigMp.Usua.Usua_Nombre,
+                           Tinta = asg.Tinta_Id,
+                           NombreTinta = asg.Tinta.Tinta_Nombre,
+                           Cantidad = asg.DtAsigTinta_Cantidad,
+                           Presentacion = asg.UndMed_Id,
+                           PrecioTinta = asg.Tinta.Tinta_Precio,
+                           Tinta2 = asg.Tinta_Id,
+                           Nombre_Tinta2 = asg.Tinta.Tinta_Nombre,
+                           MateriaPrima = asg.Tinta_Id,
+                           Nombre_MateriaPrima = asg.Tinta.Tinta_Nombre,
+                           CantidadAsignada = asg.DtAsigTinta_Cantidad,
+                           Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
+                       };
+
+            /*var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
+                           where cr.AsigMPxTinta.Tinta_Id == ot
+                           select new
+                           {
+                               OT = cr.AsigMPxTinta.Tinta_Id,
+                               Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
+                               Usuario = cr.AsigMPxTinta.Usua_Id,
+                               Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
+                               Tinta = cr.AsigMPxTinta.Tinta_Id,
+                               NombreTinta = cr.AsigMPxTinta.Tinta.Tinta_Nombre,
+                               Cantidad = cr.DetAsigMPxTinta_Cantidad,
+                               Presentacion = cr.UndMed_Id,
+                               PrecioTinta = cr.TintasDAMPxT.Tinta_Precio,
+                               Tinta2 = cr.Tinta_Id,
+                               Nombre_Tinta2 = cr.TintasDAMPxT.Tinta_Nombre,
+                               MateriaPrima = cr.MatPri_Id,
+                               Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
+                               CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
+                               Estado = cr.Proceso.Proceso_Nombre,
+                           };*/
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(asig);
         }
 
 
@@ -314,25 +532,54 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("MovTintasxFechasxTinta/{FechaInicial}/{FechaFinal}/{nTinta}")]
         public ActionResult Get8(DateTime FechaInicial, DateTime FechaFinal, int nTinta)
         {
-            var con = _context.DetalleAsignaciones_Tintas
-                .Where(dtAsg => dtAsg.AsigMp.AsigMp_FechaEntrega >= FechaInicial
-                       && dtAsg.AsigMp.AsigMp_FechaEntrega <= FechaFinal
-                       && dtAsg.Tinta_Id == nTinta)
-                .Include(dtAsg => dtAsg.AsigMp)
-                .Select(dtAsg => new
-                {
-                    dtAsg.AsigMp_Id,
-                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
-                    dtAsg.AsigMp.AsigMp_FechaEntrega,
-                    dtAsg.AsigMp.Usua.Usua_Nombre,
-                    dtAsg.AsigMp.Usua_Id,
-                    dtAsg.Tinta.Tinta_Nombre,
-                    dtAsg.Tinta_Id,
-                    dtAsg.DtAsigTinta_Cantidad,
-                    dtAsg.AsigMp.Estado_OrdenTrabajo,
-                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
-                }).ToList();
-            return Ok(con);
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var asig = from asg in _context.Set<DetalleAsignacion_Tinta>()
+                       where asg.AsigMp.AsigMp_FechaEntrega >= FechaInicial
+                             && asg.AsigMp.AsigMp_FechaEntrega <= FechaFinal
+                             && asg.Tinta_Id == nTinta
+                       select new
+                       {
+                           OT = asg.AsigMp.AsigMP_OrdenTrabajo,
+                           Fecha = asg.AsigMp.AsigMp_FechaEntrega,
+                           Usuario = asg.AsigMp.Usua_Id,
+                           Usuario_Nombre = asg.AsigMp.Usua.Usua_Nombre,
+                           Tinta = asg.Tinta_Id,
+                           NombreTinta = asg.Tinta.Tinta_Nombre,
+                           Cantidad = asg.DtAsigTinta_Cantidad,
+                           Presentacion = asg.UndMed_Id,
+                           PrecioTinta = asg.Tinta.Tinta_Precio,
+                           Tinta2 = asg.Tinta_Id,
+                           Nombre_Tinta2 = asg.Tinta.Tinta_Nombre,
+                           MateriaPrima = asg.Tinta_Id,
+                           Nombre_MateriaPrima = asg.Tinta.Tinta_Nombre,
+                           CantidadAsignada = asg.DtAsigTinta_Cantidad,
+                           Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
+                       };
+
+            var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
+                           where cr.AsigMPxTinta.Tinta_Id == nTinta
+                                 && cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega >= FechaInicial
+                                 && cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= FechaFinal
+                           select new
+                           {
+                               OT = cr.AsigMPxTinta.Tinta_Id,
+                               Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
+                               Usuario = cr.AsigMPxTinta.Usua_Id,
+                               Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
+                               Tinta = cr.AsigMPxTinta.Tinta_Id,
+                               NombreTinta = cr.AsigMPxTinta.Tinta.Tinta_Nombre,
+                               Cantidad = cr.DetAsigMPxTinta_Cantidad,
+                               Presentacion = cr.UndMed_Id,
+                               PrecioTinta = cr.TintasDAMPxT.Tinta_Precio,
+                               Tinta2 = cr.Tinta_Id,
+                               Nombre_Tinta2 = cr.TintasDAMPxT.Tinta_Nombre,
+                               MateriaPrima = cr.MatPri_Id,
+                               Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
+                               CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
+                               Estado = cr.Proceso.Proceso_Nombre,
+                           };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(asig.Concat(creacion));
         }
 
 
@@ -340,26 +587,53 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("MovTintasxFechasxTintaxEstado/{FechaInicial}/{FechaFinal}/{nTintas}/{estado}")]
         public ActionResult Get(DateTime FechaInicial, DateTime FechaFinal, int nTintas, int estado)
         {
-            var con = _context.DetalleAsignaciones_Tintas
-                .Where(dtAsg => dtAsg.AsigMp.AsigMp_FechaEntrega >= FechaInicial
-                       && dtAsg.AsigMp.AsigMp_FechaEntrega <= FechaFinal
-                       && dtAsg.Tinta_Id == nTintas
-                       && dtAsg.AsigMp.Estado_OrdenTrabajo == estado)
-                .Include(dtAsg => dtAsg.AsigMp)
-                .Select(dtAsg => new
-                {
-                    dtAsg.AsigMp_Id,
-                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
-                    dtAsg.AsigMp.AsigMp_FechaEntrega,
-                    dtAsg.AsigMp.Usua.Usua_Nombre,
-                    dtAsg.AsigMp.Usua_Id,
-                    dtAsg.Tinta.Tinta_Nombre,
-                    dtAsg.Tinta_Id,
-                    dtAsg.DtAsigTinta_Cantidad,
-                    dtAsg.AsigMp.Estado_OrdenTrabajo,
-                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
-                }).ToList();
-            return Ok(con);
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var asig = from asg in _context.Set<DetalleAsignacion_Tinta>()
+                       where asg.AsigMp.AsigMp_FechaEntrega >= FechaInicial
+                             && asg.AsigMp.AsigMp_FechaEntrega <= FechaFinal
+                             && asg.Tinta_Id == nTintas
+                             && asg.AsigMp.Estado_OrdenTrabajo == estado
+                       select new
+                       {
+                           OT = asg.AsigMp.AsigMP_OrdenTrabajo,
+                           Fecha = asg.AsigMp.AsigMp_FechaEntrega,
+                           Usuario = asg.AsigMp.Usua_Id,
+                           Usuario_Nombre = asg.AsigMp.Usua.Usua_Nombre,
+                           Tinta = asg.Tinta_Id,
+                           NombreTinta = asg.Tinta.Tinta_Nombre,
+                           Cantidad = asg.DtAsigTinta_Cantidad,
+                           Presentacion = asg.UndMed_Id,
+                           PrecioTinta = asg.Tinta.Tinta_Precio,
+                           Tinta2 = asg.Tinta_Id,
+                           Nombre_Tinta2 = asg.Tinta.Tinta_Nombre,
+                           MateriaPrima = asg.Tinta_Id,
+                           Nombre_MateriaPrima = asg.Tinta.Tinta_Nombre,
+                           CantidadAsignada = asg.DtAsigTinta_Cantidad,
+                           Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
+                       };
+
+            /*var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
+                           where cr.AsigMPxTinta.Tinta_Id == ot
+                           select new
+                           {
+                               OT = cr.AsigMPxTinta.Tinta_Id,
+                               Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
+                               Usuario = cr.AsigMPxTinta.Usua_Id,
+                               Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
+                               Tinta = cr.AsigMPxTinta.Tinta_Id,
+                               NombreTinta = cr.AsigMPxTinta.Tinta.Tinta_Nombre,
+                               Cantidad = cr.DetAsigMPxTinta_Cantidad,
+                               Presentacion = cr.UndMed_Id,
+                               PrecioTinta = cr.TintasDAMPxT.Tinta_Precio,
+                               Tinta2 = cr.Tinta_Id,
+                               Nombre_Tinta2 = cr.TintasDAMPxT.Tinta_Nombre,
+                               MateriaPrima = cr.MatPri_Id,
+                               Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
+                               CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
+                               Estado = cr.Proceso.Proceso_Nombre,
+                           };*/
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(asig);
         }
 
 
@@ -367,27 +641,54 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("MovTintasxOTxFechasxTintaxEstado/{Ot}/{FechaInicial}/{FechaFinal}/{nTintas}/{estado}")]
         public ActionResult Get(long Ot, DateTime FechaInicial, DateTime FechaFinal, int nTintas, int estado)
         {
-            var con = _context.DetalleAsignaciones_Tintas
-                .Where(dtAsg => dtAsg.AsigMp.AsigMP_OrdenTrabajo == Ot
-                       && dtAsg.AsigMp.AsigMp_FechaEntrega >= FechaInicial
-                       && dtAsg.AsigMp.AsigMp_FechaEntrega <= FechaFinal
-                       && dtAsg.Tinta_Id == nTintas
-                       && dtAsg.AsigMp.Estado_OrdenTrabajo == estado)
-                .Include(dtAsg => dtAsg.AsigMp)
-                .Select(dtAsg => new
-                {
-                    dtAsg.AsigMp_Id,
-                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
-                    dtAsg.AsigMp.AsigMp_FechaEntrega,
-                    dtAsg.AsigMp.Usua.Usua_Nombre,
-                    dtAsg.AsigMp.Usua_Id,
-                    dtAsg.Tinta.Tinta_Nombre,
-                    dtAsg.Tinta_Id,
-                    dtAsg.DtAsigTinta_Cantidad,
-                    dtAsg.AsigMp.Estado_OrdenTrabajo,
-                    dtAsg.AsigMp.EstadoOT.Estado_Nombre
-                }).ToList();
-            return Ok(con);
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var asig = from asg in _context.Set<DetalleAsignacion_Tinta>()
+                       where asg.AsigMp.AsigMP_OrdenTrabajo == Ot
+                             && asg.AsigMp.AsigMp_FechaEntrega >= FechaInicial
+                             && asg.AsigMp.AsigMp_FechaEntrega <= FechaFinal
+                             && asg.Tinta_Id == nTintas
+                             && asg.AsigMp.Estado_OrdenTrabajo == estado
+                       select new
+                       {
+                           OT = asg.AsigMp.AsigMP_OrdenTrabajo,
+                           Fecha = asg.AsigMp.AsigMp_FechaEntrega,
+                           Usuario = asg.AsigMp.Usua_Id,
+                           Usuario_Nombre = asg.AsigMp.Usua.Usua_Nombre,
+                           Tinta = asg.Tinta_Id,
+                           NombreTinta = asg.Tinta.Tinta_Nombre,
+                           Cantidad = asg.DtAsigTinta_Cantidad,
+                           Presentacion = asg.UndMed_Id,
+                           PrecioTinta = asg.Tinta.Tinta_Precio,
+                           Tinta2 = asg.Tinta_Id,
+                           Nombre_Tinta2 = asg.Tinta.Tinta_Nombre,
+                           MateriaPrima = asg.Tinta_Id,
+                           Nombre_MateriaPrima = asg.Tinta.Tinta_Nombre,
+                           CantidadAsignada = asg.DtAsigTinta_Cantidad,
+                           Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
+                       };
+
+            /*var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
+                           where cr.AsigMPxTinta.Tinta_Id == ot
+                           select new
+                           {
+                               OT = cr.AsigMPxTinta.Tinta_Id,
+                               Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
+                               Usuario = cr.AsigMPxTinta.Usua_Id,
+                               Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
+                               Tinta = cr.AsigMPxTinta.Tinta_Id,
+                               NombreTinta = cr.AsigMPxTinta.Tinta.Tinta_Nombre,
+                               Cantidad = cr.DetAsigMPxTinta_Cantidad,
+                               Presentacion = cr.UndMed_Id,
+                               PrecioTinta = cr.TintasDAMPxT.Tinta_Precio,
+                               Tinta2 = cr.Tinta_Id,
+                               Nombre_Tinta2 = cr.TintasDAMPxT.Tinta_Nombre,
+                               MateriaPrima = cr.MatPri_Id,
+                               Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
+                               CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
+                               Estado = cr.Proceso.Proceso_Nombre,
+                           };*/
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(asig);
         }
 
 
