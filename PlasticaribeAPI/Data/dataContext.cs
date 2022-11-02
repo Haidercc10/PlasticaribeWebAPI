@@ -379,6 +379,11 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetallePreEntrega_RolloDespacho>().HasOne(erp => erp.Prod).WithMany().HasForeignKey(erp => erp.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<DetallePreEntrega_RolloDespacho>().HasOne(erp => erp.UndMedidaProducto).WithMany().HasForeignKey(erp => erp.UndMed_Producto).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            //Relaciones DetallesIngRollos_Extrusion
+            modelBuilder.Entity<DetallesIngRollos_Extrusion>().HasOne(x => x.IngresoRollos_Extrusion).WithMany().HasForeignKey(x => x.IngRollo_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<DetallesIngRollos_Extrusion>().HasOne(x => x.Unidad_Medida).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<DetallesIngRollos_Extrusion>().HasOne(x => x.Estado).WithMany().HasForeignKey(x => x.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<DetallesIngRollos_Extrusion>().HasOne(x => x.Proceso).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
         }
 
 
@@ -516,6 +521,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.DetallePreEntrega_RolloDespacho> DetallesPreEntrega_RollosDespacho { get; set; }
 
         public DbSet<PlasticaribeAPI.Models.Turno> Turnos { get; set; }
+        public DbSet<PlasticaribeAPI.Models.IngresoRollos_Extrusion> IngresoRollos_Extrusion { get; set; }
+        public DbSet<PlasticaribeAPI.Models.DetallesIngRollos_Extrusion> DetallesIngRollos_Extrusion { get; set; }
     }
 
 }

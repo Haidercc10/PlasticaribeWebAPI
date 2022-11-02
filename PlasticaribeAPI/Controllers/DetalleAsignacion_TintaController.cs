@@ -502,27 +502,6 @@ namespace PlasticaribeAPI.Controllers
                            CantidadAsignada = asg.DtAsigTinta_Cantidad,
                            Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
                        };
-
-            /*var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
-                           where cr.AsigMPxTinta.Tinta_Id == ot
-                           select new
-                           {
-                               OT = cr.AsigMPxTinta.Tinta_Id,
-                               Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
-                               Usuario = cr.AsigMPxTinta.Usua_Id,
-                               Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
-                               Tinta = cr.AsigMPxTinta.Tinta_Id,
-                               NombreTinta = cr.AsigMPxTinta.Tinta.Tinta_Nombre,
-                               Cantidad = cr.DetAsigMPxTinta_Cantidad,
-                               Presentacion = cr.UndMed_Id,
-                               PrecioTinta = cr.TintasDAMPxT.Tinta_Precio,
-                               Tinta2 = cr.Tinta_Id,
-                               Nombre_Tinta2 = cr.TintasDAMPxT.Tinta_Nombre,
-                               MateriaPrima = cr.MatPri_Id,
-                               Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
-                               CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
-                               Estado = cr.Proceso.Proceso_Nombre,
-                           };*/
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(asig);
         }
@@ -611,27 +590,6 @@ namespace PlasticaribeAPI.Controllers
                            CantidadAsignada = asg.DtAsigTinta_Cantidad,
                            Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
                        };
-
-            /*var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
-                           where cr.AsigMPxTinta.Tinta_Id == ot
-                           select new
-                           {
-                               OT = cr.AsigMPxTinta.Tinta_Id,
-                               Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
-                               Usuario = cr.AsigMPxTinta.Usua_Id,
-                               Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
-                               Tinta = cr.AsigMPxTinta.Tinta_Id,
-                               NombreTinta = cr.AsigMPxTinta.Tinta.Tinta_Nombre,
-                               Cantidad = cr.DetAsigMPxTinta_Cantidad,
-                               Presentacion = cr.UndMed_Id,
-                               PrecioTinta = cr.TintasDAMPxT.Tinta_Precio,
-                               Tinta2 = cr.Tinta_Id,
-                               Nombre_Tinta2 = cr.TintasDAMPxT.Tinta_Nombre,
-                               MateriaPrima = cr.MatPri_Id,
-                               Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
-                               CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
-                               Estado = cr.Proceso.Proceso_Nombre,
-                           };*/
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(asig);
         }
@@ -666,27 +624,6 @@ namespace PlasticaribeAPI.Controllers
                            CantidadAsignada = asg.DtAsigTinta_Cantidad,
                            Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
                        };
-
-            /*var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
-                           where cr.AsigMPxTinta.Tinta_Id == ot
-                           select new
-                           {
-                               OT = cr.AsigMPxTinta.Tinta_Id,
-                               Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
-                               Usuario = cr.AsigMPxTinta.Usua_Id,
-                               Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
-                               Tinta = cr.AsigMPxTinta.Tinta_Id,
-                               NombreTinta = cr.AsigMPxTinta.Tinta.Tinta_Nombre,
-                               Cantidad = cr.DetAsigMPxTinta_Cantidad,
-                               Presentacion = cr.UndMed_Id,
-                               PrecioTinta = cr.TintasDAMPxT.Tinta_Precio,
-                               Tinta2 = cr.Tinta_Id,
-                               Nombre_Tinta2 = cr.TintasDAMPxT.Tinta_Nombre,
-                               MateriaPrima = cr.MatPri_Id,
-                               Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
-                               CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
-                               Estado = cr.Proceso.Proceso_Nombre,
-                           };*/
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(asig);
         }
