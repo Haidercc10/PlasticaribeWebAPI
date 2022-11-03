@@ -379,11 +379,22 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetallePreEntrega_RolloDespacho>().HasOne(erp => erp.Prod).WithMany().HasForeignKey(erp => erp.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<DetallePreEntrega_RolloDespacho>().HasOne(erp => erp.UndMedidaProducto).WithMany().HasForeignKey(erp => erp.UndMed_Producto).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            //Relaciones IngresoRollos_Extrusion
+            modelBuilder.Entity<IngresoRollos_Extrusion>().HasOne(x => x.Usua).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            
             //Relaciones DetallesIngRollos_Extrusion
             modelBuilder.Entity<DetallesIngRollos_Extrusion>().HasOne(x => x.IngresoRollos_Extrusion).WithMany().HasForeignKey(x => x.IngRollo_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<DetallesIngRollos_Extrusion>().HasOne(x => x.Unidad_Medida).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<DetallesIngRollos_Extrusion>().HasOne(x => x.Estado).WithMany().HasForeignKey(x => x.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<DetallesIngRollos_Extrusion>().HasOne(x => x.Proceso).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Relaciones AsignacionRollos_Extrusion
+            modelBuilder.Entity<AsignacionRollos_Extrusion>().HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Reliaciones DetallesAsigRollos_Extrusion
+            modelBuilder.Entity<DetallesAsgRollos_Extrusion>().HasOne(x => x.AsignacionRollos).WithMany().HasForeignKey(x => x.AsgRollos_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<DetallesAsgRollos_Extrusion>().HasOne(x => x.Unidad_Medida).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<DetallesAsgRollos_Extrusion>().HasOne(x => x.Proceso).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
         }
 
 

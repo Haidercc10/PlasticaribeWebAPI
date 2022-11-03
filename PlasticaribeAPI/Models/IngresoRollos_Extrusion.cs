@@ -16,7 +16,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "date")]
         public DateTime IngRollo_Fecha { get; set; }
 
-        [Column(TypeName = "varchar")]
+        [Column(TypeName = "varchar(10)")]
         public string IngRollo_Hora { get; set; }
     }
 }

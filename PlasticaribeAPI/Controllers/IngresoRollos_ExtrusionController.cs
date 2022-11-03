@@ -42,6 +42,14 @@ namespace PlasticaribeAPI.Controllers
             return ingresoRollos_Extrusion;
         }
 
+        // GET: Obtener ultimo ID
+        [HttpGet("getObtenerUltimoID")]
+        public ActionResult getObtenerUltimoID(long id)
+        {
+            var con = _context.IngresoRollos_Extrusion.OrderByDescending(x => x.IngRollo_Id).First();
+            return Ok(con);
+        }
+
         // PUT: api/IngresoRollos_Extrusion/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

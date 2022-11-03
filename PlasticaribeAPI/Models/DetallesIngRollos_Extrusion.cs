@@ -12,7 +12,7 @@ namespace PlasticaribeAPI.Models
         public IngresoRollos_Extrusion? IngresoRollos_Extrusion { get; set; }
         public int Rollo_Id { get; set; }
 
-        [Precision(14, 2)]
+        [Precision(18, 2)]
         public decimal DtIngRollo_Cantidad { get; set; }
         public string UndMed_Id { get; set; }
         public Unidad_Medida? Unidad_Medida { get; set; }
