@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20221104152324_AddProducto_DetallesAsgRollos_Extrusion")]
+    partial class AddProducto_DetallesAsgRollos_Extrusion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -244,7 +246,7 @@ namespace PlasticaribeAPI.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AsgRollos_Id"), 1L, 1);
 
                     b.Property<DateTime>("AsgRollos_Fecha")
-                        .HasColumnType("date");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("AsgRollos_Hora")
                         .IsRequired()
@@ -948,9 +950,6 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Property<int>("Prod_Id")
                         .HasColumnType("int");
-
-                    b.Property<long>("Rollo_Id")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("UndMed_Id")
                         .IsRequired()

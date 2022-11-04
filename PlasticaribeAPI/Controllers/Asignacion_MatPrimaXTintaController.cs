@@ -81,7 +81,6 @@ namespace PlasticaribeAPI.Controllers
 
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var tinta = (from tnt in _context.Set<Tinta>()
-                         where tnt.CatMP_Id == 8
                          select new
                          {
                              MatPrima = tnt.Tinta_Id,
@@ -118,8 +117,7 @@ namespace PlasticaribeAPI.Controllers
 
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var tinta = (from tnt in _context.Set<Tinta>()
-                         where tnt.CatMP_Id == 8 && 
-                         tnt.Tinta_Id == Id_MatPrima
+                         where tnt.Tinta_Id == Id_MatPrima
                          select new
                          {
                              MatPrima = tnt.Tinta_Id,

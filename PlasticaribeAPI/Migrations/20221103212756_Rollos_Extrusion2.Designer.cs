@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20221103212756_Rollos_Extrusion2")]
+    partial class Rollos_Extrusion2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -244,7 +246,7 @@ namespace PlasticaribeAPI.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AsgRollos_Id"), 1L, 1);
 
                     b.Property<DateTime>("AsgRollos_Fecha")
-                        .HasColumnType("date");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("AsgRollos_Hora")
                         .IsRequired()
@@ -946,12 +948,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(10)");
 
-                    b.Property<int>("Prod_Id")
-                        .HasColumnType("int");
-
-                    b.Property<long>("Rollo_Id")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("UndMed_Id")
                         .IsRequired()
                         .HasColumnType("varchar(10)");
@@ -961,8 +957,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("AsgRollos_Id");
 
                     b.HasIndex("Proceso_Id");
-
-                    b.HasIndex("Prod_Id");
 
                     b.HasIndex("UndMed_Id");
 
@@ -4043,12 +4037,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Producto", "Producto")
-                        .WithMany()
-                        .HasForeignKey("Prod_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "Unidad_Medida")
                         .WithMany()
                         .HasForeignKey("UndMed_Id")
@@ -4058,8 +4046,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("AsignacionRollos");
 
                     b.Navigation("Proceso");
-
-                    b.Navigation("Producto");
 
                     b.Navigation("Unidad_Medida");
                 });

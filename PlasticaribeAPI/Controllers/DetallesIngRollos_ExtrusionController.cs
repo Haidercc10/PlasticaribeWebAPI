@@ -42,11 +42,142 @@ namespace PlasticaribeAPI.Controllers
             return detallesIngRollos_Extrusion;
         }
 
+        //Funcion que servira para consultar y devolver todos los rollos que han sido ingresados
         [HttpGet("consultaRollos")]
         public ActionResult consultaRollos()
         {
             var con = from ing in _context.Set<DetallesIngRollos_Extrusion>()
                       select ing.Rollo_Id;
+            return Ok(con);
+        }
+
+        //Funcion que servirá para consultar y devolver la informacion de un rollo en especifico
+        [HttpGet("consultaRollo/{rollo}")]
+        public ActionResult consultaRollo(int rollo)
+        {
+            var con = from ing in _context.Set<DetallesIngRollos_Extrusion>()
+                      where ing.Rollo_Id == rollo
+                      select ing;
+            return Ok(con);
+        }
+
+        //Funcion que servirá para consultar y devolver la informacion necesaria para crear un pdf
+        [HttpGet("getCrearPDFUltimoId/{id}")]
+        public ActionResult getCrearPDFUltimoId(long id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from rollo in _context.Set<DetallesIngRollos_Extrusion>()
+                      from emp in _context.Set<Empresa>()
+                      where rollo.IngRollo_Id == id
+                      orderby rollo.IngRollo_Id
+                      select new
+                      {
+                          rollo.DtIngRollo_OT,
+                          rollo.IngRollo_Id,
+                          rollo.Rollo_Id,
+                          rollo.Prod_Id,
+                          rollo.Producto.Prod_Nombre,
+                          rollo.UndMed_Id,
+                          rollo.DtIngRollo_Cantidad,
+                          rollo.IngresoRollos_Extrusion.IngRollo_Fecha,
+                          rollo.IngresoRollos_Extrusion.IngRollo_Hora,
+                          Creador = rollo.IngresoRollos_Extrusion.Usua_Id,
+                          NombreCreador = rollo.IngresoRollos_Extrusion.Usua.Usua_Nombre,
+                          emp.Empresa_Id,
+                          emp.Empresa_Ciudad,
+                          emp.Empresa_COdigoPostal,
+                          emp.Empresa_Correo,
+                          emp.Empresa_Direccion,
+                          emp.Empresa_Telefono,
+                          emp.Empresa_Nombre
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        //Funcion que consultará y devolverá los rollos ingresados el dia de hoy y con estado disponible
+        [HttpGet("getRollosDisponibles/{hoy}")]
+        public ActionResult getRollosDisponibles(DateTime hoy)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from ing in _context.Set<DetallesIngRollos_Extrusion>()
+                      where ing.IngresoRollos_Extrusion.IngRollo_Fecha == hoy && ing.Estado_Id == 19
+                      select new
+                      {
+                          ing.DtIngRollo_OT,
+                          ing.Rollo_Id,
+                          ing.Prod_Id,
+                          ing.Producto.Prod_Nombre,
+                          ing.DtIngRollo_Cantidad,
+                          ing.UndMed_Id,
+                          ing.IngresoRollos_Extrusion.IngRollo_Fecha,
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        // Funcion que consultará y deolverá los rollos ingresados de una OT especifica y que tengan un estado disponieble
+        [HttpGet("getRollosDisponiblesOT/{ot}")]
+        public ActionResult getRollosDisponiblesOT(long ot)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from ing in _context.Set<DetallesIngRollos_Extrusion>()
+                      where ing.DtIngRollo_OT == ot && ing.Estado_Id == 19
+                      select new
+                      {
+                          ing.DtIngRollo_OT,
+                          ing.Rollo_Id,
+                          ing.Prod_Id,
+                          ing.Producto.Prod_Nombre,
+                          ing.DtIngRollo_Cantidad,
+                          ing.UndMed_Id,
+                          ing.IngresoRollos_Extrusion.IngRollo_Fecha,
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        // Funcion que servirá para consultar y devolverá un rollo en especifico con estado disponible
+        [HttpGet("getRollosDisponiblesRollo/{rollo}")]
+        public ActionResult getRollosDisponiblesRollo(int rollo)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from ing in _context.Set<DetallesIngRollos_Extrusion>()
+                      where ing.Rollo_Id == rollo && ing.Estado_Id == 19
+                      select new
+                      {
+                          ing.DtIngRollo_OT,
+                          ing.Rollo_Id,
+                          ing.Prod_Id,
+                          ing.Producto.Prod_Nombre,
+                          ing.DtIngRollo_Cantidad,
+                          ing.UndMed_Id,
+                          ing.IngresoRollos_Extrusion.IngRollo_Fecha,
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        //Funcion que consultará y devolverá los rollos ingresado en un rango de fechas que tengan estado disponible
+        [HttpGet("getRollosDisponiblesFechas/{fechaIncial}/{fechaFinal}")]
+        public ActionResult getRollosDisponiblesFechas(DateTime fechaInicial, DateTime fechaFinal)
+        {            
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from ing in _context.Set<DetallesIngRollos_Extrusion>()
+                      where ing.IngresoRollos_Extrusion.IngRollo_Fecha >= fechaInicial 
+                            && ing.IngresoRollos_Extrusion.IngRollo_Fecha <= fechaFinal 
+                            && ing.Estado_Id == 19
+                      select new
+                      {
+                          ing.DtIngRollo_OT,
+                          ing.Rollo_Id,
+                          ing.Prod_Id,
+                          ing.Producto.Prod_Nombre,
+                          ing.DtIngRollo_Cantidad,
+                          ing.UndMed_Id,
+                          ing.IngresoRollos_Extrusion.IngRollo_Fecha,
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
 

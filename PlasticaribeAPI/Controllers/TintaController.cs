@@ -57,7 +57,7 @@ namespace PlasticaribeAPI.Controllers
             {
                 return NotFound();
             }
-            var tinta = _context.Tintas.Where(tnt => tnt.CatMP_Id == 7);
+            var tinta = _context.Tintas.ToList();
 
             if (tinta == null)
             {

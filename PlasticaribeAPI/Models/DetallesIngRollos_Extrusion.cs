@@ -21,5 +21,7 @@ namespace PlasticaribeAPI.Models
         public Estado? Estado { get; set; }
         public string Proceso_Id { get; set; }
         public Proceso? Proceso { get; set; }
+        public int Prod_Id { get; set; }
+        public Producto? Producto { get; set; }
     }
 }

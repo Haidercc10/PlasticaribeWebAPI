@@ -7,6 +7,7 @@ namespace PlasticaribeAPI.Models
     {
         [Key]
         public int AsgRollos_Id { get; set; }
+        [Column(TypeName = "date")]
         public DateTime AsgRollos_Fecha { get; set; }
         public string AsgRollos_Hora { get; set; }
         public string AsgRollos_Observacion { get; set; }
