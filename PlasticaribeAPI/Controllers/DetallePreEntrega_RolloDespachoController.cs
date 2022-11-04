@@ -177,6 +177,72 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        //
+        [HttpGet("getRollosPreEntregadosFechas/{fechaInicial}/{fechaFinal}/{proceso}")]
+        public ActionResult getRollosPreEntregadosFechas(DateTime fechaInicial, DateTime fechaFinal, string proceso)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
+                      where pre.Proceso_Id == proceso 
+                            && pre.PreEntregaRollo.PreEntRollo_Fecha >= fechaInicial
+                            && pre.PreEntregaRollo.PreEntRollo_Fecha <= fechaFinal
+                      select new
+                      {
+                          pre.DtlPreEntRollo_OT,
+                          pre.Rollo_Id,
+                          pre.Prod_Id,
+                          pre.Prod.Prod_Nombre,
+                          pre.DtlPreEntRollo_Cantidad,
+                          pre.UndMed_Rollo,
+                          pre.Proceso.Proceso_Nombre,
+                          pre.PreEntregaRollo.PreEntRollo_Fecha
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        //
+        [HttpGet("getRollosPreEntregadosRollo/{rollo}/{proceso}")]
+        public ActionResult getRollosPreEntregadosRollo(int rollo, string proceso)
+        {
+            var con = from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
+                      where pre.Rollo_Id == rollo
+                            && pre.Proceso_Id == proceso
+                      select new
+                      {
+                          pre.DtlPreEntRollo_OT,
+                          pre.Rollo_Id,
+                          pre.Prod_Id,
+                          pre.Prod.Prod_Nombre,
+                          pre.DtlPreEntRollo_Cantidad,
+                          pre.UndMed_Rollo,
+                          pre.Proceso.Proceso_Nombre,
+                          pre.PreEntregaRollo.PreEntRollo_Fecha
+                      };
+            return Ok(con);
+        }
+
+        //
+        [HttpGet("getRollosPreEntregadosOT/{ot}/{proceso}")]
+        public ActionResult getRollosPreEntregadosOT(long ot, string proceso)
+        {
+            var con = from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
+                      where pre.DtlPreEntRollo_OT == ot
+                            && pre.Proceso_Id == proceso
+                      select new
+                      {
+                          pre.DtlPreEntRollo_OT,
+                          pre.Rollo_Id,
+                          pre.Prod_Id,
+                          pre.Prod.Prod_Nombre,
+                          pre.DtlPreEntRollo_Cantidad,
+                          pre.UndMed_Rollo,
+                          pre.Proceso.Proceso_Nombre,
+                          pre.PreEntregaRollo.PreEntRollo_Fecha
+                      };
+            return Ok(con);
+        }
+
         // PUT: api/DetallePreEntrega_RolloDespacho/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
