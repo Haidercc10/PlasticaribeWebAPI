@@ -161,11 +161,11 @@ namespace PlasticaribeAPI.Controllers
         //Funcion que consultará y devolverá los rollos ingresado en un rango de fechas que tengan estado disponible
         [HttpGet("getRollosDisponiblesFechas/{fechaIncial}/{fechaFinal}")]
         public ActionResult getRollosDisponiblesFechas(DateTime fechaInicial, DateTime fechaFinal)
-        {            
+        {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from ing in _context.Set<DetallesIngRollos_Extrusion>()
-                      where ing.IngresoRollos_Extrusion.IngRollo_Fecha >= fechaInicial 
-                            && ing.IngresoRollos_Extrusion.IngRollo_Fecha <= fechaFinal 
+                      where ing.IngresoRollos_Extrusion.IngRollo_Fecha >= fechaInicial
+                            && ing.IngresoRollos_Extrusion.IngRollo_Fecha <= fechaFinal
                             && ing.Estado_Id == 19
                       select new
                       {
@@ -179,6 +179,69 @@ namespace PlasticaribeAPI.Controllers
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
+        }
+
+        /* Funcion que consultará y devolverá un consolidado de los ingresos y las salidas de rollos realizadas,
+         * esto servirá para el reporte de la bodega de extrusion*/
+        [HttpGet("getconsultaRollosFechas/{fechaIncial}/{fechaFinal}")]
+        public ActionResult getconsultaRollosFechas(DateTime fechaInicial, DateTime fechaFinal)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var ingreso = from ing in _context.Set<DetallesIngRollos_Extrusion>()
+                          where ing.IngresoRollos_Extrusion.IngRollo_Fecha >= fechaInicial
+                                && ing.IngresoRollos_Extrusion.IngRollo_Fecha <= fechaFinal
+                          group ing by new
+                          {
+                              ing.DtIngRollo_OT,
+                              ing.Prod_Id,
+                              ing.Producto.Prod_Nombre,
+                              ing.UndMed_Id,
+                              ing.IngresoRollos_Extrusion.IngRollo_Fecha,
+                          } into ing
+                          select new
+                          {
+                              OT = ing.Key.DtIngRollo_OT,
+                              Prod_Id = ing.Key.Prod_Id,
+                              Prod_Nombre = ing.Key.Prod_Nombre,
+                              Cantidad = ing.Sum(x => x.DtIngRollo_Cantidad),
+                              UndMed_Id = ing.Key.UndMed_Id,
+                              Fecha = ing.Key.IngRollo_Fecha,
+                              Tipo = "Ingreso de Rollos",
+                              Rollos = ing.Count(),
+                          };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(ingreso);
+        }
+
+        /* Funcion que consultará y devolverá un consolidado de los ingresos y las salidas de rollos realizadas,
+         * esto servirá para el reporte de la bodega de extrusion*/
+        [HttpGet("getconsultaRollosOT/{ot}")]
+        public ActionResult getconsultaRollosOT(int ot)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var ingreso = from ing in _context.Set<DetallesIngRollos_Extrusion>()
+                      where ing.DtIngRollo_OT == ot
+                      group ing by new
+                      {
+                          ing.DtIngRollo_OT,
+                          ing.Prod_Id,
+                          ing.Producto.Prod_Nombre,
+                          ing.UndMed_Id,
+                          ing.IngresoRollos_Extrusion.IngRollo_Fecha,
+                      } into ing
+                      select new
+                      {
+                          OT = ing.Key.DtIngRollo_OT,
+                          Prod_Id = ing.Key.Prod_Id,
+                          Prod_Nombre = ing.Key.Prod_Nombre,
+                          Cantidad = ing.Sum(x => x.DtIngRollo_Cantidad),
+                          UndMed_Id = ing.Key.UndMed_Id,
+                          Fecha = ing.Key.IngRollo_Fecha,
+                          Tipo = "Ingreso de Rollos",
+                          Rollos = ing.Count(),
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(ingreso);
         }
 
         // PUT: api/DetallesIngRollos_Extrusion/5
