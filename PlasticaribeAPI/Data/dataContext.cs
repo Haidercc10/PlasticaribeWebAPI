@@ -379,6 +379,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetallePreEntrega_RolloDespacho>().HasOne(erp => erp.Prod).WithMany().HasForeignKey(erp => erp.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<DetallePreEntrega_RolloDespacho>().HasOne(erp => erp.UndMedidaProducto).WithMany().HasForeignKey(erp => erp.UndMed_Producto).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+
             //Relaciones IngresoRollos_Extrusion
             modelBuilder.Entity<IngresoRollos_Extrusion>().HasOne(x => x.Usua).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             
@@ -397,6 +398,18 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetallesAsgRollos_Extrusion>().HasOne(x => x.Unidad_Medida).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<DetallesAsgRollos_Extrusion>().HasOne(x => x.Proceso).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<DetallesAsgRollos_Extrusion>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+
+            //Relaciones Rollo_Desecho
+            modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.Prod).WithMany().HasForeignKey(erp => erp.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Producto
+            modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.Proceso).WithMany().HasForeignKey(erp => erp.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
+            modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.UndMedida).WithMany().HasForeignKey(erp => erp.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Unidad_Medida
+            modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.Turno).WithMany().HasForeignKey(erp => erp.Turno_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Turno
+            modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.Estado).WithMany().HasForeignKey(erp => erp.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Estado
+            modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.Material).WithMany().HasForeignKey(erp => erp.Material_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Material 
+            modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.Cono).WithMany().HasForeignKey(erp => erp.Cono_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Cono
+
+
         }
 
 
@@ -534,10 +547,16 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.DetallePreEntrega_RolloDespacho> DetallesPreEntrega_RollosDespacho { get; set; }
 
         public DbSet<PlasticaribeAPI.Models.Turno> Turnos { get; set; }
+
         public DbSet<PlasticaribeAPI.Models.IngresoRollos_Extrusion> IngresoRollos_Extrusion { get; set; }
         public DbSet<PlasticaribeAPI.Models.DetallesIngRollos_Extrusion> DetallesIngRollos_Extrusion { get; set; }
         public DbSet<PlasticaribeAPI.Models.AsignacionRollos_Extrusion> AsignacionRollos_Extrusion { get; set; }
         public DbSet<PlasticaribeAPI.Models.DetallesAsgRollos_Extrusion> DetallesAsgRollos_Extrusion { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Cono> Conos { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Rollo_Desecho> Rollos_Desechos { get; set; }
+
     }
 
 }
