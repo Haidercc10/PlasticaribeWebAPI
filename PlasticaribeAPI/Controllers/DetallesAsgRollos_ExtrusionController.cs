@@ -88,22 +88,16 @@ namespace PlasticaribeAPI.Controllers
                                && sal.AsignacionRollos.AsgRollos_Fecha <= fechaFinal
                          group sal by new
                          {
-                             sal.DtAsgRollos_OT,
-                             sal.Prod_Id,
-                             sal.Producto.Prod_Nombre,
-                             sal.UndMed_Id,
+                             sal.AsgRollos_Id,
                              sal.AsignacionRollos.AsgRollos_Fecha,
+                             sal.AsignacionRollos.Usuario.Usua_Nombre,
                          } into sal
                          select new
                          {
-                             OT = sal.Key.DtAsgRollos_OT,
-                             Prod_Id = sal.Key.Prod_Id,
-                             Prod_Nombre = sal.Key.Prod_Nombre,
-                             Cantidad = sal.Sum(x => x.DtAsgRollos_Cantidad),
-                             UndMed_Id = sal.Key.UndMed_Id,
+                             OT = sal.Key.AsgRollos_Id,
                              Fecha = sal.Key.AsgRollos_Fecha,
                              Tipo = "Salida de Rollos",
-                             Rollos = sal.Count(),
+                             Usuario = sal.Key.Usua_Nombre,
                          };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(salida);
@@ -119,23 +113,16 @@ namespace PlasticaribeAPI.Controllers
                          where sal.DtAsgRollos_OT == ot
                          group sal by new
                          {
-                             sal.DtAsgRollos_OT,
-                             sal.Prod_Id,
-                             sal.Producto.Prod_Nombre,
-                             sal.UndMed_Id,
+                             sal.AsgRollos_Id,
                              sal.AsignacionRollos.AsgRollos_Fecha,
+                             sal.AsignacionRollos.Usuario.Usua_Nombre,
                          } into sal
                          select new
                          {
-                             OT = sal.Key.DtAsgRollos_OT,
-                             Prod_Id = sal.Key.Prod_Id,
-                             Prod_Nombre = sal.Key.Prod_Nombre,
-                             Cantidad = sal.Sum(x => x.DtAsgRollos_Cantidad),
-                             UndMed_Id = sal.Key.UndMed_Id,
+                             OT = sal.Key.AsgRollos_Id,
                              Fecha = sal.Key.AsgRollos_Fecha,
                              Tipo = "Salida de Rollos",
-                             Rollos = sal.Count(),
-
+                             Usuario = sal.Key.Usua_Nombre,
                          };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(salida);

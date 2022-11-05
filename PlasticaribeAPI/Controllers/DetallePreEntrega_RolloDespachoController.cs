@@ -56,7 +56,7 @@ namespace PlasticaribeAPI.Controllers
         {
             var con = from rollo in _context.Set<DetallePreEntrega_RolloDespacho>()
                       from emp in _context.Set<Empresa>()
-                      where rollo.DtlPreEntRollo_OT == ot && rollo.Proceso.Proceso_Nombre == proceso
+                      where rollo.PreEntRollo_Id == ot
                       group rollo by new {
                           rollo.PreEntregaRollo.PreEntRollo_Id,
                           rollo.Prod_Id,
@@ -103,7 +103,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("crearPdf2/{ot}/{proceso}")]
         public ActionResult crearPdf2(long ot, string proceso)
         {
-            var con = _context.DetallesPreEntrega_RollosDespacho.Where(x => x.DtlPreEntRollo_OT == ot && x.Proceso.Proceso_Nombre == proceso)
+            var con = _context.DetallesPreEntrega_RollosDespacho.Where(x => x.PreEntRollo_Id == ot)
                 .GroupBy(x => new
                 {
                     x.Prod_Id,

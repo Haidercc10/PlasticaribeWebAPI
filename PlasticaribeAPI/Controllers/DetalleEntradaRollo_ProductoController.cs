@@ -90,7 +90,7 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from rollo in _context.Set<DetalleEntradaRollo_Producto>()
                       from emp in _context.Set<Empresa>()
-                      where rollo.DtEntRolloProd_OT == ot
+                      where rollo.EntRolloProd_Id == ot
                       select new
                       {
                           rollo.EntRollo_Producto.EntRolloProd_Id,
@@ -118,7 +118,7 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetCrearPdf2(long ot)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.DetallesEntradasRollos_Productos.Where(x => x.DtEntRolloProd_OT == ot)
+            var con = _context.DetallesEntradasRollos_Productos.Where(x => x.EntRolloProd_Id == ot)
                     .GroupBy(x => new
                     {
                         x.Prod_Id,
