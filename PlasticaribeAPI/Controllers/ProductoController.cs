@@ -97,6 +97,20 @@ namespace PlasticaribeAPI.Controllers
             return Ok(productos);
         }
 
+
+        [HttpGet("consultaNombreProducto/{Id}")]
+        public ActionResult GetNombreProducto(int Id)
+        {
+            var productos = from p in _context.Set<Producto>()
+                            where p.Prod_Id == Id
+                            select new
+                            {
+                                p.Prod_Id,
+                                p.Prod_Nombre,
+                            };
+            return Ok(productos);
+        }
+
         [HttpGet("ConsultaProductoExistencia/{Prod_Id}")]
         public ActionResult<Producto> GetProductoPresentacion(int Prod_Id)
         {
