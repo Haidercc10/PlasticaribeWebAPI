@@ -225,8 +225,20 @@ namespace PlasticaribeAPI.Controllers
                 .Where(asg => asg.Tinta_Id == id
                         && asg.AsigMp.AsigMp_FechaEntrega == fecha1).Sum(asg => asg.DtAsigTinta_Cantidad);
 
+            //Facturas de Materia Prima
+            var conFacturasTintas = _context.FacturasCompras_MateriaPrimas
+                .Where(asg => asg.Tinta_Id == id
+                       && asg.Facco.Facco_FechaFactura == fecha1).Sum(asg => asg.FaccoMatPri_Cantidad);
+
+            //Remisiones de Materia Prima
+            var conRemisionesTintas = _context.Remisiones_MateriasPrimas
+                .Where(asg => asg.Tinta_Id == id
+                       && asg.Rem.Rem_Fecha == fecha1).Sum(asg => asg.RemiMatPri_Cantidad);
+
             //Suma Entradas
             var entrada = conDevoluciones + conFacturas + conRemisiones + conRecuperado;
+
+            var entradaTintas = conFacturasTintas + conRemisionesTintas;
 
             //Materia Prima
             var con = (from mp in _context.Set<Materia_Prima>()
@@ -287,7 +299,7 @@ namespace PlasticaribeAPI.Controllers
                                 Nombre = tinta.Tinta_Nombre,
                                 Ancho = Convert.ToDouble(0.00),
                                 Inicial = tinta.Tinta_InvInicial,
-                                Entrada = Convert.ToDouble(tinta.Tinta_InvInicial),
+                                Entrada = Convert.ToDouble(entradaTintas),
                                 Salida = conAsgTinta,
                                 Stock = tinta.Tinta_Stock,
                                 Diferencia = tinta.Tinta_Stock - tinta.Tinta_InvInicial,
