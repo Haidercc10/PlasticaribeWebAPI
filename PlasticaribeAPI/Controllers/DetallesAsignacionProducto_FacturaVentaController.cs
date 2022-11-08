@@ -148,18 +148,17 @@ namespace PlasticaribeAPI.Controllers
                                          && fact.AsigProdFV_Fecha <= FechaFin
                                          && fact.AsigProdFV_Id == detfact.AsigProdFV_Id
                                          && rollo.Rollo_Id == detfact.Rollo_Id
+                                   group fact by new
+                                   {
+                                       fact.FacturaVta_Id,
+                                       fact.AsigProdFV_Fecha,
+                                       fact.Usua.Usua_Nombre
+                                   } into fact
                                    select new
                                    {
-                                       Documento = Convert.ToString(fact.FacturaVta_Id),
-                                       Fecha = fact.AsigProdFV_Fecha,
-                                       Cli_Id = Convert.ToString(fact.Cli_Id),
-                                       Cli_Nombre = Convert.ToString(fact.Cliente.Cli_Nombre),
-                                       Prod_Id = detfact.Prod_Id,
-                                       Prod_Nombre = detfact.Prod.Prod_Nombre,
-                                       Rollo = detfact.Rollo_Id,
-                                       Cantidad = detfact.DtAsigProdFV_Cantidad,
-                                       Presentacion = detfact.UndMed_Id,
-                                       Estado_Rollo = Convert.ToString(rollo.Estado.Estado_Nombre),
+                                       Documento = Convert.ToString(fact.Key.FacturaVta_Id),
+                                       Fecha = fact.Key.AsigProdFV_Fecha,
+                                       Usuario = fact.Key.Usua_Nombre,
                                        Tipo = Convert.ToString("ASIGPRODFV"),
                                    });
 
@@ -168,18 +167,17 @@ namespace PlasticaribeAPI.Controllers
                                 where ent.EntRolloProd_Fecha >= FechaIni
                                 && ent.EntRolloProd_Fecha <= FechaFin
                                 && ent.EntRolloProd_Id == dent.EntRolloProd_Id
+                                group dent by new
+                                {
+                                    dent.EntRolloProd_Id,
+                                    ent.EntRolloProd_Fecha,
+                                    ent.Usua.Usua_Nombre,
+                                } into ent
                                 select new
                                 {
-                                    Documento = Convert.ToString(dent.DtEntRolloProd_OT),
-                                    Fecha = ent.EntRolloProd_Fecha,
-                                    Cli_Id = Convert.ToString(""),
-                                    Cli_Nombre = Convert.ToString(""),
-                                    Prod_Id = dent.Prod_Id,
-                                    Prod_Nombre = dent.Prod.Prod_Nombre,
-                                    Rollo = dent.Rollo_Id,
-                                    Cantidad = dent.DtEntRolloProd_Cantidad,
-                                    Presentacion = dent.UndMed_Rollo,
-                                    Estado_Rollo = Convert.ToString(dent.Estado.Estado_Nombre),
+                                    Documento = Convert.ToString(ent.Key.EntRolloProd_Id),
+                                    Fecha = ent.Key.EntRolloProd_Fecha,
+                                    Usuario = ent.Key.Usua_Nombre,
                                     Tipo = Convert.ToString("ENTROLLO"),
                                 });
 
@@ -188,37 +186,36 @@ namespace PlasticaribeAPI.Controllers
                                    where dev.DevolucionProdFact.DevProdFact_Fecha >= FechaIni
                                          && dev.DevolucionProdFact.DevProdFact_Fecha <= FechaFin
                                          && dev.Rollo_Id == rollo.Rollo_Id
+                                   group dev by new
+                                   {
+                                       dev.DevolucionProdFact.FacturaVta_Id,
+                                       dev.DevolucionProdFact.DevProdFact_Fecha,
+                                       dev.DevolucionProdFact.Usua.Usua_Nombre,
+                                   } into dev
                                    select new
                                    {
-                                       Documento = Convert.ToString(dev.DevolucionProdFact.FacturaVta_Id),
-                                       Fecha = dev.DevolucionProdFact.DevProdFact_Fecha,
-                                       Cli_Id = Convert.ToString(dev.DevolucionProdFact.Cli_Id),
-                                       Cli_Nombre = Convert.ToString(dev.DevolucionProdFact.Cliente.Cli_Nombre),
-                                       Prod_Id = dev.Prod_Id,
-                                       Prod_Nombre = dev.Prod.Prod_Nombre,
-                                       Rollo = dev.Rollo_Id,
-                                       Cantidad = dev.DtDevProdFact_Cantidad,
-                                       Presentacion = dev.UndMed_Id,
-                                       Estado_Rollo = Convert.ToString(rollo.Estado.Estado_Nombre),
+                                       Documento = Convert.ToString(dev.Key.FacturaVta_Id),
+                                       Fecha = dev.Key.DevProdFact_Fecha,
+                                       Usuario = dev.Key.Usua_Nombre,
                                        Tipo = Convert.ToString("DEVPRODFAC"),
                                    });
 
             var QueryPreCargue = (from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
                                   where pre.PreEntregaRollo.PreEntRollo_Fecha >= FechaIni
                                         && pre.PreEntregaRollo.PreEntRollo_Fecha <= FechaFin
+                                  group pre by new
+                                  {
+                                     pre.PreEntRollo_Id,
+                                     pre.PreEntregaRollo.PreEntRollo_Fecha,
+                                     pre.PreEntregaRollo.Usuario.Usua_Nombre,
+                                     pre.Proceso.Proceso_Nombre,
+                                  } into pre
                                   select new
                                   {
-                                      Documento = Convert.ToString(pre.DtlPreEntRollo_OT),
-                                      Fecha = pre.PreEntregaRollo.PreEntRollo_Fecha,
-                                      Cli_Id = Convert.ToString(""),
-                                      Cli_Nombre = Convert.ToString(""),
-                                      Prod_Id = pre.Prod_Id,
-                                      Prod_Nombre = pre.Prod.Prod_Nombre,
-                                      Rollo = pre.Rollo_Id,
-                                      Cantidad = pre.DtlPreEntRollo_Cantidad,
-                                      Presentacion = pre.UndMed_Rollo,
-                                      Estado_Rollo = Convert.ToString("Pre Ingresado"),
-                                      Tipo = Convert.ToString(pre.Proceso.Proceso_Nombre),
+                                      Documento = Convert.ToString(pre.Key.PreEntRollo_Id),
+                                      Fecha = pre.Key.PreEntRollo_Fecha,
+                                      Usuario = pre.Key.Usua_Nombre,
+                                      Tipo = Convert.ToString(pre.Key.Proceso_Nombre),
                                   });
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -236,18 +233,17 @@ namespace PlasticaribeAPI.Controllers
                                    where fact.FacturaVta_Id == factura
                                          && fact.AsigProdFV_Id == detfact.AsigProdFV_Id
                                          && rollo.Rollo_Id == detfact.Rollo_Id
+                                   group fact by new
+                                   {
+                                       fact.FacturaVta_Id,
+                                       fact.AsigProdFV_Fecha,
+                                       fact.Usua.Usua_Nombre
+                                   } into fact
                                    select new
                                    {
-                                       Documento = Convert.ToString(fact.FacturaVta_Id),
-                                       Fecha = fact.AsigProdFV_Fecha,
-                                       Cli_Id = Convert.ToString(fact.Cli_Id),
-                                       Cli_Nombre = Convert.ToString(fact.Cliente.Cli_Nombre),
-                                       Prod_Id = detfact.Prod_Id,
-                                       Prod_Nombre = detfact.Prod.Prod_Nombre,
-                                       Rollo = detfact.Rollo_Id,
-                                       Cantidad = detfact.DtAsigProdFV_Cantidad,
-                                       Presentacion = detfact.UndMed_Id,
-                                       Estado_Rollo = Convert.ToString(rollo.Estado.Estado_Nombre),
+                                       Documento = Convert.ToString(fact.Key.FacturaVta_Id),
+                                       Fecha = fact.Key.AsigProdFV_Fecha,
+                                       Usuario = fact.Key.Usua_Nombre,
                                        Tipo = Convert.ToString("ASIGPRODFV"),
                                    });
 
@@ -255,18 +251,17 @@ namespace PlasticaribeAPI.Controllers
                                 from dent in _context.Set<DetalleEntradaRollo_Producto>()
                                 where Convert.ToString(dent.DtEntRolloProd_OT) == ot
                                 && ent.EntRolloProd_Id == dent.EntRolloProd_Id
+                                group dent by new
+                                {
+                                    dent.EntRolloProd_Id,
+                                    ent.EntRolloProd_Fecha,
+                                    ent.Usua.Usua_Nombre,
+                                } into ent
                                 select new
                                 {
-                                    Documento = Convert.ToString(dent.DtEntRolloProd_OT),
-                                    Fecha = ent.EntRolloProd_Fecha,
-                                    Cli_Id = Convert.ToString(""),
-                                    Cli_Nombre = Convert.ToString(""),
-                                    Prod_Id = dent.Prod_Id,
-                                    Prod_Nombre = dent.Prod.Prod_Nombre,
-                                    Rollo = dent.Rollo_Id,
-                                    Cantidad = dent.DtEntRolloProd_Cantidad,
-                                    Presentacion = dent.UndMed_Rollo,
-                                    Estado_Rollo = Convert.ToString(dent.Estado.Estado_Nombre),
+                                    Documento = Convert.ToString(ent.Key.EntRolloProd_Id),
+                                    Fecha = ent.Key.EntRolloProd_Fecha,
+                                    Usuario = ent.Key.Usua_Nombre,
                                     Tipo = Convert.ToString("ENTROLLO"),
                                 });
 
@@ -274,36 +269,35 @@ namespace PlasticaribeAPI.Controllers
                                    from rollo in _context.Set<DetalleEntradaRollo_Producto>()
                                    where dev.DevolucionProdFact.FacturaVta_Id == factura
                                          && dev.Rollo_Id == rollo.Rollo_Id
+                                   group dev by new
+                                   {
+                                       dev.DevolucionProdFact.FacturaVta_Id,
+                                       dev.DevolucionProdFact.DevProdFact_Fecha,
+                                       dev.DevolucionProdFact.Usua.Usua_Nombre,
+                                   } into dev
                                    select new
                                    {
-                                       Documento = Convert.ToString(dev.DevolucionProdFact.FacturaVta_Id),
-                                       Fecha = dev.DevolucionProdFact.DevProdFact_Fecha,
-                                       Cli_Id = Convert.ToString(dev.DevolucionProdFact.Cli_Id),
-                                       Cli_Nombre = Convert.ToString(dev.DevolucionProdFact.Cliente.Cli_Nombre),
-                                       Prod_Id = dev.Prod_Id,
-                                       Prod_Nombre = dev.Prod.Prod_Nombre,
-                                       Rollo = dev.Rollo_Id,
-                                       Cantidad = dev.DtDevProdFact_Cantidad,
-                                       Presentacion = dev.UndMed_Id,
-                                       Estado_Rollo = Convert.ToString(rollo.Estado.Estado_Nombre),
+                                       Documento = Convert.ToString(dev.Key.FacturaVta_Id),
+                                       Fecha = dev.Key.DevProdFact_Fecha,
+                                       Usuario = dev.Key.Usua_Nombre,
                                        Tipo = Convert.ToString("DEVPRODFAC"),
                                    });
 
             var QueryPreCargue = (from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
                                   where Convert.ToString(pre.DtlPreEntRollo_OT) == ot
+                                  group pre by new
+                                  {
+                                      pre.PreEntRollo_Id,
+                                      pre.PreEntregaRollo.PreEntRollo_Fecha,
+                                      pre.PreEntregaRollo.Usuario.Usua_Nombre,
+                                      pre.Proceso.Proceso_Nombre,
+                                  } into pre
                                   select new
                                   {
-                                      Documento = Convert.ToString(pre.DtlPreEntRollo_OT),
-                                      Fecha = pre.PreEntregaRollo.PreEntRollo_Fecha,
-                                      Cli_Id = Convert.ToString(""),
-                                      Cli_Nombre = Convert.ToString(""),
-                                      Prod_Id = pre.Prod_Id,
-                                      Prod_Nombre = pre.Prod.Prod_Nombre,
-                                      Rollo = pre.Rollo_Id,
-                                      Cantidad = pre.DtlPreEntRollo_Cantidad,
-                                      Presentacion = pre.UndMed_Rollo,
-                                      Estado_Rollo = Convert.ToString("Pre Ingresado"),
-                                      Tipo = Convert.ToString(pre.Proceso.Proceso_Nombre),
+                                      Documento = Convert.ToString(pre.Key.PreEntRollo_Id),
+                                      Fecha = pre.Key.PreEntRollo_Fecha,
+                                      Usuario = pre.Key.Usua_Nombre,
+                                      Tipo = Convert.ToString(pre.Key.Proceso_Nombre),
                                   });
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 

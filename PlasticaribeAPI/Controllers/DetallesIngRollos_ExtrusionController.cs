@@ -192,22 +192,16 @@ namespace PlasticaribeAPI.Controllers
                                 && ing.IngresoRollos_Extrusion.IngRollo_Fecha <= fechaFinal
                           group ing by new
                           {
-                              ing.DtIngRollo_OT,
-                              ing.Prod_Id,
-                              ing.Producto.Prod_Nombre,
-                              ing.UndMed_Id,
+                              ing.IngRollo_Id,
                               ing.IngresoRollos_Extrusion.IngRollo_Fecha,
+                              ing.IngresoRollos_Extrusion.Usua.Usua_Nombre,
                           } into ing
                           select new
                           {
-                              OT = ing.Key.DtIngRollo_OT,
-                              Prod_Id = ing.Key.Prod_Id,
-                              Prod_Nombre = ing.Key.Prod_Nombre,
-                              Cantidad = ing.Sum(x => x.DtIngRollo_Cantidad),
-                              UndMed_Id = ing.Key.UndMed_Id,
+                              OT = ing.Key.IngRollo_Id,
                               Fecha = ing.Key.IngRollo_Fecha,
                               Tipo = "Ingreso de Rollos",
-                              Rollos = ing.Count(),
+                              Usuario = ing.Key.Usua_Nombre,
                           };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ingreso);
@@ -223,22 +217,16 @@ namespace PlasticaribeAPI.Controllers
                       where ing.DtIngRollo_OT == ot
                       group ing by new
                       {
-                          ing.DtIngRollo_OT,
-                          ing.Prod_Id,
-                          ing.Producto.Prod_Nombre,
-                          ing.UndMed_Id,
+                          ing.IngRollo_Id,
                           ing.IngresoRollos_Extrusion.IngRollo_Fecha,
+                          ing.IngresoRollos_Extrusion.Usua.Usua_Nombre,
                       } into ing
                       select new
                       {
-                          OT = ing.Key.DtIngRollo_OT,
-                          Prod_Id = ing.Key.Prod_Id,
-                          Prod_Nombre = ing.Key.Prod_Nombre,
-                          Cantidad = ing.Sum(x => x.DtIngRollo_Cantidad),
-                          UndMed_Id = ing.Key.UndMed_Id,
+                          OT = ing.Key.IngRollo_Id,
                           Fecha = ing.Key.IngRollo_Fecha,
                           Tipo = "Ingreso de Rollos",
-                          Rollos = ing.Count(),
+                          Usuario = ing.Key.Usua_Nombre,
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ingreso);
