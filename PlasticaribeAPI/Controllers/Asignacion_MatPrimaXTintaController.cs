@@ -75,7 +75,8 @@ namespace PlasticaribeAPI.Controllers
                                 Stock = mp.MatPri_Stock,
                                 Unidad = mp.UndMed_Id,
                                 IDCategoria = mp.CatMP_Id,
-                                NombreCategoria = mp.CatMP.CatMP_Nombre
+                                NombreCategoria = mp.CatMP.CatMP_Nombre,
+                                PrecioMP = mp.MatPri_Precio
                             });
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -88,7 +89,8 @@ namespace PlasticaribeAPI.Controllers
                              Stock = tnt.Tinta_Stock,
                              Unidad = tnt.UndMed_Id,
                              IDCategoria = tnt.CatMP_Id,
-                             NombreCategoria = tnt.CatMP.CatMP_Nombre
+                             NombreCategoria = tnt.CatMP.CatMP_Nombre, 
+                             PrecioMP = tnt.Tinta_Precio
                          });
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -111,7 +113,9 @@ namespace PlasticaribeAPI.Controllers
                                 Stock = mp.MatPri_Stock,
                                 Unidad = mp.UndMed_Id,
                                 IDCategoria = mp.CatMP_Id,
-                                NombreCategoria = mp.CatMP.CatMP_Nombre
+                                NombreCategoria = mp.CatMP.CatMP_Nombre,
+                                PrecioMP = mp.MatPri_Precio
+
                             });
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -125,7 +129,8 @@ namespace PlasticaribeAPI.Controllers
                              Stock = tnt.Tinta_Stock,
                              Unidad = tnt.UndMed_Id,
                              IDCategoria = tnt.CatMP_Id,
-                             NombreCategoria = tnt.CatMP.CatMP_Nombre
+                             NombreCategoria = tnt.CatMP.CatMP_Nombre,
+                             PrecioMP = tnt.Tinta_Precio
                          });
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 

@@ -34,7 +34,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "text")] 
         public string? Rem_Observacion { get; set; }
 
-        public IList<Remision_MateriaPrima>? RemiMatPri { get; set; }
+        //public IList<Remision_MateriaPrima>? RemiMatPri { get; set; }
 
         public IList<Remision_FacturaCompra>? RemiFacco { get; set; }
 

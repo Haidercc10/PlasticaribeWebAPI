@@ -38,12 +38,13 @@ namespace PlasticaribeAPI.Models
         public IList<Provedor_MateriaPrima>? ProvMatPri { get; set; }
 
         //Lista requerida para relación facturas compras - materias primas
-        public IList<FacturaCompra_MateriaPrima>? FaccoMatPri { get; set; }
+        
+        //public IList<FacturaCompra_MateriaPrima>? FaccoMatPri { get; set; }
 
         //Lista requerida para relación detalles asignacion - materias primas
         public IList<DetalleAsignacion_MateriaPrima>? DtAsigMatPri { get; set; }
 
-        public IList<Remision_MateriaPrima>? RemiMatPri { get; set; }
+        //public IList<Remision_MateriaPrima>? RemiMatPri { get; set; }
 
         public IList<DetalleRecuperado_MateriaPrima>? DetRecMatPri { get; set; }
 

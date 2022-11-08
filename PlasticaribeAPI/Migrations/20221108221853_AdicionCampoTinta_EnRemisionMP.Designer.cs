@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20221108221853_AdicionCampoTinta_EnRemisionMP")]
+    partial class AdicionCampoTinta_EnRemisionMP
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2855,7 +2857,7 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<long>("Tinta_Id")
+                    b.Property<long?>("Tinta_Id")
                         .HasColumnType("bigint");
 
                     b.Property<string>("UndMed_Id")
@@ -5281,8 +5283,7 @@ namespace PlasticaribeAPI.Migrations
                     b.HasOne("PlasticaribeAPI.Models.Tinta", "Tinta")
                         .WithMany()
                         .HasForeignKey("Tinta_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "UndMed")
                         .WithMany()

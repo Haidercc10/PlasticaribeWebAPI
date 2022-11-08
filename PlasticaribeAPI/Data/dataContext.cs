@@ -126,10 +126,11 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Factura_Compra>().HasOne(fcco => fcco.TpDoc).WithMany().HasForeignKey(facco => facco.TpDoc_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de tipo de documento
 
             //Relaciones FacturasCompras_MateriasPrimas
-            modelBuilder.Entity<FacturaCompra_MateriaPrima>().HasKey(fcmp => new { fcmp.Facco_Id, fcmp.MatPri_Id }); //Llave Compuesta FacturaCompra_MateriaPrima 
-            modelBuilder.Entity<FacturaCompra_MateriaPrima>().HasOne<Factura_Compra>(fcomp => fcomp.Facco).WithMany(fccomp => fccomp.FaccoMatPri).HasForeignKey(fcomp => fcomp.Facco_Id); //Foranea factura compra
-            modelBuilder.Entity<FacturaCompra_MateriaPrima>().HasOne<Materia_Prima>(fcomp => fcomp.MatPri).WithMany(fccomp => fccomp.FaccoMatPri).HasForeignKey(fcomp => fcomp.MatPri_Id); //Foranea materiaprima
+            modelBuilder.Entity<FacturaCompra_MateriaPrima>().HasOne(fcco => fcco.MatPri).WithMany().HasForeignKey(facco => facco.MatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
+            modelBuilder.Entity<FacturaCompra_MateriaPrima>().HasOne(fcco => fcco.Facco).WithMany().HasForeignKey(facco => facco.Facco_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
+            modelBuilder.Entity<FacturaCompra_MateriaPrima>().HasOne(fcco => fcco.Tinta).WithMany().HasForeignKey(facco => facco.Tinta_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<FacturaCompra_MateriaPrima>().HasOne(fcco => fcco.UndMed).WithMany().HasForeignKey(facco => facco.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
+
 
             //Relaciones Asignaciones_MatPrima
             modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Estado).WithMany().HasForeignKey(asigmp => asigmp.Estado_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado
@@ -157,9 +158,12 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Remision>().HasOne(rem => rem.TpDoc).WithMany().HasForeignKey(remi => remi.TpDoc_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de tipo de documento
 
             //Relaciones Remisiones - Materias Primas 
-            modelBuilder.Entity<Remision_MateriaPrima>().HasKey(rmp => new { rmp.Rem_Id, rmp.MatPri_Id }); //Llave Compuesta Remision_MateriaPrima 
-            modelBuilder.Entity<Remision_MateriaPrima>().HasOne<Remision>(remi => remi.Rem).WithMany(remmp => remmp.RemiMatPri).HasForeignKey(remi => remi.Rem_Id); //Foranea remision
-            modelBuilder.Entity<Remision_MateriaPrima>().HasOne<Materia_Prima>(fcomp => fcomp.MatPri).WithMany(remmp => remmp.RemiMatPri).HasForeignKey(remi => remi.MatPri_Id); //Foranea materiaprima
+            //modelBuilder.Entity<Remision_MateriaPrima>().HasKey(rmp => new { rmp.Rem_Id, rmp.MatPri_Id }); //Llave Compuesta Remision_MateriaPrima 
+            //modelBuilder.Entity<Remision_MateriaPrima>().HasOne<Remision>(remi => remi.Rem).WithMany(remmp => remmp.RemiMatPri).HasForeignKey(remi => remi.Rem_Id); //Foranea remision
+            //modelBuilder.Entity<Remision_MateriaPrima>().HasOne<Materia_Prima>(fcomp => fcomp.MatPri).WithMany(remmp => remmp.RemiMatPri).HasForeignKey(remi => remi.MatPri_Id); //Foranea materiaprima
+            modelBuilder.Entity<Remision_MateriaPrima>().HasOne(fcco => fcco.MatPri).WithMany().HasForeignKey(facco => facco.MatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
+            modelBuilder.Entity<Remision_MateriaPrima>().HasOne(fcco => fcco.Rem).WithMany().HasForeignKey(facco => facco.Rem_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
+            modelBuilder.Entity<Remision_MateriaPrima>().HasOne(fcco => fcco.Tinta).WithMany().HasForeignKey(facco => facco.Tinta_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<Remision_MateriaPrima>().HasOne(rmp => rmp.UndMed).WithMany().HasForeignKey(rmp => rmp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
 
             //Relaciones Remisiones_FacturasCompras

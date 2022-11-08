@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20221108220309_AdicionCampoTinta_EnFComprasMP")]
+    partial class AdicionCampoTinta_EnFComprasMP
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1573,7 +1575,7 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("MatPri_Id")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("Tinta_Id")
+                    b.Property<long?>("Tinta_Id")
                         .HasColumnType("bigint");
 
                     b.Property<string>("UndMed_Id")
@@ -2835,17 +2837,11 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Remision_MateriaPrima", b =>
                 {
-                    b.Property<long>("RemiMatPri_Codigo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("RemiMatPri_Codigo"), 1L, 1);
+                    b.Property<int>("Rem_Id")
+                        .HasColumnType("int");
 
                     b.Property<long>("MatPri_Id")
                         .HasColumnType("bigint");
-
-                    b.Property<int>("Rem_Id")
-                        .HasColumnType("int");
 
                     b.Property<decimal>("RemiMatPri_Cantidad")
                         .HasPrecision(14, 2)
@@ -2855,20 +2851,13 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<long>("Tinta_Id")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("UndMed_Id")
                         .IsRequired()
                         .HasColumnType("varchar(10)");
 
-                    b.HasKey("RemiMatPri_Codigo");
+                    b.HasKey("Rem_Id", "MatPri_Id");
 
                     b.HasIndex("MatPri_Id");
-
-                    b.HasIndex("Rem_Id");
-
-                    b.HasIndex("Tinta_Id");
 
                     b.HasIndex("UndMed_Id");
 
@@ -4516,8 +4505,7 @@ namespace PlasticaribeAPI.Migrations
                     b.HasOne("PlasticaribeAPI.Models.Tinta", "Tinta")
                         .WithMany()
                         .HasForeignKey("Tinta_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "UndMed")
                         .WithMany()
@@ -5267,21 +5255,15 @@ namespace PlasticaribeAPI.Migrations
             modelBuilder.Entity("PlasticaribeAPI.Models.Remision_MateriaPrima", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.Materia_Prima", "MatPri")
-                        .WithMany()
+                        .WithMany("RemiMatPri")
                         .HasForeignKey("MatPri_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PlasticaribeAPI.Models.Remision", "Rem")
-                        .WithMany()
+                        .WithMany("RemiMatPri")
                         .HasForeignKey("Rem_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Tinta", "Tinta")
-                        .WithMany()
-                        .HasForeignKey("Tinta_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "UndMed")
@@ -5293,8 +5275,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("MatPri");
 
                     b.Navigation("Rem");
-
-                    b.Navigation("Tinta");
 
                     b.Navigation("UndMed");
                 });
@@ -5553,6 +5533,8 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Navigation("ProvMatPri");
 
+                    b.Navigation("RemiMatPri");
+
                     b.Navigation("TintaMatPri");
                 });
 
@@ -5585,6 +5567,8 @@ namespace PlasticaribeAPI.Migrations
             modelBuilder.Entity("PlasticaribeAPI.Models.Remision", b =>
                 {
                     b.Navigation("RemiFacco");
+
+                    b.Navigation("RemiMatPri");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tinta", b =>
