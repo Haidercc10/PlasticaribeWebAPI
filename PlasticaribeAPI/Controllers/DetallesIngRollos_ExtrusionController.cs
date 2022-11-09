@@ -180,7 +180,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //Funcion que consultará y devolverá los rollos ingresado en un rango de fechas que tengan estado disponible
-        [HttpGet("getRollosDisponiblesFechas/{fechaIncial}/{fechaFinal}")]
+        [HttpGet("getRollosDisponiblesFechas/{fechaInicial}/{fechaFinal}")]
         public ActionResult getRollosDisponiblesFechas(DateTime fechaInicial, DateTime fechaFinal)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -204,7 +204,7 @@ namespace PlasticaribeAPI.Controllers
 
         /* Funcion que consultará y devolverá un consolidado de los ingresos y las salidas de rollos realizadas,
          * esto servirá para el reporte de la bodega de extrusion*/
-        [HttpGet("getconsultaRollosFechas/{fechaIncial}/{fechaFinal}")]
+        [HttpGet("getconsultaRollosFechas/{fechaInicial}/{fechaFinal}")]
         public ActionResult getconsultaRollosFechas(DateTime fechaInicial, DateTime fechaFinal)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -251,6 +251,33 @@ namespace PlasticaribeAPI.Controllers
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ingreso);
+        }
+
+        //Funcion que va a consultar la información de la asignacion consultada
+        [HttpGet("getCrearPdfEntrada/{id}")]
+        public ActionResult getCrearPdfSalida(int id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from rollo in _context.Set<DetallesIngRollos_Extrusion>()
+                      where rollo.IngRollo_Id == id
+                      group rollo by new
+                      {
+                          rollo.IngRollo_Id,
+                          rollo.DtIngRollo_OT,
+                          rollo.Prod_Id,
+                          rollo.Producto.Prod_Nombre,
+                      } into rollo
+                      select new
+                      {
+                          rollo.Key.IngRollo_Id,
+                          rollo.Key.DtIngRollo_OT,
+                          rollo.Key.Prod_Id,
+                          rollo.Key.Prod_Nombre,
+                          CantidadRollos = rollo.Count()
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            return Ok(con);
         }
 
         // PUT: api/DetallesIngRollos_Extrusion/5

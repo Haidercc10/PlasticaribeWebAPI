@@ -79,7 +79,7 @@ namespace PlasticaribeAPI.Controllers
 
         /* Funcion que consultará y devolverá un consolidado de los ingresos y las salidas de rollos realizadas,
          * esto servirá para el reporte de la bodega de extrusion*/
-        [HttpGet("getconsultaRollosFechas/{fechaIncial}/{fechaFinal}")]
+        [HttpGet("getconsultaRollosFechas/{fechaInicial}/{fechaFinal}")]
         public ActionResult getconsultaRollosFechas(DateTime fechaInicial, DateTime fechaFinal)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -126,6 +126,33 @@ namespace PlasticaribeAPI.Controllers
                          };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(salida);
+        }
+
+        //Funcion que va a consultar la información de la asignacion consultada
+        [HttpGet("getCrearPdfSalida/{id}")]
+        public ActionResult getCrearPdfSalida(int id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from rollo in _context.Set<DetallesAsgRollos_Extrusion>()
+                      where rollo.AsgRollos_Id == id
+                      group rollo by new
+                      {
+                          rollo.AsgRollos_Id,
+                          rollo.DtAsgRollos_OT,
+                          rollo.Prod_Id,
+                          rollo.Producto.Prod_Nombre,
+                      } into rollo
+                      select new
+                      {
+                          rollo.Key.AsgRollos_Id,
+                          rollo.Key.DtAsgRollos_OT,
+                          rollo.Key.Prod_Id,
+                          rollo.Key.Prod_Nombre,
+                          CantidadRollos = rollo.Count()
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            return Ok(con);
         }
 
         // PUT: api/DetallesAsgRollos_Extrusion/5
