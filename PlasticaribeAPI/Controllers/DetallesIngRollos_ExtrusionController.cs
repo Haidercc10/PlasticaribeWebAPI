@@ -116,6 +116,27 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        /** Función que Consulta todos los rollos disponibles */
+        [HttpGet("getTodosRollosDisponibles")]
+        public ActionResult getRollosDisponibles2()
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from ing in _context.Set<DetallesIngRollos_Extrusion>()
+                      where ing.Estado_Id == 19
+                      select new
+                      {
+                          ing.DtIngRollo_OT,
+                          ing.Rollo_Id,
+                          ing.Prod_Id,
+                          ing.Producto.Prod_Nombre,
+                          ing.DtIngRollo_Cantidad,
+                          ing.UndMed_Id,
+                          ing.IngresoRollos_Extrusion.IngRollo_Fecha,
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
         // Funcion que consultará y deolverá los rollos ingresados de una OT especifica y que tengan un estado disponieble
         [HttpGet("getRollosDisponiblesOT/{ot}")]
         public ActionResult getRollosDisponiblesOT(long ot)
