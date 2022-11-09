@@ -50,6 +50,15 @@ namespace PlasticaribeAPI.Controllers
             return detallePreEntrega_RolloDespacho;
         }
 
+        [HttpGet("getconsultaProceso/{proceso}")]
+        public ActionResult getconsultaProceso(string proceso)
+        {
+            var con = from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
+                      where pre.Proceso_Id == proceso
+                      select pre.Rollo_Id;
+            return Ok(con);
+        }
+
         //Funcion que va a buscar la informacion que aparecerá en el PDF
         [HttpGet("crearPdf/{ot}/{proceso}")]
         public ActionResult crearPdf(long ot, string proceso)
