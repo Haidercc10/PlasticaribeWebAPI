@@ -173,7 +173,8 @@ namespace PlasticaribeAPI.Controllers
                        where asg.AsigMp.AsigMp_FechaEntrega == FechaInicial
                        select new
                        {
-                           OT = asg.AsigMp.AsigMP_OrdenTrabajo,
+                           ID = Convert.ToInt32(asg.AsigMp_Id),
+                           OT = Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo),
                            Fecha = asg.AsigMp.AsigMp_FechaEntrega,
                            Usuario = asg.AsigMp.Usua_Id,
                            Usuario_Nombre = asg.AsigMp.Usua.Usua_Nombre,
@@ -187,14 +188,15 @@ namespace PlasticaribeAPI.Controllers
                            MateriaPrima = asg.Tinta_Id,
                            Nombre_MateriaPrima = asg.Tinta.Tinta_Nombre,
                            CantidadAsignada = asg.DtAsigTinta_Cantidad,
-                           Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
+                           Estado = Convert.ToString(asg.AsigMp.EstadoOT.Estado_Nombre),
                        };
 
             var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
                            where cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega == FechaInicial
                            select new
                            {
-                               OT = cr.AsigMPxTinta.Tinta_Id,
+                               ID = Convert.ToInt32(cr.AsigMPxTinta_Id),
+                               OT = Convert.ToString(cr.AsigMPxTinta.Tinta_Id),
                                Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
                                Usuario = cr.AsigMPxTinta.Usua_Id,
                                Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
@@ -208,11 +210,57 @@ namespace PlasticaribeAPI.Controllers
                                MateriaPrima = cr.MatPri_Id,
                                Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
                                CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
-                               Estado = cr.Proceso.Proceso_Nombre,
+                               Estado = Convert.ToString(cr.Proceso.Proceso_Nombre),
                            };
+
+            var facturas = from fac in _context.Set<FacturaCompra_MateriaPrima>()
+                           where fac.Facco.Facco_FechaFactura == FechaInicial
+                                 && fac.Tinta_Id != 2001
+                           select new
+                           {
+                               ID = Convert.ToInt32(fac.Facco_Id),
+                               OT = Convert.ToString(fac.Facco.Facco_Codigo),
+                               Fecha = fac.Facco.Facco_FechaFactura,
+                               Usuario = fac.Facco.Usua_Id,
+                               Usuario_Nombre = fac.Facco.Usua.Usua_Nombre,
+                               Tinta = fac.Tinta_Id,
+                               NombreTinta = fac.Tinta.Tinta_Nombre,
+                               Cantidad = fac.FaccoMatPri_Cantidad,
+                               Presentacion = fac.UndMed_Id,
+                               PrecioTinta = fac.Tinta.Tinta_Precio,
+                               Tinta2 = fac.Tinta_Id,
+                               Nombre_Tinta2 = fac.Tinta.Tinta_Nombre,
+                               MateriaPrima = fac.Tinta.Tinta_Id,
+                               Nombre_MateriaPrima = fac.Tinta.Tinta_Nombre,
+                               CantidadAsignada = fac.FaccoMatPri_Cantidad,
+                               Estado = Convert.ToString(fac.Facco.TpDoc.TpDoc_Nombre),
+                           };
+
+            var remisiones = from rem in _context.Set<Remision_MateriaPrima>()
+                             where rem.Rem.Rem_Fecha == FechaInicial
+                                   && rem.Tinta_Id != 2001
+                             select new
+                             {
+                                 ID = Convert.ToInt32(rem.Rem_Id),
+                                 OT = Convert.ToString(rem.Rem.Rem_Codigo),
+                                 Fecha = rem.Rem.Rem_Fecha,
+                                 Usuario = rem.Rem.Usua_Id,
+                                 Usuario_Nombre = rem.Rem.Usua.Usua_Nombre,
+                                 Tinta = rem.Tinta_Id,
+                                 NombreTinta = rem.Tinta.Tinta_Nombre,
+                                 Cantidad = rem.RemiMatPri_Cantidad,
+                                 Presentacion = rem.UndMed_Id,
+                                 PrecioTinta = rem.Tinta.Tinta_Precio,
+                                 Tinta2 = rem.Tinta_Id,
+                                 Nombre_Tinta2 = rem.Tinta.Tinta_Nombre,
+                                 MateriaPrima = rem.Tinta.Tinta_Id,
+                                 Nombre_MateriaPrima = rem.Tinta.Tinta_Nombre,
+                                 CantidadAsignada = rem.RemiMatPri_Cantidad,
+                                 Estado = Convert.ToString(rem.Rem.TpDoc.TpDoc_Nombre),
+                             };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            
-            return Ok(asig.Concat(creacion));
+
+            return Ok(asig.Concat(creacion).Concat(facturas).Concat(remisiones));
         }
 
 
@@ -277,7 +325,8 @@ namespace PlasticaribeAPI.Controllers
                        where asg.AsigMp.AsigMp_FechaEntrega == FechaInicial && asg.Tinta_Id == nTinta
                        select new
                        {
-                           OT = asg.AsigMp.AsigMP_OrdenTrabajo,
+                           ID = Convert.ToInt32(asg.AsigMp_Id),
+                           OT = Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo),
                            Fecha = asg.AsigMp.AsigMp_FechaEntrega,
                            Usuario = asg.AsigMp.Usua_Id,
                            Usuario_Nombre = asg.AsigMp.Usua.Usua_Nombre,
@@ -291,14 +340,15 @@ namespace PlasticaribeAPI.Controllers
                            MateriaPrima = asg.Tinta_Id,
                            Nombre_MateriaPrima = asg.Tinta.Tinta_Nombre,
                            CantidadAsignada = asg.DtAsigTinta_Cantidad,
-                           Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
+                           Estado = Convert.ToString(asg.AsigMp.EstadoOT.Estado_Nombre),
                        };
 
             var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
                            where cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega == FechaInicial && cr.AsigMPxTinta.Tinta_Id == nTinta
                            select new
                            {
-                               OT = cr.AsigMPxTinta.Tinta_Id,
+                               ID = Convert.ToInt32(cr.AsigMPxTinta_Id),
+                               OT = Convert.ToString(cr.AsigMPxTinta.Tinta_Id),
                                Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
                                Usuario = cr.AsigMPxTinta.Usua_Id,
                                Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
@@ -312,23 +362,72 @@ namespace PlasticaribeAPI.Controllers
                                MateriaPrima = cr.MatPri_Id,
                                Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
                                CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
-                               Estado = cr.Proceso.Proceso_Nombre,
+                               Estado = Convert.ToString(cr.Proceso.Proceso_Nombre),
                            };
+
+            var facturas = from fac in _context.Set<FacturaCompra_MateriaPrima>()
+                           where fac.Facco.Facco_FechaFactura == FechaInicial 
+                                 && fac.Tinta_Id == nTinta
+                                 && fac.Tinta_Id != 2001
+                           select new
+                           {
+                               ID = Convert.ToInt32(fac.Facco_Id),
+                               OT = Convert.ToString(fac.Facco.Facco_Codigo),
+                               Fecha = fac.Facco.Facco_FechaFactura,
+                               Usuario = fac.Facco.Usua_Id,
+                               Usuario_Nombre = fac.Facco.Usua.Usua_Nombre,
+                               Tinta = fac.Tinta_Id,
+                               NombreTinta = fac.Tinta.Tinta_Nombre,
+                               Cantidad = fac.FaccoMatPri_Cantidad,
+                               Presentacion = fac.UndMed_Id,
+                               PrecioTinta = fac.Tinta.Tinta_Precio,
+                               Tinta2 = fac.Tinta_Id,
+                               Nombre_Tinta2 = fac.Tinta.Tinta_Nombre,
+                               MateriaPrima = fac.Tinta.Tinta_Id,
+                               Nombre_MateriaPrima = fac.Tinta.Tinta_Nombre,
+                               CantidadAsignada = fac.FaccoMatPri_Cantidad,
+                               Estado = Convert.ToString(fac.Facco.TpDoc.TpDoc_Nombre),
+                           };
+
+            var remisiones = from rem in _context.Set<Remision_MateriaPrima>()
+                             where rem.Rem.Rem_Fecha == FechaInicial 
+                                   && rem.Tinta_Id == nTinta
+                                   && rem.Tinta_Id != 2001
+                             select new
+                             {
+                                 ID = Convert.ToInt32(rem.Rem_Id),
+                                 OT = Convert.ToString(rem.Rem.Rem_Codigo),
+                                 Fecha = rem.Rem.Rem_Fecha,
+                                 Usuario = rem.Rem.Usua_Id,
+                                 Usuario_Nombre = rem.Rem.Usua.Usua_Nombre,
+                                 Tinta = rem.Tinta_Id,
+                                 NombreTinta = rem.Tinta.Tinta_Nombre,
+                                 Cantidad = rem.RemiMatPri_Cantidad,
+                                 Presentacion = rem.UndMed_Id,
+                                 PrecioTinta = rem.Tinta.Tinta_Precio,
+                                 Tinta2 = rem.Tinta_Id,
+                                 Nombre_Tinta2 = rem.Tinta.Tinta_Nombre,
+                                 MateriaPrima = rem.Tinta.Tinta_Id,
+                                 Nombre_MateriaPrima = rem.Tinta.Tinta_Nombre,
+                                 CantidadAsignada = rem.RemiMatPri_Cantidad,
+                                 Estado = Convert.ToString(rem.Rem.TpDoc.TpDoc_Nombre),
+                             };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
-            return Ok(asig.Concat(creacion));
+            return Ok(asig.Concat(creacion).Concat(facturas).Concat(remisiones));
         }
 
         /** Consulta por OT */
         [HttpGet("MovTintasxOT/{ot}")]
-        public ActionResult GetOT(long ot)
+        public ActionResult GetOT(string ot)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var asig = from asg in _context.Set<DetalleAsignacion_Tinta>()
-                       where asg.AsigMp.AsigMP_OrdenTrabajo == ot
+                       where asg.AsigMp.AsigMP_OrdenTrabajo == Convert.ToInt64(ot)
                        select new
                        {
-                           OT = asg.AsigMp.AsigMP_OrdenTrabajo,
+                           ID = Convert.ToInt32(asg.AsigMp_Id),
+                           OT = Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo),
                            Fecha = asg.AsigMp.AsigMp_FechaEntrega,
                            Usuario = asg.AsigMp.Usua_Id,
                            Usuario_Nombre = asg.AsigMp.Usua.Usua_Nombre,
@@ -342,14 +441,15 @@ namespace PlasticaribeAPI.Controllers
                            MateriaPrima = asg.Tinta_Id,
                            Nombre_MateriaPrima = asg.Tinta.Tinta_Nombre,
                            CantidadAsignada = asg.DtAsigTinta_Cantidad,
-                           Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
+                           Estado = Convert.ToString(asg.AsigMp.EstadoOT.Estado_Nombre),
                        };
 
             var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
-                           where cr.AsigMPxTinta.Tinta_Id == ot
+                           where cr.AsigMPxTinta.Tinta_Id == Convert.ToInt64(ot)
                            select new
                            {
-                               OT = cr.AsigMPxTinta.Tinta_Id,
+                               ID = Convert.ToInt32(cr.AsigMPxTinta_Id),
+                               OT = Convert.ToString(cr.AsigMPxTinta.Tinta_Id),
                                Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
                                Usuario = cr.AsigMPxTinta.Usua_Id,
                                Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
@@ -363,10 +463,57 @@ namespace PlasticaribeAPI.Controllers
                                MateriaPrima = cr.MatPri_Id,
                                Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
                                CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
-                               Estado = cr.Proceso.Proceso_Nombre,
+                               Estado = Convert.ToString(cr.Proceso.Proceso_Nombre),
                            };
+
+            var facturas = from fac in _context.Set<FacturaCompra_MateriaPrima>()
+                           where fac.Facco.Facco_Codigo == Convert.ToString(ot)
+                                 && fac.Tinta_Id != 2001
+                           select new
+                           {
+                               ID = Convert.ToInt32(fac.Facco_Id),
+                               OT = Convert.ToString(fac.Facco.Facco_Codigo),
+                               Fecha = fac.Facco.Facco_FechaFactura,
+                               Usuario = fac.Facco.Usua_Id,
+                               Usuario_Nombre = fac.Facco.Usua.Usua_Nombre,
+                               Tinta = fac.Tinta_Id,
+                               NombreTinta = fac.Tinta.Tinta_Nombre,
+                               Cantidad = fac.FaccoMatPri_Cantidad,
+                               Presentacion = fac.UndMed_Id,
+                               PrecioTinta = fac.Tinta.Tinta_Precio,
+                               Tinta2 = fac.Tinta_Id,
+                               Nombre_Tinta2 = fac.Tinta.Tinta_Nombre,
+                               MateriaPrima = fac.Tinta.Tinta_Id,
+                               Nombre_MateriaPrima = fac.Tinta.Tinta_Nombre,
+                               CantidadAsignada = fac.FaccoMatPri_Cantidad,
+                               Estado = Convert.ToString(fac.Facco.TpDoc.TpDoc_Nombre),
+                           };
+
+            var remisiones = from rem in _context.Set<Remision_MateriaPrima>()
+                             where rem.Rem.Rem_Codigo == Convert.ToString(ot)
+                                   && rem.Tinta_Id != 2001
+                             select new
+                             {
+                                 ID = Convert.ToInt32(rem.Rem_Id),
+                                 OT = Convert.ToString(rem.Rem.Rem_Codigo),
+                                 Fecha = rem.Rem.Rem_Fecha,
+                                 Usuario = rem.Rem.Usua_Id,
+                                 Usuario_Nombre = rem.Rem.Usua.Usua_Nombre,
+                                 Tinta = rem.Tinta_Id,
+                                 NombreTinta = rem.Tinta.Tinta_Nombre,
+                                 Cantidad = rem.RemiMatPri_Cantidad,
+                                 Presentacion = rem.UndMed_Id,
+                                 PrecioTinta = rem.Tinta.Tinta_Precio,
+                                 Tinta2 = rem.Tinta_Id,
+                                 Nombre_Tinta2 = rem.Tinta.Tinta_Nombre,
+                                 MateriaPrima = rem.Tinta.Tinta_Id,
+                                 Nombre_MateriaPrima = rem.Tinta.Tinta_Nombre,
+                                 CantidadAsignada = rem.RemiMatPri_Cantidad,
+                                 Estado = Convert.ToString(rem.Rem.TpDoc.TpDoc_Nombre),
+                             };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(asig.Concat(creacion));
+
+            return Ok(asig.Concat(creacion).Concat(facturas).Concat(remisiones));
         }
 
         /** Consulta por Fechas */
@@ -379,7 +526,8 @@ namespace PlasticaribeAPI.Controllers
                              && asg.AsigMp.AsigMp_FechaEntrega <= FechaFinal
                        select new
                        {
-                           OT = asg.AsigMp.AsigMP_OrdenTrabajo,
+                           ID = Convert.ToInt32(asg.AsigMp_Id),
+                           OT = Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo),
                            Fecha = asg.AsigMp.AsigMp_FechaEntrega,
                            Usuario = asg.AsigMp.Usua_Id,
                            Usuario_Nombre = asg.AsigMp.Usua.Usua_Nombre,
@@ -393,7 +541,7 @@ namespace PlasticaribeAPI.Controllers
                            MateriaPrima = asg.Tinta_Id,
                            Nombre_MateriaPrima = asg.Tinta.Tinta_Nombre,
                            CantidadAsignada = asg.DtAsigTinta_Cantidad,
-                           Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
+                           Estado = Convert.ToString(asg.AsigMp.EstadoOT.Estado_Nombre),
                        };
 
             var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
@@ -401,7 +549,8 @@ namespace PlasticaribeAPI.Controllers
                                  && cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= FechaInicial
                            select new
                            {
-                               OT = cr.AsigMPxTinta.Tinta_Id,
+                               ID = Convert.ToInt32(cr.AsigMPxTinta_Id),
+                               OT = Convert.ToString(cr.AsigMPxTinta.Tinta_Id),
                                Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
                                Usuario = cr.AsigMPxTinta.Usua_Id,
                                Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
@@ -415,10 +564,59 @@ namespace PlasticaribeAPI.Controllers
                                MateriaPrima = cr.MatPri_Id,
                                Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
                                CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
-                               Estado = cr.Proceso.Proceso_Nombre,
+                               Estado = Convert.ToString(cr.Proceso.Proceso_Nombre),
                            };
+
+            var facturas = from fac in _context.Set<FacturaCompra_MateriaPrima>()
+                           where fac.Facco.Facco_FechaFactura >= FechaInicial
+                                 && fac.Facco.Facco_FechaFactura <= FechaFinal
+                                 && fac.Tinta_Id != 2001
+                           select new
+                           {
+                               ID = Convert.ToInt32(fac.Facco_Id),
+                               OT = Convert.ToString(fac.Facco.Facco_Codigo),
+                               Fecha = fac.Facco.Facco_FechaFactura,
+                               Usuario = fac.Facco.Usua_Id,
+                               Usuario_Nombre = fac.Facco.Usua.Usua_Nombre,
+                               Tinta = fac.Tinta_Id,
+                               NombreTinta = fac.Tinta.Tinta_Nombre,
+                               Cantidad = fac.FaccoMatPri_Cantidad,
+                               Presentacion = fac.UndMed_Id,
+                               PrecioTinta = fac.Tinta.Tinta_Precio,
+                               Tinta2 = fac.Tinta_Id,
+                               Nombre_Tinta2 = fac.Tinta.Tinta_Nombre,
+                               MateriaPrima = fac.Tinta.Tinta_Id,
+                               Nombre_MateriaPrima = fac.Tinta.Tinta_Nombre,
+                               CantidadAsignada = fac.FaccoMatPri_Cantidad,
+                               Estado = Convert.ToString(fac.Facco.TpDoc.TpDoc_Nombre),
+                           };
+
+            var remisiones = from rem in _context.Set<Remision_MateriaPrima>()
+                             where rem.Rem.Rem_Fecha >= FechaInicial
+                                   && rem.Rem.Rem_Fecha <= FechaFinal
+                                   && rem.Tinta_Id != 2001
+                             select new
+                             {
+                                 ID = Convert.ToInt32(rem.Rem_Id),
+                                 OT = Convert.ToString(rem.Rem.Rem_Codigo),
+                                 Fecha = rem.Rem.Rem_Fecha,
+                                 Usuario = rem.Rem.Usua_Id,
+                                 Usuario_Nombre = rem.Rem.Usua.Usua_Nombre,
+                                 Tinta = rem.Tinta_Id,
+                                 NombreTinta = rem.Tinta.Tinta_Nombre,
+                                 Cantidad = rem.RemiMatPri_Cantidad,
+                                 Presentacion = rem.UndMed_Id,
+                                 PrecioTinta = rem.Tinta.Tinta_Precio,
+                                 Tinta2 = rem.Tinta_Id,
+                                 Nombre_Tinta2 = rem.Tinta.Tinta_Nombre,
+                                 MateriaPrima = rem.Tinta.Tinta_Id,
+                                 Nombre_MateriaPrima = rem.Tinta.Tinta_Nombre,
+                                 CantidadAsignada = rem.RemiMatPri_Cantidad,
+                                 Estado = Convert.ToString(rem.Rem.TpDoc.TpDoc_Nombre),
+                             };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(asig.Concat(creacion));
+
+            return Ok(asig.Concat(creacion).Concat(facturas).Concat(remisiones));
         }
 
         /** Consulta por OT y Fechas */
@@ -432,7 +630,8 @@ namespace PlasticaribeAPI.Controllers
                              && asg.AsigMp.AsigMp_FechaEntrega <= FechaFinal
                        select new
                        {
-                           OT = asg.AsigMp.AsigMP_OrdenTrabajo,
+                           ID = Convert.ToInt32(asg.AsigMp_Id),
+                           OT = Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo),
                            Fecha = asg.AsigMp.AsigMp_FechaEntrega,
                            Usuario = asg.AsigMp.Usua_Id,
                            Usuario_Nombre = asg.AsigMp.Usua.Usua_Nombre,
@@ -446,7 +645,7 @@ namespace PlasticaribeAPI.Controllers
                            MateriaPrima = asg.Tinta_Id,
                            Nombre_MateriaPrima = asg.Tinta.Tinta_Nombre,
                            CantidadAsignada = asg.DtAsigTinta_Cantidad,
-                           Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
+                           Estado = Convert.ToString(asg.AsigMp.EstadoOT.Estado_Nombre),
                        };
 
             var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
@@ -455,7 +654,8 @@ namespace PlasticaribeAPI.Controllers
                                  && cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= FechaFinal
                            select new
                            {
-                               OT = cr.AsigMPxTinta.Tinta_Id,
+                               ID = Convert.ToInt32(cr.AsigMPxTinta_Id),
+                               OT = Convert.ToString(cr.AsigMPxTinta.Tinta_Id),
                                Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
                                Usuario = cr.AsigMPxTinta.Usua_Id,
                                Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
@@ -469,10 +669,61 @@ namespace PlasticaribeAPI.Controllers
                                MateriaPrima = cr.MatPri_Id,
                                Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
                                CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
-                               Estado = cr.Proceso.Proceso_Nombre,
+                               Estado = Convert.ToString(cr.Proceso.Proceso_Nombre),
                            };
+
+            var facturas = from fac in _context.Set<FacturaCompra_MateriaPrima>()
+                           where fac.Facco.Facco_Codigo == Convert.ToString(Ot)
+                                 && fac.Facco.Facco_FechaFactura >= FechaInicial
+                                 && fac.Facco.Facco_FechaFactura <= FechaFinal
+                                 && fac.Tinta_Id != 2001
+                           select new
+                           {
+                               ID = Convert.ToInt32(fac.Facco_Id),
+                               OT = Convert.ToString(fac.Facco.Facco_Codigo),
+                               Fecha = fac.Facco.Facco_FechaFactura,
+                               Usuario = fac.Facco.Usua_Id,
+                               Usuario_Nombre = fac.Facco.Usua.Usua_Nombre,
+                               Tinta = fac.Tinta_Id,
+                               NombreTinta = fac.Tinta.Tinta_Nombre,
+                               Cantidad = fac.FaccoMatPri_Cantidad,
+                               Presentacion = fac.UndMed_Id,
+                               PrecioTinta = fac.Tinta.Tinta_Precio,
+                               Tinta2 = fac.Tinta_Id,
+                               Nombre_Tinta2 = fac.Tinta.Tinta_Nombre,
+                               MateriaPrima = fac.Tinta.Tinta_Id,
+                               Nombre_MateriaPrima = fac.Tinta.Tinta_Nombre,
+                               CantidadAsignada = fac.FaccoMatPri_Cantidad,
+                               Estado = Convert.ToString(fac.Facco.TpDoc.TpDoc_Nombre),
+                           };
+
+            var remisiones = from rem in _context.Set<Remision_MateriaPrima>()
+                             where rem.Rem.Rem_Codigo == Convert.ToString(Ot)
+                                   && rem.Rem.Rem_Fecha >= FechaInicial
+                                   && rem.Rem.Rem_Fecha <= FechaFinal
+                                   && rem.Tinta_Id != 2001
+                             select new
+                             {
+                                 ID = Convert.ToInt32(rem.Rem_Id),
+                                 OT = Convert.ToString(rem.Rem.Rem_Codigo),
+                                 Fecha = rem.Rem.Rem_Fecha,
+                                 Usuario = rem.Rem.Usua_Id,
+                                 Usuario_Nombre = rem.Rem.Usua.Usua_Nombre,
+                                 Tinta = rem.Tinta_Id,
+                                 NombreTinta = rem.Tinta.Tinta_Nombre,
+                                 Cantidad = rem.RemiMatPri_Cantidad,
+                                 Presentacion = rem.UndMed_Id,
+                                 PrecioTinta = rem.Tinta.Tinta_Precio,
+                                 Tinta2 = rem.Tinta_Id,
+                                 Nombre_Tinta2 = rem.Tinta.Tinta_Nombre,
+                                 MateriaPrima = rem.Tinta.Tinta_Id,
+                                 Nombre_MateriaPrima = rem.Tinta.Tinta_Nombre,
+                                 CantidadAsignada = rem.RemiMatPri_Cantidad,
+                                 Estado = Convert.ToString(rem.Rem.TpDoc.TpDoc_Nombre),
+                             };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(asig.Concat(creacion));
+
+            return Ok(asig.Concat(creacion).Concat(facturas).Concat(remisiones));
         }
 
         /** Consulta por Estado y Fechas */
@@ -518,7 +769,8 @@ namespace PlasticaribeAPI.Controllers
                              && asg.Tinta_Id == nTinta
                        select new
                        {
-                           OT = asg.AsigMp.AsigMP_OrdenTrabajo,
+                           ID = Convert.ToInt32(asg.AsigMp_Id),
+                           OT = Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo),
                            Fecha = asg.AsigMp.AsigMp_FechaEntrega,
                            Usuario = asg.AsigMp.Usua_Id,
                            Usuario_Nombre = asg.AsigMp.Usua.Usua_Nombre,
@@ -532,7 +784,7 @@ namespace PlasticaribeAPI.Controllers
                            MateriaPrima = asg.Tinta_Id,
                            Nombre_MateriaPrima = asg.Tinta.Tinta_Nombre,
                            CantidadAsignada = asg.DtAsigTinta_Cantidad,
-                           Estado = asg.AsigMp.EstadoOT.Estado_Nombre,
+                           Estado = Convert.ToString(asg.AsigMp.EstadoOT.Estado_Nombre),
                        };
 
             var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
@@ -541,7 +793,8 @@ namespace PlasticaribeAPI.Controllers
                                  && cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= FechaFinal
                            select new
                            {
-                               OT = cr.AsigMPxTinta.Tinta_Id,
+                               ID = Convert.ToInt32(cr.AsigMPxTinta_Id),
+                               OT = Convert.ToString(cr.AsigMPxTinta.Tinta_Id),
                                Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
                                Usuario = cr.AsigMPxTinta.Usua_Id,
                                Usuario_Nombre = cr.AsigMPxTinta.Usua.Usua_Nombre,
@@ -555,10 +808,61 @@ namespace PlasticaribeAPI.Controllers
                                MateriaPrima = cr.MatPri_Id,
                                Nombre_MateriaPrima = cr.MatPri.MatPri_Nombre,
                                CantidadAsignada = cr.DetAsigMPxTinta_Cantidad,
-                               Estado = cr.Proceso.Proceso_Nombre,
+                               Estado = Convert.ToString(cr.Proceso.Proceso_Nombre),
                            };
+
+            var facturas = from fac in _context.Set<FacturaCompra_MateriaPrima>()
+                           where fac.Facco.Facco_FechaFactura >= FechaInicial
+                                 && fac.Facco.Facco_FechaFactura <= FechaFinal
+                                 && fac.Tinta_Id == nTinta
+                                 && fac.Tinta_Id != 2001
+                           select new
+                           {
+                               ID = Convert.ToInt32(fac.Facco_Id),
+                               OT = Convert.ToString(fac.Facco.Facco_Codigo),
+                               Fecha = fac.Facco.Facco_FechaFactura,
+                               Usuario = fac.Facco.Usua_Id,
+                               Usuario_Nombre = fac.Facco.Usua.Usua_Nombre,
+                               Tinta = fac.Tinta_Id,
+                               NombreTinta = fac.Tinta.Tinta_Nombre,
+                               Cantidad = fac.FaccoMatPri_Cantidad,
+                               Presentacion = fac.UndMed_Id,
+                               PrecioTinta = fac.Tinta.Tinta_Precio,
+                               Tinta2 = fac.Tinta_Id,
+                               Nombre_Tinta2 = fac.Tinta.Tinta_Nombre,
+                               MateriaPrima = fac.Tinta.Tinta_Id,
+                               Nombre_MateriaPrima = fac.Tinta.Tinta_Nombre,
+                               CantidadAsignada = fac.FaccoMatPri_Cantidad,
+                               Estado = Convert.ToString(fac.Facco.TpDoc.TpDoc_Nombre),
+                           };
+
+            var remisiones = from rem in _context.Set<Remision_MateriaPrima>()
+                             where rem.Rem.Rem_Fecha >= FechaInicial
+                                   && rem.Rem.Rem_Fecha <= FechaFinal
+                                   && rem.Tinta_Id == nTinta
+                                   && rem.Tinta_Id != 2001
+                             select new
+                             {
+                                 ID = Convert.ToInt32(rem.Rem_Id),
+                                 OT = Convert.ToString(rem.Rem.Rem_Codigo),
+                                 Fecha = rem.Rem.Rem_Fecha,
+                                 Usuario = rem.Rem.Usua_Id,
+                                 Usuario_Nombre = rem.Rem.Usua.Usua_Nombre,
+                                 Tinta = rem.Tinta_Id,
+                                 NombreTinta = rem.Tinta.Tinta_Nombre,
+                                 Cantidad = rem.RemiMatPri_Cantidad,
+                                 Presentacion = rem.UndMed_Id,
+                                 PrecioTinta = rem.Tinta.Tinta_Precio,
+                                 Tinta2 = rem.Tinta_Id,
+                                 Nombre_Tinta2 = rem.Tinta.Tinta_Nombre,
+                                 MateriaPrima = rem.Tinta.Tinta_Id,
+                                 Nombre_MateriaPrima = rem.Tinta.Tinta_Nombre,
+                                 CantidadAsignada = rem.RemiMatPri_Cantidad,
+                                 Estado = Convert.ToString(rem.Rem.TpDoc.TpDoc_Nombre),
+                             };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(asig.Concat(creacion));
+
+            return Ok(asig.Concat(creacion).Concat(facturas).Concat(remisiones));
         }
 
 
