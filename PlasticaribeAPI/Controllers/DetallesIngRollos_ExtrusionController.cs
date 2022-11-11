@@ -338,6 +338,26 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        //Eliminar Rollo del ingreso
+        [HttpDelete("EliminarRolloIngresados/{rollo}")]
+        public ActionResult EliminarRolloIngresados(int rollo)
+        {
+            var x = (from y in _context.Set<DetallesIngRollos_Extrusion>()
+                     where y.Rollo_Id == rollo
+                     orderby y.Rollo_Id descending
+                     select y).FirstOrDefault();
+
+            if (x == null)
+            {
+                return NotFound();
+            }
+
+            _context.DetallesIngRollos_Extrusion.Remove(x);
+            _context.SaveChanges();
+
+            return NoContent();
+        }
+
         private bool DetallesIngRollos_ExtrusionExists(int id)
         {
             return _context.DetallesIngRollos_Extrusion.Any(e => e.DtIngRollo_Id == id);
