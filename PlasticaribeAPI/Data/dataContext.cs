@@ -413,6 +413,20 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.Material).WithMany().HasForeignKey(erp => erp.Material_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Material 
             modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.Cono).WithMany().HasForeignKey(erp => erp.Cono_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Cono
 
+            //Relaciones Orden_Compra
+            //modelBuilder.Entity<Orden_Compra>().HasOne(erp => erp.Proveedor).WithMany().HasForeignKey(erp => erp.Prov_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Producto
+            //modelBuilder.Entity<Orden_Compra>().HasOne(erp => erp.TipoDoc).WithMany().HasForeignKey(erp => erp.TpDoc_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
+            //modelBuilder.Entity<Orden_Compra>().HasOne(erp => erp.Estado).WithMany().HasForeignKey(erp => erp.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
+            //modelBuilder.Entity<Orden_Compra>().HasOne(erp => erp.Usua).WithMany().HasForeignKey(erp => erp.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
+
+
+            //Relaciones Detalle_OrdenCompra
+           //modelBuilder.Entity<Detalle_OrdenCompra>().HasOne(erp => erp.Orden_Compra).WithMany().HasForeignKey(erp => erp.Oc_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Producto
+           //modelBuilder.Entity<Detalle_OrdenCompra>().HasOne(erp => erp.MatPrima).WithMany().HasForeignKey(erp => erp.MatPri_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
+           //modelBuilder.Entity<Detalle_OrdenCompra>().HasOne(erp => erp.Tinta).WithMany().HasForeignKey(erp => erp.Tinta_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
+           //modelBuilder.Entity<Detalle_OrdenCompra>().HasOne(erp => erp.BOPP).WithMany().HasForeignKey(erp => erp.BOPP_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
+           //modelBuilder.Entity<Detalle_OrdenCompra>().HasOne(erp => erp.UndMed).WithMany().HasForeignKey(erp => erp.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
+
 
         }
 
@@ -560,6 +574,10 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.Cono> Conos { get; set; }
 
         public DbSet<PlasticaribeAPI.Models.Rollo_Desecho> Rollos_Desechos { get; set; }
+
+        //public DbSet<PlasticaribeAPI.Models.Orden_Compra> Ordenes_Compras { get; set; }
+
+        //public DbSet<PlasticaribeAPI.Models.Detalle_OrdenCompra> Detalles_OrdenesCompras { get; set; }
 
     }
 

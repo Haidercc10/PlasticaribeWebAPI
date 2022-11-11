@@ -82,7 +82,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
             return Ok(rollo_Desecho);
@@ -112,7 +113,8 @@ namespace PlasticaribeAPI.Controllers
                                                                  Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                                  Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                                  Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                                 Turno_Id = Convert.ToString(r.Turno_Id)
+                                                                 Turno_Id = Convert.ToString(r.Turno_Id),
+                                                                 Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                              }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -149,7 +151,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -186,7 +189,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -223,7 +227,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -236,6 +241,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(rollo_Desecho);
             }
         }
+        
 
         //Material
         [HttpGet("RollosxMaterial/{material}")]
@@ -260,7 +266,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -273,8 +280,6 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(rollo_Desecho);
             }
         }
-
-       
 
         //Fecha, OT
         [HttpGet("RollosxFechaxOT/{fecha}/{OT}")]
@@ -300,7 +305,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -338,7 +344,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -377,7 +384,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -415,7 +423,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -455,7 +464,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
                 return Ok(rollo_Desecho);
@@ -486,7 +496,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
                 return Ok(rollo_Desecho);
@@ -518,7 +529,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -552,7 +564,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
                 return Ok(rollo_Desecho);
@@ -584,7 +597,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
             return Ok(rollo_Desecho);
@@ -619,7 +633,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
             return Ok(rollo_Desecho);
@@ -653,7 +668,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
             return Ok(rollo_Desecho);
@@ -687,7 +703,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
             return Ok(rollo_Desecho);
@@ -722,7 +739,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
             return Ok(rollo_Desecho);
@@ -756,12 +774,106 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id)
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
             return Ok(rollo_Desecho);
 
         }
+
+
+        //Fechas, rollo, Item, OT
+        [HttpGet("RollosxFechasxRolloXItemxOT/{fecha1}/{fecha2}/{rollo}/{item}/{OT}")]
+        public ActionResult GetRollo35(DateTime fecha1, DateTime fecha2, long rollo, int item, long OT)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_FechaIngreso >= fecha1
+                                                               && r.Rollo_FechaIngreso <= fecha2
+                                                               && r.Prod_Id == item
+                                                               && r.Rollo_OT == OT
+                                                               && r.Rollo_Id == rollo)
+                                                         .Select(r => new
+                                                         {
+                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
+                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
+                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
+                                                             Prod_Id = Convert.ToString(r.Prod_Id),
+                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
+                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
+                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
+                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
+                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
+                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
+                                                             Material_Id = Convert.ToString(r.Material_Id),
+                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
+                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
+                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
+                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                         }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
+            return Ok(rollo_Desecho);
+
+        }
+
+        //Fecha, Rollo
+        [HttpGet("RollosxOTxRollo/{OT}/{rollo}")]
+        public ActionResult GetRollo33(long OT, long rollo)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_Id == rollo &&
+                                                               r.Rollo_OT == OT)
+                                                         .Select(r => new
+                                                         {
+                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
+                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
+                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
+                                                             Prod_Id = Convert.ToString(r.Prod_Id),
+                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
+                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
+                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
+                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
+                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
+                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
+                                                             Material_Id = Convert.ToString(r.Material_Id),
+                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
+                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
+                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
+                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                         }).ToList();
+
+           
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+                return Ok(rollo_Desecho);               
+            
+        }
+
+        /*
+        //Item
+        [HttpGet("DataConsolidadaxItem/{Item}")]
+        public ActionResult GetRollo36(int Item)
+        {
+
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var dataConsolidada = _context.Rollos_Desechos.Where(ro => ro.Prod_Id == Item)
+                                                        .GroupBy(ext => new { ext.Rollo_OT, ext.Rollo_Cliente, ext.Prod_Id, ext.Prod.Prod_Nombre })
+                                                        .Select(ro => new
+                                                         {
+                                                             ro.Key.Rollo_OT,
+                                                             ro.Key.Rollo_Cliente,
+                                                             ro.Key.Prod_Id,
+                                                             ro.Key.Prod_Nombre,
+                                                             SumaOrdenes = ro.Sum(e => e.Rollo_OT),
+                                                             SumaPesoNeto = ro.Sum(e => e.Rollo_Id)
+                                                         }).ToList();
+                                                        
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
+            return Ok(dataConsolidada);
+        }*/
 
 
 
