@@ -42,6 +42,23 @@ namespace PlasticaribeAPI.Controllers
             return ordenesCompras_FacturasCompras;
         }
 
+
+        [HttpGet("InfoOrdenCompraxFactura/{OC}")]
+        public ActionResult GetFacturaxOC(long OC)
+        {
+
+            var FacCompras = _context.OrdenesCompras_FacturasCompras.Where(o => o.Oc_Id == OC).Select(of => new { of.Facco_Id });
+
+
+            if (FacCompras == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(FacCompras);
+
+        }
+
         // PUT: api/OrdenesCompras_FacturasCompras/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

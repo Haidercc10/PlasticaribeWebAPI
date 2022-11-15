@@ -98,6 +98,31 @@ namespace PlasticaribeAPI.Controllers
             return detalle_OrdenCompra;
         }
 
+        [HttpGet("InfoOrdenCompraxId/{OC}")]
+        public  ActionResult GetDetalle_OrdenCompraxID(long OC)
+        {
+            var detalle_OrdenCompra =  _context.Detalles_OrdenesCompras.Where(d => d.Oc_Id == OC).Select(doc => new
+            {
+                doc.Oc_Id,
+                doc.MatPri_Id,
+                doc.MatPrima.MatPri_Nombre,
+                doc.Tinta_Id,
+                doc.Tinta.Tinta_Nombre,
+                doc.BOPP_Id,
+                doc.BOPP.BoppGen_Nombre,
+                doc.Doc_CantidadPedida,
+                doc.UndMed_Id
+                
+            }).ToList();
+
+            if (detalle_OrdenCompra == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(detalle_OrdenCompra);
+        }
+
         // PUT: api/Detalle_OrdenCompra/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
