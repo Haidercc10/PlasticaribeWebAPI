@@ -50,6 +50,20 @@ namespace PlasticaribeAPI.Controllers
             return proveedor;
         }
 
+        //
+        [HttpGet("getProveedorLike/{nombre}")]
+        public ActionResult getProveedorLike(string nombre)
+        {
+            var con = _context.Proveedores
+                .Where(x => x.Prov_Nombre.StartsWith(nombre) || Convert.ToString(x.Prov_Id).StartsWith(nombre))
+                .Select(x => new
+                {
+                    x.Prov_Id,
+                    x.Prov_Nombre,
+                });
+            return Ok(con);
+        }
+
         // PUT: api/Proveedor/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

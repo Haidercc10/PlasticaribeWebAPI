@@ -59,12 +59,18 @@ namespace PlasticaribeAPI.Controllers
                       where cr.AsigMPxTinta_Id == id
                       select new
                       {
+                          Tinta_Creada = cr.AsigMPxTinta.Tinta_Id,
+                          Nombre_TintaCreada = cr.AsigMPxTinta.Tinta.Tinta_Nombre,
+                          Cantidad_Creada = cr.AsigMPxTinta.AsigMPxTinta_Cantidad,
                           cr.MatPri_Id,
                           cr.MatPri.MatPri_Nombre,
                           cr.Tinta_Id,
                           cr.TintasDAMPxT.Tinta_Nombre,
                           cr.DetAsigMPxTinta_Cantidad,
                           cr.UndMed_Id,
+                          cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
+                          cr.AsigMPxTinta.AsigMPxTinta_Observacion,
+                          cr.AsigMPxTinta.Usua.Usua_Nombre
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);

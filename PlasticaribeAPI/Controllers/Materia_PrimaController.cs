@@ -846,6 +846,71 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        //Consulta que traerá la materia prima, tintas, bopp
+        [HttpGet("getMpTintaBopp")]
+        public ActionResult getMpTintaBopp()
+        {
+            var materiaPrima = from mp in _context.Set<Materia_Prima>()
+                               select new
+                               {
+                                   Id = mp.MatPri_Id,
+                                   Nombre = mp.MatPri_Nombre
+                               };
+
+            var tinta = from tt in _context.Set<Tinta>()
+                        select new
+                        {
+                            Id = tt.Tinta_Id,
+                            Nombre = tt.Tinta_Nombre
+                        };
+
+            var bopp = from bp in _context.Set<BOPP>()
+                       select new
+                       {
+                           Id = bp.BOPP_Serial,
+                           Nombre = bp.BOPP_Nombre
+                       };
+
+            return Ok(materiaPrima.Concat(tinta).Concat(bopp));
+        }
+
+        //Consulta que traerá la materia prima, tintas, bopp
+        [HttpGet("getInfoMpTintaBopp/{id}")]
+        public ActionResult getInfoMpTintaBopp(long id)
+        {
+            var materiaPrima = from mp in _context.Set<Materia_Prima>()
+                               where mp.MatPri_Id == id
+                               select new
+                               {
+                                   Id = mp.MatPri_Id,
+                                   Nombre = mp.MatPri_Nombre,
+                                   UndMedida = mp.UndMed_Id,
+                                   Precio = mp.MatPri_Precio
+                               };
+
+            var tinta = from tt in _context.Set<Tinta>()
+                        where tt.Tinta_Id == id    
+                        select new
+                        {
+                            Id = tt.Tinta_Id,
+                            Nombre = tt.Tinta_Nombre,
+                            UndMedida = tt.UndMed_Id,
+                            Precio = tt.Tinta_Precio
+                        };
+
+            var bopp = from bp in _context.Set<BOPP>()
+                       where bp.BOPP_Serial == Convert.ToInt64(id)
+                       select new
+                       {
+                           Id = bp.BOPP_Serial,
+                           Nombre = bp.BOPP_Nombre,
+                           UndMedida = bp.UndMed_Kg,
+                           Precio = bp.BOPP_Precio
+                       };
+
+            return Ok(materiaPrima.Concat(tinta).Concat(bopp));
+        }
+
         // PUT: api/Materia_Prima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
