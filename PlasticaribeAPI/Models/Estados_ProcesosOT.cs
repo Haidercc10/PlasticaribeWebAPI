@@ -125,5 +125,9 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(MAX)")]
         public string? EstProcOT_Cliente { get; set; }
 
+
+        [Precision(18, 2)]
+        public decimal EstProcOT_CantMatPrimaAsignada { get; set; }
+
     }
 }
