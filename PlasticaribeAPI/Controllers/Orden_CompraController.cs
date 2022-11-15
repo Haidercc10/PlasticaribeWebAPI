@@ -28,6 +28,14 @@ namespace PlasticaribeAPI.Controllers
             return await _context.Ordenes_Compras.ToListAsync();
         }
 
+        //FUNCION QUE CONSULTARÁ Y RETURNARÁ EL ULTIMO ID CREADO 
+        [HttpGet("GetUltimoId")]
+        public ActionResult GetUltimoId()
+        {
+            var con = _context.Ordenes_Compras.OrderBy(x => x.Oc_Id).Select(x => x.Oc_Id).Last();
+            return Ok(con);
+        }
+
         // GET: api/Orden_Compra/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Orden_Compra>> GetOrden_Compra(long id)

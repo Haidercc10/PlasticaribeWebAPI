@@ -854,21 +854,24 @@ namespace PlasticaribeAPI.Controllers
                                select new
                                {
                                    Id = mp.MatPri_Id,
-                                   Nombre = mp.MatPri_Nombre
+                                   Nombre = mp.MatPri_Nombre,
+                                   Categoria = mp.CatMP_Id,
                                };
 
             var tinta = from tt in _context.Set<Tinta>()
                         select new
                         {
                             Id = tt.Tinta_Id,
-                            Nombre = tt.Tinta_Nombre
+                            Nombre = tt.Tinta_Nombre,
+                            Categoria = tt.CatMP_Id,
                         };
 
-            var bopp = from bp in _context.Set<BOPP>()
+            var bopp = from bp in _context.Set<Bopp_Generico>()
                        select new
                        {
-                           Id = bp.BOPP_Serial,
-                           Nombre = bp.BOPP_Nombre
+                           Id = bp.BoppGen_Id,
+                           Nombre = bp.BoppGen_Nombre,
+                           Categoria = 6,
                        };
 
             return Ok(materiaPrima.Concat(tinta).Concat(bopp));
@@ -884,28 +887,31 @@ namespace PlasticaribeAPI.Controllers
                                {
                                    Id = mp.MatPri_Id,
                                    Nombre = mp.MatPri_Nombre,
-                                   UndMedida = mp.UndMed_Id,
-                                   Precio = mp.MatPri_Precio
+                                   UndMedida = Convert.ToString(mp.UndMed_Id),
+                                   Precio = mp.MatPri_Precio,
+                                   Categoria = mp.CatMP_Id,
                                };
 
             var tinta = from tt in _context.Set<Tinta>()
-                        where tt.Tinta_Id == id    
+                        where tt.Tinta_Id == id
                         select new
                         {
                             Id = tt.Tinta_Id,
                             Nombre = tt.Tinta_Nombre,
-                            UndMedida = tt.UndMed_Id,
-                            Precio = tt.Tinta_Precio
+                            UndMedida = Convert.ToString(tt.UndMed_Id),
+                            Precio = tt.Tinta_Precio,
+                            Categoria = tt.CatMP_Id,
                         };
 
-            var bopp = from bp in _context.Set<BOPP>()
-                       where bp.BOPP_Serial == Convert.ToInt64(id)
+            var bopp = from bp in _context.Set<Bopp_Generico>()
+                       where bp.BoppGen_Id == id
                        select new
                        {
-                           Id = bp.BOPP_Serial,
-                           Nombre = bp.BOPP_Nombre,
-                           UndMedida = bp.UndMed_Kg,
-                           Precio = bp.BOPP_Precio
+                           Id = bp.BoppGen_Id,
+                           Nombre = bp.BoppGen_Nombre,
+                           UndMedida = Convert.ToString("Kg"),
+                           Precio = Convert.ToDecimal(0),
+                           Categoria = 6,
                        };
 
             return Ok(materiaPrima.Concat(tinta).Concat(bopp));
