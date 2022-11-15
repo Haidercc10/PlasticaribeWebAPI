@@ -50,6 +50,19 @@ namespace PlasticaribeAPI.Controllers
             return producto;
         }
 
+
+        [HttpGet("consultaNombreItem/{letras}")]
+        public ActionResult GetItem(string letras)
+        {
+            var productos = _context.Productos.Where(p => p.Prod_Nombre.StartsWith(letras))
+                                              .Select(p => new {p.Prod_Id,  p.Prod_Nombre })
+                                              .Take(30)
+                                              .ToList();
+                            
+            return Ok(productos);
+        }
+
+
         [HttpGet("IdProducto/{Prod_Id}")]
         public ActionResult<Producto> GetNombreCliente(int Prod_Id)
         {
@@ -85,6 +98,7 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+
         [HttpGet("consultaGeneral")]
         public ActionResult Get()
         {
@@ -103,13 +117,11 @@ namespace PlasticaribeAPI.Controllers
         {
             var productos = from p in _context.Set<Producto>()
                             where p.Prod_Id == Id
-                            select new
-                            {
-                                p.Prod_Id,
-                                p.Prod_Nombre,
-                            };
+                            select p.Prod_Nombre;
+
             return Ok(productos);
         }
+
 
         [HttpGet("ConsultaProductoExistencia/{Prod_Id}")]
         public ActionResult<Producto> GetProductoPresentacion(int Prod_Id)
@@ -141,6 +153,7 @@ namespace PlasticaribeAPI.Controllers
             }
 
         }
+
 
        /* [HttpGet("ConsultaProductoExistencia/{Prod_Id}")]
         public ActionResult<Producto> GetProductoPresentacion(int Prod_Id)
