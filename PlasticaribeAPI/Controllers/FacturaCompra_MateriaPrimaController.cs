@@ -68,6 +68,24 @@ namespace PlasticaribeAPI.Controllers
             return Ok(factCompra);
         }
 
+
+        //Consulta por el Id de la factura (Select Campos)
+        [HttpGet("ObtenerFacturaCompra_MatPrima/{Facco_Id}")]
+        public ActionResult FacturaMP(long Facco_Id)
+        {
+            var factCompra = _context.FacturasCompras_MateriaPrimas.Where(f => f.Facco_Id == Facco_Id).Select(fco => new
+            {
+                fco.Facco_Id,
+                fco.MatPri_Id,
+                fco.Tinta_Id,
+                fco.FaccoMatPri_Cantidad,
+                fco.UndMed_Id
+
+            }).ToList();
+
+            return Ok(factCompra);
+        }
+
         [HttpGet("MPFechaActual/{MatPri_Id}")]
         public ActionResult materiaPrimaIdFechaActual(long MatPri_Id, DateTime Facco_FechaFactura)
         {
