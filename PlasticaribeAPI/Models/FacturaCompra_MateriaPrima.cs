@@ -22,6 +22,9 @@ namespace PlasticaribeAPI.Models
         public long Tinta_Id { get; set; } //Llave primaria compuesta Tinta
         public Tinta? Tinta { get; set; } //Propiedad de navegación Tinta
 
+        public long Bopp_Id { get; set; }
+        public Bopp_Generico? Bopp_Generico { get; set; }
+
 
         [Precision(14, 2)]
         public decimal FaccoMatPri_Cantidad { get; set; }

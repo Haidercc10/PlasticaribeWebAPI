@@ -113,7 +113,9 @@ namespace PlasticaribeAPI.Controllers
                 doc.BOPP.BoppGen_Nombre,
                 doc.Doc_CantidadPedida,
                 doc.UndMed_Id,
-                doc.Doc_PrecioUnitario
+                doc.Doc_PrecioUnitario,
+                doc.Orden_Compra.Prov_Id,
+                doc.Orden_Compra.Proveedor.Prov_Nombre,
                 
             }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.

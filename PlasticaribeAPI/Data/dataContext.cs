@@ -130,7 +130,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<FacturaCompra_MateriaPrima>().HasOne(fcco => fcco.Facco).WithMany().HasForeignKey(facco => facco.Facco_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<FacturaCompra_MateriaPrima>().HasOne(fcco => fcco.Tinta).WithMany().HasForeignKey(facco => facco.Tinta_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<FacturaCompra_MateriaPrima>().HasOne(fcco => fcco.UndMed).WithMany().HasForeignKey(facco => facco.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
-
+            modelBuilder.Entity<FacturaCompra_MateriaPrima>().HasOne(fcco => fcco.Bopp_Generico).WithMany().HasForeignKey(facco => facco.Bopp_Id).OnDelete(DeleteBehavior.Restrict);
 
             //Relaciones Asignaciones_MatPrima
             modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Estado).WithMany().HasForeignKey(asigmp => asigmp.Estado_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado
@@ -165,6 +165,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Remision_MateriaPrima>().HasOne(fcco => fcco.Rem).WithMany().HasForeignKey(facco => facco.Rem_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<Remision_MateriaPrima>().HasOne(fcco => fcco.Tinta).WithMany().HasForeignKey(facco => facco.Tinta_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<Remision_MateriaPrima>().HasOne(rmp => rmp.UndMed).WithMany().HasForeignKey(rmp => rmp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
+            modelBuilder.Entity<Remision_MateriaPrima>().HasOne(rem => rem.Bopp).WithMany().HasForeignKey(rem => rem.Bopp_Id).OnDelete(DeleteBehavior.Restrict);
 
             //Relaciones Remisiones_FacturasCompras
             modelBuilder.Entity<Remision_FacturaCompra>().HasKey(remfc => new { remfc.Facco_Id, remfc.Rem_Id}); //Llave Compuesta de facturas compras y remisiones 
@@ -427,7 +428,6 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<OrdenesCompras_FacturasCompras>().HasKey(x => new { x.Oc_Id, x.Facco_Id }); //Llave Compuesta Provedor_MateriaPrima 
             modelBuilder.Entity<OrdenesCompras_FacturasCompras>().HasOne<Orden_Compra>(x => x.Orden_Compra).WithMany(x => x.OrdenFactura).HasForeignKey(x => x.Oc_Id);
             modelBuilder.Entity<OrdenesCompras_FacturasCompras>().HasOne<Factura_Compra>(x => x.Facco).WithMany(x => x.OrdenFactura).HasForeignKey(x => x.Facco_Id);
-
 
         }
 

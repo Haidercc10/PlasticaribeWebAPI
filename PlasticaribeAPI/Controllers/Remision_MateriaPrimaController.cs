@@ -263,6 +263,28 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("GetRemisionSinFactura/{codigo}")]
+        public ActionResult GetRemisionSinFactura(string codigo)
+        {
+            var con = _context.Remisiones_FacturasCompras.Where(x => x.Remi.Rem_Codigo == codigo).Select(x => x.Rem_Id).ToList();
+            var remision = from rem in _context.Set<Remision>()
+                            where !con.Contains(rem.Rem_Id) && rem.Rem_Codigo == codigo
+                            select new
+                            {
+                                rem.Rem_Id,
+                                rem.Rem_Codigo,
+                                rem.Rem_Fecha,
+                                rem.Prov_Id,
+                                rem.Prov.Prov_Nombre,
+                                rem.Usua_Id,
+                                rem.Usua.Usua_Nombre,
+                                rem.TpDoc_Id,
+                                rem.TpDoc.TpDoc_Nombre,
+                                rem.Rem_PrecioEstimado,
+                            };
+            return Ok(remision);
+        }
+
         // PUT: api/Remision_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
