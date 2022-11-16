@@ -32,6 +32,13 @@ namespace PlasticaribeAPI.Controllers
             return await _context.Remisiones.ToListAsync();
         }
 
+        [HttpGet("UltimoIdRemision")]
+        public ActionResult UltimoIdRemision()
+        {
+            var con = _context.Remisiones.OrderByDescending(x => x.Rem_Id).Select(x => x.Rem_Id).ToList();
+            return Ok(con);
+        }
+
         // GET: api/Remision/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Remision>> GetRemision(int id)

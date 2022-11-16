@@ -32,6 +32,13 @@ namespace PlasticaribeAPI.Controllers
             return await _context.Facturas_Compras.ToListAsync();
         }
 
+        [HttpGet("UltimoIdFactura")]
+        public ActionResult UltimoIdFactura()
+        {
+            var con = _context.Facturas_Compras.OrderByDescending(x => x.Facco_Id).Select(x => x.Facco_Id).First();
+            return Ok(con);
+        }
+
         // GET: api/Factura_Compra/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Factura_Compra>> GetFactura_Compra(long id)

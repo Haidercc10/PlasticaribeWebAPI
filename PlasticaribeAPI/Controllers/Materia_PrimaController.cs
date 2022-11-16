@@ -851,6 +851,7 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult getMpTintaBopp()
         {
             var materiaPrima = from mp in _context.Set<Materia_Prima>()
+                               where mp.MatPri_Id != 84
                                select new
                                {
                                    Id = mp.MatPri_Id,
@@ -859,6 +860,7 @@ namespace PlasticaribeAPI.Controllers
                                };
 
             var tinta = from tt in _context.Set<Tinta>()
+                        where tt.Tinta_Id != 2001
                         select new
                         {
                             Id = tt.Tinta_Id,
@@ -867,6 +869,7 @@ namespace PlasticaribeAPI.Controllers
                         };
 
             var bopp = from bp in _context.Set<Bopp_Generico>()
+                       where bp.BoppGen_Id != 1
                        select new
                        {
                            Id = bp.BoppGen_Id,

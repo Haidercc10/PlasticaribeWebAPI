@@ -101,6 +101,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("InfoOrdenCompraxId/{OC}")]
         public  ActionResult GetDetalle_OrdenCompraxID(long OC)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var detalle_OrdenCompra =  _context.Detalles_OrdenesCompras.Where(d => d.Oc_Id == OC).Select(doc => new
             {
                 doc.Oc_Id,
@@ -111,9 +112,11 @@ namespace PlasticaribeAPI.Controllers
                 doc.BOPP_Id,
                 doc.BOPP.BoppGen_Nombre,
                 doc.Doc_CantidadPedida,
-                doc.UndMed_Id
+                doc.UndMed_Id,
+                doc.Doc_PrecioUnitario
                 
             }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             if (detalle_OrdenCompra == null)
             {
