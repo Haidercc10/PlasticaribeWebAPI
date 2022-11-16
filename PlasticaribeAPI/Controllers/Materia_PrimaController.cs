@@ -920,6 +920,55 @@ namespace PlasticaribeAPI.Controllers
             return Ok(materiaPrima.Concat(tinta).Concat(bopp));
         }
 
+        [HttpGet("getMatPrimasYTintas")]
+        public ActionResult getMpTinta()
+        {
+            var materiaPrima = from mp in _context.Set<Materia_Prima>()
+                               where mp.MatPri_Id != 84
+                               select new
+                               {
+                                   Id = mp.MatPri_Id,
+                                   Nombre = mp.MatPri_Nombre,
+                                   Medida = mp.UndMed_Id
+
+                               };
+
+            var tinta = from tt in _context.Set<Tinta>()
+                        where tt.Tinta_Id != 2001 
+                        select new
+                        {
+                            Id = tt.Tinta_Id,
+                            Nombre = tt.Tinta_Nombre,
+                            Medida = tt.UndMed_Id
+                        };
+
+            return Ok(materiaPrima.Concat(tinta));
+        }
+
+        [HttpGet("getMatPrimasYTintasxId/{Ident}")]
+        public ActionResult getMpTintaxId(long Ident)
+        {
+            var materiaPrima = from mp in _context.Set<Materia_Prima>()
+                               where mp.MatPri_Id != 84 && mp.MatPri_Id == Ident
+                               select new
+                               {
+                                   Id = mp.MatPri_Id,
+                                   Nombre = mp.MatPri_Nombre,
+                                   Medida = mp.UndMed_Id
+                               };
+
+            var tinta = from tt in _context.Set<Tinta>()
+                        where tt.Tinta_Id != 2001 && tt.Tinta_Id == Ident
+                        select new
+                        {
+                            Id = tt.Tinta_Id,
+                            Nombre = tt.Tinta_Nombre,
+                            Medida = tt.UndMed_Id
+                        };
+
+            return Ok(materiaPrima.Concat(tinta));
+        }
+
         // PUT: api/Materia_Prima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
