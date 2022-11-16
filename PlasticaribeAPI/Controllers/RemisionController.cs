@@ -35,7 +35,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("UltimoIdRemision")]
         public ActionResult UltimoIdRemision()
         {
-            var con = _context.Remisiones.OrderByDescending(x => x.Rem_Id).Select(x => x.Rem_Id).ToList();
+            var con = _context.Remisiones.OrderByDescending(x => x.Rem_Id).Select(x => x.Rem_Id).First();
             return Ok(con);
         }
 

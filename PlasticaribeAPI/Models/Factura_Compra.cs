@@ -19,7 +19,7 @@ namespace PlasticaribeAPI.Models
         public DateTime Facco_FechaVencimiento { get; set; }
 
         [Column(TypeName = "varchar(10)")]
-        public string Facco_Hora { get; set; } //hora en que se creó la factura
+        public string? Facco_Hora { get; set; } //hora en que se creó la factura
 
         public long Prov_Id { get; set; } //Llave foranea de proveedores
         public Proveedor? Prov { get; set; } //Propiedad de navegación proveedores 

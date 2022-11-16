@@ -16,7 +16,7 @@ namespace PlasticaribeAPI.Models
         public DateTime Rem_Fecha { get; set; }
 
         [Column(TypeName = "varchar(10)")]
-        public string Rem_Hora { get; set; } //Codigo Externo
+        public string? Rem_Hora { get; set; } //Codigo Externo
 
         [Precision(18,2)]
         public decimal? Rem_PrecioEstimado { get; set; }

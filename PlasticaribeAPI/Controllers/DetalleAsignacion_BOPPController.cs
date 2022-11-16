@@ -552,7 +552,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpPut("{id}/{ot}/{bopp}")]
-        public async Task<IActionResult> PutDetalleAsignacion_BOPP(long id, long ot, int bopp, DetalleAsignacion_BOPP detalleAsignacion_BOPP)
+        public IActionResult PutDetalleAsignacion_BOPP(long id, long ot, int bopp, DetalleAsignacion_BOPP detalleAsignacion_BOPP)
         {
             if (id != detalleAsignacion_BOPP.AsigBOPP_Id && ot != detalleAsignacion_BOPP.DtAsigBOPP_OrdenTrabajo && bopp != detalleAsignacion_BOPP.BOPP_Id)
             {
