@@ -47,7 +47,73 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetFacturaxOC(long OC)
         {
 
-            var FacCompras = _context.OrdenesCompras_FacturasCompras.Where(o => o.Oc_Id == OC).Select(of => new { of.Facco_Id });
+            var FacCompras = _context.OrdenesCompras_FacturasCompras.Where(o => o.Oc_Id == OC).Select(of => new { of.Facco_Id }).ToList();
+
+
+            if (FacCompras == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(FacCompras);
+
+        }
+
+        /** Consulta facturas asociadas a OC, Luego carga las Mat. Primas que están en dichas facturas. Forma 1 */
+        [HttpGet("FacturasAsociadasAOC/{OC}")]
+        public ActionResult GetFactura(long OC)
+        {
+            /** Selecciona las facturas de OrdenesCompras_FacturasCompras. */
+            var Facturas = _context.OrdenesCompras_FacturasCompras.Where(o => o.Oc_Id == OC).Select(of => of.Facco_Id);
+            var Ordenes = _context.Detalles_OrdenesCompras.Where(o => o.Oc_Id == OC).Select(of => of.MatPri_Id);
+            var Ordenes2 = _context.Detalles_OrdenesCompras.Where(o => o.Oc_Id == OC).Select(of => of.Tinta_Id);
+
+            /** Selecciona las mat. primas y tintas de facturas compras materias primas. */
+            var FacCompras = _context.FacturasCompras_MateriaPrimas.Where(f => Facturas.Contains(f.Facco_Id) && 
+                                                                          Ordenes.Contains(f.MatPri_Id) &&
+                                                                          Ordenes2.Contains(f.Tinta_Id))
+                                                                   .GroupBy(agr => new { agr.MatPri_Id, agr.Tinta_Id, agr.UndMed_Id})
+                                                                   .Select(fco => new
+            {
+                fco.Key.MatPri_Id,
+                fco.Key.Tinta_Id,
+                Suma = fco.Sum(a=>a.FaccoMatPri_Cantidad),
+                fco.Key.UndMed_Id
+            }).ToList();
+
+
+            if (FacCompras == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(FacCompras);
+        }
+
+        /** Consulta facturas asociadas a OC, Luego carga las Mat. Primas que están en dichas facturas. Forma 2  */
+        [HttpGet("FacturasComprasAsociadasAOC/{OC}")]
+        public ActionResult GetFactura2(long OC)
+        {
+            var facxOrden = from ocfc2 in _context.Set<OrdenesCompras_FacturasCompras>()
+                         where ocfc2.Oc_Id == OC
+                         select ocfc2.Facco_Id;
+
+            var FacCompras = from ocfc in _context.Set<OrdenesCompras_FacturasCompras>()
+                             from fac in _context.Set<FacturaCompra_MateriaPrima>()
+                             from doc in _context.Set<Detalle_OrdenCompra>()
+                             where facxOrden.Contains(ocfc.Facco_Id) &&
+                             doc.MatPri_Id == fac.MatPri_Id &&
+                             doc.Tinta_Id == fac.Tinta_Id &&
+                             ocfc.Facco_Id == fac.Facco_Id &&
+                             ocfc.Oc_Id == doc.Oc_Id
+                             group fac by new { fac.MatPri_Id, fac.Tinta_Id, fac.UndMed_Id } into fc
+                             select new
+                             { 
+                                 fc.Key.MatPri_Id,
+                                 fc.Key.Tinta_Id,
+                                 Suma = fc.Sum(a => a.FaccoMatPri_Cantidad),
+                                 fc.Key.UndMed_Id
+                             };
 
 
             if (FacCompras == null)
