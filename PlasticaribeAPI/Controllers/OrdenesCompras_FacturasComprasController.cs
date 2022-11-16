@@ -59,6 +59,7 @@ namespace PlasticaribeAPI.Controllers
 
         }
 
+        /** Consulta facturas asociadas a OC, Luego carga las Mat. Primas que están en dichas facturas. Forma 1 */
         [HttpGet("FacturasAsociadasAOC/{OC}")]
         public ActionResult GetFactura(long OC)
         {
@@ -89,7 +90,7 @@ namespace PlasticaribeAPI.Controllers
             return Ok(FacCompras);
         }
 
-
+        /** Consulta facturas asociadas a OC, Luego carga las Mat. Primas que están en dichas facturas. Forma 2  */
         [HttpGet("FacturasComprasAsociadasAOC/{OC}")]
         public ActionResult GetFactura2(long OC)
         {
