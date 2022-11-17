@@ -21,7 +21,7 @@ namespace PlasticaribeAPI.Models
         public long Usua_Id { get; set; } //Llave foranea de usuario que registra la devolucion
         public Usuario? Usua { get; set; } //Propiedad de navegación usuario que registra la devolucion
 
-        public IList<DetalleDevolucion_MateriaPrima>? DetDevMatPri { get; set; }
+        //public IList<DetalleDevolucion_MateriaPrima>? DetDevMatPri { get; set; }
 
     }
 }

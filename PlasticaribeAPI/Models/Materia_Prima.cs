@@ -48,7 +48,7 @@ namespace PlasticaribeAPI.Models
 
         public IList<DetalleRecuperado_MateriaPrima>? DetRecMatPri { get; set; }
 
-        public IList<DetalleDevolucion_MateriaPrima>? DetDevMatPri { get; set; }
+        //public IList<DetalleDevolucion_MateriaPrima>? DetDevMatPri { get; set; }
 
         //Lista requerida para relación tintas - materias primas
         public IList<Tinta_MateriaPrima>? TintaMatPri { get; set; }
