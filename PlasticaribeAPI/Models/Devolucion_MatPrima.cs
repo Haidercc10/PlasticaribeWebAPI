@@ -14,6 +14,9 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "Date")]
         public DateTime DevMatPri_Fecha { get; set; }
+        
+        [Column(TypeName = "varchar(10)")]
+        public string? DevMatPri_Hora { get; set; }
 
         [Column(TypeName = "text")]
         public string? DevMatPri_Motivo { get; set; }
