@@ -15,8 +15,9 @@ namespace PlasticaribeAPI.Models
         public long MatPri_Id { get; set; }
         public Materia_Prima? MatPri { get; set; }
 
-        public long Tinta_Id { get; set; }
+        public long? Tinta_Id { get; set; }
         public Tinta? Tinta { get; set; }
+
 
         [Precision(14, 2)]
         public decimal DtDevMatPri_CantidadDevuelta { get; set; }
