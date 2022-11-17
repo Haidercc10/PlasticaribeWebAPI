@@ -67,27 +67,33 @@ namespace PlasticaribeAPI.Controllers
             var Facturas = _context.OrdenesCompras_FacturasCompras.Where(o => o.Oc_Id == OC).Select(of => of.Facco_Id);
             var Ordenes = _context.Detalles_OrdenesCompras.Where(o => o.Oc_Id == OC).Select(of => of.MatPri_Id);
             var Ordenes2 = _context.Detalles_OrdenesCompras.Where(o => o.Oc_Id == OC).Select(of => of.Tinta_Id);
+            var Ordenes3 = _context.Detalles_OrdenesCompras.Where(o => o.Oc_Id == OC).Select(of => of.BOPP_Id);
 
             /** Selecciona las mat. primas y tintas de facturas compras materias primas. */
             var FacCompras = _context.FacturasCompras_MateriaPrimas.Where(f => Facturas.Contains(f.Facco_Id) && 
                                                                           Ordenes.Contains(f.MatPri_Id) &&
-                                                                          Ordenes2.Contains(f.Tinta_Id))
-                                                                   .GroupBy(agr => new { agr.MatPri_Id, agr.Tinta_Id, agr.UndMed_Id})
-                                                                   .Select(fco => new
-            {
-                fco.Key.MatPri_Id,
-                fco.Key.Tinta_Id,
-                Suma = fco.Sum(a=>a.FaccoMatPri_Cantidad),
-                fco.Key.UndMed_Id
-            }).ToList();
-
-
+                                                                          Ordenes2.Contains(f.Tinta_Id) && 
+                                                                          Ordenes3.Contains(f.Bopp_Id)
+                                                                          ).GroupBy(agr => new {
+                                                                                               agr.MatPri_Id, 
+                                                                                               agr.Tinta_Id, 
+                                                                                               agr.UndMed_Id, 
+                                                                                               agr.Bopp_Id
+                                                                          }).Select(fco => new {
+                                                                                        fco.Key.MatPri_Id,
+                                                                                        fco.Key.Tinta_Id,
+                                                                                        fco.Key.Bopp_Id,
+                                                                                        Suma = fco.Sum(a=>a.FaccoMatPri_Cantidad),
+                                                                                        fco.Key.UndMed_Id
+                                                                         }).ToList();
             if (FacCompras == null)
             {
                 return NotFound();
+            } 
+            else
+            {
+                return Ok(FacCompras);
             }
-
-            return Ok(FacCompras);
         }
 
         /** Consulta facturas asociadas a OC, Luego carga las Mat. Primas que están en dichas facturas. Forma 2  */
@@ -104,13 +110,15 @@ namespace PlasticaribeAPI.Controllers
                              where facxOrden.Contains(ocfc.Facco_Id) &&
                              doc.MatPri_Id == fac.MatPri_Id &&
                              doc.Tinta_Id == fac.Tinta_Id &&
+                             doc.BOPP_Id == fac.Bopp_Id &&
                              ocfc.Facco_Id == fac.Facco_Id &&
                              ocfc.Oc_Id == doc.Oc_Id
-                             group fac by new { fac.MatPri_Id, fac.Tinta_Id, fac.UndMed_Id } into fc
+                             group fac by new { fac.MatPri_Id, fac.Tinta_Id, fac.UndMed_Id, fac.Bopp_Id } into fc
                              select new
                              { 
                                  fc.Key.MatPri_Id,
                                  fc.Key.Tinta_Id,
+                                 fc.Key.Bopp_Id,
                                  Suma = fc.Sum(a => a.FaccoMatPri_Cantidad),
                                  fc.Key.UndMed_Id
                              };
