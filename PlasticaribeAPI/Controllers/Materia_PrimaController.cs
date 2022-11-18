@@ -893,6 +893,7 @@ namespace PlasticaribeAPI.Controllers
                                    UndMedida = Convert.ToString(mp.UndMed_Id),
                                    Precio = mp.MatPri_Precio,
                                    Categoria = mp.CatMP_Id,
+                                   Stock = Convert.ToDecimal(mp.MatPri_Stock),
                                };
 
             var tinta = from tt in _context.Set<Tinta>()
@@ -904,6 +905,7 @@ namespace PlasticaribeAPI.Controllers
                             UndMedida = Convert.ToString(tt.UndMed_Id),
                             Precio = tt.Tinta_Precio,
                             Categoria = tt.CatMP_Id,
+                            Stock = Convert.ToDecimal(tt.Tinta_Stock),
                         };
 
             var bopp = from bp in _context.Set<Bopp_Generico>()
@@ -915,6 +917,7 @@ namespace PlasticaribeAPI.Controllers
                            UndMedida = Convert.ToString("Kg"),
                            Precio = Convert.ToDecimal(0),
                            Categoria = 6,
+                           Stock = Convert.ToDecimal(0),
                        };
 
             return Ok(materiaPrima.Concat(tinta).Concat(bopp));
