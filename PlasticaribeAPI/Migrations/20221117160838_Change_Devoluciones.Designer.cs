@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,10 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20221117160838_Change_Devoluciones")]
+    partial class Change_Devoluciones
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -766,9 +768,6 @@ namespace PlasticaribeAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("DtDevMatPri_Codigo"), 1L, 1);
 
-                    b.Property<long?>("BOPP_Id")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("DevMatPri_Id")
                         .HasColumnType("bigint");
 
@@ -791,8 +790,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("varchar(10)");
 
                     b.HasKey("DtDevMatPri_Codigo");
-
-                    b.HasIndex("BOPP_Id");
 
                     b.HasIndex("DevMatPri_Id");
 
@@ -4188,11 +4185,6 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.DetalleDevolucion_MateriaPrima", b =>
                 {
-                    b.HasOne("PlasticaribeAPI.Models.BOPP", "Bopp")
-                        .WithMany()
-                        .HasForeignKey("BOPP_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.Devolucion_MatPrima", "DevMatPri")
                         .WithMany()
                         .HasForeignKey("DevMatPri_Id")
@@ -4221,8 +4213,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("UndMed_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Bopp");
 
                     b.Navigation("DevMatPri");
 

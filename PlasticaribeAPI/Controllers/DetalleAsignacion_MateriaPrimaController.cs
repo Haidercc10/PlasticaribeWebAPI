@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
@@ -530,6 +525,9 @@ namespace PlasticaribeAPI.Controllers
                         select new
                         {
                             //Materia Prima
+                            MatPri_Id = Convert.ToInt16(y.Key.MatPri_Id),
+                            Tinta_Id = Convert.ToInt16(2001),
+                            Bopp_Id = Convert.ToInt16(0),
                             MateriaPrima = y.Key.MatPri_Id,
                             NombreMP = y.Key.MatPri_Nombre,
                             CantMP = y.Sum(Asgmp => Asgmp.DtAsigMp_Cantidad),
@@ -554,6 +552,9 @@ namespace PlasticaribeAPI.Controllers
                             select new
                             {
                                 //Tintas
+                                MatPri_Id = Convert.ToInt16(84),
+                                Tinta_Id = Convert.ToInt16(y.Key.Tinta_Id),
+                                Bopp_Id = Convert.ToInt16(0),
                                 MateriaPrima = y.Key.Tinta_Id,
                                 NombreMP = y.Key.Tinta_Nombre,
                                 CantMP = y.Sum(AsgTinta => AsgTinta.DtAsigTinta_Cantidad),
@@ -578,6 +579,9 @@ namespace PlasticaribeAPI.Controllers
                            select new
                            {
                                //BOPP
+                               MatPri_Id = Convert.ToInt16(84),
+                               Tinta_Id = Convert.ToInt16(2001),
+                               Bopp_Id = Convert.ToInt16(y.Key.BOPP_Id),
                                MateriaPrima = y.Key.BOPP_Id,
                                NombreMP = y.Key.BOPP_Nombre,
                                CantMP = y.Sum(AsgBopp => AsgBopp.DtAsigBOPP_Cantidad),
@@ -591,7 +595,6 @@ namespace PlasticaribeAPI.Controllers
 
             return Ok(con);
         }
-
 
         /** CONSULTA PARA REPORTE DE RECUPERADO */
         [HttpGet("ReporteRecuperadoMP/{FechaInicial}/{FechaFinal}/{MatPri}/{estado}")]
