@@ -30,6 +30,12 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(100)")]
         public String Empresa_Correo { get; set; }
         public int Empresa_COdigoPostal { get; set; }
+
+        [Column(TypeName = "Date")]
+        public DateTime? Empresa_Fecha { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string? Empresa_Hora { get; set; }
     }
 }
 

@@ -22,5 +22,11 @@ namespace PlasticaribeAPI.Models
         public long? SedeCli_CodPostal { get; set; } //Colocar NUllable.
         public long Cli_Id { get; set; }
         public Clientes? Cli { get; set; }
+
+        [Column(TypeName = "Date")]
+        public DateTime? SedeCli_Fecha { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string? SedeCli_Hora { get; set; }
     }
 }

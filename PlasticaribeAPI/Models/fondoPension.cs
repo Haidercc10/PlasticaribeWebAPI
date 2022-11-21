@@ -34,6 +34,12 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(50)")]
         public String fPen_Ciudad { get; set; }
+
+        [Column(TypeName = "Date")]
+        public DateTime? fPen_Fecha { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string? fPen_Hora { get; set; }
     }
 
 }

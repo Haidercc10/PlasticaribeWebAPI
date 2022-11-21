@@ -32,6 +32,9 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "Date")]
         public DateTime Ot_FechaCreacion { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string? Ot_Hora { get; set; }
         public int Estado_Id { get; set; }
         public Estado? Estado { get; set; }
         public long Usua_Id { get; set; }

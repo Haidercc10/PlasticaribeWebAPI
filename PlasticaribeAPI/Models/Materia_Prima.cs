@@ -33,7 +33,13 @@ namespace PlasticaribeAPI.Models
         public int TpBod_Id { get; set; } //Llave foranea Tipo_Bodega
         public Tipo_Bodega? TpBod { get; set; } //Propiedad de Navegación Tipos_Bodegas
 
-        
+        [Column(TypeName = "Date")]
+        public DateTime? MatPri_Fecha { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string? MatPri_Hora { get; set; }
+
+
         //Lista requerida para relación proveedor-materiaprima
         public IList<Provedor_MateriaPrima>? ProvMatPri { get; set; }
 

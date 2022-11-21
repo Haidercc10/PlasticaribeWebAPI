@@ -12,6 +12,9 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "date")]
         public DateTime PreEntRollo_Fecha { get; set; }
 
+        [Column(TypeName = "varchar(10)")]
+        public string? PreEntRollo_Hora { get; set; }
+
 
         [Column(TypeName = "text")]
         public string? PreEntRollo_Observacion { get; set; }

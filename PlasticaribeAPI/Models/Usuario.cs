@@ -64,5 +64,11 @@ namespace PlasticaribeAPI.Models
         //Llave fondo pensiones agregada
         public long fPen_Id { get; set; }
         public fondoPension? fPen { get; set; }
+
+        [Column(TypeName = "Date")]
+        public DateTime? Usua_Fecha { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string? Usua_Hora { get; set; }
     }
 }

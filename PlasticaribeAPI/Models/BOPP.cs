@@ -44,6 +44,9 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "Date")]
         public DateTime BOPP_FechaIngreso { get; set; }
 
+        [Column(TypeName = "varchar(10)")]
+        public string? BOPP_Hora { get; set; }
+
 
         [Precision(18, 2)]
         public decimal BOPP_Ancho { get; set; }

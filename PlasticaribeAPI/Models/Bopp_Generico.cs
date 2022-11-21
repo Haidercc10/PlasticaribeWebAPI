@@ -20,5 +20,12 @@ namespace PlasticaribeAPI.Models
 
         [Precision(18, 2)]
         public long BoppGen_Micra { get; set; }
+
+
+        [Column(TypeName = "Date")]
+        public DateTime? BoppGen_FechaIngreso { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string? BoppGen_Hora { get; set; }
     }
 }

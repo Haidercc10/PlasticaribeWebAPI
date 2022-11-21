@@ -15,6 +15,9 @@ namespace PlasticaribeAPI.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime PedExt_FechaCreacion { get; set; }
 
+        [Column(TypeName = "varchar(10)")]
+        public string? PedExt_HoraCreacion { get; set; }
+
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime PedExt_FechaEntrega { get; set; }

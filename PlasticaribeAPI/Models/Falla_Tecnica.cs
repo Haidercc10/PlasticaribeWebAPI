@@ -21,5 +21,11 @@ namespace PlasticaribeAPI.Models
         public int TipoFalla_Id { get; set; }
         public Tipo_FallaTecnica? TipoFallaTecnica { get; set; }
 
+        [Column(TypeName = "Date")]
+        public DateTime? Fecha_Creacion { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string? Hora_Creacion { get; set; }
+
     }
 }

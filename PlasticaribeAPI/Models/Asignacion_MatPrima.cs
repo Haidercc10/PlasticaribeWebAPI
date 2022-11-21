@@ -13,6 +13,9 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "Date")]
         public DateTime AsigMp_FechaEntrega { get; set; }
 
+        [Column(TypeName = "varchar(10)")]
+        public string? AsigMp_Hora { get; set; }
+
         [Column(TypeName = "text")]
         public string? AsigMp_Observacion { get; set; }
 

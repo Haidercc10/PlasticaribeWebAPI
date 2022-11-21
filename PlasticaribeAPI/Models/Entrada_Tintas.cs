@@ -11,6 +11,9 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "Date")]
         public DateTime entTinta_FechaEntrada { get; set; }
 
+        [Column(TypeName = "varchar(10)")]
+        public string? entTinta_Hora { get; set; }
+
         public long Usua_Id { get; set; }
         public Usuario? Usua { get; set; }
 

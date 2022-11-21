@@ -20,6 +20,9 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "date")]
         public DateTime DevProdFact_Fecha { get; set; }
 
+        [Column(TypeName = "varchar(10)")]
+        public string? DevProdFact_Hora { get; set; }
+
 
         [Column(TypeName = "text")]
         public string? DevProdFact_Observacion { get; set; }

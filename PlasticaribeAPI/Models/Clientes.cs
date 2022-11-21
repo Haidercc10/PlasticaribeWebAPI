@@ -50,5 +50,11 @@ namespace PlasticaribeAPI.Models
         //Lista requerida para relación clientes-productos
         public IList<Cliente_Producto>? CliProd { get; set; } /**POSIBLE: CLIENTEOT_ITEMS */
 
+        [Column(TypeName = "date")]
+        public DateTime? Cli_Fecha { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string? Cli_Hora { get; set; }
+
     }
 }

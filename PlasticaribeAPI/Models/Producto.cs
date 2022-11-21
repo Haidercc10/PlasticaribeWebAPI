@@ -92,6 +92,12 @@ namespace PlasticaribeAPI.Models
         [Precision(14, 2)]
         public int? Prod_CantBolsasBulto { get; set; }
 
+        [Column(TypeName = "Date")]
+        public DateTime? Prod_Fecha { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string? Prod_Hora { get; set; }
+
         public IList<DetallesAsignacionProducto_FacturaVenta>? DtAsigProd_FVTA { get; set; }
 
         public IList<DetalleDevolucion_ProductoFacturado>? DtDevProd_Fact { get; set; }

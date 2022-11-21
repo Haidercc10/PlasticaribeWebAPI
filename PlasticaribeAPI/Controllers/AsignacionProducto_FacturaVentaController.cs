@@ -52,7 +52,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("CodigoFactura/{factura}")]
         public ActionResult Get(string factura)
         {
-            var con = _context.AsignacionesProductos_FacturasVentas.Where(x => x.FacturaVta_Id == factura).ToList();
+            var con = _context.AsignacionesProductos_FacturasVentas.Where(x => x.FacturaVta_Id == factura).First();
             return Ok(con);
         }
 

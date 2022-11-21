@@ -43,6 +43,13 @@ namespace PlasticaribeAPI.Models
         [Precision(14,2)]
         public decimal Tinta_InvInicial { get; set; }
 
+
+        [Column(TypeName = "Date")]
+        public DateTime? Tinta_FechaIngreso { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string? Tinta_Hora { get; set; }
+
         public IList<Tinta_MateriaPrima>? TintaMatPri { get; set; }
 
         //Lista requerida para relación detalles asignacion_matpri - tintas

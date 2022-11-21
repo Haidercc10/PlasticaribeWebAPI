@@ -9,8 +9,10 @@ namespace PlasticaribeAPI.Models
         public long EntRolloProd_Id { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime EntRolloProd_Fecha { get; set; }    
+        public DateTime EntRolloProd_Fecha { get; set; }
 
+        [Column(TypeName = "varchar(10)")]
+        public string? EntRolloProd_Hora { get; set; }
 
         [Column(TypeName = "text")]
         public string? EntRolloProd_Observacion { get; set; }

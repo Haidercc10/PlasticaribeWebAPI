@@ -54,6 +54,12 @@ namespace PlasticaribeAPI.Models
         [Precision(18,2)]
         public decimal ExProd_CantMinima { get; set; }
 
+        [Column(TypeName = "Date")]
+        public DateTime? ExProd_Fecha { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string? ExProd_Hora { get; set; }
+
         //[Precision(14, 2)]
         //public int ExProd_CantBolsasPaquete { get; set; }
 

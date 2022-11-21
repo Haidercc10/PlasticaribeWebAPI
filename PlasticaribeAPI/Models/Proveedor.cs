@@ -35,6 +35,12 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(MAX)")]
         public string? Prov_Email { get; set; }
 
+        [Column(TypeName = "Date")]
+        public DateTime? Prov_Fecha { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string? Prod_Hora { get; set; }
+
         //Lista requerida para relación proveedor-materiaprima
         public IList<Provedor_MateriaPrima>? ProvMatPri { get; set; } 
     }
