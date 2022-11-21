@@ -201,6 +201,9 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(ddmp => ddmp.Tinta).WithMany().HasForeignKey(damp => damp.Tinta_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(ddmp => ddmp.UndMed).WithMany().HasForeignKey(damp => damp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(ddmp => ddmp.Proceso).WithMany().HasForeignKey(damp => damp.Proceso_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
+            modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(erp => erp.Bopp).WithMany().HasForeignKey(erp => erp.BOPP_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+                                                                                                                                                                       //modelBuilder.Entity<DetalleDevolucion_ProductoFacturado>().HasOne(erp => erp.Bopp).WithMany().HasForeignKey(erp => erp.BOPP_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
 
             //Relaciones TINTAS
             modelBuilder.Entity<Tinta>().HasOne(tin => tin.UndMed).WithMany().HasForeignKey(tint => tint.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
@@ -374,6 +377,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetalleDevolucion_ProductoFacturado>().HasOne<Devolucion_ProductoFacturado>(dapfv => dapfv.DevolucionProdFact).WithMany(remmp => remmp.DtDevProd_Fact).HasForeignKey(dapfv => dapfv.DevProdFact_Id);
             modelBuilder.Entity<DetalleDevolucion_ProductoFacturado>().HasOne<Producto>(dapfv => dapfv.Prod).WithMany(remmp => remmp.DtDevProd_Fact).HasForeignKey(dapfv => dapfv.Prod_Id);
             modelBuilder.Entity<DetalleDevolucion_ProductoFacturado>().HasOne(erp => erp.UndMedida).WithMany().HasForeignKey(erp => erp.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+           
 
             //Relaciones PreEntrega_RolloDespacho
             modelBuilder.Entity<PreEntrega_RolloDespacho>().HasOne(erp => erp.Usuario).WithMany().HasForeignKey(erp => erp.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);

@@ -18,6 +18,9 @@ namespace PlasticaribeAPI.Models
         public long? Tinta_Id { get; set; }
         public Tinta? Tinta { get; set; }
 
+        public long? BOPP_Id { get; set; }
+        public BOPP? Bopp { get; set; } 
+
 
         [Precision(14, 2)]
         public decimal DtDevMatPri_CantidadDevuelta { get; set; }
