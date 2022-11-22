@@ -89,7 +89,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 });
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
@@ -135,7 +139,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -181,7 +189,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -227,7 +239,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -273,7 +289,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -319,7 +339,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -365,7 +389,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -412,7 +440,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -459,7 +491,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -506,7 +542,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -552,7 +592,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -599,7 +643,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -646,7 +694,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -692,7 +744,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -738,7 +794,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -784,7 +844,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -833,7 +897,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
 
                 })
                 .ToList();
@@ -882,7 +950,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -930,7 +1002,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -978,7 +1054,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1027,7 +1107,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1074,7 +1158,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1120,7 +1208,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1167,7 +1259,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1214,7 +1310,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1261,7 +1361,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1308,7 +1412,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1355,7 +1463,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1402,7 +1514,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1449,7 +1565,11 @@ namespace PlasticaribeAPI.Controllers
                     estOt.Cli_Id,
                     estOt.Clientes.Cli_Nombre,
                     estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1506,7 +1626,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -1555,7 +1679,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -1604,7 +1732,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -1653,7 +1785,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -1702,7 +1838,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -1751,7 +1891,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -1800,7 +1944,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -1849,7 +1997,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -1897,7 +2049,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -1945,7 +2101,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -1993,7 +2153,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -2041,7 +2205,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -2089,7 +2257,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -2137,7 +2309,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -2185,7 +2361,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -2233,7 +2413,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -2281,7 +2465,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -2329,7 +2517,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -2379,7 +2571,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -2428,7 +2624,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -2476,7 +2676,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -2524,7 +2728,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -2572,7 +2780,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -2620,7 +2832,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -2668,7 +2884,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -2715,7 +2935,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -2765,7 +2989,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
@@ -2808,7 +3036,11 @@ namespace PlasticaribeAPI.Controllers
                         estOt.Cli_Id,
                         estOt.Clientes.Cli_Nombre,
                         estOt.Prod_Id,
-                        estOt.Producto.Prod_Nombre
+                        estOt.Producto.Prod_Nombre,
+                        estOt.EstProcOT_CantProdFacturada,
+                        estOt.EstProcOT_CantProdIngresada,
+                        estOt.EstProcOT_CantMatPrimaAsignada,
+                        estOt.EstProcOT_Cliente,
                     })
                     .ToList();
                 return Ok(con);
