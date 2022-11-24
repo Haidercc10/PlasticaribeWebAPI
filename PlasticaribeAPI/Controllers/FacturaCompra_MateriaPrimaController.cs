@@ -50,6 +50,7 @@ namespace PlasticaribeAPI.Controllers
             return facturaCompra_MateriaPrima;
         }
 
+        /*********************************************** CONSULTAS PARA LOS MOVIMIENTOS DE MATERIA PRIMAS ****************************************************************/
         //Consulta por el Id de la factura
         [HttpGet("facturaCompra/{Facco_Id}")]
         public ActionResult FacturaId(long Facco_Id)
@@ -67,7 +68,6 @@ namespace PlasticaribeAPI.Controllers
 
             return Ok(factCompra);
         }
-
 
         //Consulta por el Id de la factura (Select Campos)
         [HttpGet("ObtenerFacturaCompra_MatPrima/{Facco_Id}")]
@@ -249,6 +249,165 @@ namespace PlasticaribeAPI.Controllers
                 .ToList();
             return Ok(con);
         }
+        /************************************************************************************************************************************************/
+
+
+        /************************************************ CONSULTAS PARA ENTRADAS DE MATERIAS PRIMAS ***************************************************/
+        [HttpGet("GetEntradaFacRem_Fechas/{fecha1}/{fecha2}")]
+        public ActionResult GetEntradaFacRem_Fechas(DateTime fecha1, DateTime fecha2)
+        {
+            var conFac = _context.Facturas_Compras.Where(x => x.Facco_FechaFactura >= fecha1 && x.Facco_FechaFactura <= fecha2).
+                Select(fac => new
+                {
+                    Id = Convert.ToInt64(fac.Facco_Id),
+                    Codigo = fac.Facco_Codigo,
+                    Fecha = fac.Facco_FechaFactura,
+                    Valor = Convert.ToDecimal(fac.Facco_ValorTotal),
+                    Observacion = fac.Facco_Observacion,
+                    UsuarioId = fac.Usua_Id,
+                    Usuario = fac.Usua.Usua_Nombre,
+                    Proveedor_Id = fac.Prov_Id,
+                    Proveedor = fac.Prov.Prov_Nombre,
+                    Tipo_Doc = "FCO",
+                    Nombre_Doc = "Factura",
+                }).ToList();
+
+            var conRem = _context.Remisiones.Where(x => x.Rem_Fecha >= fecha1 && x.Rem_Fecha <= fecha2).
+                Select(rem => new
+                {
+                    Id = Convert.ToInt64(rem.Rem_Id),
+                    Codigo = rem.Rem_Codigo,
+                    Fecha = rem.Rem_Fecha,
+                    Valor = Convert.ToDecimal(rem.Rem_PrecioEstimado),
+                    Observacion = rem.Rem_Observacion,
+                    UsuarioId = rem.Usua_Id,
+                    Usuario = rem.Usua.Usua_Nombre,
+                    Proveedor_Id = rem.Prov_Id,
+                    Proveedor = rem.Prov.Prov_Nombre,
+                    Tipo_Doc = "REM",
+                    Nombre_Doc = "Remision",
+                }).ToList();
+            return Ok(conFac.Concat(conRem));
+        }
+
+        [HttpGet("GetEntradaFacRem_Codigo/{codigo}")]
+        public ActionResult GetEntradaFacRem_Codigo(string codigo)
+        {
+            var conFac = _context.Facturas_Compras.Where(x => x.Facco_Codigo == codigo).
+                Select(fac => new
+                {
+                    Id = Convert.ToInt64(fac.Facco_Id),
+                    Codigo = fac.Facco_Codigo,
+                    Fecha = fac.Facco_FechaFactura,
+                    Valor = Convert.ToDecimal(fac.Facco_ValorTotal),
+                    Observacion = fac.Facco_Observacion,
+                    UsuarioId = fac.Usua_Id,
+                    Usuario = fac.Usua.Usua_Nombre,
+                    Proveedor_Id = fac.Prov_Id,
+                    Proveedor = fac.Prov.Prov_Nombre,
+                    Tipo_Doc = "FCO",
+                    Nombre_Doc = "Factura",
+                }).ToList();
+
+            var conRem = _context.Remisiones.Where(x => x.Rem_Codigo == codigo).
+                Select(rem => new
+                {
+                    Id = Convert.ToInt64(rem.Rem_Id),
+                    Codigo = rem.Rem_Codigo,
+                    Fecha = rem.Rem_Fecha,
+                    Valor = Convert.ToDecimal(rem.Rem_PrecioEstimado),
+                    Observacion = rem.Rem_Observacion,
+                    UsuarioId = rem.Usua_Id,
+                    Usuario = rem.Usua.Usua_Nombre,
+                    Proveedor_Id = rem.Prov_Id,
+                    Proveedor = rem.Prov.Prov_Nombre,
+                    Tipo_Doc = "REM",
+                    Nombre_Doc = "Remision",
+                }).ToList();
+            return Ok(conFac.Concat(conRem));
+        }
+
+        [HttpGet("GetEntradaFacRem_Proveedor/{proveedor}")]
+        public ActionResult GetEntradaFacRem_Proveedor(long proveedor)
+        {
+            var conFac = _context.Facturas_Compras.Where(x => x.Prov_Id == proveedor).
+                Select(fac => new
+                {
+                    Id = Convert.ToInt64(fac.Facco_Id),
+                    Codigo = fac.Facco_Codigo,
+                    Fecha = fac.Facco_FechaFactura,
+                    Valor = Convert.ToDecimal(fac.Facco_ValorTotal),
+                    Observacion = fac.Facco_Observacion,
+                    UsuarioId = fac.Usua_Id,
+                    Usuario = fac.Usua.Usua_Nombre,
+                    Proveedor_Id = fac.Prov_Id,
+                    Proveedor = fac.Prov.Prov_Nombre,
+                    Tipo_Doc = "FCO",
+                    Nombre_Doc = "Factura",
+                }).ToList();
+
+            var conRem = _context.Remisiones.Where(x => x.Prov_Id == proveedor).
+                Select(rem => new
+                {
+                    Id = Convert.ToInt64(rem.Rem_Id),
+                    Codigo = rem.Rem_Codigo,
+                    Fecha = rem.Rem_Fecha,
+                    Valor = Convert.ToDecimal(rem.Rem_PrecioEstimado),
+                    Observacion = rem.Rem_Observacion,
+                    UsuarioId = rem.Usua_Id,
+                    Usuario = rem.Usua.Usua_Nombre,
+                    Proveedor_Id = rem.Prov_Id,
+                    Proveedor = rem.Prov.Prov_Nombre,
+                    Tipo_Doc = "REM",
+                    Nombre_Doc = "Remision",
+                }).ToList();
+            return Ok(conFac.Concat(conRem));
+        }
+
+        [HttpGet("GetEntradaFacRem_FechasTipoDocProveedor/{fecha1}/{fecha2}/{tipoDoc}/{proveedor}")]
+        public ActionResult GetEntradaFacRem_Proveedor(DateTime fecha1, DateTime fecha2, string tipoDoc, long proveedor)
+        {
+            var conFac = _context.Facturas_Compras.Where(fac => fac.Prov_Id == proveedor
+                               && fac.Facco_FechaFactura >= fecha1
+                               && fac.Facco_FechaFactura <= fecha2
+                               && tipoDoc == "FCO").
+                Select(fac => new
+                {
+                    Id = Convert.ToInt64(fac.Facco_Id),
+                    Codigo = fac.Facco_Codigo,
+                    Fecha = fac.Facco_FechaFactura,
+                    Valor = Convert.ToDecimal(fac.Facco_ValorTotal),
+                    Observacion = fac.Facco_Observacion,
+                    UsuarioId = fac.Usua_Id,
+                    Usuario = fac.Usua.Usua_Nombre,
+                    Proveedor_Id = fac.Prov_Id,
+                    Proveedor = fac.Prov.Prov_Nombre,
+                    Tipo_Doc = "FCO",
+                    Nombre_Doc = "Factura",
+                }).ToList();
+
+            var conRem = _context.Remisiones.Where(rem => rem.Prov_Id == proveedor
+                               && rem.Rem_Fecha >= fecha1
+                               && rem.Rem_Fecha <= fecha2
+                               && tipoDoc == "REM").
+                Select(rem => new
+                {
+                    Id = Convert.ToInt64(rem.Rem_Id),
+                    Codigo = rem.Rem_Codigo,
+                    Fecha = rem.Rem_Fecha,
+                    Valor = Convert.ToDecimal(rem.Rem_PrecioEstimado),
+                    Observacion = rem.Rem_Observacion,
+                    UsuarioId = rem.Usua_Id,
+                    Usuario = rem.Usua.Usua_Nombre,
+                    Proveedor_Id = rem.Prov_Id,
+                    Proveedor = rem.Prov.Prov_Nombre,
+                    Tipo_Doc = "REM",
+                    Nombre_Doc = "Remision",
+                }).ToList();
+            return Ok(conFac.Concat(conRem));
+        }
+        /************************************************************************************************************************************************/
+
 
         [HttpGet("pdfMovimientos/{codigo}")]
         public ActionResult Get (string codigo)

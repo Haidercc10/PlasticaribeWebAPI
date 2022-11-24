@@ -972,6 +972,37 @@ namespace PlasticaribeAPI.Controllers
             return Ok(materiaPrima.Concat(tinta));
         }
 
+        [HttpGet("GetMateriaPrima_LikeNombre/{nombre}")]
+        public ActionResult GetMateriaPrima_LikeNombre(string nombre)
+        {
+            var mp = from matPri in _context.Set<Materia_Prima>()
+                     where matPri.MatPri_Nombre.StartsWith(nombre)
+                           || matPri.MatPri_Nombre.EndsWith(nombre)
+                     select new
+                     {
+                         Id = matPri.MatPri_Id, 
+                         Nombre = matPri.MatPri_Nombre,
+                     };
+            var tinta = from t in _context.Set<Tinta>()
+                        where t.Tinta_Nombre.StartsWith(nombre)
+                              || t.Tinta_Nombre.EndsWith(nombre)
+                        select new
+                        {
+                            Id = t.Tinta_Id,
+                            Nombre = t.Tinta_Nombre,
+                        };
+            var bopp = from bp in _context.Set<BOPP>()
+                       where bp.BOPP_Nombre.StartsWith(nombre)
+                             || bp.BOPP_Nombre.EndsWith(nombre)
+                       select new
+                       {
+                           Id = bp.BOPP_Id,
+                           Nombre = bp.BOPP_Nombre,
+                       };
+
+            return Ok(mp.Concat(tinta).Concat(bopp));
+        }
+
         // PUT: api/Materia_Prima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
