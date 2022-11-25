@@ -270,13 +270,12 @@ namespace PlasticaribeAPI.Controllers
             if (x == null)
             {
                 return NoContent();
-            }else
-            {
+            }
                 _context.DetallesEntradasRollos_Productos.Remove(x);
                 _context.SaveChanges();
 
                 return NoContent();
-            }
+            
         }
 
         private bool DetalleEntradaRollo_ProductoExists(long id)

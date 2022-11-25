@@ -322,13 +322,13 @@ namespace PlasticaribeAPI.Controllers
             {
                 return NoContent();
             }
-            else
-            {
+           
+            
                 _context.DetallesPreEntrega_RollosDespacho.Remove(x);
                 _context.SaveChanges();
 
                 return NoContent();
-            }
+            
         }
 
         private bool DetallePreEntrega_RolloDespachoExists(long id)
