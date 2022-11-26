@@ -83,7 +83,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
             return Ok(rollo_Desecho);
@@ -114,7 +116,9 @@ namespace PlasticaribeAPI.Controllers
                                                                  Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                                  Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                                  Turno_Id = Convert.ToString(r.Turno_Id),
-                                                                 Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                                 Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                                 Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                                 Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                              }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -152,7 +156,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -190,7 +196,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -228,7 +236,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -266,7 +276,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -306,7 +318,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -345,7 +359,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -384,7 +400,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -422,7 +440,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
                 return Ok(rollo_Desecho);
@@ -454,7 +474,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
                 return Ok(rollo_Desecho);
@@ -487,7 +509,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -522,7 +546,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
                 return Ok(rollo_Desecho);
@@ -555,7 +581,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 
 
@@ -592,7 +620,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
             return Ok(rollo_Desecho);
@@ -625,7 +655,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
             return Ok(rollo_Desecho);
@@ -660,7 +692,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
             return Ok(rollo_Desecho);
@@ -695,7 +729,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
             return Ok(rollo_Desecho);
@@ -731,7 +767,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
             return Ok(rollo_Desecho);
@@ -770,7 +808,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
@@ -807,7 +847,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
@@ -844,7 +886,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
@@ -881,7 +925,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
@@ -917,7 +963,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
@@ -952,7 +1000,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
@@ -988,7 +1038,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
@@ -1023,7 +1075,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -1064,7 +1118,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -1105,7 +1161,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -1145,7 +1203,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -1185,7 +1245,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 
 
@@ -1220,7 +1282,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 
 
@@ -1255,7 +1319,9 @@ namespace PlasticaribeAPI.Controllers
                                                              Rollo_Operario = Convert.ToString(r.Rollo_Operario),
                                                              Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
