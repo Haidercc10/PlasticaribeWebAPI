@@ -242,13 +242,12 @@ namespace PlasticaribeAPI.Controllers
             }
         }
         
-
-        //Material
-        [HttpGet("RollosxMaterial/{material}")]
-        public ActionResult GetRollo7(int material)
+        //Proceso
+        [HttpGet("RollosxProceso/{proceso}")]
+        public ActionResult GetRollo7(string proceso)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Material_Id == material)
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Proceso_Id == proceso)
                                                          .Select(r => new
                                                          {
                                                              Rollo_OT = Convert.ToString(r.Rollo_OT),
@@ -280,6 +279,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(rollo_Desecho);
             }
         }
+
 
         //Fecha, OT
         [HttpGet("RollosxFechaxOT/{fecha}/{OT}")]
@@ -359,7 +359,6 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-
         //Fecha, item
         [HttpGet("RollosxFechaxItem/{fecha}/{item}")]
         public ActionResult GetRollo35(DateTime fecha, int item)
@@ -398,48 +397,6 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(rollo_Desecho);
             }
         }
-
-        //Fecha, Material
-        [HttpGet("RollosxMaterial/{fecha}/{material}")]
-        public ActionResult GetRollo36(DateTime fecha, int material)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Material_Id == material &&
-                                                               r.Rollo_FechaIngreso == fecha)
-                                                         .Select(r => new
-                                                         {
-                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
-                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
-                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
-                                                             Prod_Id = Convert.ToString(r.Prod_Id),
-                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
-                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
-                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
-                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
-                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
-                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
-                                                             Material_Id = Convert.ToString(r.Material_Id),
-                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
-                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
-                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
-                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
-                                                         }).ToList();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-
-            if (rollo_Desecho == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(rollo_Desecho);
-            }
-        }
-
-       
-
 
         //Fechas
         [HttpGet("RollosxFechas/{fecha1}/{fecha2}")]
@@ -572,14 +529,14 @@ namespace PlasticaribeAPI.Controllers
             
         }
 
-        //Fechas, Material
-        [HttpGet("RollosxFechasxMaterial/{fecha1}/{fecha2}/{material}")]
-        public ActionResult GetRollo16(DateTime fecha1, DateTime fecha2, int material)
+
+        //OT, Rollo
+        [HttpGet("RollosxOTxRollo/{OT}/{rollo}")]
+        public ActionResult GetRollo33(long OT, long rollo)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_FechaIngreso >= fecha1
-                                                               && r.Rollo_FechaIngreso <= fecha2
-                                                               && r.Material_Id == material)
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_Id == rollo &&
+                                                               r.Rollo_OT == OT)
                                                          .Select(r => new
                                                          {
                                                              Rollo_OT = Convert.ToString(r.Rollo_OT),
@@ -600,11 +557,12 @@ namespace PlasticaribeAPI.Controllers
                                                              Turno_Id = Convert.ToString(r.Turno_Id),
                                                              Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
+
+
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(rollo_Desecho);
 
         }
-
 
 
         //Fechas, rollo, Item
@@ -642,15 +600,13 @@ namespace PlasticaribeAPI.Controllers
         }
 
      
-        //Fechas, rollo, material
-        [HttpGet("RollosxFechasxRolloxMaterial/{fecha1}/{fecha2}/{rollo}/{material}")]
-        public ActionResult GetRollo20(DateTime fecha1, DateTime fecha2, long rollo, int material)
+        //Item, Proceso
+        [HttpGet("RollosxProcesoxItem/{proceso}/{item}")]
+        public ActionResult GetRollo20(string proceso, long item)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_FechaIngreso >= fecha1
-                                                               && r.Rollo_FechaIngreso <= fecha2
-                                                               && r.Rollo_Id == rollo
-                                                               && r.Material_Id == material)
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Proceso_Id == proceso                                                             
+                                                               && r.Rollo_Id == item)
                                                          .Select(r => new
                                                          {
                                                              Rollo_OT = Convert.ToString(r.Rollo_OT),
@@ -712,42 +668,6 @@ namespace PlasticaribeAPI.Controllers
         }
 
 
-
-        //Fechas, item, material
-        [HttpGet("RollosxFechasxItemxMaterial/{fecha1}/{fecha2}/{item}/{material}")]
-        public ActionResult GetRollo24(DateTime fecha1, DateTime fecha2, int item, int material)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_FechaIngreso >= fecha1
-                                                               && r.Rollo_FechaIngreso <= fecha2
-                                                               && r.Prod_Id == item
-                                                               && r.Material_Id == material)
-                                                         .Select(r => new
-                                                         {
-                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
-                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
-                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
-                                                             Prod_Id = Convert.ToString(r.Prod_Id),
-                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
-                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
-                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
-                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
-                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
-                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
-                                                             Material_Id = Convert.ToString(r.Material_Id),
-                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
-                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
-                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
-                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                             Turno_Id = Convert.ToString(r.Turno_Id),
-                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
-                                                         }).ToList();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
-            return Ok(rollo_Desecho);
-
-        }
-
-       
         //Fechas, Item, OT
         [HttpGet("RollosxFechasxItemxOT/{fecha1}/{fecha2}/{item}/{OT}")]
         public ActionResult GetRollo26(DateTime fecha1, DateTime fecha2, int item, long OT)
@@ -784,8 +704,8 @@ namespace PlasticaribeAPI.Controllers
 
 
         //Fechas, rollo, Item, OT
-        [HttpGet("RollosxFechasxRolloXItemxOT/{fecha1}/{fecha2}/{rollo}/{item}/{OT}")]
-        public ActionResult GetRollo35(DateTime fecha1, DateTime fecha2, long rollo, int item, long OT)
+        [HttpGet("RollosxFechasxRolloxItemxOT/{fecha1}/{fecha2}/{rollo}/{item}/{OT}")]
+        public ActionResult GetRollo42(DateTime fecha1, DateTime fecha2, long rollo, int item, long OT)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_FechaIngreso >= fecha1
@@ -818,13 +738,20 @@ namespace PlasticaribeAPI.Controllers
 
         }
 
-        //Fecha, Rollo
-        [HttpGet("RollosxOTxRollo/{OT}/{rollo}")]
-        public ActionResult GetRollo33(long OT, long rollo)
+
+        /********************** Consultas con PROCESO **********************/
+
+        //Fechas, rollo, Item, OT, Proceso -- ok
+        [HttpGet("RollosxFechasxRolloxItemxOTXProceso/{fecha1}/{fecha2}/{rollo}/{item}/{OT}/{proceso}")]
+        public ActionResult GetRollo35(DateTime fecha1, DateTime fecha2, long rollo, int item, long OT, string proceso)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_Id == rollo &&
-                                                               r.Rollo_OT == OT)
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_FechaIngreso >= fecha1
+                                                               && r.Rollo_FechaIngreso <= fecha2
+                                                               && r.Prod_Id == item
+                                                               && r.Rollo_OT == OT
+                                                               && r.Rollo_Id == rollo
+                                                               && r.Proceso_Id == proceso)
                                                          .Select(r => new
                                                          {
                                                              Rollo_OT = Convert.ToString(r.Rollo_OT),
@@ -846,10 +773,494 @@ namespace PlasticaribeAPI.Controllers
                                                              Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
                                                          }).ToList();
 
-           
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
+            return Ok(rollo_Desecho);
+
+        }
+
+
+        //Fechas, rollo, Item, Proceso -- ok
+        [HttpGet("RollosxFechasxRolloxItemxProceso/{fecha1}/{fecha2}/{rollo}/{item}/{proceso}")]
+        public ActionResult GetRollo36(DateTime fecha1, DateTime fecha2, long rollo, int item, string proceso)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_FechaIngreso >= fecha1
+                                                               && r.Rollo_FechaIngreso <= fecha2
+                                                               && r.Prod_Id == item
+                                                               && r.Rollo_Id == rollo
+                                                               && r.Proceso_Id == proceso)
+                                                         .Select(r => new
+                                                         {
+                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
+                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
+                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
+                                                             Prod_Id = Convert.ToString(r.Prod_Id),
+                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
+                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
+                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
+                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
+                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
+                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
+                                                             Material_Id = Convert.ToString(r.Material_Id),
+                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
+                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
+                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
+                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                         }).ToList();
+
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
+            return Ok(rollo_Desecho);
+
+        }
+
+
+        //Fechas, rollo, OT, Proceso -- ok
+        [HttpGet("RollosxFechasxRolloxOTxProceso/{fecha1}/{fecha2}/{rollo}/{OT}/{proceso}")]
+        public ActionResult GetRollo43(DateTime fecha1, DateTime fecha2, long rollo, long OT, string proceso)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_FechaIngreso >= fecha1
+                                                               && r.Rollo_FechaIngreso <= fecha2
+                                                               && r.Rollo_OT == OT
+                                                               && r.Rollo_Id == rollo
+                                                               && r.Proceso_Id == proceso)
+                                                         .Select(r => new
+                                                         {
+                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
+                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
+                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
+                                                             Prod_Id = Convert.ToString(r.Prod_Id),
+                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
+                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
+                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
+                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
+                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
+                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
+                                                             Material_Id = Convert.ToString(r.Material_Id),
+                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
+                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
+                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
+                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                         }).ToList();
+
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
+            return Ok(rollo_Desecho);
+
+        }
+
+
+        //Fechas, Item, OT, Proceso, --ok
+        [HttpGet("RollosxFechasxItemxOTxProceso/{fecha1}/{fecha2}/{item}/{OT}/{proceso}")]
+        public ActionResult GetRollo44(DateTime fecha1, DateTime fecha2, long item, long OT, string proceso)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_FechaIngreso >= fecha1
+                                                               && r.Rollo_FechaIngreso <= fecha2
+                                                               && r.Rollo_OT == OT
+                                                               && r.Prod_Id == item
+                                                               && r.Proceso_Id == proceso)
+                                                         .Select(r => new
+                                                         {
+                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
+                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
+                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
+                                                             Prod_Id = Convert.ToString(r.Prod_Id),
+                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
+                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
+                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
+                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
+                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
+                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
+                                                             Material_Id = Convert.ToString(r.Material_Id),
+                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
+                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
+                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
+                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                         }).ToList();
+
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
+            return Ok(rollo_Desecho);
+
+        }
+
+
+        //Fechas, rollo, Proceso, --ok
+        [HttpGet("RollosxFechasxRolloxProceso/{fecha1}/{fecha2}/{rollo}/{proceso}")]
+        public ActionResult GetRollo37(DateTime fecha1, DateTime fecha2, long rollo, string proceso)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_FechaIngreso >= fecha1
+                                                               && r.Rollo_FechaIngreso <= fecha2
+                                                               && r.Rollo_Id == rollo
+                                                               && r.Proceso_Id == proceso)
+                                                         .Select(r => new
+                                                         {
+                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
+                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
+                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
+                                                             Prod_Id = Convert.ToString(r.Prod_Id),
+                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
+                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
+                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
+                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
+                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
+                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
+                                                             Material_Id = Convert.ToString(r.Material_Id),
+                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
+                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
+                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
+                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                         }).ToList();
+
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
+            return Ok(rollo_Desecho);
+
+        }
+
+        //Fechas, Item, Proceso, --ok
+        [HttpGet("RollosxFechasxItemxProceso/{fecha1}/{fecha2}/{item}/{proceso}")]
+        public ActionResult GetRollo41(DateTime fecha1, DateTime fecha2, int item, string proceso)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_FechaIngreso >= fecha1
+                                                               && r.Rollo_FechaIngreso <= fecha2
+                                                               && r.Prod_Id == item
+                                                               && r.Proceso_Id == proceso)
+                                                         .Select(r => new
+                                                         {
+                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
+                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
+                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
+                                                             Prod_Id = Convert.ToString(r.Prod_Id),
+                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
+                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
+                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
+                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
+                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
+                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
+                                                             Material_Id = Convert.ToString(r.Material_Id),
+                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
+                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
+                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
+                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                         }).ToList();
+
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
+            return Ok(rollo_Desecho);
+
+        }
+
+
+        //Fechas, OT, Proceso, --ok
+        [HttpGet("RollosxFechasxOTxProceso/{fecha1}/{fecha2}/{OT}/{proceso}")]
+        public ActionResult GetRollo40(DateTime fecha1, DateTime fecha2, int OT, string proceso)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_FechaIngreso >= fecha1
+                                                               && r.Rollo_FechaIngreso <= fecha2
+                                                               && r.Rollo_OT == OT
+                                                               && r.Proceso_Id == proceso)
+                                                         .Select(r => new
+                                                         {
+                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
+                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
+                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
+                                                             Prod_Id = Convert.ToString(r.Prod_Id),
+                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
+                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
+                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
+                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
+                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
+                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
+                                                             Material_Id = Convert.ToString(r.Material_Id),
+                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
+                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
+                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
+                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                         }).ToList();
+
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
+            return Ok(rollo_Desecho);
+
+        }
+
+
+        //Fechas, Proceso --ok
+        [HttpGet("RollosxFechasxProceso/{fecha}/{fecha2}/{proceso}")]
+        public ActionResult GetRollo36(DateTime fecha, DateTime fecha2, int proceso)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Material_Id == proceso &&
+                                                               r.Rollo_FechaIngreso >= fecha &&
+                                                               r.Rollo_FechaIngreso <= fecha2)
+                                                         .Select(r => new
+                                                         {
+                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
+                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
+                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
+                                                             Prod_Id = Convert.ToString(r.Prod_Id),
+                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
+                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
+                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
+                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
+                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
+                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
+                                                             Material_Id = Convert.ToString(r.Material_Id),
+                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
+                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
+                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
+                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                         }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-                return Ok(rollo_Desecho);               
-            
+
+            if (rollo_Desecho == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(rollo_Desecho);
+            }
+        }
+
+
+        //Fecha, OT, Proceso --ok
+        [HttpGet("RollosxFechaxOTxProceso/{fecha}/{OT}/{proceso}")]
+        public ActionResult GetRollo46(DateTime fecha, long OT, string proceso)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_OT == OT &&
+                                                          r.Rollo_FechaIngreso == fecha &&
+                                                          r.Proceso_Id == proceso)
+                                                         .Select(r => new
+                                                         {
+                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
+                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
+                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
+                                                             Prod_Id = Convert.ToString(r.Prod_Id),
+                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
+                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
+                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
+                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
+                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
+                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
+                                                             Material_Id = Convert.ToString(r.Material_Id),
+                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
+                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
+                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
+                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                         }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            if (rollo_Desecho == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(rollo_Desecho);
+            }
+        }
+
+
+        //Fecha, Rollo, Proceso --ok
+        [HttpGet("RollosxFechaxRolloxProceso/{fecha}/{rollo}/{proceso}")]
+        public ActionResult GetRollo47(DateTime fecha, long rollo, string proceso)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_Id == rollo &&
+                                                               r.Rollo_FechaIngreso == fecha && 
+                                                               r.Proceso_Id == proceso)
+                                                         .Select(r => new
+                                                         {
+                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
+                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
+                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
+                                                             Prod_Id = Convert.ToString(r.Prod_Id),
+                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
+                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
+                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
+                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
+                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
+                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
+                                                             Material_Id = Convert.ToString(r.Material_Id),
+                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
+                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
+                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
+                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                         }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            if (rollo_Desecho == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(rollo_Desecho);
+            }
+        }
+
+        //Fecha, item, Proceso --ok
+        [HttpGet("RollosxFechaxItemxProceso/{fecha}/{item}/{proceso}")]
+        public ActionResult GetRollo48(DateTime fecha, int item, string proceso)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Prod_Id == item &&
+                                                               r.Rollo_FechaIngreso == fecha && 
+                                                               r.Proceso_Id == proceso)
+                                                         .Select(r => new
+                                                         {
+                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
+                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
+                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
+                                                             Prod_Id = Convert.ToString(r.Prod_Id),
+                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
+                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
+                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
+                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
+                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
+                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
+                                                             Material_Id = Convert.ToString(r.Material_Id),
+                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
+                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
+                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
+                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                         }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            if (rollo_Desecho == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(rollo_Desecho);
+            }
+        }
+
+        //OT, Rollo, Proceso --ok
+        [HttpGet("RollosxOTxRolloxProceso/{OT}/{rollo}/{proceso}")]
+        public ActionResult GetRollo49(long OT, long rollo, string proceso)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_Id == rollo &&
+                                                               r.Rollo_OT == OT && 
+                                                               r.Proceso_Id == proceso)
+                                                         .Select(r => new
+                                                         {
+                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
+                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
+                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
+                                                             Prod_Id = Convert.ToString(r.Prod_Id),
+                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
+                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
+                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
+                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
+                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
+                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
+                                                             Material_Id = Convert.ToString(r.Material_Id),
+                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
+                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
+                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
+                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                         }).ToList();
+
+
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(rollo_Desecho);
+
+        }
+
+        //OT, Item, Proceso 
+        [HttpGet("RollosxOTxItemxProceso/{OT}/{item}/{proceso}")]
+        public ActionResult GetRollo50(long OT, int item, string proceso)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Prod_Id == item &&
+                                                               r.Rollo_OT == OT &&
+                                                               r.Proceso_Id == proceso)
+                                                         .Select(r => new
+                                                         {
+                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
+                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
+                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
+                                                             Prod_Id = Convert.ToString(r.Prod_Id),
+                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
+                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
+                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
+                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
+                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
+                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
+                                                             Material_Id = Convert.ToString(r.Material_Id),
+                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
+                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
+                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
+                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                         }).ToList();
+
+
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(rollo_Desecho);
+
+        }
+
+        //Rollo, Item, Proceso
+        [HttpGet("RollosxItemxRolloxProceso/{rollo}/{item}/{proceso}")]
+        public ActionResult GetRollo51(long rollo, int item, string proceso)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Prod_Id == item &&
+                                                               r.Rollo_Id == rollo &&
+                                                               r.Proceso_Id == proceso)
+                                                         .Select(r => new
+                                                         {
+                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
+                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
+                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
+                                                             Prod_Id = Convert.ToString(r.Prod_Id),
+                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
+                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
+                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
+                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
+                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
+                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
+                                                             Material_Id = Convert.ToString(r.Material_Id),
+                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
+                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
+                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
+                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre)
+                                                         }).ToList();
+
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(rollo_Desecho);
+
         }
 
         /*
