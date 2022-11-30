@@ -25,10 +25,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BOPP>>> GetBOPP()
         {
-          if (_context.BOPP == null)
-          {
-              return NotFound();
-          }
+            if (_context.BOPP == null)
+            {
+                return NotFound();
+            }
             return await _context.BOPP.ToListAsync();
         }
 
@@ -36,10 +36,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<BOPP>> GetBOPP(long id)
         {
-          if (_context.BOPP == null)
-          {
-              return NotFound();
-          }
+            if (_context.BOPP == null)
+            {
+                return NotFound();
+            }
             var bOPP = await _context.BOPP.FindAsync(id);
 
             if (bOPP == null)
@@ -48,6 +48,15 @@ namespace PlasticaribeAPI.Controllers
             }
 
             return bOPP;
+        }
+
+        [HttpGet("GetBoppConExistencias")]
+        public ActionResult GetBoppConExistencias()
+        {
+            var bopp = from b in _context.Set<BOPP>()
+                       where b.BOPP_Stock > 3
+                       select b;
+            return Ok(bopp);
         }
 
         /** Obtener BOPP consultado por serial */
