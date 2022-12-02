@@ -89,6 +89,91 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+
+        [HttpGet("UsuariosxId/{ID}")]
+        public ActionResult<Usuario> GetUsuariosxId(long ID)
+        {
+            try
+            {
+                var usuario = _context.Usuarios.Where(tp => tp.Usua_Id == ID )
+                                               .Select(usu => new
+                                               {
+                                                usu.Usua_Id, 
+                                                usu.Usua_Nombre, 
+                                                usu.tpUsu_Id,
+                                                usu.tpUsu.tpUsu_Nombre,
+                                                usu.Area_Id, 
+                                                usu.Area.Area_Nombre,
+                                                usu.RolUsu_Id,
+                                                usu.RolUsu.RolUsu_Nombre, 
+                                                usu.Estado_Id, 
+                                                usu.Estado.Estado_Nombre,
+                                                usu.Usua_Telefono,
+                                                usu.fPen_Id, 
+                                                usu.fPen.fPen_Nombre,
+                                                usu.Usua_Email, 
+                                                usu.cajComp_Id,
+                                                usu.cajComp.cajComp_Nombre, 
+                                                usu.eps_Id,
+                                                usu.EPS.eps_Nombre, 
+                                                usu.Usua_Contrasena, 
+                                               }).ToList();
+
+                if (usuario == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(usuario);
+                }
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex);
+            }
+        }
+
+        [HttpGet("UsuariosSinParametros")]
+        public ActionResult<Usuario> GetUsuarios2()
+        {
+           
+                var usuario = _context.Usuarios.Select(usu => new
+                                               {
+                                                   usu.Usua_Id,
+                                                   usu.Usua_Nombre,
+                                                   usu.tpUsu_Id,
+                                                   usu.tpUsu.tpUsu_Nombre,
+                                                   usu.Area_Id,
+                                                   usu.Area.Area_Nombre,
+                                                   usu.RolUsu_Id,
+                                                   usu.RolUsu.RolUsu_Nombre,
+                                                   usu.Estado_Id,
+                                                   usu.Estado.Estado_Nombre,
+                                                   usu.Usua_Telefono,
+                                                   usu.fPen_Id,
+                                                   usu.fPen.fPen_Nombre,
+                                                   usu.Usua_Email,
+                                                   usu.cajComp_Id,
+                                                   usu.cajComp.cajComp_Nombre,
+                                                   usu.eps_Id,
+                                                   usu.EPS.eps_Nombre,
+                                                   usu.Usua_Contrasena,
+                                               }).ToList();
+
+                if (usuario == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(usuario);
+                }
+            
+           
+        }
+
+
         // PUT: api/Usuarios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
