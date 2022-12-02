@@ -215,6 +215,15 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             return Ok(con);
         }
 
+        [HttpGet("GetRollosLike/{datos}")]
+        public ActionResult GetRollosLike(String datos)
+        {
+            var con = from bopp in _context.Set<BOPP>()
+                      where bopp.BOPP_Nombre.Contains(datos)
+                      select bopp;
+            return Ok(con);
+        }
+
         [HttpGet("consultaMovimientos4/{Bopp}/{FechaInicial}/{FechaFinal}")]
         public ActionResult Get(long Bopp, DateTime FechaInicial, DateTime FechaFinal)
         {

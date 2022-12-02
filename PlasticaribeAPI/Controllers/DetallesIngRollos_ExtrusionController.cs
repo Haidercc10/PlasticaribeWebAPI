@@ -137,6 +137,32 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        //Funcion que va a consultar y agrupar por OT los rollos disponibles 
+        [HttpGet("getTodosRollosDisponiblesAgrupados")]
+        public ActionResult getTodosRollosDisponiblesAgrupados()
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from ing in _context.Set<DetallesIngRollos_Extrusion>()
+                      where ing.Estado_Id == 19
+                      group ing by new
+                      {
+                          ing.DtIngRollo_OT,
+                          ing.Prod_Id,
+                          ing.Producto.Prod_Nombre,
+                          ing.UndMed_Id
+                      } into ing
+                      select new
+                      {
+                          ing.Key.DtIngRollo_OT,
+                          ing.Key.Prod_Id,
+                          ing.Key.Prod_Nombre,
+                          Suma = ing.Sum(x => x.DtIngRollo_Cantidad),
+                          ing.Key.UndMed_Id,
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
         // Funcion que consultará y deolverá los rollos ingresados de una OT especifica y que tengan un estado disponieble
         [HttpGet("getRollosDisponiblesOT/{ot}")]
         public ActionResult getRollosDisponiblesOT(long ot)
