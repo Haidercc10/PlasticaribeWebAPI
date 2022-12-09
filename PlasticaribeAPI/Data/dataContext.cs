@@ -450,6 +450,9 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<OrdenesCompras_FacturasCompras>().HasOne<Orden_Compra>(x => x.Orden_Compra).WithMany(x => x.OrdenFactura).HasForeignKey(x => x.Oc_Id);
             modelBuilder.Entity<OrdenesCompras_FacturasCompras>().HasOne<Factura_Compra>(x => x.Facco).WithMany(x => x.OrdenFactura).HasForeignKey(x => x.Facco_Id);
 
+            //Vistas Favoritas
+            modelBuilder.Entity<VistasFavoritas>().HasOne(erp => erp.Usuario).WithMany().HasForeignKey(erp => erp.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
         }
 
 
@@ -601,6 +604,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.Detalle_OrdenCompra> Detalles_OrdenesCompras { get; set; }
         public DbSet<PlasticaribeAPI.Models.Bopp_Generico> Bopp_Generico { get; set; }
         public DbSet<PlasticaribeAPI.Models.OrdenesCompras_FacturasCompras> OrdenesCompras_FacturasCompras { get; set; }
+        public DbSet<PlasticaribeAPI.Models.VistasFavoritas> VistasFavoritas { get; set; }
 
 
     }
