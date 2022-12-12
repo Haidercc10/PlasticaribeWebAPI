@@ -113,8 +113,9 @@ namespace PlasticaribeAPI.Controllers
                     p.ExProd_PrecioSinInflacion,
                     p.TpMoneda_Id,
                     p.ExProd_PrecioVenta,
-                    p.ExProd_CantMinima
-                    
+                    p.ExProd_CantMinima,
+                    p.ExProd_Fecha, 
+                    p.ExProd_Hora                   
                 })
                 .ToList();
 

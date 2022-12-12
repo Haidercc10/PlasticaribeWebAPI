@@ -453,6 +453,32 @@ namespace PlasticaribeAPI.Data
             //Vistas Favoritas
             modelBuilder.Entity<VistasFavoritas>().HasOne(erp => erp.Usuario).WithMany().HasForeignKey(erp => erp.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            //Activos
+            modelBuilder.Entity<Activo>().HasOne(erp => erp.Estados).WithMany().HasForeignKey(erp => erp.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Activo>().HasOne(erp => erp.Tp_Activo).WithMany().HasForeignKey(erp => erp.TpActv_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Activo>().HasOne(erp => erp.Area).WithMany().HasForeignKey(erp => erp.Area_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Mantenimientos
+            modelBuilder.Entity<Mantenimiento>().HasOne(erp => erp.Estado).WithMany().HasForeignKey(erp => erp.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Mantenimiento>().HasOne(erp => erp.Proveedor).WithMany().HasForeignKey(erp => erp.Prov_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Mantenimiento>().HasOne(erp => erp.Usu).WithMany().HasForeignKey(erp => erp.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Mantenimiento>().HasOne(erp => erp.Pedido_Mtto).WithMany().HasForeignKey(erp => erp.PedMtto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+
+            //Detalles_Mtto
+            modelBuilder.Entity<Detalle_Mantenimiento>().HasOne(erp => erp.Mttos).WithMany().HasForeignKey(erp => erp.Mtto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalle_Mantenimiento>().HasOne(erp => erp.Tipo_Mtto).WithMany().HasForeignKey(erp => erp.TpMtto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalle_Mantenimiento>().HasOne(erp => erp.Act).WithMany().HasForeignKey(erp => erp.Actv_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Pedido_Mtto
+            modelBuilder.Entity<Pedido_Mantenimiento>().HasOne(erp => erp.Usuario).WithMany().HasForeignKey(erp => erp.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Pedido_Mantenimiento>().HasOne(erp => erp.Estado).WithMany().HasForeignKey(erp => erp.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //DetallePedido_Mtto
+            modelBuilder.Entity<DetallePedido_Mantenimiento>().HasOne(erp => erp.PedidoMtto).WithMany().HasForeignKey(erp => erp.PedMtto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<DetallePedido_Mantenimiento>().HasOne(erp => erp.Tipo_Mtto).WithMany().HasForeignKey(erp => erp.TpMtto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<DetallePedido_Mantenimiento>().HasOne(erp => erp.Act).WithMany().HasForeignKey(erp => erp.Actv_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
         }
 
 
@@ -606,7 +632,19 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.OrdenesCompras_FacturasCompras> OrdenesCompras_FacturasCompras { get; set; }
         public DbSet<PlasticaribeAPI.Models.VistasFavoritas> VistasFavoritas { get; set; }
 
+        public DbSet<PlasticaribeAPI.Models.Tipo_Activo> Tipos_Activos { get; set; }
 
+        public DbSet<PlasticaribeAPI.Models.Tipo_Mantenimiento> Tipos_Mantenimientos { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Activo> Activos { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Mantenimiento> Mantenimientos { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Detalle_Mantenimiento> Detalles_Mantenimientos { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Pedido_Mantenimiento> Pedidos_Mantenimientos { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.DetallePedido_Mantenimiento> DetallesPedidos_Mantenimientos { get; set; }
     }
 
 }

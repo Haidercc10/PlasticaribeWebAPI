@@ -95,7 +95,7 @@ namespace PlasticaribeAPI.Controllers
         {
             try
             {
-                var usuario = _context.Usuarios.Where(tp => tp.Usua_Id == ID )
+                var usuario = _context.Usuarios.Where(tp => tp.Usua_Id == ID)
                                                .Select(usu => new
                                                {
                                                 usu.Usua_Id, 
@@ -116,9 +116,13 @@ namespace PlasticaribeAPI.Controllers
                                                 usu.cajComp.cajComp_Nombre, 
                                                 usu.eps_Id,
                                                 usu.EPS.eps_Nombre, 
-                                                usu.Usua_Contrasena, 
+                                                usu.Usua_Contrasena,
+                                                usu.Empresa_Id,
+                                                usu.Empresa.Empresa_Nombre,
+                                                usu.TipoIdentificacion_Id,
+                                                usu.Usua_Fecha,
+                                                usu.Usua_Hora
                                                }).ToList();
-
                 if (usuario == null)
                 {
                     return NotFound();
@@ -159,8 +163,12 @@ namespace PlasticaribeAPI.Controllers
                                                    usu.eps_Id,
                                                    usu.EPS.eps_Nombre,
                                                    usu.Usua_Contrasena,
+                                                   usu.Empresa_Id,
+                                                   usu.Empresa.Empresa_Nombre, 
+                                                   usu.TipoIdentificacion_Id,
+                                                   usu.Usua_Fecha,
+                                                   usu.Usua_Hora
                                                }).ToList();
-
                 if (usuario == null)
                 {
                     return NotFound();
