@@ -75,7 +75,7 @@ namespace PlasticaribeAPI.Controllers
             _context.DetallesPedidos_Mantenimientos.Add(detallePedido_Mantenimiento);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetActivos", new { id = detallePedido_Mantenimiento.DtPedMtto_Codigo }, detallePedido_Mantenimiento);
+            return CreatedAtAction("GetDetallePedido_Mantenimiento", new { id = detallePedido_Mantenimiento.DtPedMtto_Codigo }, detallePedido_Mantenimiento);
         }
 
         //

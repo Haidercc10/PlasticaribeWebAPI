@@ -26,7 +26,7 @@ namespace PlasticaribeAPI.Controllers
 
         //
         [HttpGet("{id}")]
-        public async Task<ActionResult<Tipo_Mantenimiento>> GetTipo_Mantenimiento(long id)
+        public async Task<ActionResult<Tipo_Mantenimiento>> GetTipo_Mantenimiento(int id)
         {
             var Tipo_Mantenimiento = await _context.Tipos_Mantenimientos.FindAsync(id);
 
@@ -40,7 +40,7 @@ namespace PlasticaribeAPI.Controllers
 
         //
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTipo_Mantenimiento(long id, Tipo_Mantenimiento tipo_Mantenimiento)
+        public async Task<IActionResult> PutTipo_Mantenimiento(int id, Tipo_Mantenimiento tipo_Mantenimiento)
         {
             if (id != tipo_Mantenimiento.TpMtto_Id)
             {

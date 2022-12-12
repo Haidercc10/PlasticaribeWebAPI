@@ -38,6 +38,15 @@ namespace PlasticaribeAPI.Controllers
             return Activos;
         }
 
+        [HttpGet("getUltimoIdPedido")]
+        public ActionResult<Pedido_Mantenimiento> getUltimoIdPedido()
+        {
+            var con = (from pm in _context.Set<Pedido_Mantenimiento>()
+                      orderby pm.PedMtto_Id descending
+                      select pm.PedMtto_Id).FirstOrDefault();
+            return Ok(con);
+        }
+
         //
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPedido_Mantenimiento(long id, Pedido_Mantenimiento pedido_Mantenimiento)
