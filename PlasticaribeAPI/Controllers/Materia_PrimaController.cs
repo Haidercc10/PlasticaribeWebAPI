@@ -140,11 +140,11 @@ namespace PlasticaribeAPI.Controllers
                        && asg.Tinta.CatMP_Id == categoria).Sum(asg => asg.RemiMatPri_Cantidad);
 
             //Creacion de Tintas
-            var conCreacionTintas = _context.DetallesAsignaciones_MatPrimasXTintas
-                .Where(asg => asg.AsigMPxTinta.Tinta_Id == id
-                       && asg.AsigMPxTinta.AsigMPxTinta_FechaEntrega >= fecha1
-                       && asg.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= fecha2
-                       && asg.AsigMPxTinta.Tinta.CatMP_Id == categoria).Sum(asg => asg.DetAsigMPxTinta_Cantidad);
+            var conCreacionTintas = _context.Asignaciones_MatPrimasXTintas
+                .Where(asg => asg.Tinta_Id == id
+                       && asg.AsigMPxTinta_FechaEntrega >= fecha1
+                       && asg.AsigMPxTinta_FechaEntrega <= fecha2
+                       && asg.Tinta.CatMP_Id == categoria).Sum(asg => asg.AsigMPxTinta_Cantidad);
 
             //Suma Salidas
             var salidaMateriaPrima = conAsg + conAsgMPCreacionTintas;
@@ -294,9 +294,9 @@ namespace PlasticaribeAPI.Controllers
                        && asg.Rem.Rem_Fecha == fecha1).Sum(asg => asg.RemiMatPri_Cantidad);
 
             //Creacion de Tintas
-            var conCreacionTintas = _context.DetallesAsignaciones_MatPrimasXTintas
-                .Where(asg => asg.AsigMPxTinta.Tinta_Id == id
-                       && asg.AsigMPxTinta.AsigMPxTinta_FechaEntrega == fecha1).Sum(asg => asg.DetAsigMPxTinta_Cantidad);
+            var conCreacionTintas = _context.Asignaciones_MatPrimasXTintas
+                .Where(asg => asg.Tinta_Id == id
+                       && asg.AsigMPxTinta_FechaEntrega == fecha1).Sum(asg => asg.AsigMPxTinta_Cantidad);
 
             //Suma Salidas
             var salidaMateriaPrima = conAsg + conAsgMPCreacionTintas;
@@ -458,10 +458,10 @@ namespace PlasticaribeAPI.Controllers
                        && asg.Tinta.CatMP_Id == categoria).Sum(asg => asg.RemiMatPri_Cantidad);
 
             //Creacion de Tintas
-            var conCreacionTintas = _context.DetallesAsignaciones_MatPrimasXTintas
-                .Where(asg => asg.AsigMPxTinta.Tinta_Id == id
-                       && asg.AsigMPxTinta.AsigMPxTinta_FechaEntrega == fecha1
-                       && asg.AsigMPxTinta.Tinta.CatMP_Id == categoria).Sum(asg => asg.DetAsigMPxTinta_Cantidad);
+            var conCreacionTintas = _context.Asignaciones_MatPrimasXTintas
+                .Where(asg => asg.Tinta_Id == id
+                       && asg.AsigMPxTinta_FechaEntrega == fecha1
+                       && asg.Tinta.CatMP_Id == categoria).Sum(asg => asg.AsigMPxTinta_Cantidad);
 
             //Suma Salidas
             var salidaMateriaPrima = conAsg + conAsgMPCreacionTintas;
@@ -623,10 +623,10 @@ namespace PlasticaribeAPI.Controllers
                        && asg.Rem.Rem_Fecha <= fecha2).Sum(asg => asg.RemiMatPri_Cantidad);
 
             //Creacion de Tintas
-            var conCreacionTintas = _context.DetallesAsignaciones_MatPrimasXTintas
-                .Where(asg => asg.AsigMPxTinta.Tinta_Id == id
-                       && asg.AsigMPxTinta.AsigMPxTinta_FechaEntrega >= fecha1
-                       && asg.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= fecha2).Sum(asg => asg.DetAsigMPxTinta_Cantidad);
+            var conCreacionTintas = _context.Asignaciones_MatPrimasXTintas
+                .Where(asg => asg.Tinta_Id == id
+                       && asg.AsigMPxTinta_FechaEntrega >= fecha1
+                       && asg.AsigMPxTinta_FechaEntrega <= fecha2).Sum(asg => asg.AsigMPxTinta_Cantidad);
 
             //Suma Salidas
             var salidaMateriaPrima = conAsg + conAsgMPCreacionTintas;
