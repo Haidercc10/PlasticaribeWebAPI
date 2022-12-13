@@ -26,7 +26,7 @@ namespace PlasticaribeAPI.Controllers
 
         //
         [HttpGet("{id}")]
-        public async Task<ActionResult<Mantenimiento>> GetMantenimientos(long id)
+        public async Task<ActionResult<Mantenimiento>> GetMantenimiento(long id)
         {
             var Mantenimiento = await _context.Mantenimientos.FindAsync(id);
 
@@ -36,6 +36,23 @@ namespace PlasticaribeAPI.Controllers
             }
 
             return Mantenimiento;
+        }
+
+        [HttpGet("ObtenerUltimoId")]
+        public ActionResult GetMttos()
+        {
+            var Mantenimiento = _context.Mantenimientos.OrderByDescending(ult => ult.Mtto_Id).First();
+
+            return Ok(Mantenimiento);
+        }
+
+        //
+        [HttpGet("getPedidoMtto/{id}")]
+        public ActionResult GetPedidosMttos(long id)
+        {
+            var Mantenimiento = _context.Mantenimientos.Where(pm => pm.PedMtto_Id == id).First();
+
+            return Ok(Mantenimiento);
         }
 
         //
