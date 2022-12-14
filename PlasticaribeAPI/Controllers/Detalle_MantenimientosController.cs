@@ -39,6 +39,36 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //
+        [HttpGet("getPDFPedido/{id}")]
+        public ActionResult getPDFPedido(long id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from mtto in _context.Set<Detalle_Mantenimiento>()
+                      from emp in _context.Set<Empresa>()
+                      where mtto.Mtto_Id == id
+                            && emp.Empresa_Id == 800188730
+                      select new
+                      {
+                          mtto.Mtto_Id,
+                          TipoMov = "Mantenimiento",
+                          mtto.Mttos.Mtto_FechaRegistro,
+                          mtto.Mttos.Mtto_FechaInicio,
+                          mtto.Mttos.Mtto_FechaFin,
+                          Creador = mtto.Mttos.Usua_Id,
+                          NombreCreador = mtto.Mttos.Usu.Usua_Nombre,
+                          emp.Empresa_Id,
+                          emp.Empresa_Ciudad,
+                          emp.Empresa_COdigoPostal,
+                          emp.Empresa_Correo,
+                          emp.Empresa_Direccion,
+                          emp.Empresa_Telefono,
+                          emp.Empresa_Nombre
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        //
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDetalle_Mantenimiento(long id, Detalle_Mantenimiento detalle_Mantenimiento)
         {

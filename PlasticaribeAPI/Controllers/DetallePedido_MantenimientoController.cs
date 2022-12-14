@@ -60,6 +60,42 @@ namespace PlasticaribeAPI.Controllers
             }
 
             return Ok(detPedidos);
+
+        }
+
+        [HttpGet("getPDFPedido/{id}")]
+        public ActionResult getPDFPedido(long id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from ped in _context.Set<DetallePedido_Mantenimiento>()
+                      from emp in _context.Set<Empresa>()
+                      where ped.PedMtto_Id == id
+                            && emp.Empresa_Id == 800188730
+                      select new
+                      {
+                          ped.PedMtto_Id,
+                          TipoMov = "Pedido de Mantenimiento",
+                          ped.PedidoMtto.PedMtto_Fecha,
+                          ped.PedidoMtto.Estado_Id,
+                          ped.PedidoMtto.Estado.Estado_Nombre,
+                          ped.Actv_Id,
+                          ped.Act.Actv_Serial,
+                          ped.Act.Actv_Nombre,
+                          ped.DtPedMtto_FechaFalla,
+                          ped.TpMtto_Id,
+                          ped.Tipo_Mtto.TpMtto_Nombre,
+                          Creador = ped.PedidoMtto.Usua_Id,
+                          NombreCreador = ped.PedidoMtto.Usuario.Usua_Nombre,
+                          emp.Empresa_Id,
+                          emp.Empresa_Ciudad,
+                          emp.Empresa_COdigoPostal,
+                          emp.Empresa_Correo,
+                          emp.Empresa_Direccion,
+                          emp.Empresa_Telefono,
+                          emp.Empresa_Nombre
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
         }
 
         //
