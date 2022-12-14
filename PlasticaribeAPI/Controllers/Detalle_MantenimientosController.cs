@@ -94,8 +94,8 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //
-        [HttpGet("getPDFPedido/{id}")]
-        public ActionResult getPDFPedido(long id)
+        [HttpGet("getPDFMantenimiento/{id}")]
+        public ActionResult getPDFMantenimiento(long id)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from mtto in _context.Set<Detalle_Mantenimiento>()
@@ -109,6 +109,14 @@ namespace PlasticaribeAPI.Controllers
                           mtto.Mttos.Mtto_FechaRegistro,
                           mtto.Mttos.Mtto_FechaInicio,
                           mtto.Mttos.Mtto_FechaFin,
+                          mtto.Estado_Id,
+                          mtto.Estados.Estado_Nombre,
+                          mtto.Actv_Id,
+                          mtto.Act.Actv_Serial,
+                          mtto.Act.Actv_Nombre,
+                          mtto.TpMtto_Id,
+                          mtto.Tipo_Mtto.TpMtto_Nombre,
+                          mtto.Mttos.Mtto_Observacion,
                           Creador = mtto.Mttos.Usua_Id,
                           NombreCreador = mtto.Mttos.Usu.Usua_Nombre,
                           emp.Empresa_Id,
@@ -117,7 +125,14 @@ namespace PlasticaribeAPI.Controllers
                           emp.Empresa_Correo,
                           emp.Empresa_Direccion,
                           emp.Empresa_Telefono,
-                          emp.Empresa_Nombre
+                          emp.Empresa_Nombre,
+                          mtto.Mttos.Prov_Id,
+                          mtto.Mttos.Proveedor.TipoIdentificacion_Id,
+                          mtto.Mttos.Proveedor.TpProv.TpProv_Nombre,
+                          mtto.Mttos.Proveedor.Prov_Nombre,
+                          mtto.Mttos.Proveedor.Prov_Telefono,
+                          mtto.Mttos.Proveedor.Prov_Ciudad,
+                          mtto.Mttos.Proveedor.Prov_Email
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);

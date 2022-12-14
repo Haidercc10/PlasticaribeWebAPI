@@ -84,6 +84,7 @@ namespace PlasticaribeAPI.Controllers
                           ped.DtPedMtto_FechaFalla,
                           ped.TpMtto_Id,
                           ped.Tipo_Mtto.TpMtto_Nombre,
+                          ped.PedidoMtto.PedMtto_Observacion,
                           Creador = ped.PedidoMtto.Usua_Id,
                           NombreCreador = ped.PedidoMtto.Usuario.Usua_Nombre,
                           emp.Empresa_Id,
