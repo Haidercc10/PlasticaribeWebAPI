@@ -28,5 +28,8 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "text")]
         public string? DtMtto_Descripcion { get; set; }
+
+        public int Estado_Id { get; set; }
+        public Estado? Estados { get; set; }
     }
 }

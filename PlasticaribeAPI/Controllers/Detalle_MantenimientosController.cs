@@ -38,6 +38,61 @@ namespace PlasticaribeAPI.Controllers
             return Activos;
         }
 
+
+        [HttpGet("getDetalleMtto/{idPedido}")]
+        public ActionResult GetDetalleMttos(long idPedido)
+        {
+            var Mantenimiento = _context.Detalles_Mantenimientos.Where(pm => pm.Mttos.PedMtto_Id == idPedido)
+                                                       .Select(u => new
+                                                       {
+                                                            u.DtMtto_Codigo,
+                                                            u.Mtto_Id,
+                                                            u.Actv_Id,
+                                                            u.Act.Actv_Serial,
+                                                            u.Act.Actv_Nombre,
+                                                            u.TpMtto_Id,
+                                                            u.Tipo_Mtto.TpMtto_Nombre,
+                                                            u.Estado_Id,
+                                                            u.Estados.Estado_Nombre,
+                                                            u.DtMtto_Descripcion,
+                                                            u.DtMtto_Precio
+                                                       }).ToList();
+
+            if (Mantenimiento == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(Mantenimiento);
+        }
+
+        [HttpGet("getCodigoMtto/{codigo}")]
+        public ActionResult GetCodigoDetalleMttos(long codigo)
+        {
+            var Mantenimiento = _context.Detalles_Mantenimientos.Where(pm => pm.DtMtto_Codigo == codigo)
+                                                       .Select(u => new
+                                                       {
+                                                           u.DtMtto_Codigo,
+                                                           u.Mtto_Id,
+                                                           u.Actv_Id,
+                                                           u.Act.Actv_Serial,
+                                                           u.Act.Actv_Nombre,
+                                                           u.TpMtto_Id,
+                                                           u.Tipo_Mtto.TpMtto_Nombre,
+                                                           u.Estado_Id,
+                                                           u.Estados.Estado_Nombre,
+                                                           u.DtMtto_Descripcion,
+                                                           u.DtMtto_Precio
+                                                       }).ToList();
+
+            if (Mantenimiento == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(Mantenimiento);
+        }
+
         //
         [HttpGet("getPDFPedido/{id}")]
         public ActionResult getPDFPedido(long id)
@@ -98,7 +153,68 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        //
+        [HttpPut("CambioEstadoDetalleMtto/{codigo}")]
+        public ActionResult PutEstado(long codigo, Detalle_Mantenimiento Detalles_Mtto, int Estado)
+        {
+            if (codigo != Detalles_Mtto.DtMtto_Codigo)
+            {
+                return BadRequest();
+            }
+
+            var Actualizado = _context.Detalles_Mantenimientos.Where(x => x.DtMtto_Codigo == codigo).First<Detalle_Mantenimiento>();
+
+            try
+            {
+                Actualizado.Estado_Id = Estado;
+                _context.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!Detalle_MantenimientoExists(codigo))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpPut("CambioPrecioDetalleMtto/{codigo}")]
+        public ActionResult PutPrecio(long codigo, Detalle_Mantenimiento Detalles_Mtto, decimal precio)
+        {
+            if (codigo != Detalles_Mtto.DtMtto_Codigo)
+            {
+                return BadRequest();
+            }
+
+            var Actualizado = _context.Detalles_Mantenimientos.Where(x => x.DtMtto_Codigo == codigo).First<Detalle_Mantenimiento>();
+
+            try
+            {
+                Actualizado.DtMtto_Precio = precio;
+                _context.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!Detalle_MantenimientoExists(codigo))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+
+
         [HttpPost]
         public async Task<ActionResult<Detalle_Mantenimiento>> PostDetalle_Mantenimiento(Detalle_Mantenimiento detalle_Mantenimiento)
         {
