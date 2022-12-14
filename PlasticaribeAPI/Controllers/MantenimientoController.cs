@@ -50,7 +50,30 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getPedidoMtto/{id}")]
         public ActionResult GetPedidosMttos(long id)
         {
-            var Mantenimiento = _context.Mantenimientos.Where(pm => pm.PedMtto_Id == id).First();
+            var Mantenimiento = _context.Mantenimientos.Where(pm => pm.PedMtto_Id == id)
+                                                       .Select(u => new
+                                                       {
+                                                           u.Mtto_Id,
+                                                           u.PedMtto_Id,
+                                                           u.Mtto_FechaInicio,
+                                                           u.Mtto_FechaFin,
+                                                           u.Mtto_FechaRegistro,
+                                                           u.Mtto_HoraRegistro,
+                                                           u.Mtto_PrecioTotal,
+                                                           u.Prov_Id,
+                                                           u.Proveedor.Prov_Nombre,
+                                                           u.Usua_Id,
+                                                           u.Usu.Usua_Nombre,
+                                                           u.Mtto_Observacion,
+                                                           u.Mtto_CantDias,
+                                                           u.Estado_Id,
+                                                           u.Estado.Estado_Nombre
+                                                       }).ToList();
+
+            if (Mantenimiento == null)
+            {
+                return NotFound();
+            }
 
             return Ok(Mantenimiento);
         }
