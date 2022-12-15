@@ -466,6 +466,7 @@ namespace PlasticaribeAPI.Data
 
 
             //Detalles_Mtto
+            modelBuilder.Entity<Detalle_Mantenimiento>().ToTable(tb => tb.HasTrigger("ActualizarMantenimiento_Pedido"));
             modelBuilder.Entity<Detalle_Mantenimiento>().HasOne(erp => erp.Mttos).WithMany().HasForeignKey(erp => erp.Mtto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalle_Mantenimiento>().HasOne(erp => erp.Tipo_Mtto).WithMany().HasForeignKey(erp => erp.TpMtto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalle_Mantenimiento>().HasOne(erp => erp.Act).WithMany().HasForeignKey(erp => erp.Actv_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
