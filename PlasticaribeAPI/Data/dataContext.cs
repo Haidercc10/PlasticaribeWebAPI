@@ -459,6 +459,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Activo>().HasOne(erp => erp.Area).WithMany().HasForeignKey(erp => erp.Area_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Mantenimientos
+            modelBuilder.Entity<Mantenimiento>().ToTable(tb => tb.HasTrigger("ActualizarEstado_PedidoMtto"));
             modelBuilder.Entity<Mantenimiento>().HasOne(erp => erp.Estado).WithMany().HasForeignKey(erp => erp.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Mantenimiento>().HasOne(erp => erp.Proveedor).WithMany().HasForeignKey(erp => erp.Prov_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Mantenimiento>().HasOne(erp => erp.Usu).WithMany().HasForeignKey(erp => erp.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);

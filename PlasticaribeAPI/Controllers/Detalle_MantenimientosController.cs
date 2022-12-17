@@ -66,6 +66,33 @@ namespace PlasticaribeAPI.Controllers
             return Ok(Mantenimiento);
         }
 
+        [HttpGet("getMttoxId/{idMtto}")]
+        public ActionResult GetDetalleMttosxId(long idMtto)
+        {
+            var Mantenimiento = _context.Detalles_Mantenimientos.Where(pm => pm.Mtto_Id == idMtto)
+                                                       .Select(u => new
+                                                       {
+                                                           u.DtMtto_Codigo,
+                                                           u.Mtto_Id,
+                                                           u.Actv_Id,
+                                                           u.Act.Actv_Serial,
+                                                           u.Act.Actv_Nombre,
+                                                           u.TpMtto_Id,
+                                                           u.Tipo_Mtto.TpMtto_Nombre,
+                                                           u.Estado_Id,
+                                                           u.Estados.Estado_Nombre,
+                                                           u.DtMtto_Descripcion,
+                                                           u.DtMtto_Precio
+                                                       }).ToList();
+
+            if (Mantenimiento == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(Mantenimiento);
+        }
+
         [HttpGet("getCodigoMtto/{codigo}")]
         public ActionResult GetCodigoDetalleMttos(long codigo)
         {
