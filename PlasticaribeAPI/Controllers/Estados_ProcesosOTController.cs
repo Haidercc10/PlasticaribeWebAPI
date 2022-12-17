@@ -3050,6 +3050,89 @@ namespace PlasticaribeAPI.Controllers
 
         /** Fin Consultas por vendedor */
 
+        /******************************************************** Consultas para mostrar informacion general ****************************************************************/
+        [HttpGet("getCantOrdenesUltimoMes/{fecha1}/{fecha2}")]
+        public ActionResult getCantOrdenesUltimoMes(DateTime fecha1, DateTime fecha2)
+        {
+            var con = from ot in _context.Set<Estados_ProcesosOT>()
+                      where ot.EstProcOT_FechaCreacion >= fecha1
+                            && ot.EstProcOT_FechaCreacion <= fecha2
+                      group ot by new { ot.EstProcOT_Cliente }
+                      into ot
+                      select new { 
+                          ot.Key.EstProcOT_Cliente,
+                          cantidad = ot.Count(),
+                      };
+            return Ok(con);
+        }
+
+        [HttpGet("getProductosOrdenesUltimoMes/{fecha1}/{fecha2}")]
+        public ActionResult getProductosOrdenesUltimoMes(DateTime fecha1, DateTime fecha2)
+        {
+            var con = from ot in _context.Set<Estados_ProcesosOT>()
+                      where ot.EstProcOT_FechaCreacion >= fecha1
+                            && ot.EstProcOT_FechaCreacion <= fecha2
+                      group ot by new { 
+                          ot.Prod_Id,
+                          ot.Producto.Prod_Nombre
+                      }
+                      into ot
+                      select new
+                      {
+                          ot.Key.Prod_Id,
+                          ot.Key.Prod_Nombre,
+                          cantidad = ot.Count(),
+                      };
+            return Ok(con);
+        }
+
+        [HttpGet("getVendedoresOrdenesUltimoMes/{fecha1}/{fecha2}")]
+        public ActionResult getVendedoresOrdenesUltimoMes(DateTime fecha1, DateTime fecha2)
+        {
+            var con = from ot in _context.Set<Estados_ProcesosOT>()
+                      where ot.EstProcOT_FechaCreacion >= fecha1
+                            && ot.EstProcOT_FechaCreacion <= fecha2
+                      group ot by new
+                      {
+                          ot.Usua_Id,
+                          ot.Usuario.Usua_Nombre
+                      }
+                      into ot
+                      select new
+                      {
+                          ot.Key.Usua_Id,
+                          ot.Key.Usua_Nombre,
+                          cantidad = ot.Count(),
+                      };
+            return Ok(con);
+        }
+
+        [HttpGet("getProcesosOrdenesUltimoMes/{fecha1}/{fecha2}")]
+        public ActionResult getProcesosOrdenesUltimoMes(DateTime fecha1, DateTime fecha2)
+        {
+            var con = from ot in _context.Set<Estados_ProcesosOT>()
+                      where ot.EstProcOT_FechaCreacion >= fecha1
+                            && ot.EstProcOT_FechaCreacion <= fecha2
+                      group ot by new
+                      {
+                          ot.Cli_Id
+                      }
+                      into ot
+                      select new
+                      {
+                          Extrusion = ot.Sum(x => x.EstProcOT_ExtrusionKg),
+                          Impresion = ot.Sum(x => x.EstProcOT_ImpresionKg),
+                          Rotograbado = ot.Sum(x => x.EstProcOT_RotograbadoKg),
+                          Laminado = ot.Sum(x => x.EstProcOT_LaminadoKg),
+                          Corte = ot.Sum(x => x.EstProcOT_CorteKg),
+                          Doblado = ot.Sum(x => x.EstProcOT_DobladoKg),
+                          SelladoKg = ot.Sum(x => x.EstProcOT_SelladoKg),
+                          SelladoUnd = ot.Sum(x => x.EstProcOT_SelladoUnd),
+                          cantidad = ot.Count(),
+                      };
+            return Ok(con);
+        }
+
         [HttpPut("ActualizacionFallaObservacion/{EstProcOT_OrdenTrabajo}")]
         public IActionResult Put(long EstProcOT_OrdenTrabajo, Estados_ProcesosOT Estados_ProcesosOT)
         {
