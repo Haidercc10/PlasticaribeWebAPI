@@ -30,19 +30,33 @@ namespace PlasticaribeAPI.Controllers
             return await _context.Areas.ToListAsync();
         }
 
-        /*[HttpGet("{Area_Nombre}")]
-        [Route("[controller]/[GetAreaNombre]/{Area_Nombre}")]
-        public async Task<ActionResult<Area>> GetAreaNombre(string Area_Nombre)
+        [HttpGet("getNombreArea/{Nombre}")]
+        public ActionResult GetAreaNombre(string Nombre)
         {
-            var area = await _context.Areas.FindAsync(Area_Nombre);
+            var area =  _context.Areas.Where(a => a.Area_Nombre == Nombre).Select(ar => new { ar.Area_Nombre });
 
             if (area == null)
             {
                 return NotFound();
             }
 
-            return area;
-        }*/
+            return Ok(area);
+        }
+
+        [HttpGet("getNombreAreaXLike/{Nombre}")]
+        public ActionResult GetNombre(string Nombre)
+        {
+            var area = from ar in _context.Set<Area>()
+                       where ar.Area_Nombre.Contains(Nombre)
+                       select new { ar.Area_Nombre }; 
+
+            if (area == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(area);
+        }
 
         // GET: api/Areas/5
         [HttpGet("{id}")]

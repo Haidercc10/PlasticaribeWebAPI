@@ -43,6 +43,40 @@ namespace PlasticaribeAPI.Controllers
             return rol_Usuario;
         }
 
+        // GET: api/Rol_Usuario/5
+        [HttpGet("getNombreRol/{rol}")]
+        public ActionResult GetNombreRol_Usuario(string rol)
+        {
+            var rol_Usuario =  _context.Roles_Usuarios.Where(r => r.RolUsu_Nombre == rol).
+                                                       Select(r => new
+                                                       {
+                                                           r.RolUsu_Nombre
+                                                       });
+
+            if (rol_Usuario == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(rol_Usuario);
+        }
+
+
+        [HttpGet("getNombreRolxLike/{Nombre}")]
+        public ActionResult GetNombre(string Nombre)
+        {
+            var area = from r in _context.Set<Rol_Usuario>()
+                       where r.RolUsu_Nombre.Contains(Nombre)
+                       select new { r.RolUsu_Nombre };
+
+            if (area == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(area);
+        }
+
         // PUT: api/Rol_Usuario/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

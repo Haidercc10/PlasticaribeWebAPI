@@ -98,5 +98,11 @@ namespace PlasticaribeAPI.Models
         public Estado? Estado { get; set; }
 
 
+        [Column(TypeName = "date")]
+        public DateTime? Rollo_FechaEliminacion { get; set; }
+
+
+        [Column(TypeName = "varchar(10)")]
+        public string? Rollo_HoraEliminacion { get; set; }
     }
 }
