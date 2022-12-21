@@ -53,7 +53,9 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("consultarPorFecha/{entTinta_FechaEntrada}")]
         public ActionResult Get (DateTime entTinta_FechaEntrada)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var tinta = _context.Detalles_EntradaTintas.Where(dtET => dtET.Entrada_Tinta.entTinta_FechaEntrada == entTinta_FechaEntrada).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(tinta);
         }
 

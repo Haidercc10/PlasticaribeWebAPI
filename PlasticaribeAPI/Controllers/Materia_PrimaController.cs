@@ -719,15 +719,18 @@ namespace PlasticaribeAPI.Controllers
             //DateTime date = dt.Date;
 
             //var queryInvInicial = _context.InventarioInicialXDias_MatPrima.Where(mp => mp.MatPri_Id == Id).Select(inv => new { inv.InvInicial_Stock });
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var asig_MatPrima = (_context.DetallesAsignaciones_MateriasPrimas.
                                 Where(mp => mp.MatPri_Id == Id
                                 && mp.AsigMp.AsigMp_FechaEntrega == date));
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
-           /** var Recu_MatPrima = (_context..
-                                Where(mp => mp.MatPri_Id == Id
-                                && mp.AsigMp.AsigMp_FechaEntrega == date)); */
+            /** var Recu_MatPrima = (_context..
+                                 Where(mp => mp.MatPri_Id == Id
+                                 && mp.AsigMp.AsigMp_FechaEntrega == date)); */
 
 
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var matPrima = (from mp in _context.Set<Materia_Prima>()
                          from invIni in _context.Set<InventarioInicialXDia_MatPrima>()
                          from asmp in _context.Set<Asignacion_MatPrima>()
@@ -759,7 +762,9 @@ namespace PlasticaribeAPI.Controllers
                              Subtotal = ASG.Key.MatPri_Stock * ASG.Key.MatPri_Precio,
                              Categoria = ASG.Key.CatMP_Nombre                             
                          });
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var tinta = (from tnt in _context.Set<Tinta>()
                          from asmp in _context.Set<Asignacion_MatPrima>()
                          from dastnt in _context.Set<DetalleAsignacion_Tinta>()
@@ -794,7 +799,9 @@ namespace PlasticaribeAPI.Controllers
                              Categoria = ASG.Key.CatMP_Nombre,
                              
                          });
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var BOPP = (from bopp in _context.Set<BOPP>()
                         from asb in _context.Set<Asignacion_BOPP>()
                         from dasb in _context.Set<DetalleAsignacion_BOPP>()
@@ -824,6 +831,7 @@ namespace PlasticaribeAPI.Controllers
                             Subtotal = ASG.Key.BOPP_Stock * ASG.Key.BOPP_Precio,
                             Categoria = ASG.Key.CatMP_Nombre,
                         });
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             var Query = matPrima.Concat(tinta).Concat(BOPP);
 
@@ -1001,6 +1009,167 @@ namespace PlasticaribeAPI.Controllers
                        };
 
             return Ok(mp.Concat(tinta).Concat(bopp));
+        }
+
+        [HttpGet("getMateriasPrimasUtilizadasHoy/{fecha1}")]
+        public ActionResult getMateriasPrimasUtilizadasHoy(DateTime fecha1)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var AsignacionMp = from dtAsg in _context.Set<DetalleAsignacion_MateriaPrima>()
+                      where dtAsg.AsigMp.AsigMp_FechaEntrega == fecha1
+                      group dtAsg by new
+                      {
+                          Id = dtAsg.MatPri_Id,
+                          Nombre = dtAsg.MatPri.MatPri_Nombre,
+                      } into mp
+                      select new
+                      {
+                          mp.Key.Id,
+                          mp.Key.Nombre,
+                          Cantidad = mp.Sum(x => x.DtAsigMp_Cantidad),
+                          Asignaciones = mp.Count(),
+                      };
+
+            var CreacionTinta = from dtAsigCT in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
+                                  where dtAsigCT.AsigMPxTinta.AsigMPxTinta_FechaEntrega == fecha1
+                                  group dtAsigCT by new
+                                  {
+                                      Id = dtAsigCT.AsigMPxTinta.Tinta_Id,
+                                      Nombre = dtAsigCT.AsigMPxTinta.Tinta.Tinta_Nombre,
+                                  } into mp
+                                  select new
+                                  {
+                                      mp.Key.Id,
+                                      mp.Key.Nombre,
+                                      Cantidad = mp.Sum(x => x.DetAsigMPxTinta_Cantidad),
+                                      Asignaciones = mp.Count(),
+                                  };
+
+            var AsignacionTinta = from dtAsgT in _context.Set<DetalleAsignacion_Tinta>()
+                      where dtAsgT.AsigMp.AsigMp_FechaEntrega == fecha1
+                      group dtAsgT by new
+                      {
+                          Nombre = dtAsgT.Tinta.Tinta_Nombre,
+                          Id = dtAsgT.Tinta_Id,
+                      } into mp
+                      select new
+                      {
+                          mp.Key.Id,
+                          mp.Key.Nombre,
+                          Cantidad = mp.Sum(x => x.DtAsigTinta_Cantidad),
+                          Asignaciones = mp.Count(),
+                      };
+
+            var AsignacionBopp = from bp in _context.Set<DetalleAsignacion_BOPP>()
+                                 where bp.AsigBOPP.AsigBOPP_FechaEntrega == fecha1
+                                 group bp by new
+                                 {
+                                     Nombre = bp.BOPP.BOPP_Nombre,
+                                     Id = bp.BOPP_Id,
+                                 } into bp
+                                 select new
+                                 {
+                                     bp.Key.Id,
+                                     bp.Key.Nombre,
+                                     Cantidad = bp.Sum(x => x.DtAsigBOPP_Cantidad),
+                                     Asignaciones = bp.Count(),
+                                 };
+
+
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(AsignacionMp.Concat(CreacionTinta).Concat(AsignacionTinta));
+        }
+
+        [HttpGet("getMateriasPrimasUltilizadasMes/{fecha1}/{fecha2}")]
+        public ActionResult getMateriasPrimasUltilizadasMes(DateTime fecha1, DateTime fecha2)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var AsignacionMp = from dtAsg in _context.Set<DetalleAsignacion_MateriaPrima>()
+                               where dtAsg.AsigMp.AsigMp_FechaEntrega >= fecha1
+                                     && dtAsg.AsigMp.AsigMp_FechaEntrega <= fecha2
+                               group dtAsg by new
+                               {
+                                   Id = dtAsg.MatPri_Id,
+                                   Nombre = dtAsg.MatPri.MatPri_Nombre,
+                               } into mp
+                               select new
+                               {
+                                   mp.Key.Id,
+                                   mp.Key.Nombre,
+                                   Cantidad = mp.Sum(x => x.DtAsigMp_Cantidad),
+                                   Asignaciones = mp.Count(),
+                               };
+
+            var CreacionTinta = from dtAsigCT in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
+                                where dtAsigCT.AsigMPxTinta.AsigMPxTinta_FechaEntrega >= fecha1
+                                      && dtAsigCT.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= fecha2
+                                group dtAsigCT by new
+                                {
+                                    Id = dtAsigCT.AsigMPxTinta.Tinta_Id,
+                                    Nombre = dtAsigCT.AsigMPxTinta.Tinta.Tinta_Nombre,
+                                } into mp
+                                select new
+                                {
+                                    mp.Key.Id,
+                                    mp.Key.Nombre,
+                                    Cantidad = mp.Sum(x => x.DetAsigMPxTinta_Cantidad),
+                                    Asignaciones = mp.Count(),
+                                };
+
+            var AsignacionTinta = from dtAsgT in _context.Set<DetalleAsignacion_Tinta>()
+                                  where dtAsgT.AsigMp.AsigMp_FechaEntrega >= fecha1
+                                        && dtAsgT.AsigMp.AsigMp_FechaEntrega <= fecha2
+                                  group dtAsgT by new
+                                  {
+                                      Nombre = dtAsgT.Tinta.Tinta_Nombre,
+                                      Id = dtAsgT.Tinta_Id,
+                                  } into mp
+                                  select new
+                                  {
+                                      mp.Key.Id,
+                                      mp.Key.Nombre,
+                                      Cantidad = mp.Sum(x => x.DtAsigTinta_Cantidad),
+                                      Asignaciones = mp.Count(),
+                                  };
+
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(AsignacionMp.Concat(CreacionTinta).Concat(AsignacionTinta));
+        }
+
+        [HttpGet("getInventarioMateriasPrimas")]
+        public ActionResult getInventarioMateriasPrimas()
+        {
+            var materiasPrimas = from mp in _context.Set<Materia_Prima>()
+                                 from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                                 where mp.MatPri_Id == inv.MatPri_Id
+                                 select new
+                                 {
+                                     Id_Materia_Prima = mp.MatPri_Id,
+                                     Nombre_Materia_Prima = mp.MatPri_Nombre,
+                                     Inicial = inv.InvInicial_Stock,
+                                     Actual = mp.MatPri_Stock,
+                                 };
+
+            var bopp = from bp in _context.Set<BOPP>()
+                       where bp.BOPP_Stock != 0
+                       select new
+                       {
+                           Id_Materia_Prima = bp.BOPP_Id,
+                           Nombre_Materia_Prima = bp.BOPP_Nombre,
+                           Inicial = bp.BOPP_CantidadInicialKg,
+                           Actual = bp.BOPP_Stock,
+                       };
+
+            var tintas = from t in _context.Set<Tinta>()
+                         select new
+                         {
+                             Id_Materia_Prima = t.Tinta_Id,
+                             Nombre_Materia_Prima = t.Tinta_Nombre,
+                             Inicial = t.Tinta_InvInicial,
+                             Actual = t.Tinta_Stock,
+                         };
+
+            return Ok(materiasPrimas.Concat(bopp).Concat(tintas));
         }
 
         // PUT: api/Materia_Prima/5

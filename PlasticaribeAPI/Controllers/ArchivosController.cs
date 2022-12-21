@@ -278,10 +278,12 @@ namespace PlasticaribeAPI.Controllers
         {
             var provider = new FileExtensionContentTypeProvider();
 
+#pragma warning disable CS8600 // Se va a convertir un literal nulo o un posible valor nulo en un tipo que no acepta valores NULL
             if (!provider.TryGetContentType(path, out string contentType))
             {
                 contentType = "application/octet-stream";
             }
+#pragma warning restore CS8600 // Se va a convertir un literal nulo o un posible valor nulo en un tipo que no acepta valores NULL
             return contentType;
         }
     }

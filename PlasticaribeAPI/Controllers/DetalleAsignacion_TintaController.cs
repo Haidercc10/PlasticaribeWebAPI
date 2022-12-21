@@ -148,12 +148,16 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("SumaTintas_MatPrimasAsignadas/{OT}")]
         public ActionResult<DetalleAsignacion_Tinta> GetDetalleAsignacion2(long OT)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var union_Asignaciones = _context.DetalleAsignaciones_Tintas
                 .Where(dtAsg => dtAsg.AsigMp.AsigMP_OrdenTrabajo == OT).Sum(da => da.DtAsigTinta_Cantidad);
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
 
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var union_Asignaciones2 = _context.DetallesAsignaciones_MateriasPrimas
                .Where(dtAsg => dtAsg.AsigMp.AsigMP_OrdenTrabajo == OT).Sum(da => da.DtAsigMp_Cantidad);
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
 
             var union_Asignaciones3 = union_Asignaciones + union_Asignaciones2;
@@ -938,6 +942,7 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult Get(long Ot)
         {
 
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.DetalleAsignaciones_Tintas
                 .Where(dtAsg => dtAsg.AsigMp.AsigMP_OrdenTrabajo == Ot)
                 .Include(dtAsg => dtAsg.AsigMp)
@@ -958,6 +963,7 @@ namespace PlasticaribeAPI.Controllers
                     dtAsg.Proceso.Proceso_Nombre
                 })
                 .ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             return Ok(con);
         }

@@ -42,6 +42,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getDetalleMtto/{idPedido}")]
         public ActionResult GetDetalleMttos(long idPedido)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var Mantenimiento = _context.Detalles_Mantenimientos.Where(pm => pm.Mttos.PedMtto_Id == idPedido)
                                                        .Select(u => new
                                                        {
@@ -57,6 +58,7 @@ namespace PlasticaribeAPI.Controllers
                                                             u.DtMtto_Descripcion,
                                                             u.DtMtto_Precio
                                                        }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             if (Mantenimiento == null)
             {
@@ -69,6 +71,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getMttoxId/{idMtto}")]
         public ActionResult GetDetalleMttosxId(long idMtto)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var Mantenimiento = _context.Detalles_Mantenimientos.Where(pm => pm.Mtto_Id == idMtto)
                                                        .Select(u => new
                                                        {
@@ -84,6 +87,7 @@ namespace PlasticaribeAPI.Controllers
                                                            u.DtMtto_Descripcion,
                                                            u.DtMtto_Precio
                                                        }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             if (Mantenimiento == null)
             {
@@ -96,6 +100,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getCodigoMtto/{codigo}")]
         public ActionResult GetCodigoDetalleMttos(long codigo)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var Mantenimiento = _context.Detalles_Mantenimientos.Where(pm => pm.DtMtto_Codigo == codigo)
                                                        .Select(u => new
                                                        {
@@ -111,6 +116,7 @@ namespace PlasticaribeAPI.Controllers
                                                            u.DtMtto_Descripcion,
                                                            u.DtMtto_Precio
                                                        }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             if (Mantenimiento == null)
             {

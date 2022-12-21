@@ -41,6 +41,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getDatosCompletos/{id}")]
         public ActionResult GetPedido_Mtto(long id)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var pedidos =  _context.Pedidos_Mantenimientos.Where(p => p.PedMtto_Id == id)
                                                           .Select(ped => new
                                                           {
@@ -54,6 +55,7 @@ namespace PlasticaribeAPI.Controllers
                                                               ped.PedMtto_Observacion
                                                           }).
                                                           ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             if (pedidos == null)
             {

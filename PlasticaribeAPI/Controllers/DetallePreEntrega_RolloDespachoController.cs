@@ -63,6 +63,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("crearPdf/{ot}/{proceso}")]
         public ActionResult crearPdf(long ot, string proceso)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from rollo in _context.Set<DetallePreEntrega_RolloDespacho>()
                       from emp in _context.Set<Empresa>()
                       where rollo.PreEntRollo_Id == ot
@@ -106,6 +107,7 @@ namespace PlasticaribeAPI.Controllers
                           rollos.Key.Empresa_Telefono,
                           rollos.Key.Empresa_Nombre
                       };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
 
@@ -113,6 +115,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("crearPdf2/{ot}/{proceso}")]
         public ActionResult crearPdf2(long ot, string proceso)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.DetallesPreEntrega_RollosDespacho.Where(x => x.PreEntRollo_Id == ot)
                 .GroupBy(x => new
                 {
@@ -128,6 +131,7 @@ namespace PlasticaribeAPI.Controllers
                     suma = x.Sum(x => x.DtlPreEntRollo_Cantidad),
                     cantRollos = x.Count()
                 });
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
 
@@ -135,6 +139,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("cantidadRollosPorOT/{ot}/{proceso}")]
         public ActionResult cantidadRollosPorOT(long ot, string proceso)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from rollo in _context.Set<DetallePreEntrega_RolloDespacho>()
                       from emp in _context.Set<Empresa>()
                       where rollo.DtlPreEntRollo_OT == ot && rollo.Proceso.Proceso_Nombre == proceso
@@ -148,6 +153,7 @@ namespace PlasticaribeAPI.Controllers
                       {
                           cantRollos = rollos.Count(),
                       };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
 
@@ -216,6 +222,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getRollosPreEntregadosRollo/{rollo}/{proceso}")]
         public ActionResult getRollosPreEntregadosRollo(int rollo, string proceso)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
                       where pre.Rollo_Id == rollo
                             && pre.Proceso_Id == proceso
@@ -230,6 +237,7 @@ namespace PlasticaribeAPI.Controllers
                           pre.Proceso.Proceso_Nombre,
                           pre.PreEntregaRollo.PreEntRollo_Fecha
                       };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
 
@@ -237,6 +245,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getRollosPreEntregadosOT/{ot}/{proceso}")]
         public ActionResult getRollosPreEntregadosOT(long ot, string proceso)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
                       where pre.DtlPreEntRollo_OT == ot
                             && pre.Proceso_Id == proceso
@@ -251,6 +260,7 @@ namespace PlasticaribeAPI.Controllers
                           pre.Proceso.Proceso_Nombre,
                           pre.PreEntregaRollo.PreEntRollo_Fecha
                       };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
 

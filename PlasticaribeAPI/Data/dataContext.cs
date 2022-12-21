@@ -482,6 +482,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetallePedido_Mantenimiento>().HasOne(erp => erp.Tipo_Mtto).WithMany().HasForeignKey(erp => erp.TpMtto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<DetallePedido_Mantenimiento>().HasOne(erp => erp.Act).WithMany().HasForeignKey(erp => erp.Actv_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<MovimientosAplicacion>().HasOne(mov => mov.Usuario).WithMany().HasForeignKey(mov => mov.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
         }
 
 
@@ -648,6 +649,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.Pedido_Mantenimiento> Pedidos_Mantenimientos { get; set; }
 
         public DbSet<PlasticaribeAPI.Models.DetallePedido_Mantenimiento> DetallesPedidos_Mantenimientos { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.MovimientosAplicacion> MovimientosAplicacion { get; set; }
     }
 
 }

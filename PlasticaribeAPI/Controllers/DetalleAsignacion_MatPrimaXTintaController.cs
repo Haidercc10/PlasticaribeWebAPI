@@ -77,6 +77,48 @@ namespace PlasticaribeAPI.Controllers
 
         }
 
+        [HttpGet("getTintasCreadasMes/{fecha1}/{fecha2}")]
+        public ActionResult GetTintasCreadasMes(DateTime fecha1, DateTime fecha2)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from creacion in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
+                      where creacion.AsigMPxTinta.AsigMPxTinta_FechaEntrega >= fecha1
+                            && creacion.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= fecha2
+                       group creacion by new { creacion.AsigMPxTinta.Tinta_Id, creacion.AsigMPxTinta.Tinta.Tinta_Nombre }
+                       into creacion
+                       select new
+                       {
+                           creacion.Key.Tinta_Id,
+                           creacion.Key.Tinta_Nombre,
+                           cantidad = creacion.Sum(x => x.AsigMPxTinta.AsigMPxTinta_Cantidad),
+                       };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        [HttpGet("getMateriasPrimasCrearTintasMes/{fecha1}/{fecha2}")]
+        public ActionResult getMateriasPrimasCrearTintasMes(DateTime fecha1, DateTime fecha2)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from mp in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
+                      where mp.AsigMPxTinta.AsigMPxTinta_FechaEntrega >= fecha1
+                            && mp.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= fecha2
+                      group mp by new
+                      {
+                          mp.Tinta_Id,
+                          mp.TintasDAMPxT.Tinta_Nombre,
+                      } into mp
+                      select new
+                      {
+                          mp.Key.Tinta_Id,
+                          mp.Key.Tinta_Nombre,
+                          cantidad = mp.Sum(x => x.DetAsigMPxTinta_Cantidad),
+                          asignaciones = mp.Count(),
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
         // PUT: api/DetalleAsignacion_MatPrimaXTinta/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
