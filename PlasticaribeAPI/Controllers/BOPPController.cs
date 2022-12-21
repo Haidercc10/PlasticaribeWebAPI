@@ -97,7 +97,8 @@ y cantidad en Kilos agrupados BOPP por Nombre */
         {
 
             /** Consulta la tabla de BOPP Agrupa por descripción */
-            var bOPP = _context.BOPP.GroupBy(x => new {x.BOPP_Descripcion, x.BOPP_CantidadMicras, x.BOPP_Ancho})
+            var bOPP = _context.BOPP.Where(x => x.BOPP_Stock > 0)
+                                    .GroupBy(x => new { x.BOPP_Descripcion, x.BOPP_CantidadMicras, x.BOPP_Ancho, x.CatMP_Id })
             /** Selecciona los campos Descripción, Cantidad Micras, Suma el Precio total, Suma los Kilos, Cuenta cantidad de cada BOPP */
                                     .Select(bopp => new
                                     {
@@ -107,7 +108,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
                                         sumaPrecio = bopp.Sum(x => x.BOPP_Precio),
                                         sumaKilosIngresados = bopp.Sum(x => x.BOPP_CantidadInicialKg),
                                         sumaKilosActual = bopp.Sum(x => x.BOPP_Stock),
-                                        conteoDescripcion = bopp.Count() 
+                                        conteoDescripcion = bopp.Count()
                                     })
                                     .ToList();
             if (bOPP == null)
@@ -118,6 +119,72 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             {
                 return Ok(bOPP);
             }
+        }
+
+        /** Get para contar la cantidad de unidades, precio total segun existencias 
+y cantidad en Kilos agrupados BOPP por Nombre */
+        [HttpGet("getBoppStockInventario")]
+        public ActionResult<BOPP> getBoppStockInventario()
+        {
+
+            /** Consulta la tabla de BOPP Agrupa por descripción */
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var bOPP = _context.BOPP.Where(x => x.BOPP_Stock > 0)
+                                    .GroupBy(x => new { x.CatMP_Id, x.CatMP.CatMP_Nombre })
+                                    .Select(bopp => new {
+                                        bopp.Key.CatMP_Id,
+                                        bopp.Key.CatMP_Nombre,
+                                        sumaPrecio = bopp.Sum(x => x.BOPP_Precio),
+                                        sumaKilosActual = bopp.Sum(x => x.BOPP_Stock),
+                                        conteoDescripcion = bopp.Count()
+                                    }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            if (bOPP == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(bOPP);
+            }
+        }
+
+        [HttpGet("getCantRollosIngresados_Mes/{fecha1}/{fecha2}")]
+        public ActionResult getCantRollosIngresados_Mes(DateTime fecha1, DateTime fecha2)
+        {
+            var con = from r in _context.Set<BOPP>()
+                      where r.BOPP_FechaIngreso >= fecha1 && r.BOPP_FechaIngreso <= fecha2
+                      group r by new
+                      {
+                          r.BOPP_Id,
+                      }
+                      into r
+                      select new
+                      {
+                          cantidad = r.Count(),
+                      };
+            return Ok(con);
+
+        }
+        [HttpGet("getCantRollosUtilizados_Mes/{fecha1}/{fecha2}")]
+        public ActionResult getCantRollosUtilizados_Mes(DateTime fecha1, DateTime fecha2)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from r in _context.Set<Asignacion_BOPP>()
+                      from r2 in _context.Set<DetalleAsignacion_BOPP>()
+                      where r.AsigBOPP_FechaEntrega >= fecha1 && r.AsigBOPP_FechaEntrega <= fecha2
+                            && r.AsigBOPP_Id == r2.AsigBOPP_Id
+                      group r by new
+                      {
+                          r2.BOPP.BOPP_Id,
+                      }
+                      into r
+                      select new
+                      {
+                          cantidad = r.Count(),
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
         }
 
         [HttpGet("fechas/")]
@@ -179,6 +246,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
         [HttpGet("consultaMovimientos2/{Bopp}")]
         public ActionResult Get(long Bopp)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.BOPP
                 .Where(dtAsg => dtAsg.BOPP_Serial == Bopp)
                 .Select(BOPP => new
@@ -191,6 +259,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
                     BOPP.Usua_Id,
                     BOPP.BOPP_CantidadInicialKg
                 }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
 

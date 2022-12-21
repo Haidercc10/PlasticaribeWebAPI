@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20221221143108_AddMovimientosApp")]
+    partial class AddMovimientosApp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3443,9 +3446,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(MAX)");
 
-                    b.Property<DateTime?>("Rollo_FechaEliminacion")
-                        .HasColumnType("date");
-
                     b.Property<DateTime>("Rollo_FechaIngreso")
                         .HasColumnType("date");
 
@@ -3455,9 +3455,6 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Property<string>("Rollo_Hora")
                         .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("Rollo_HoraEliminacion")
                         .HasColumnType("varchar(10)");
 
                     b.Property<long>("Rollo_Id")

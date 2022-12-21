@@ -50,6 +50,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getPedidoMtto/{id}")]
         public ActionResult GetPedidosMttos(long id)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var Mantenimiento = _context.Mantenimientos.Where(pm => pm.PedMtto_Id == id)
                                                        .Select(u => new
                                                        {
@@ -69,6 +70,7 @@ namespace PlasticaribeAPI.Controllers
                                                            u.Estado_Id,
                                                            u.Estado.Estado_Nombre
                                                        }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             if (Mantenimiento == null)
             {
@@ -81,6 +83,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getMttos/{id}")]
         public ActionResult GetEncabezadoMtto(long id)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var Mantenimiento = _context.Mantenimientos.Where(pm => pm.Mtto_Id == id)
                                                        .Select(u => new
                                                        {
@@ -100,6 +103,7 @@ namespace PlasticaribeAPI.Controllers
                                                            u.Estado_Id,
                                                            u.Estado.Estado_Nombre
                                                        }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             if (Mantenimiento == null)
             {

@@ -3069,6 +3069,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getProductosOrdenesUltimoMes/{fecha1}/{fecha2}")]
         public ActionResult getProductosOrdenesUltimoMes(DateTime fecha1, DateTime fecha2)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from ot in _context.Set<Estados_ProcesosOT>()
                       where ot.EstProcOT_FechaCreacion >= fecha1
                             && ot.EstProcOT_FechaCreacion <= fecha2
@@ -3083,12 +3084,14 @@ namespace PlasticaribeAPI.Controllers
                           ot.Key.Prod_Nombre,
                           cantidad = ot.Count(),
                       };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
 
         [HttpGet("getVendedoresOrdenesUltimoMes/{fecha1}/{fecha2}")]
         public ActionResult getVendedoresOrdenesUltimoMes(DateTime fecha1, DateTime fecha2)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from ot in _context.Set<Estados_ProcesosOT>()
                       where ot.EstProcOT_FechaCreacion >= fecha1
                             && ot.EstProcOT_FechaCreacion <= fecha2
@@ -3104,6 +3107,7 @@ namespace PlasticaribeAPI.Controllers
                           ot.Key.Usua_Nombre,
                           cantidad = ot.Count(),
                       };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
 
