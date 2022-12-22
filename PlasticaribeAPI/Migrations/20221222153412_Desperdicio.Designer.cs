@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20221222153412_Desperdicio")]
+    partial class Desperdicio
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -138,10 +141,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("Area_Id");
 
-                    b.ToTable("Areas", t =>
-                        {
-                            t.HasTrigger("TR_MovimientosApp_Areas");
-                        });
+                    b.ToTable("Areas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.AsignacionProducto_FacturaVenta", b =>
@@ -624,7 +624,7 @@ namespace PlasticaribeAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Desp_Id"));
 
-                    b.Property<long>("Actv_Id")
+                    b.Property<long>("Area_Id")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("Desp_Fecha")
@@ -639,6 +639,9 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<string>("Desp_Impresion")
                         .IsRequired()
                         .HasColumnType("varchar(10)");
+
+                    b.Property<long>("Desp_Maquina")
+                        .HasColumnType("bigint");
 
                     b.Property<long>("Desp_OT")
                         .HasColumnType("bigint");
@@ -656,10 +659,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Material_Id")
                         .HasColumnType("int");
 
-                    b.Property<string>("Proceso_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
                     b.Property<int>("Prod_Id")
                         .HasColumnType("int");
 
@@ -671,13 +670,11 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("Desp_Id");
 
-                    b.HasIndex("Actv_Id");
+                    b.HasIndex("Area_Id");
 
                     b.HasIndex("Falla_Id");
 
                     b.HasIndex("Material_Id");
-
-                    b.HasIndex("Proceso_Id");
 
                     b.HasIndex("Prod_Id");
 
@@ -4574,9 +4571,9 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Desperdicio", b =>
                 {
-                    b.HasOne("PlasticaribeAPI.Models.Activo", "Activo")
+                    b.HasOne("PlasticaribeAPI.Models.Area", "Area")
                         .WithMany()
-                        .HasForeignKey("Actv_Id")
+                        .HasForeignKey("Area_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -4589,12 +4586,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasOne("PlasticaribeAPI.Models.Material_MatPrima", "Material")
                         .WithMany()
                         .HasForeignKey("Material_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Proceso", "Proceso")
-                        .WithMany()
-                        .HasForeignKey("Proceso_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -4616,13 +4607,11 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Activo");
+                    b.Navigation("Area");
 
                     b.Navigation("Falla");
 
                     b.Navigation("Material");
-
-                    b.Navigation("Proceso");
 
                     b.Navigation("Producto");
 

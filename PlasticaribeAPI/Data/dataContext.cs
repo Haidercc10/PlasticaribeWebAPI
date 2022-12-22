@@ -481,8 +481,20 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetallePedido_Mantenimiento>().HasOne(erp => erp.PedidoMtto).WithMany().HasForeignKey(erp => erp.PedMtto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<DetallePedido_Mantenimiento>().HasOne(erp => erp.Tipo_Mtto).WithMany().HasForeignKey(erp => erp.TpMtto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<DetallePedido_Mantenimiento>().HasOne(erp => erp.Act).WithMany().HasForeignKey(erp => erp.Actv_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
-
+            
+            //Movimientos Aplicacion
             modelBuilder.Entity<MovimientosAplicacion>().HasOne(mov => mov.Usuario).WithMany().HasForeignKey(mov => mov.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Movimientos Aplicacion
+            modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Producto).WithMany().HasForeignKey(desp => desp.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Material).WithMany().HasForeignKey(desp => desp.Material_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Usuario1).WithMany().HasForeignKey(desp => desp.Usua_Operario).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Usuario2).WithMany().HasForeignKey(desp => desp.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Proceso).WithMany().HasForeignKey(desp => desp.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Falla).WithMany().HasForeignKey(desp => desp.Falla_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Activo).WithMany().HasForeignKey(desp => desp.Actv_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("TR_MovimientosApp_Areas"));
         }
 
 
@@ -651,6 +663,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.DetallePedido_Mantenimiento> DetallesPedidos_Mantenimientos { get; set; }
 
         public DbSet<PlasticaribeAPI.Models.MovimientosAplicacion> MovimientosAplicacion { get; set; }
+
+        public DbSet<PlasticaribeAPI.Models.Desperdicio> Desperdicios { get; set; }
     }
 
 }
