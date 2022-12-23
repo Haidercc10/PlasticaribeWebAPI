@@ -35,10 +35,10 @@ namespace PlasticaribeAPI.Controllers
         {
             var area =  _context.Areas.Where(a => a.Area_Nombre == Nombre).Select(ar => new { ar.Area_Nombre });
 
-            if (area == null)
+            /*if (area == null)
             {
                 return NotFound();
-            }
+            }*/
 
             return Ok(area);
         }
@@ -50,10 +50,10 @@ namespace PlasticaribeAPI.Controllers
                        where ar.Area_Nombre.Contains(Nombre)
                        select new { ar.Area_Nombre }; 
 
-            if (area == null)
+            /*if (area == null)
             {
                 return NotFound();
-            }
+            }*/
 
             return Ok(area);
         }

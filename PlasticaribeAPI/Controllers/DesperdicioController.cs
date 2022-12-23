@@ -97,6 +97,71 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+
+        /** OT */
+        [HttpGet("getConsultaDesperdicioxOT/{OT}")]
+        public ActionResult<Desperdicio> GetDesperdicioOT(long OT)
+        {
+            var Desperdicio = (from d in _context.Set<Desperdicio>()
+                               where d.Desp_OT == OT
+                               select new
+                               {
+                                   d.Desp_Id,
+                                   d.Desp_OT,
+                                   d.Prod_Id,
+                                   d.Desp_PesoKg,
+                                   d.Producto.Prod_Nombre,
+                                   d.Proceso_Id,
+                                   d.Proceso.Proceso_Nombre,
+                                   d.Material_Id,
+                                   d.Material.Material_Nombre,
+                                   d.Falla_Id,
+                                   d.Falla.Falla_Nombre,
+                                   d.Desp_Impresion,
+                                   d.Actv_Id,
+                                   d.Activo.Actv_Nombre,
+                                   d.Activo.Actv_Serial,
+                                   Operario = d.Usua_Operario,
+                                   d.Usuario1.Usua_Nombre,
+                                   d.Usua_Id,
+                                   Usuario = d.Usuario2.Usua_Nombre, 
+                                   d.Desp_Fecha, 
+                                   d.Desp_Observacion,
+                                   d.Desp_FechaRegistro,
+                                   d.Desp_HoraRegistro
+                               }).ToList();
+            
+            //if (Desperdicio == null) return NotFound();           
+            return Ok(Desperdicio);
+        }
+
+        /** OT */
+        [HttpGet("getConsultaDesperdicio2/{fecha1}/{fecha2}")]
+        public ActionResult<Desperdicio> GetDesperdicios(DateTime fecha1, DateTime fecha2, string? OT = "", string? material = "", string? item = "")
+        {
+            var Desperdicio = (from d in _context.Set<Desperdicio>()
+                               where d.Desp_Fecha >= fecha1 &&
+                               d.Desp_Fecha <= fecha2 &&
+                               Convert.ToString(d.Desp_OT).Contains(OT) &&
+                               Convert.ToString(d.Material_Id).Contains(material) &&
+                               Convert.ToString(d.Prod_Id).Contains(item)
+                               group d by  new { d.Desp_OT, d.Desp_Impresion, d.Prod_Id, d.Producto.Prod_Nombre, d.Material_Id, d.Material.Material_Nombre } into grupo
+                               select new
+                               { 
+                                  OT = grupo.Key.Desp_OT,
+                                  Item = grupo.Key.Prod_Id,
+                                  NombreItem = grupo.Key.Prod_Nombre,
+                                  Material = grupo.Key.Material_Nombre,
+                                  Impreso = grupo.Key.Desp_Impresion,
+                                  PesoTotal = grupo.Sum(dd => dd.Desp_PesoKg)
+                               }).ToList();
+            
+            //if (Desperdicio == null) return NotFound();           
+            return Ok(Desperdicio);
+        }
+
+
+
         // PUT: api/Desperdicios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
