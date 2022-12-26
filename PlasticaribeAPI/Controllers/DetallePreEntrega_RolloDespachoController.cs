@@ -67,7 +67,7 @@ namespace PlasticaribeAPI.Controllers
             var con = from rollo in _context.Set<DetallePreEntrega_RolloDespacho>()
                       from emp in _context.Set<Empresa>()
                       where rollo.PreEntRollo_Id == ot
-                            && emp.Empresa_Id == 800188730
+                            && emp.Empresa_Id == 800188732
                       group rollo by new {
                           rollo.PreEntregaRollo.PreEntRollo_Id,
                           rollo.Prod_Id,
@@ -164,7 +164,7 @@ namespace PlasticaribeAPI.Controllers
             var con = from dt in _context.Set<DetallePreEntrega_RolloDespacho>()
                       from emp in _context.Set<Empresa>()
                       where dt.PreEntregaRollo.PreEntRollo_Id == id
-                            && emp.Empresa_Id == 800188730
+                            && emp.Empresa_Id == 800188732
                       orderby dt.PreEntregaRollo.PreEntRollo_Id
                       select new {
                           dt.PreEntRollo_Id,

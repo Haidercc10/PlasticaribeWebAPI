@@ -41,7 +41,7 @@ namespace PlasticaribeAPI.Controllers
                       orderby dt.Oc_Id descending
                       where dt.Oc_Id == consecutivo 
                             && dt.Oc_Id == Oc.Oc_Id 
-                            && Emp.Empresa_Id == 800188730
+                            && Emp.Empresa_Id == 800188732
                       select new
                       {
                           Consecutivo = dt.Oc_Id,
@@ -97,7 +97,7 @@ namespace PlasticaribeAPI.Controllers
                       orderby dt.Oc_Id descending
                       where dt.Oc_Id == orden
                             && dt.Oc_Id == Oc.Oc_Id
-                            && Emp.Empresa_Id == 800188730
+                            && Emp.Empresa_Id == 800188732
                       select new
                       {
                           Consecutivo = dt.Oc_Id,
@@ -154,7 +154,7 @@ namespace PlasticaribeAPI.Controllers
                       where Oc.Oc_Fecha >= fecha1
                             && Oc.Oc_Fecha <= fecha2
                             && dt.Oc_Id == Oc.Oc_Id
-                            && Emp.Empresa_Id == 800188730
+                            && Emp.Empresa_Id == 800188732
                       select new
                       {
                           Consecutivo = dt.Oc_Id,
@@ -210,7 +210,7 @@ namespace PlasticaribeAPI.Controllers
                       orderby dt.Oc_Id descending
                       where Oc.Estado_Id == estado
                             && dt.Oc_Id == Oc.Oc_Id
-                            && Emp.Empresa_Id == 800188730
+                            && Emp.Empresa_Id == 800188732
                       select new
                       {
                           Consecutivo = dt.Oc_Id,
@@ -268,7 +268,7 @@ namespace PlasticaribeAPI.Controllers
                             && Oc.Oc_Fecha >= fecha1
                             && Oc.Oc_Fecha <= fecha2
                             && dt.Oc_Id == Oc.Oc_Id
-                            && Emp.Empresa_Id == 800188730
+                            && Emp.Empresa_Id == 800188732
                       select new
                       {
                           Consecutivo = dt.Oc_Id,

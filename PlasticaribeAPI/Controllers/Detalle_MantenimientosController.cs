@@ -134,7 +134,7 @@ namespace PlasticaribeAPI.Controllers
             var con = from mtto in _context.Set<Detalle_Mantenimiento>()
                       from emp in _context.Set<Empresa>()
                       where mtto.Mtto_Id == id
-                            && emp.Empresa_Id == 800188730
+                            && emp.Empresa_Id == 800188732
                       select new
                       {
                           mtto.Mtto_Id,

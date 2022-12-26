@@ -50,7 +50,7 @@ namespace PlasticaribeAPI.Controllers
             var con = from rollo in _context.Set<DetallesAsgRollos_Extrusion>()
                       from emp in _context.Set<Empresa>()
                       where rollo.AsgRollos_Id == id
-                            && emp.Empresa_Id == 800188730
+                            && emp.Empresa_Id == 800188732
                       orderby rollo.AsgRollos_Id
                       select new
                       {

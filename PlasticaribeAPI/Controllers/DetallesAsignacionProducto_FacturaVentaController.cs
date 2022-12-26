@@ -77,7 +77,7 @@ namespace PlasticaribeAPI.Controllers
                       from emp in _context.Set<Empresa>()
                       where dtAsg.AsigProducto_FV.FacturaVta_Id == factura
                             && rollo.Rollo_Id == dtAsg.Rollo_Id
-                            && emp.Empresa_Id == 800188730
+                            && emp.Empresa_Id == 800188732
                       select new
                       {
                           dtAsg.AsigProdFV_Id,

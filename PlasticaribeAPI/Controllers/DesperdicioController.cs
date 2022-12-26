@@ -63,7 +63,7 @@ namespace PlasticaribeAPI.Controllers
 
             var con = from des in _context.Set<Desperdicio>()
                       from emp in _context.Set<Empresa>()
-                      where emp.Empresa_Id == 800188730
+                      where emp.Empresa_Id == 800188732
                             && des.Desp_FechaRegistro == Convert.ToDateTime(desperdicioFecha).AddHours(hora.Hour).AddMinutes(hora.Minute).AddSeconds(hora.Second)
                             && des.Desp_HoraRegistro == Convert.ToString(desperdicioHora)
                             && des.Usua_Id == Convert.ToInt64(desperdicioUsuario)
@@ -133,6 +133,46 @@ namespace PlasticaribeAPI.Controllers
             
             //if (Desperdicio == null) return NotFound();           
             return Ok(Desperdicio);
+        }
+
+
+        /** OT */
+        [HttpGet("GetDesperdicioOt/{Ot}")]
+        public ActionResult<Desperdicio> GetDesperdicioOt(long Ot)
+        {
+            var con = from des in _context.Set<Desperdicio>()
+                      from emp in _context.Set<Empresa>()
+                      where emp.Empresa_Id == 800188732
+                            && des.Desp_OT == Ot
+                      select new
+                      {
+                          des.Desp_Id,
+                          des.Desp_FechaRegistro,
+                          des.Desp_OT,
+                          des.Activo.Actv_Serial,
+                          des.Usuario1.Usua_Nombre,
+                          des.Prod_Id,
+                          des.Producto.Prod_Nombre,
+                          des.Material.Material_Nombre,
+                          des.Desp_Impresion,
+                          des.Falla.Falla_Nombre,
+                          des.Desp_PesoKg,
+                          des.Desp_Observacion,
+                          des.Desp_Fecha,
+                          des.Proceso.Proceso_Nombre,
+                          Creador = des.Usua_Id,
+                          NombreCreador = des.Usuario2.Usua_Nombre,
+                          emp.Empresa_Id,
+                          emp.Empresa_Ciudad,
+                          emp.Empresa_COdigoPostal,
+                          emp.Empresa_Correo,
+                          emp.Empresa_Direccion,
+                          emp.Empresa_Telefono,
+                          emp.Empresa_Nombre
+                      };
+
+            //if (Desperdicio == null) return NotFound();           
+            return Ok(con);
         }
 
         /** OT */

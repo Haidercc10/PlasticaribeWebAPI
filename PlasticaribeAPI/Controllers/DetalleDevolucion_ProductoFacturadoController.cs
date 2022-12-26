@@ -91,7 +91,7 @@ namespace PlasticaribeAPI.Controllers
                       from emp in _context.Set<Empresa>()
                       where dtDev.DevolucionProdFact.FacturaVta_Id == factura
                             && rollo.Rollo_Id == dtDev.Rollo_Id
-                            && emp.Empresa_Id == 800188730
+                            && emp.Empresa_Id == 800188732
                       select new
                       {
                           dtDev.DevProdFact_Id,
