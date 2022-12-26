@@ -103,7 +103,9 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult<Desperdicio> GetDesperdicioOT(long OT)
         {
             var Desperdicio = (from d in _context.Set<Desperdicio>()
-                               where d.Desp_OT == OT
+                               from e in _context.Set<Empresa>()
+                               where d.Desp_OT == OT &&
+                               e.Empresa_Id == 800188732
                                select new
                                {
                                    d.Desp_Id,
@@ -128,7 +130,11 @@ namespace PlasticaribeAPI.Controllers
                                    d.Desp_Fecha, 
                                    d.Desp_Observacion,
                                    d.Desp_FechaRegistro,
-                                   d.Desp_HoraRegistro
+                                   d.Desp_HoraRegistro,
+                                   e.Empresa_Id,
+                                   e.Empresa_Nombre,
+                                   e.Empresa_Ciudad,
+                                   e.Empresa_Direccion
                                }).ToList();
             
             //if (Desperdicio == null) return NotFound();           
