@@ -3137,6 +3137,27 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("getTotalMateriaPrimaAsignadaMes/{fecha1}/{fecha2}")]
+        public ActionResult getTotalMateriaPrimaAsignadaMes(DateTime fecha1, DateTime fecha2)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from ot in _context.Set<Estados_ProcesosOT>()
+                      where ot.EstProcOT_FechaCreacion >= fecha1
+                            && ot.EstProcOT_FechaCreacion <= fecha2
+                      group ot by new
+                      {
+                          ot.Usua_Id,
+                      }
+                      into ot
+                      select new
+                      {
+                          cantidad = ot.Sum(x => x.EstProcOT_CantMatPrimaAsignada),
+                          extruido = ot.Sum(x => x.EstProcOT_ExtrusionKg),
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
         [HttpPut("ActualizacionFallaObservacion/{EstProcOT_OrdenTrabajo}")]
         public IActionResult Put(long EstProcOT_OrdenTrabajo, Estados_ProcesosOT Estados_ProcesosOT)
         {
