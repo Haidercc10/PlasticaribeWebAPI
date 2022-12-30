@@ -313,7 +313,6 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
-
         // GET: api/Detalle_OrdenCompra/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Detalle_OrdenCompra>> GetDetalle_OrdenCompra(long id)
@@ -356,6 +355,18 @@ namespace PlasticaribeAPI.Controllers
             }
 
             return Ok(detalle_OrdenCompra);
+        }
+
+        [HttpGet("getMateriaPrimaOrdenCompa/{orden}/{mp}")]
+        public ActionResult getMateriaPrimaOrdenCompa(long orden, int mp)
+        {
+            var con = from oc in _context.Set<Detalle_OrdenCompra>()
+                      where oc.Oc_Id == orden
+                            && (oc.BOPP_Id == mp
+                                || oc.MatPri_Id == mp
+                                || oc.Tinta_Id == mp)
+                      select oc.Doc_Codigo;
+            return Ok(con);
         }
 
         // PUT: api/Detalle_OrdenCompra/5

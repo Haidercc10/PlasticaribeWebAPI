@@ -44,5 +44,6 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "text")]
         public string? Oc_Observacion { get; set; }
         public IList<OrdenesCompras_FacturasCompras>? OrdenFactura { get; set; }
+        public IList<Remision_OrdenCompra>? OrdenRemision { get; set; }
     }
 }

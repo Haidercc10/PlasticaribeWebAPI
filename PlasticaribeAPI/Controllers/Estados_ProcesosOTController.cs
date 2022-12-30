@@ -3050,6 +3050,64 @@ namespace PlasticaribeAPI.Controllers
 
         /** Fin Consultas por vendedor */
 
+        /* CONSULTA PARA EL REPORTE DE LOS PROCESOS DE CADA ORDEN DE TRABAJO */
+        [HttpGet("getReporteProcesosOt/{fechaInicial}/{fechaFinal}")]
+        public ActionResult getReporteProcesosOt(DateTime fechaInicial, DateTime fechaFinal, string? ot = "", string? cli = "", string? prod = "", string? falla = "", string? estado = "", string? vendedor = "")
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+            var con = from orden in _context.Set<Estados_ProcesosOT>()
+                      where orden.EstProcOT_FechaCreacion >= fechaInicial
+                            && orden.EstProcOT_FechaCreacion <= fechaFinal
+                            && Convert.ToString(orden.EstProcOT_OrdenTrabajo).Contains(ot)
+                            && Convert.ToString(orden.Falla_Id).Contains(falla)
+                            && Convert.ToString(orden.Estado_Id).Contains(estado)
+                            && Convert.ToString(orden.Usuario.Usua_Id).Contains(vendedor)
+                            && orden.EstProcOT_Cliente.Contains(cli)
+                            && Convert.ToString(orden.Prod_Id).Contains(prod)
+                      select new
+                      {
+                          orden.EstProcOT_Id,
+                          orden.EstProcOT_OrdenTrabajo,
+                          orden.EstProcOT_ExtrusionKg,
+                          orden.EstProcOT_ImpresionKg,
+                          orden.EstProcOT_RotograbadoKg,
+                          orden.EstProcOT_LaminadoKg,
+                          orden.EstProcOT_DobladoKg,
+                          orden.EstProcOT_CorteKg,
+                          orden.EstProcOT_EmpaqueKg,
+                          orden.EstProcOT_SelladoKg,
+                          orden.EstProcOT_SelladoUnd,
+                          orden.EstProcOT_WiketiadoKg,
+                          orden.EstProcOT_WiketiadoUnd,
+                          orden.Falla_Id,
+                          orden.FallaTecnica.Falla_Nombre,
+                          orden.Estado_Id,
+                          orden.Estado_OT.Estado_Nombre,
+                          orden.EstProcOT_Observacion,
+                          orden.EstProcOT_FechaCreacion,
+                          orden.EstProcOT_CantidadPedida,
+                          orden.UndMed_Id,
+                          orden.UnidadMedida.UndMed_Nombre,
+                          orden.EstProcOT_FechaInicio,
+                          orden.EstProcOT_FechaFinal,
+                          orden.EstProcOT_CantidadPedidaUnd,
+                          orden.Usua_Id,
+                          orden.Usuario.Usua_Nombre,
+                          orden.Cli_Id,
+                          orden.Clientes.Cli_Nombre,
+                          orden.Prod_Id,
+                          orden.Producto.Prod_Nombre,
+                          orden.EstProcOT_CantProdFacturada,
+                          orden.EstProcOT_CantProdIngresada,
+                          orden.EstProcOT_CantMatPrimaAsignada,
+                          orden.EstProcOT_Cliente,
+                      };
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
         /******************************************************** Consultas para mostrar informacion general ****************************************************************/
         [HttpGet("getCantOrdenesUltimoMes/{fecha1}/{fecha2}")]
         public ActionResult getCantOrdenesUltimoMes(DateTime fecha1, DateTime fecha2)
