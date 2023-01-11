@@ -208,6 +208,42 @@ namespace PlasticaribeAPI.Controllers
             return Ok(Desperdicio);
         }
 
+        /** Movimientos Desperdicios*/
+        [HttpGet("getMovDesperdicios/{fecha1}/{fecha2}")]
+        public ActionResult<Desperdicio> GetDesperdicios(DateTime fecha1, DateTime fecha2, string? OT = "", string? material = "", string? item = "", string? falla = "", string? proceso = "", string? maquina = "")
+        {
+            var Desperdicio = (from des in _context.Set<Desperdicio>()
+                               where des.Desp_Fecha >= fecha1 &&
+                               des.Desp_Fecha <= fecha2 &&
+                               Convert.ToString(des.Desp_OT).Contains(OT) &&
+                               Convert.ToString(des.Material_Id).Contains(material) &&
+                               Convert.ToString(des.Prod_Id).Contains(item) &&
+                               Convert.ToString(des.Falla_Id).Contains(falla) &&
+                               Convert.ToString(des.Proceso_Id).Contains(proceso) &&
+                               Convert.ToString(des.Actv_Id).Contains(maquina)
+                               select new
+                               {
+                                   des.Desp_Id,
+                                   des.Desp_OT,
+                                   des.Activo.Actv_Serial,
+                                   des.Usuario1.Usua_Nombre,
+                                   des.Prod_Id,
+                                   des.Producto.Prod_Nombre,
+                                   des.Material.Material_Nombre,
+                                   des.Desp_Impresion,
+                                   des.Falla.Falla_Nombre,
+                                   des.Desp_PesoKg,
+                                   Unidad = "Kg",
+                                   des.Desp_Fecha,
+                                   des.Proceso.Proceso_Nombre,
+                                   UsuarioCreador = des.Usuario2.Usua_Nombre,
+                                   des.Desp_FechaRegistro,
+                                   des.Desp_Observacion,
+                               }).ToList();
+
+            //if (Desperdicio == null) return NotFound();           
+            return Ok(Desperdicio);
+        }
 
 
         // PUT: api/Desperdicios/5
