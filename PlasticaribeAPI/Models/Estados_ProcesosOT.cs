@@ -129,5 +129,7 @@ namespace PlasticaribeAPI.Models
         [Precision(18, 2)]
         public decimal EstProcOT_CantMatPrimaAsignada { get; set; }
 
+        public long? EstProcOT_Pedido { get; set; }
+
     }
 }

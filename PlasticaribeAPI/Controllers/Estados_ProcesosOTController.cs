@@ -94,6 +94,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 });
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
@@ -144,6 +145,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -194,6 +196,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -244,6 +247,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -294,6 +298,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -344,6 +349,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -394,6 +400,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -445,6 +452,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -496,6 +504,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -547,6 +556,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -597,6 +607,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -648,6 +659,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -699,6 +711,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -749,6 +762,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -799,6 +813,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -849,6 +864,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -902,6 +918,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
 
                 })
                 .ToList();
@@ -955,6 +972,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1007,6 +1025,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1059,6 +1078,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1112,6 +1132,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1163,6 +1184,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1213,6 +1235,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1264,6 +1287,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1315,6 +1339,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1366,6 +1391,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1417,6 +1443,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1468,6 +1495,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1519,6 +1547,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -1570,6 +1599,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantProdIngresada,
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -3102,6 +3132,7 @@ namespace PlasticaribeAPI.Controllers
                           orden.EstProcOT_CantProdIngresada,
                           orden.EstProcOT_CantMatPrimaAsignada,
                           orden.EstProcOT_Cliente,
+                          orden.EstProcOT_Pedido,
                       };
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -3216,6 +3247,55 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("getOrdenesTrabajo_Pedido/{pedido}")]
+        public ActionResult getOrdenesTrabajo_Pedido(long pedido)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var ot = _context.Estados_ProcesosOT
+                .Where(epOT => epOT.EstProcOT_Pedido == pedido)
+                .Select(estOt => new {
+                    estOt.EstProcOT_Id,
+                    estOt.EstProcOT_OrdenTrabajo,
+                    estOt.EstProcOT_ExtrusionKg,
+                    estOt.EstProcOT_ImpresionKg,
+                    estOt.EstProcOT_RotograbadoKg,
+                    estOt.EstProcOT_LaminadoKg,
+                    estOt.EstProcOT_DobladoKg,
+                    estOt.EstProcOT_CorteKg,
+                    estOt.EstProcOT_EmpaqueKg,
+                    estOt.EstProcOT_SelladoKg,
+                    estOt.EstProcOT_SelladoUnd,
+                    estOt.EstProcOT_WiketiadoKg,
+                    estOt.EstProcOT_WiketiadoUnd,
+                    estOt.Falla_Id,
+                    estOt.FallaTecnica.Falla_Nombre,
+                    estOt.Estado_Id,
+                    estOt.Estado_OT.Estado_Nombre,
+                    estOt.EstProcOT_Observacion,
+                    estOt.EstProcOT_FechaCreacion,
+                    estOt.EstProcOT_CantidadPedida,
+                    estOt.UndMed_Id,
+                    estOt.UnidadMedida.UndMed_Nombre,
+                    estOt.EstProcOT_FechaInicio,
+                    estOt.EstProcOT_FechaFinal,
+                    estOt.EstProcOT_CantidadPedidaUnd,
+                    estOt.Usua_Id,
+                    estOt.Usuario.Usua_Nombre,
+                    estOt.Cli_Id,
+                    estOt.Clientes.Cli_Nombre,
+                    estOt.Prod_Id,
+                    estOt.Producto.Prod_Nombre,
+                    estOt.EstProcOT_CantProdFacturada,
+                    estOt.EstProcOT_CantProdIngresada,
+                    estOt.EstProcOT_CantMatPrimaAsignada,
+                    estOt.EstProcOT_Cliente,
+                    estOt.EstProcOT_Pedido,
+                })
+                .ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(ot);
+        }
+
         [HttpPut("ActualizacionFallaObservacion/{EstProcOT_OrdenTrabajo}")]
         public IActionResult Put(long EstProcOT_OrdenTrabajo, Estados_ProcesosOT Estados_ProcesosOT)
         {
@@ -3225,6 +3305,7 @@ namespace PlasticaribeAPI.Controllers
                 Actualizado.Falla_Id = Estados_ProcesosOT.Falla_Id;
                 Actualizado.EstProcOT_Observacion = Estados_ProcesosOT.EstProcOT_Observacion;
                 Actualizado.Estado_Id = Estados_ProcesosOT.Estado_Id;
+                Actualizado.EstProcOT_Pedido = Estados_ProcesosOT.EstProcOT_Pedido;
 
                 _context.SaveChanges();
             }
