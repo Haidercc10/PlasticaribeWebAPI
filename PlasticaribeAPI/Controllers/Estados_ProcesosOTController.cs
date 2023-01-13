@@ -1296,10 +1296,11 @@ namespace PlasticaribeAPI.Controllers
 
         // Consulta por Clientes
         [HttpGet("consultaPorClientes/{Cli_Id}")]
-        public ActionResult GetClientes(long Cli_Id)
+        public ActionResult GetClientes(string Cli_Id)
         {
+            
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var ot = _context.Estados_ProcesosOT.Where(epOT => epOT.Cli_Id == Cli_Id)
+            var ot = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_Cliente.Contains(Cli_Id))
                 .Include(estOT => estOT.FallaTecnica)
                 .Include(estOT => estOT.Estado_OT)
                 .Include(estOt => estOt.UnidadMedida)
