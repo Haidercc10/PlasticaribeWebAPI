@@ -26,7 +26,7 @@ namespace PlasticaribeAPI.Controllers
 
         //
         [HttpGet("{id}")]
-        public async Task<ActionResult<Tipo_Activo>> GetTipo_Activo(long id)
+        public async Task<ActionResult<Tipo_Activo>> GetTipo_Activo(int id)
         {
             var Tipo_Activo = await _context.Tipos_Activos.FindAsync(id);
 
@@ -40,7 +40,7 @@ namespace PlasticaribeAPI.Controllers
 
         //
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTipo_Activo(long id, Tipo_Activo tipo_Activo)
+        public async Task<IActionResult> PutTipo_Activo(int id, Tipo_Activo tipo_Activo)
         {
             if (id != tipo_Activo.TpActv_Id)
             {
@@ -80,7 +80,7 @@ namespace PlasticaribeAPI.Controllers
 
         //
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTipo_Activo(long id)
+        public async Task<IActionResult> DeleteTipo_Activo(int id)
         {
             var activo = await _context.Tipos_Activos.FindAsync(id);
             if (activo == null)
@@ -95,7 +95,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //
-        private bool Tipo_ActivoExists(long id)
+        private bool Tipo_ActivoExists(int id)
         {
             return _context.Tipos_Activos.Any(e => e.TpActv_Id == id);
         }
