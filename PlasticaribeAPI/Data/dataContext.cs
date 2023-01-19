@@ -315,6 +315,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<OT_Laminado>().HasOne(ot_lam => ot_lam.Laminado_Capa3).WithMany().HasForeignKey(ot_lam => ot_lam.Capa_Id3).OnDelete(DeleteBehavior.Restrict);
 
             //Mezclas OT
+            modelBuilder.Entity<Mezcla>().ToTable(tb => tb.HasTrigger("Crear_Mezclas"));
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MaterialMP).WithMany().HasForeignKey(mez => mez.Material_Id).OnDelete(DeleteBehavior.Restrict); /** Llave Primaria Material_MatPrima*/
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP1C1).WithMany().HasForeignKey(mez => mez.MezMaterial_Id1xCapa1).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP1C2).WithMany().HasForeignKey(mez => mez.MezMaterial_Id1xCapa2).OnDelete(DeleteBehavior.Restrict);
