@@ -1776,7 +1776,7 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Mezclas_Materiales");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Mezcla_Pigmento", b =>
+            modelBuilder.Entity("PlasticaribeAPI.Models.Mezcla_Material", b =>
                 {
                     b.Property<int>("MezPigmto_Id")
                         .ValueGeneratedOnAdd()
@@ -1793,7 +1793,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("MezPigmto_Id");
 
-                    b.ToTable("Mezclas_Pigmentos");
+                    b.ToTable("Mezclas_Materials");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Orden_Trabajo", b =>
@@ -2163,7 +2163,7 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("PedidosExternos_Productos");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Pigmento", b =>
+            modelBuilder.Entity("PlasticaribeAPI.Models.Material", b =>
                 {
                     b.Property<int>("Pigmt_Id")
                         .ValueGeneratedOnAdd()
@@ -2181,7 +2181,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("Pigmt_Id");
 
-                    b.ToTable("Pigmentos");
+                    b.ToTable("Materials");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Pistas", b =>
@@ -4080,37 +4080,37 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Mezcla_Pigmento", "MezPigmento1C1")
+                    b.HasOne("PlasticaribeAPI.Models.Mezcla_Material", "MezMaterial1C1")
                         .WithMany()
                         .HasForeignKey("MezPigmto_Id1xCapa1")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Mezcla_Pigmento", "MezPigmento1C2")
+                    b.HasOne("PlasticaribeAPI.Models.Mezcla_Material", "MezMaterial1C2")
                         .WithMany()
                         .HasForeignKey("MezPigmto_Id1xCapa2")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Mezcla_Pigmento", "MezPigmento1C3")
+                    b.HasOne("PlasticaribeAPI.Models.Mezcla_Material", "MezMaterial1C3")
                         .WithMany()
                         .HasForeignKey("MezPigmto_Id1xCapa3")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Mezcla_Pigmento", "MezPigmento2C1")
+                    b.HasOne("PlasticaribeAPI.Models.Mezcla_Material", "MezMaterial2C1")
                         .WithMany()
                         .HasForeignKey("MezPigmto_Id2xCapa1")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Mezcla_Pigmento", "MezPigmento2C2")
+                    b.HasOne("PlasticaribeAPI.Models.Mezcla_Material", "MezMaterial2C2")
                         .WithMany()
                         .HasForeignKey("MezPigmto_Id2xCapa2")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Mezcla_Pigmento", "MezPigmento2C3")
+                    b.HasOne("PlasticaribeAPI.Models.Mezcla_Material", "MezMaterial2C3")
                         .WithMany()
                         .HasForeignKey("MezPigmto_Id2xCapa3")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4148,17 +4148,17 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Navigation("MezMaterial_MP4C3");
 
-                    b.Navigation("MezPigmento1C1");
+                    b.Navigation("MezMaterial1C1");
 
-                    b.Navigation("MezPigmento1C2");
+                    b.Navigation("MezMaterial1C2");
 
-                    b.Navigation("MezPigmento1C3");
+                    b.Navigation("MezMaterial1C3");
 
-                    b.Navigation("MezPigmento2C1");
+                    b.Navigation("MezMaterial2C1");
 
-                    b.Navigation("MezPigmento2C2");
+                    b.Navigation("MezMaterial2C2");
 
-                    b.Navigation("MezPigmento2C3");
+                    b.Navigation("MezMaterial2C3");
 
                     b.Navigation("Usua");
                 });
@@ -4242,7 +4242,7 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Pigmento", "Pigmento")
+                    b.HasOne("PlasticaribeAPI.Models.Material", "Material")
                         .WithMany()
                         .HasForeignKey("Pigmt_Id")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -4266,7 +4266,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Navigation("Orden_Trabajo");
 
-                    b.Navigation("Pigmento");
+                    b.Navigation("Material");
 
                     b.Navigation("Tratado");
 
@@ -4498,7 +4498,7 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("Material_Id")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("PlasticaribeAPI.Models.Pigmento", "Pigmt")
+                    b.HasOne("PlasticaribeAPI.Models.Material", "Pigmt")
                         .WithMany()
                         .HasForeignKey("Pigmt_Id")
                         .OnDelete(DeleteBehavior.Restrict);

@@ -4,12 +4,12 @@
 
 namespace PlasticaribeAPI.Migrations
 {
-    public partial class Adicion_ModeloTablaPigmentosNuevo : Migration
+    public partial class Adicion_ModeloTablaMaterialsNuevo : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Pigmentos",
+                name: "Materials",
                 columns: table => new
                 {
                     Pigmt_Id = table.Column<int>(type: "int", nullable: false)
@@ -19,14 +19,14 @@ namespace PlasticaribeAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Pigmentos", x => x.Pigmt_Id);
+                    table.PrimaryKey("PK_Materials", x => x.Pigmt_Id);
                 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Pigmentos");
+                name: "Materials");
         }
     }
 }

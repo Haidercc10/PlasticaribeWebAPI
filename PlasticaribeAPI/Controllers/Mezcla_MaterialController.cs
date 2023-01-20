@@ -50,6 +50,18 @@ namespace PlasticaribeAPI.Controllers
             return mezcla_Material;
         }
 
+        [HttpGet("Nombres_Materiales/{mezclaMaterial}")]
+        public ActionResult GetMezcla_MaterialxNombre(string mezclaMaterial)
+        {
+            if (_context.Mezclas_Materiales == null)
+            {
+                return NotFound();
+            }
+            var mezcla_Material = _context.Mezclas_Materiales.Where(p => p.MezMaterial_Nombre == mezclaMaterial).ToList();
+
+            return Ok(mezcla_Material);
+        }
+
         // PUT: api/Mezcla_Material/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

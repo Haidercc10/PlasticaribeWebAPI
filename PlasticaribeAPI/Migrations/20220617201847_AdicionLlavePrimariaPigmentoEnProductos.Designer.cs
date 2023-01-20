@@ -12,8 +12,8 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    [Migration("20220617201847_AdicionLlavePrimariaPigmentoEnProductos")]
-    partial class AdicionLlavePrimariaPigmentoEnProductos
+    [Migration("20220617201847_AdicionLlavePrimariaMaterialEnProductos")]
+    partial class AdicionLlavePrimariaMaterialEnProductos
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -504,7 +504,7 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("PedidosExternos_Productos");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Pigmento", b =>
+            modelBuilder.Entity("PlasticaribeAPI.Models.Material", b =>
                 {
                     b.Property<int>("Pigmt_Id")
                         .ValueGeneratedOnAdd()
@@ -522,7 +522,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("Pigmt_Id");
 
-                    b.ToTable("Pigmentos");
+                    b.ToTable("Materials");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Producto", b =>
@@ -1142,7 +1142,7 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("Estado_Id")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("PlasticaribeAPI.Models.Pigmento", "Pigmt")
+                    b.HasOne("PlasticaribeAPI.Models.Material", "Pigmt")
                         .WithMany()
                         .HasForeignKey("Pigmt_Id")
                         .OnDelete(DeleteBehavior.Restrict);

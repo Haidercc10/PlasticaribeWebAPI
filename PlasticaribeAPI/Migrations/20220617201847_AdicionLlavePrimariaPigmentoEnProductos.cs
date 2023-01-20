@@ -4,7 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
-    public partial class AdicionLlavePrimariaPigmentoEnProductos : Migration
+    public partial class AdicionLlavePrimariaMaterialEnProductos : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -31,10 +31,10 @@ namespace PlasticaribeAPI.Migrations
                 column: "Pigmt_Id");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Productos_Pigmentos_Pigmt_Id",
+                name: "FK_Productos_Materials_Pigmt_Id",
                 table: "Productos",
                 column: "Pigmt_Id",
-                principalTable: "Pigmentos",
+                principalTable: "Materials",
                 principalColumn: "Pigmt_Id",
                 onDelete: ReferentialAction.Restrict);
         }
@@ -42,7 +42,7 @@ namespace PlasticaribeAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Productos_Pigmentos_Pigmt_Id",
+                name: "FK_Productos_Materials_Pigmt_Id",
                 table: "Productos");
 
             migrationBuilder.DropIndex(

@@ -1112,7 +1112,7 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("PedidosExternos_Productos");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Pigmento", b =>
+            modelBuilder.Entity("PlasticaribeAPI.Models.Material", b =>
                 {
                     b.Property<int>("Pigmt_Id")
                         .ValueGeneratedOnAdd()
@@ -1130,7 +1130,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("Pigmt_Id");
 
-                    b.ToTable("Pigmentos");
+                    b.ToTable("Materials");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Proceso", b =>
@@ -2522,7 +2522,7 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("Material_Id")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("PlasticaribeAPI.Models.Pigmento", "Pigmt")
+                    b.HasOne("PlasticaribeAPI.Models.Material", "Pigmt")
                         .WithMany()
                         .HasForeignKey("Pigmt_Id")
                         .OnDelete(DeleteBehavior.Restrict);

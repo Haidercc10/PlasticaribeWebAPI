@@ -50,6 +50,18 @@ namespace PlasticaribeAPI.Controllers
             return mezcla_Pigmento;
         }
 
+        [HttpGet("Nombres_Pigmentos/{mezclaPigmento}")]
+        public ActionResult GetMezcla_PigmentoxNombre(string mezclaPigmento)
+        {
+            if (_context.Mezclas_Pigmentos == null)
+            {
+                return NotFound();
+            }
+            var mezcla_Pigmento = _context.Mezclas_Pigmentos.Where(p => p.MezPigmto_Nombre == mezclaPigmento).ToList();
+
+            return Ok(mezcla_Pigmento);
+        }
+
         // PUT: api/Mezcla_Pigmento/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

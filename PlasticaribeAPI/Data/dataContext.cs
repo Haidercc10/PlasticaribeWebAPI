@@ -336,6 +336,9 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento2C2).WithMany().HasForeignKey(mez => mez.MezPigmto_Id2xCapa2).OnDelete(DeleteBehavior.Restrict); /** Llave Primaria Mezcla_Pigmento*/
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento2C3).WithMany().HasForeignKey(mez => mez.MezPigmto_Id2xCapa3).OnDelete(DeleteBehavior.Restrict);            
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.Usua).WithMany().HasForeignKey(mez => mez.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario 
+            /** Triggers tablas Mezclas*/
+            modelBuilder.Entity<Mezcla_Material>().ToTable(tb => tb.HasTrigger("Crear_Mezclas_Materiales"));
+            modelBuilder.Entity<Mezcla_Pigmento>().ToTable(tb => tb.HasTrigger("Crear_Mezcla_Pigmento"));
 
             //Relaciones EstadosProcesos_OT
             modelBuilder.Entity<Estados_ProcesosOT>().HasOne(eOT => eOT.UnidadMedida).WithMany().HasForeignKey(eOT => eOT.UndMed_Id).OnDelete(DeleteBehavior.Restrict);
