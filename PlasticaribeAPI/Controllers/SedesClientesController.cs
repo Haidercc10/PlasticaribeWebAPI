@@ -144,6 +144,17 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        // Funcion que consultará las sedes que tenga un cliente, el cliente se le pasará como parametro
+        [HttpGet("getSedesCliente/{id}")]
+        public ActionResult GetSedes_Clientes(long id)
+        {
+            var con = (from sc in _context.Set<SedesClientes>()
+                      where sc.Cli_Id == id
+                      orderby sc.SedeCli_Id descending
+                      select sc.SedeCli_Id).FirstOrDefault();
+            return Ok(con);
+        }
+
         // PUT: api/SedesClientes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

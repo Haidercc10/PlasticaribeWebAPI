@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20230118204103_CreadorDoc_PedidoExterno2")]
+    partial class CreadorDocPedidoExterno2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2899,9 +2902,9 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("PedExt_Codigo")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal?>("PedExt_Descuento")
+                    b.Property<int?>("PedExt_Descuento")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("PedExt_FechaCreacion")
                         .HasColumnType("datetime2");

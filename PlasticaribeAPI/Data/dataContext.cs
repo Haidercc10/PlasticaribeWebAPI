@@ -64,6 +64,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<PedidoExterno>().HasOne(Pext => Pext.Empresa).WithMany().HasForeignKey(Pext => Pext.Empresa_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<PedidoExterno>().HasOne(Pext => Pext.Estado).WithMany().HasForeignKey(Pext => Pext.Estado_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<PedidoExterno>().HasOne(Pext => Pext.Usua).WithMany().HasForeignKey(Pext => Pext.Usua_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<PedidoExterno>().HasOne(Pext => Pext.Creador).WithMany().HasForeignKey(Pext => Pext.Creador_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<PedidoExterno>().HasOne(Pext => Pext.SedeCli).WithMany().HasForeignKey(Pext => Pext.SedeCli_Id).OnDelete(DeleteBehavior.Restrict);
 
             //Relaciones fondo pension
@@ -675,6 +676,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.MovimientosAplicacion> MovimientosAplicacion { get; set; }
 
         public DbSet<PlasticaribeAPI.Models.Desperdicio> Desperdicios { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Tipos_Sellados> Tipos_Sellados { get; set; }
     }
 
 }

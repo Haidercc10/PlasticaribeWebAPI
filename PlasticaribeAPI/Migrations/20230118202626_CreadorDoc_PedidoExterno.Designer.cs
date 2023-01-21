@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20230118202626_CreadorDoc_PedidoExterno")]
+    partial class CreadorDocPedidoExterno
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2887,6 +2890,9 @@ namespace PlasticaribeAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("PedExt_Id"));
 
+                    b.Property<long?>("CreadorUsua_Id")
+                        .HasColumnType("bigint");
+
                     b.Property<long?>("Creador_Id")
                         .HasColumnType("bigint");
 
@@ -2896,12 +2902,16 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Estado_Id")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("PedExt_Archivo")
+                        .IsRequired()
+                        .HasColumnType("binary(MAX)");
+
                     b.Property<long>("PedExt_Codigo")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal?>("PedExt_Descuento")
+                    b.Property<int?>("PedExt_Descuento")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("PedExt_FechaCreacion")
                         .HasColumnType("datetime2");
@@ -2937,7 +2947,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("PedExt_Id");
 
-                    b.HasIndex("Creador_Id");
+                    b.HasIndex("CreadorUsua_Id");
 
                     b.HasIndex("Empresa_Id");
 
@@ -6084,8 +6094,7 @@ namespace PlasticaribeAPI.Migrations
                 {
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "Creador")
                         .WithMany()
-                        .HasForeignKey("Creador_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("CreadorUsua_Id");
 
                     b.HasOne("PlasticaribeAPI.Models.Empresa", "Empresa")
                         .WithMany()

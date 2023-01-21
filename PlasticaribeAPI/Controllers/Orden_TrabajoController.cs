@@ -283,6 +283,19 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("getOrdenesSinPedidos")]
+        public ActionResult getOrdenesSinPedidos()
+        {
+            var pedOt = from ot in _context.Set<Orden_Trabajo>()
+                        select ot.PedExt_Id;
+
+            var con = from ped in _context.Set<PedidoExterno>()
+                      where Convert.ToString(ped.PedExt_Id).Contains(Convert.ToString(pedOt))
+                      select ped;
+
+            return Ok(con);
+        }
+
         // PUT: api/Orden_Trabajo/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

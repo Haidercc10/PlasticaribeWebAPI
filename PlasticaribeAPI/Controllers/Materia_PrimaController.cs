@@ -1026,7 +1026,11 @@ namespace PlasticaribeAPI.Controllers
                       {
                           mp.Key.Id,
                           mp.Key.Nombre,
-                          Cantidad = mp.Sum(x => x.DtAsigMp_Cantidad),
+                          Cantidad = mp.Sum(x => x.DtAsigMp_Cantidad) - (from dev in _context.Set<DetalleDevolucion_MateriaPrima>()
+                                                                         where dev.MatPri_Id == mp.Key.Id
+                                                                               && dev.DevMatPri.DevMatPri_Fecha == fecha1
+                                                                         group dev by new { dev.MatPri_Id } into dev
+                                                                         select dev.Sum(x => x.DtDevMatPri_CantidadDevuelta)).FirstOrDefault(),
                           Asignaciones = mp.Count(),
                       };
 
@@ -1096,7 +1100,12 @@ namespace PlasticaribeAPI.Controllers
                                {
                                    mp.Key.Id,
                                    mp.Key.Nombre,
-                                   Cantidad = mp.Sum(x => x.DtAsigMp_Cantidad),
+                                   Cantidad = mp.Sum(x => x.DtAsigMp_Cantidad) - (from dev in _context.Set<DetalleDevolucion_MateriaPrima>()
+                                                                                  where dev.MatPri_Id == mp.Key.Id
+                                                                                        && dev.DevMatPri.DevMatPri_Fecha >= fecha1
+                                                                                        && dev.DevMatPri.DevMatPri_Fecha <= fecha2
+                                                                                  group dev by new { dev.MatPri_Id } into dev
+                                                                                  select dev.Sum(x => x.DtDevMatPri_CantidadDevuelta)).FirstOrDefault(),
                                    Asignaciones = mp.Count(),
                                };
 

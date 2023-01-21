@@ -950,28 +950,86 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
 
-            var ot = from ordenTrabajo in _context.Set<Orden_Trabajo>()
-                     select ordenTrabajo.PedExt_Id;
-
-            var otProd = from ordenTrabajo in _context.Set<Orden_Trabajo>()
-                         where ot.Contains(ordenTrabajo.PedExt_Id)
-                         select ordenTrabajo.Prod_Id;
-
-            var pedido = from pe in _context.Set<PedidoProducto>()
-                         where !ot.Contains(pe.PedExt_Id)
-                         orderby pe.PedExt_Id
-                         select new { 
-                             pe.PedExt_Id,
-                             pe.Prod_Id,
-                             pe.PedidoExt.SedeCli.Cli.Cli_Nombre,
-                             pe.PedidoExt.SedeCli.Cli.Cli_Id,
-                             pe.PedidoExt.PedExt_FechaEntrega
-                         };
-
-            return Ok(pedido);
-
+            var pedidos = from ped in _context.Set<PedidoProducto>()
+                          where ped.PedidoExt.Estado_Id != 5
+                          group ped by new
+                          {
+                              ped.PedExt_Id,
+                              ped.PedidoExt.SedeCli.Cli_Id,
+                              ped.PedidoExt.SedeCli.Cli.Cli_Nombre,
+                              ped.PedidoExt.PedExt_FechaEntrega
+                          } into ped
+                          select new
+                          {
+                              Id_Pedido = ped.Key.PedExt_Id,
+                              Id_Cliente = ped.Key.Cli_Id,
+                              Nombre_Cliente = ped.Key.Cli_Nombre,
+                              Fecha_Entrega = ped.Key.PedExt_FechaEntrega
+                          };
+            if (pedidos == null)
+            {
+                return NotFound();
+            }            
+            return Ok(pedidos);
         }
 
+        //funcion que llevará la información para crear el pdf del ultimo pedido ingresado
+        [HttpGet("getCrearPdfUltPedido")]
+        public ActionResult getCrearPdfUltPedido()
+        {
+            var id = (from ped in _context.Set<PedidoExterno>()
+                      orderby ped.PedExt_Id descending
+                      select ped.PedExt_Id).FirstOrDefault();
+
+            var con = from ped in _context.Set<PedidoProducto>()
+                      from Emp in _context.Set<Empresa>()
+                      where ped.PedExt_Id == id
+                            && Emp.Empresa_Id == 800188732
+                      select new
+                      {
+                          Consecutivo = ped.PedidoExt.PedExt_Codigo,
+                          FechaCreacion = ped.PedidoExt.PedExt_FechaCreacion,
+                          FechaEntrega = ped.PedidoExt.PedExt_FechaEntrega,
+                          Hora = ped.PedidoExt.PedExt_HoraCreacion,
+                          Creador_Id = ped.PedidoExt.Creador_Id,
+                          Creador = ped.PedidoExt.Creador.Usua_Nombre,
+
+                          Estado_Id = ped.PedidoExt.Estado_Id,
+                          Estado = ped.PedidoExt.Estado.Estado_Nombre,
+                          Observacion = ped.PedidoExt.PedExt_Observacion,
+                          Vendedor_Id = ped.PedidoExt.Usua_Id,
+                          Vendedor = ped.PedidoExt.Usua.Usua_Nombre,
+                          Descuento = ped.PedidoExt.PedExt_Descuento,
+                          Iva = ped.PedidoExt.PedExt_Iva,
+                          Precio_Total = ped.PedidoExt.PedExt_PrecioTotal,
+                          Precio_Final = ped.PedidoExt.PedExt_PrecioTotalFinal,
+                          Cliente_Id = ped.PedidoExt.SedeCli.Cli_Id,
+                          Tipo_Id = ped.PedidoExt.SedeCli.Cli.TipoIdentificacion_Id,
+                          Cliente = ped.PedidoExt.SedeCli.Cli.Cli_Nombre,
+                          Tipo_Cliente = ped.PedidoExt.SedeCli.Cli.TPCli.TPCli_Nombre,
+                          Telefono_Cliente = ped.PedidoExt.SedeCli.Cli.Cli_Telefono,
+                          Ciudad_Cliente = ped.PedidoExt.SedeCli.SedeCliente_Ciudad,
+                          Correo_Cliente = ped.PedidoExt.SedeCli.Cli.Cli_Email,
+                          Direccion_Cliente = ped.PedidoExt.SedeCli.SedeCliente_Direccion,
+                          CodPostal_Cliente = ped.PedidoExt.SedeCli.SedeCli_CodPostal,
+
+                          Producto_Id = ped.Prod_Id,
+                          Producto = ped.Product.Prod_Nombre,
+                          Cantidad = ped.PedExtProd_Cantidad,
+                          Presentacion = ped.UndMed_Id,
+                          Precio_Unitario = ped.PedExtProd_PrecioUnitario,
+                          SubTotal_Producto = (ped.PedExtProd_Cantidad * ped.PedExtProd_PrecioUnitario),
+
+                          Empresa_Id = Emp.Empresa_Id,
+                          Empresa_Ciudad = Emp.Empresa_Ciudad,
+                          Empresa_Codigo = Emp.Empresa_COdigoPostal,
+                          Empresa_Correo = Emp.Empresa_Correo,
+                          Empresa_Direccion = Emp.Empresa_Direccion,
+                          Empresa_Telefono = Emp.Empresa_Telefono,
+                          Empresa = Emp.Empresa_Nombre,
+                      };
+            return Ok(con);
+        }
 
         // PUT: api/PedidoExterno/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
