@@ -71,15 +71,19 @@ namespace PlasticaribeAPI.Models
         [Column(Order = 14)]
         public int? Estado_Id { get; set; } /** POSIBLE: DESHABILITADO | */   //Foranea de estados en producto.
 
+
         public Estado? Estado { get; set; }
 
         [Column(Order = 15)]
         public int? Pigmt_Id { get; set; } //Llave Foranea Pigmentos
         public Pigmento? Pigmt { get; set; }
 
+
         [Column(Order = 16)]
         public int? Material_Id { get; set; } //Llave foranea Materiales_MatPrima
         public Material_MatPrima? MaterialMP { get; set; }
+
+
         public IList<PedidoProducto>? PedExtProd { get; set; }
         //Lista requerida para relación clientes-productos
         public IList<Cliente_Producto>? CliProd { get; set; }

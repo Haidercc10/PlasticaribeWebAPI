@@ -35,5 +35,9 @@ namespace PlasticaribeAPI.Models
         [Precision(14, 2)]
         public int Tratado_Id { get; set; }
         public Tratado? Tratado { get; set; }
+
+
+        [Precision(14, 2)]
+        public decimal Extrusion_Peso { get; set; }
     }
 }
