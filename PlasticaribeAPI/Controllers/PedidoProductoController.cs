@@ -120,6 +120,39 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        /** Obtener pedidos con estado pendiente */
+        [HttpGet("PedidosPendientes")]
+        public ActionResult<PedidoProducto> GetPedido_Pendiente()
+        {
+            var producto = from p in _context.Set<PedidoExterno>()
+                           from pp in _context.Set<PedidoProducto>()
+                           from ex in _context.Set<Existencia_Productos>()
+                           where (p.Estado_Id == 11 || p.Estado_Id == 12)
+                           && p.PedExt_Id == pp.PedExt_Id
+                           && pp.Prod_Id == ex.Prod_Id
+                           select new
+                           {
+                               p.PedExt_Id, 
+                               p.PedExt_FechaCreacion,
+                               p.PedExt_FechaEntrega,
+                               p.SedeCli.Cli_Id,
+                               p.SedeCli.Cli.Cli_Nombre,
+                               pp.Prod_Id, 
+                               pp.Product.Prod_Nombre, 
+                               pp.PedExtProd_Cantidad, 
+                               pp.UndMed.UndMed_Id,
+                               pp.PedExtProd_PrecioUnitario,
+                               ex.ExProd_PrecioVenta,
+                               ex.ExProd_Cantidad,
+                               p.Estado_Id,
+                               p.Estado.Estado_Nombre,
+                               p.Usua_Id,
+                               p.Usua.Usua_Nombre, 
+                           };
+
+            return Ok(producto);       
+        }
+
         // PUT: api/PedidoProducto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
