@@ -1015,16 +1015,12 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //funcion que llevará la información para crear el pdf del ultimo pedido ingresado
-        [HttpGet("getCrearPdfUltPedido")]
-        public ActionResult getCrearPdfUltPedido()
+        [HttpGet("getCrearPdfUltPedido/{pedido}")]
+        public ActionResult getCrearPdfUltPedido(int pedido)
         {
-            var id = (from ped in _context.Set<PedidoExterno>()
-                      orderby ped.PedExt_Id descending
-                      select ped.PedExt_Id).FirstOrDefault();
-
             var con = from ped in _context.Set<PedidoProducto>()
                       from Emp in _context.Set<Empresa>()
-                      where ped.PedExt_Id == id
+                      where ped.PedExt_Id == pedido
                             && Emp.Empresa_Id == 800188732
                       select new
                       {
