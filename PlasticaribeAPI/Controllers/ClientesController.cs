@@ -113,6 +113,36 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        //Funcion que actualizará el estado del cliente
+        [HttpPut("putEstadoCliente/{id}")]
+        public ActionResult PutEstadoCliente(long id, Clientes clientes)
+        {
+            if (id != clientes.Cli_Id)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var con = _context.Clientes.Where(x => x.Cli_Id == id).First<Clientes>();
+                con.Estado_Id = clientes.Estado_Id;
+                _context.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ClientesExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
         // POST: api/Clientes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

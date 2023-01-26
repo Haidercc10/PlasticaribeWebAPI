@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20230125224003_Cambios_Tabla_Producto")]
+    partial class CambiosTablaProducto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2795,20 +2798,8 @@ namespace PlasticaribeAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Ot_Id"));
 
-                    b.Property<bool>("Corte")
-                        .HasColumnType("bit");
-
                     b.Property<int>("Estado_Id")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Extrusion")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Impresion")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Laminado")
-                        .HasColumnType("bit");
 
                     b.Property<long>("Mezcla_Id")
                         .HasColumnType("bigint");
@@ -2857,14 +2848,8 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Prod_Id")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Rotograbado")
-                        .HasColumnType("bit");
-
                     b.Property<long>("SedeCli_Id")
                         .HasColumnType("bigint");
-
-                    b.Property<bool>("Sellado")
-                        .HasColumnType("bit");
 
                     b.Property<string>("UndMed_Id")
                         .IsRequired()

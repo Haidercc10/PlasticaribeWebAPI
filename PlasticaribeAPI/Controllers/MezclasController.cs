@@ -50,6 +50,16 @@ namespace PlasticaribeAPI.Controllers
             return mezcla;
         }
 
+        [HttpGet("getMezclaNombre/{nombre}")]
+        public ActionResult GetMezclaNombre(string nombre)
+        {
+            var con = (from mez in _context.Set<Mezcla>()
+                      where mez.Mezcla_Nombre == nombre
+                      select mez).FirstOrDefault();
+            if (con == null) return NotFound();
+            else return Ok(con);
+        }
+
         [HttpGet("combinacionMezclas/{Mezcla_Nombre}")]
         public ActionResult GetCombinacionMezclas(string Mezcla_Nombre)
         {

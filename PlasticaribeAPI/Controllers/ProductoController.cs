@@ -195,6 +195,33 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        //Funcion que va a actualizar el estado del producto
+        [HttpPut("putEstadoProducto/{id}")]
+        public ActionResult PutEstadoProducto(int id, Producto producto)
+        {
+            if (id != producto.Prod_Id)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                var con = _context.Productos.Where(x => x.Prod_Id == id).First<Producto>();
+                con.Estado_Id = producto.Estado_Id;
+                _context.SaveChanges();
+            } catch (DbUpdateConcurrencyException)
+            {
+                if (!ProductoExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return NoContent();
+        }
+
         // POST: api/Producto
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

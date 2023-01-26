@@ -949,7 +949,6 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult<PedidoExterno> GetPedidosSinOT()
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-
             var pedidos = from ped in _context.Set<PedidoProducto>()
                           where ped.PedidoExt.Estado_Id != 5
                           group ped by new
@@ -973,6 +972,48 @@ namespace PlasticaribeAPI.Controllers
             return Ok(pedidos);
         }
 
+        // funcion que consultará la información de un pedido
+        [HttpGet("getInfoPedido/{pedido}")]
+        public ActionResult getInfoPedido(int pedido)
+        {
+            var con = from ped in _context.Set<PedidoProducto>()
+                      where ped.PedExt_Id == pedido
+                            && ped.PedidoExt.Estado_Id != 5
+                      select new
+                      {
+                          Id_Vendedor = ped.PedidoExt.Usua_Id,
+                          Vendedor = ped.PedidoExt.Usua.Usua_Nombre,
+                          Fecha_Entrega = ped.PedidoExt.PedExt_FechaEntrega,
+                          Id_Sede_Cliente = ped.PedidoExt.SedeCli_Id,
+                          Id_Cliente = ped.PedidoExt.SedeCli.Cli_Id,
+                          Cliente = ped.PedidoExt.SedeCli.Cli.Cli_Nombre,
+                          Ciudad = ped.PedidoExt.SedeCli.SedeCliente_Ciudad,
+                          Direccion = ped.PedidoExt.SedeCli.SedeCliente_Direccion,
+                          Estado = ped.PedidoExt.Estado_Id,
+                          Observacion = ped.PedidoExt.PedExt_Observacion,
+                          Id_Producto = ped.Prod_Id,
+                          Producto = ped.Product.Prod_Nombre,
+                          Ancho_Producto = ped.Product.Prod_Ancho,
+                          Calibre_Producto = ped.Product.Prod_Calibre,
+                          Fuelle_Producto = ped.Product.Prod_Fuelle,
+                          Largo_Producto = ped.Product.Prod_Largo,
+                          Und_ACFL = ped.Product.UndMedACF,
+                          Peso_Producto = ped.Product.Prod_Peso,
+                          Peso_Millar = ped.Product.Prod_Peso_Millar,
+                          Tipo_Producto = ped.Product.TpProd.TpProd_Nombre,
+                          Material_Producto = ped.Product.MaterialMP.Material_Nombre,
+                          Pigmento_Producto = ped.Product.Pigmt.Pigmt_Nombre,
+                          Cant_Paquete = ped.Product.Prod_CantBolsasPaquete,
+                          Cant_Bulto = ped.Product.Prod_CantBolsasBulto,
+                          Cantidad_Pedida = ped.PedExtProd_Cantidad,
+                          Und_Pedido = ped.UndMed_Id,
+                          Tipo_Sellado = ped.Product.TiposSellados.TpSellados_Nombre,
+                          Precio_Producto = ped.PedExtProd_PrecioUnitario,
+                          SubTotal_Producto = (ped.PedExtProd_PrecioUnitario * ped.PedExtProd_Cantidad),
+                      };
+            return Ok(con);
+        }
+
         //funcion que llevará la información para crear el pdf del ultimo pedido ingresado
         [HttpGet("getCrearPdfUltPedido")]
         public ActionResult getCrearPdfUltPedido()
@@ -987,6 +1028,7 @@ namespace PlasticaribeAPI.Controllers
                             && Emp.Empresa_Id == 800188732
                       select new
                       {
+                          Id_Pedido = ped.PedExt_Id,
                           Consecutivo = ped.PedidoExt.PedExt_Codigo,
                           FechaCreacion = ped.PedidoExt.PedExt_FechaCreacion,
                           FechaEntrega = ped.PedidoExt.PedExt_FechaEntrega,

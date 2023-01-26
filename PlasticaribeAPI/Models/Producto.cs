@@ -102,6 +102,15 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string? Prod_Hora { get; set; }
 
+        [Precision(14, 2)]
+        public decimal Prod_PrecioDia_Sellado { get; set; }
+        [Precision(14, 2)]
+        public decimal Prod_PrecioNoche_Sellado { get; set; }
+        [Precision(14, 2)]
+        public decimal Prod_Peso_Paquete { get; set; }
+        [Precision(14, 2)]
+        public decimal Prod_Peso_Bulto { get; set; }
+
         public IList<DetallesAsignacionProducto_FacturaVenta>? DtAsigProd_FVTA { get; set; }
 
         public IList<DetalleDevolucion_ProductoFacturado>? DtDevProd_Fact { get; set; }

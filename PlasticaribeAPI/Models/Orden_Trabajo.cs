@@ -53,6 +53,12 @@ namespace PlasticaribeAPI.Models
 
         public long Mezcla_Id { get; set; }
         public Mezcla? Mezcla { get; set; }
+        public bool Extrusion { get; set; }
+        public bool Impresion { get; set; }
+        public bool Rotograbado { get; set; }
+        public bool Laminado { get; set; }
+        public bool Corte { get; set; }
+        public bool Sellado { get; set; }
 
     }
 }
