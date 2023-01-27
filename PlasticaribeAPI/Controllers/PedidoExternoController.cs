@@ -1069,6 +1069,43 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        //Funcion que traerá la informacion completa de un pedido, esta consulta se usará inicialmente para la edicion de pedidos
+        [HttpGet("getInfoEditarPedido/{pedido}")]
+        public ActionResult GetInfoEditarPedido(int pedido)
+        {
+            var con = from ped in _context.Set<PedidoExterno>()
+                      from pedProd in _context.Set<PedidoProducto>()
+                      where ped.PedExt_Id == pedido
+                            && ped.PedExt_Id == pedProd.PedExt_Id
+                            && ped.Estado_Id == 11
+                      select new
+                      {
+                          Consecutivo = ped.PedExt_Id,
+                          Id_SedeCliente = ped.SedeCli_Id,
+                          Id_Cliente = ped.SedeCli.Cli_Id,
+                          Cliente = ped.SedeCli.Cli.Cli_Nombre,
+                          Ciudad = ped.SedeCli.SedeCliente_Ciudad,
+                          Direccion = ped.SedeCli.SedeCliente_Direccion,
+                          Id_Vendedor = ped.Usua_Id,
+                          Vendedor = ped.Usua.Usua_Nombre,
+                          Fecha_Entrega = ped.PedExt_FechaEntrega,
+                          Observacion = ped.PedExt_Observacion,
+                          Descuento = ped.PedExt_Descuento,
+                          Iva = ped.PedExt_Iva,
+                          Id_Creador = ped.Creador_Id,
+                          Creador = ped.Creador.Usua_Nombre,
+                          Valor_Total = ped.PedExt_PrecioTotal,
+
+                          Id_Producto = pedProd.Prod_Id,
+                          Producto = pedProd.Product.Prod_Nombre,
+                          Cantidad_Pedida = pedProd.PedExtProd_Cantidad,
+                          Presentacion = pedProd.UndMed_Id,
+                          Precio_Unitario = pedProd.PedExtProd_PrecioUnitario,
+                      };
+            return Ok(con);
+                      
+        }
+
         // PUT: api/PedidoExterno/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
