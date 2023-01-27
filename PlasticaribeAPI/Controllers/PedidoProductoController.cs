@@ -203,6 +203,29 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("getPedidosPendientesAgrupadosxId/{Id}")]
+        public ActionResult getPedidosPendientesAgrupadosxId(long Id)
+        {
+            var con = from p in _context.Set<PedidoExterno>()
+                      where (p.Estado_Id == 11 || p.Estado_Id == 12)
+                      && p.PedExt_Id == Id
+                      select new
+                      {
+                          p.PedExt_Id,
+                          p.PedExt_FechaCreacion,
+                          p.PedExt_FechaEntrega,
+                          p.SedeCli.Cli_Id,
+                          p.SedeCli.Cli.Cli_Nombre,
+                          p.Estado_Id,
+                          p.Estado.Estado_Nombre,
+                          p.Usua_Id,
+                          p.Usua.Usua_Nombre,
+                          p.PedExt_PrecioTotalFinal,
+                      };
+
+            return Ok(con);
+        }
+
         // PUT: api/PedidoProducto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
