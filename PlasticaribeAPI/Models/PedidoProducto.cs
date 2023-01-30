@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace PlasticaribeAPI.Models
 {
@@ -22,6 +23,9 @@ namespace PlasticaribeAPI.Models
 
         [Precision(18, 2)]
         public decimal? PedExtProd_PrecioUnitario { get; set; } /** Valor */
+
+        [Column(TypeName = "date")]
+        public DateTime PedExtProd_FechaEntrega { get; set; }
 
     }
 }

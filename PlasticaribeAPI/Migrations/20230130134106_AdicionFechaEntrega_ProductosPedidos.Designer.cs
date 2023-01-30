@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20230130134106_AdicionFechaEntrega_ProductosPedidos")]
+    partial class AdicionFechaEntregaProductosPedidos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3749,9 +3752,6 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Property<long>("Cli_Id")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("SedeCli_CodBagPro")
-                        .HasColumnType("varchar(10)");
 
                     b.Property<long?>("SedeCli_CodPostal")
                         .HasColumnType("bigint");

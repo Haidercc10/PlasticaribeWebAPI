@@ -15,21 +15,6 @@ namespace PlasticaribeAPI.Models
         public string UndMed_Id { get; set; }
         public Unidad_Medida? Unidad_Medida { get; set; }
 
-        [Precision(14, 2)]
-        public decimal Ot_CantidadKilos { get; set; }
-
-        [Precision(14, 2)]
-        public decimal Ot_CantidadUnidades { get; set; }
-
-        [Precision(14, 2)]
-        public decimal Ot_MargenAdicional { get; set; }
-
-        [Precision(14, 2)]
-        public decimal Ot_CantidadKilos_Margen { get; set; }
-
-        [Precision(14, 2)]
-        public decimal Ot_CantidadUnidades_Margen { get; set; }
-
         [Column(TypeName = "Date")]
         public DateTime Ot_FechaCreacion { get; set; }
 
@@ -57,8 +42,25 @@ namespace PlasticaribeAPI.Models
         public bool Impresion { get; set; }
         public bool Rotograbado { get; set; }
         public bool Laminado { get; set; }
-        public bool Corte { get; set; }
         public bool Sellado { get; set; }
+
+        [Precision(14, 2)]
+        public decimal Ot_MargenAdicional { get; set; }
+
+        [Precision(14, 2)]
+        public decimal Ot_CantidadPedida { get; set; }
+        
+        [Precision(14, 2)]
+        public decimal Ot_ValorUnidad { get; set; }
+
+        [Precision(14, 2)]
+        public decimal Ot_PesoNetoKg { get; set; }
+
+        [Precision(14, 2)]
+        public decimal Ot_ValorKg { get; set; }
+
+        [Precision(14, 2)]
+        public decimal Ot_ValorOT { get; set; }
 
     }
 }

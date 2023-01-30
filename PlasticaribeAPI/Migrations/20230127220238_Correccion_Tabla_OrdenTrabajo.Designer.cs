@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20230127220238_Correccion_Tabla_OrdenTrabajo")]
+    partial class CorreccionTablaOrdenTrabajo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2735,80 +2738,6 @@ namespace PlasticaribeAPI.Migrations
                         });
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.OT_Sellado_Corte", b =>
-                {
-                    b.Property<long>("SelladoCorte_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SelladoCorte_Id"));
-
-                    b.Property<bool>("Corte")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Formato_Id")
-                        .HasColumnType("int");
-
-                    b.Property<long>("Ot_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("Sellado")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal>("SelladoCorte_Ancho")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<decimal>("SelladoCorte_CantBolsasBulto")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<decimal>("SelladoCorte_CantBolsasPaquete")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<decimal?>("SelladoCorte_Fuelle")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<decimal>("SelladoCorte_Largo")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<decimal>("SelladoCorte_PesoBulto")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<decimal>("SelladoCorte_PesoMillar")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<decimal>("SelladoCorte_PesoPaquete")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<decimal>("SelladoCorte_PrecioSelladoDia")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<decimal>("SelladoCorte_PrecioSelladoNoche")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<int>("TpSellado_Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("SelladoCorte_Id");
-
-                    b.HasIndex("Formato_Id");
-
-                    b.HasIndex("Ot_Id");
-
-                    b.HasIndex("TpSellado_Id");
-
-                    b.ToTable("OT_Sellado_Corte");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Orden_Compra", b =>
                 {
                     b.Property<long>("Oc_Id")
@@ -2884,7 +2813,19 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("Mezcla_Id")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal>("Ot_CantidadPedida")
+                    b.Property<decimal>("Ot_CantidadKilos")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("decimal(14,2)");
+
+                    b.Property<decimal>("Ot_CantidadKilos_Margen")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("decimal(14,2)");
+
+                    b.Property<decimal>("Ot_CantidadUnidades")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("decimal(14,2)");
+
+                    b.Property<decimal>("Ot_CantidadUnidades_Margen")
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
 
@@ -2909,22 +2850,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<string>("Ot_Observacion")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<decimal>("Ot_PesoNetoKg")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<decimal>("Ot_ValorKg")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<decimal>("Ot_ValorOT")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<decimal>("Ot_ValorUnidad")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
 
                     b.Property<long>("PedExt_Id")
                         .HasColumnType("bigint");
@@ -3070,9 +2995,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<decimal>("PedExtProd_Cantidad")
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
-
-                    b.Property<DateTime>("PedExtProd_FechaEntrega")
-                        .HasColumnType("date");
 
                     b.Property<decimal?>("PedExtProd_PrecioUnitario")
                         .HasPrecision(18, 2)
@@ -3749,9 +3671,6 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Property<long>("Cli_Id")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("SedeCli_CodBagPro")
-                        .HasColumnType("varchar(10)");
 
                     b.Property<long?>("SedeCli_CodPostal")
                         .HasColumnType("bigint");
@@ -6096,33 +6015,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Laminado_Capa3");
 
                     b.Navigation("Orden_Trabajo");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.OT_Sellado_Corte", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Tipo_Producto", "Formato")
-                        .WithMany()
-                        .HasForeignKey("Formato_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Orden_Trabajo", "Orden_Trabajo")
-                        .WithMany()
-                        .HasForeignKey("Ot_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Tipos_Sellados", "TipoSellado")
-                        .WithMany()
-                        .HasForeignKey("TpSellado_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Formato");
-
-                    b.Navigation("Orden_Trabajo");
-
-                    b.Navigation("TipoSellado");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Orden_Compra", b =>

@@ -77,7 +77,6 @@ namespace PlasticaribeAPI.Controllers
                     ot.Ot_Cyrel,
                     ot.Ot_Corte,
                     ot.Prod_Id,
-                    ot.Ot_CantidadKilos
                 })
                 .ToList();
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
@@ -125,11 +124,7 @@ namespace PlasticaribeAPI.Controllers
                           ot.Prod.Prod_Nombre,
                           Presentacion_Id = ot.UndMed_Id,
                           Presentacion_Nombre = ot.Unidad_Medida.UndMed_Nombre,
-                          ot.Ot_CantidadKilos,
-                          ot.Ot_CantidadUnidades,
                           ot.Ot_MargenAdicional,
-                          ot.Ot_CantidadKilos_Margen,
-                          ot.Ot_CantidadUnidades_Margen,
                           ot.Ot_FechaCreacion,
                           ot.PedidoExterno.PedExt_FechaEntrega,
                           ot.Estado_Id,
