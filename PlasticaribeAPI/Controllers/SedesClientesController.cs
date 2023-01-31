@@ -146,6 +146,16 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        [HttpGet("getDireccionesCliente/{cliente}/{ciudad}")]
+        public ActionResult GetDireccionesCliente(long cliente, string ciudad)
+        {
+            var con = from sc in _context.Set<SedesClientes>()
+                      where sc.Cli_Id == cliente
+                            && sc.SedeCliente_Ciudad == ciudad
+                      select sc;
+            return Ok(con);
+        }
+
         // Funcion que consultará las sedes que tenga un cliente, el cliente se le pasará como parametro
         [HttpGet("getSedesCliente/{id}")]
         public ActionResult GetSedes_Clientes(long id)

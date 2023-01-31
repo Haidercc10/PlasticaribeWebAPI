@@ -983,7 +983,6 @@ namespace PlasticaribeAPI.Controllers
                       {
                           Id_Vendedor = ped.PedidoExt.Usua_Id,
                           Vendedor = ped.PedidoExt.Usua.Usua_Nombre,
-                          Fecha_Entrega = ped.PedidoExt.PedExt_FechaEntrega,
                           Id_Sede_Cliente = ped.PedidoExt.SedeCli_Id,
                           Id_Cliente = ped.PedidoExt.SedeCli.Cli_Id,
                           Cliente = ped.PedidoExt.SedeCli.Cli.Cli_Nombre,
@@ -1010,6 +1009,7 @@ namespace PlasticaribeAPI.Controllers
                           Tipo_Sellado = ped.Product.TiposSellados.TpSellados_Nombre,
                           Precio_Producto = ped.PedExtProd_PrecioUnitario,
                           SubTotal_Producto = (ped.PedExtProd_PrecioUnitario * ped.PedExtProd_Cantidad),
+                          Fecha_Entrega = ped.PedExtProd_FechaEntrega,
                       };
             return Ok(con);
         }
@@ -1027,7 +1027,7 @@ namespace PlasticaribeAPI.Controllers
                           Id_Pedido = ped.PedExt_Id,
                           Consecutivo = ped.PedidoExt.PedExt_Codigo,
                           FechaCreacion = ped.PedidoExt.PedExt_FechaCreacion,
-                          FechaEntrega = ped.PedidoExt.PedExt_FechaEntrega,
+                          //FechaEntrega = ped.PedidoExt.PedExt_FechaEntrega,
                           Hora = ped.PedidoExt.PedExt_HoraCreacion,
                           Creador_Id = ped.PedidoExt.Creador_Id,
                           Creador = ped.PedidoExt.Creador.Usua_Nombre,
@@ -1057,6 +1057,7 @@ namespace PlasticaribeAPI.Controllers
                           Presentacion = ped.UndMed_Id,
                           Precio_Unitario = ped.PedExtProd_PrecioUnitario,
                           SubTotal_Producto = (ped.PedExtProd_Cantidad * ped.PedExtProd_PrecioUnitario),
+                          Fecha_Entrega = ped.PedExtProd_FechaEntrega,
 
                           Empresa_Id = Emp.Empresa_Id,
                           Empresa_Ciudad = Emp.Empresa_Ciudad,
