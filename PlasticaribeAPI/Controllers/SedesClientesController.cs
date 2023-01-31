@@ -66,7 +66,8 @@ namespace PlasticaribeAPI.Controllers
                     sc.Cli_Id,
                     sc.Cli.Cli_Nombre,
                     sc.Cli.usua_Id,
-                    sc.Cli.Usua.Usua_Nombre
+                    sc.Cli.Usua.Usua_Nombre,
+                    sc.SedeCli_CodBagPro,
                 }).ToList();
 
             if (clientes == null)
@@ -101,8 +102,8 @@ namespace PlasticaribeAPI.Controllers
                     sc.Cli.TPCli.TPCli_Id,
                     sc.Cli.TipoIdentificacion_Id,
                     sc.Cli.Cli_Telefono,
-                    sc.Cli.Cli_Email
-
+                    sc.Cli.Cli_Email,
+                    sc.SedeCli_CodBagPro,
                 }).ToList();
 
             if (clientes == null)
@@ -131,7 +132,8 @@ namespace PlasticaribeAPI.Controllers
                     sc.Cli_Id,
                     sc.Cli.Cli_Nombre,
                     sc.Cli.usua_Id,
-                    sc.Cli.Usua.Usua_Nombre
+                    sc.Cli.Usua.Usua_Nombre,
+                    sc.SedeCli_CodBagPro,
                 }).ToList();
 
             if (clientes == null)
