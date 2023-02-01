@@ -161,7 +161,7 @@ namespace PlasticaribeAPI.Controllers
                            {
                                p.PedExt_Id,
                                p.PedExt_FechaCreacion,
-                               p.PedExt_FechaEntrega,
+                               pp.PedExtProd_FechaEntrega,
                                p.SedeCli.Cli_Id,
                                p.SedeCli.Cli.Cli_Nombre,
                                pp.Prod_Id,
@@ -190,7 +190,6 @@ namespace PlasticaribeAPI.Controllers
                       {
                           p.PedExt_Id,
                           p.PedExt_FechaCreacion,
-                          p.PedExt_FechaEntrega,
                           p.SedeCli.Cli_Id,
                           p.SedeCli.Cli.Cli_Nombre,
                           p.Estado_Id,
@@ -213,7 +212,6 @@ namespace PlasticaribeAPI.Controllers
                       {
                           p.PedExt_Id,
                           p.PedExt_FechaCreacion,
-                          p.PedExt_FechaEntrega,
                           p.SedeCli.Cli_Id,
                           p.SedeCli.Cli.Cli_Nombre,
                           p.Estado_Id,

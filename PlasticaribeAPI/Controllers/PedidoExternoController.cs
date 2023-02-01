@@ -1089,7 +1089,6 @@ namespace PlasticaribeAPI.Controllers
                           Direccion = ped.SedeCli.SedeCliente_Direccion,
                           Id_Vendedor = ped.Usua_Id,
                           Vendedor = ped.Usua.Usua_Nombre,
-                          Fecha_Entrega = ped.PedExt_FechaEntrega,
                           Observacion = ped.PedExt_Observacion,
                           Descuento = ped.PedExt_Descuento,
                           Iva = ped.PedExt_Iva,
@@ -1102,6 +1101,7 @@ namespace PlasticaribeAPI.Controllers
                           Cantidad_Pedida = pedProd.PedExtProd_Cantidad,
                           Presentacion = pedProd.UndMed_Id,
                           Precio_Unitario = pedProd.PedExtProd_PrecioUnitario,
+                          Fecha_Entrega = pedProd.PedExtProd_FechaEntrega,
                       };
             return Ok(con);
                       
