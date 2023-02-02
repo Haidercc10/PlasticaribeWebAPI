@@ -29,7 +29,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string? SedeCli_Hora { get; set; }
 
-        [Column(TypeName = "varchar(10)")]
+        [Column(TypeName = "varchar(30)")]
         public string? SedeCli_CodBagPro { get; set; }
     }
 }
