@@ -8,9 +8,9 @@ namespace PlasticaribeAPI.Models
         [Key]
         public int MovApp_Id { get; set; }
         public long Usua_Id { get; set; }
-        public Usuario Usuario { get; set; }
+        public Usuario? Usuario { get; set; }
 
-        [Column(TypeName = "varchar(50)")]
+        [Column(TypeName = "varchar(200)")]
         public string MovApp_Nombre { get; set; }
 
         [Column(TypeName = "text")]

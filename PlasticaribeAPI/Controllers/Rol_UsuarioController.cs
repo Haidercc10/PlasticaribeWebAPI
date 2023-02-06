@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +44,7 @@ namespace PlasticaribeAPI.Controllers
             return rol_Usuario;
         }
 
+        [Authorize]
         // GET: api/Rol_Usuario/5
         [HttpGet("getNombreRol/{rol}")]
         public ActionResult GetNombreRol_Usuario(string rol)
@@ -62,6 +64,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
 
+        [Authorize]
         [HttpGet("getNombreRolxLike/{Nombre}")]
         public ActionResult GetNombre(string Nombre)
         {
@@ -77,6 +80,7 @@ namespace PlasticaribeAPI.Controllers
             return Ok(area);
         }
 
+        [Authorize]
         // PUT: api/Rol_Usuario/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -108,6 +112,7 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        [Authorize]
         // POST: api/Rol_Usuario
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -118,7 +123,8 @@ namespace PlasticaribeAPI.Controllers
 
             return CreatedAtAction("GetRol_Usuario", new { id = rol_Usuario.RolUsu_Id }, rol_Usuario);
         }
-
+        
+        [Authorize]
         // DELETE: api/Rol_Usuario/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRol_Usuario(int id)

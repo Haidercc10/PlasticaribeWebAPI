@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ namespace PlasticaribeAPI.Controllers
             return await _context.Empresas.ToListAsync();
         }
 
+        [Authorize]
         // GET: api/Empresas/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Empresa>> GetEmpresa(long id)
@@ -43,6 +45,7 @@ namespace PlasticaribeAPI.Controllers
             return empresa;
         }
 
+        [Authorize]
         // PUT: api/Empresas/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -74,6 +77,7 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        [Authorize]
         // POST: api/Empresas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -99,6 +103,7 @@ namespace PlasticaribeAPI.Controllers
             return CreatedAtAction("GetEmpresa", new { id = empresa.Empresa_Id }, empresa);
         }
 
+        [Authorize]
         // DELETE: api/Empresas/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmpresa(long id)

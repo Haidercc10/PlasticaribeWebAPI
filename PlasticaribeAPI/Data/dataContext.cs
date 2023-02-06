@@ -6,7 +6,12 @@ namespace PlasticaribeAPI.Data
 {
     public class dataContext : DbContext
     {
-        public dataContext(DbContextOptions<dataContext> options) : base(options) { }
+        protected readonly IConfiguration Configuration;
+        public dataContext(DbContextOptions<dataContext> options, IConfiguration configuration) : base(options) { Configuration = configuration;  }
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        {
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+        }
 
         public DbSet<PlasticaribeAPI.Models.TipoIdentificacion> TipoIdentificaciones { get; set; }
         public DbSet<PlasticaribeAPI.Models.Empresa> Empresas { get; set; }

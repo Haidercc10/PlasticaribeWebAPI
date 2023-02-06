@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@ namespace PlasticaribeAPI.Controllers
 {
     
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class PedidoExternoController : ControllerBase
     {
         private readonly dataContext _context;
