@@ -8,31 +8,21 @@ using System.Security.Claims;
 using System.Text;
 using ConfigurationManager = PlasticaribeAPI.Service.ConfigurationManager;
 
-namespace PlasticaribeAPI.Controllers
-{
+namespace PlasticaribeAPI.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthenticationController : ControllerBase
-    {
+    public class AuthenticationController : ControllerBase {
+
         private readonly dataContext _context;
-        public AuthenticationController(dataContext context)
-        {
-            _context = context;
-        }
+        public AuthenticationController(dataContext context) { _context = context; }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] Login user)
-        {
-            if (user is null)
-            {
-                return BadRequest("Invalid user request!!!");
-            }
-            var con = _context.Usuarios.Where(x => x.Usua_Id == user.Id_Usuario
-                                                    && x.Usua_Contrasena == user.Contrasena
-                                                    && x.Empresa_Id == user.Empresa
-                                                    && x.Estado_Id == 1).First();
-            if (con != null)
-            {
+        public IActionResult Login([FromBody] Login user) {
+            if (user is null) return BadRequest("Invalid user request!!!");
+            var con = _context.Usuarios.Where(x => x.Usua_Id == user.Id_Usuario && x.Usua_Contrasena == user.Contrasena  && x.Empresa_Id == user.Empresa && x.Estado_Id == 1).First();
+
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+            if (con != null) {
                 var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ConfigurationManager.AppSetting["JWT:Secret"]));
                 var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
                 var tokeOptions = new JwtSecurityToken(
@@ -51,6 +41,7 @@ namespace PlasticaribeAPI.Controllers
                 });
             }
             return Unauthorized();
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
         }
     }
 }

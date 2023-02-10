@@ -81,11 +81,11 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<OT_Impresion>> PostOT_Sellado_Corte(OT_Sellado_Corte OT_Sellado_Corte)
+        public async Task<ActionResult<OT_Sellado_Corte>> PostOT_Sellado_Corte(OT_Sellado_Corte OT_Sellado_Corte)
         {
           if (_context.OT_Sellado_Corte == null)
           {
-              return Problem("Entity set 'dataContext.OT_Impresion'  is null.");
+              return Problem("Entity set 'dataContext.OT_Sellado_Corte'  is null.");
           }
             _context.OT_Sellado_Corte.Add(OT_Sellado_Corte);
             await _context.SaveChangesAsync();

@@ -31,10 +31,10 @@ namespace PlasticaribeAPI.Models
         public string Ot_Observacion { get; set; }
 
         [Column(TypeName = "varchar(10)")]
-        public string Ot_Cyrel { get; set; }
+        public bool Ot_Cyrel { get; set; }
 
         [Column(TypeName = "varchar(10)")]
-        public string Ot_Corte { get; set; }
+        public bool Ot_Corte { get; set; }
 
         public long Mezcla_Id { get; set; }
         public Mezcla? Mezcla { get; set; }
