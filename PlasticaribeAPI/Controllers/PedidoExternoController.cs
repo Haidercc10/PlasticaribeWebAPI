@@ -952,6 +952,7 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var pedidos = from ped in _context.Set<PedidoProducto>()
                           where ped.PedidoExt.Estado_Id != 5
+                                && ped.PedExtProd_CantidadFacturada < ped.PedExtProd_Cantidad
                           group ped by new
                           {
                               ped.PedExt_Id,
@@ -964,7 +965,9 @@ namespace PlasticaribeAPI.Controllers
                               Id_Pedido = ped.Key.PedExt_Id,
                               Id_Cliente = ped.Key.Cli_Id,
                               Nombre_Cliente = ped.Key.Cli_Nombre,
-                              Fecha_Entrega = ped.Key.PedExt_FechaEntrega
+                              Fecha_Entrega = ped.Key.PedExt_FechaEntrega,
+                              Cantidad_Productos = ped.Count(),
+                              Zeus = false,
                           };
             if (pedidos == null)
             {
@@ -980,6 +983,7 @@ namespace PlasticaribeAPI.Controllers
             var con = from ped in _context.Set<PedidoProducto>()
                       where ped.PedExt_Id == pedido
                             && ped.PedidoExt.Estado_Id != 5
+                            && ped.PedExtProd_CantidadFacturada < ped.PedExtProd_Cantidad
                       select new
                       {
                           Id_Vendedor = ped.PedidoExt.Usua_Id,
@@ -1006,10 +1010,11 @@ namespace PlasticaribeAPI.Controllers
                           Cant_Paquete = ped.Product.Prod_CantBolsasPaquete,
                           Cant_Bulto = ped.Product.Prod_CantBolsasBulto,
                           Cantidad_Pedida = ped.PedExtProd_Cantidad,
+                          Cantidad_Restante = ped.PedExtProd_Cantidad - ped.PedExtProd_CantidadFacturada,
                           Und_Pedido = ped.UndMed_Id,
                           Tipo_Sellado = ped.Product.TiposSellados.TpSellados_Nombre,
                           Precio_Producto = ped.PedExtProd_PrecioUnitario,
-                          SubTotal_Producto = (ped.PedExtProd_PrecioUnitario * ped.PedExtProd_Cantidad),
+                          SubTotal_Producto = (ped.PedExtProd_PrecioUnitario * (ped.PedExtProd_Cantidad - ped.PedExtProd_CantidadFacturada)),
                           Fecha_Entrega = ped.PedExtProd_FechaEntrega,
                       };
             return Ok(con);

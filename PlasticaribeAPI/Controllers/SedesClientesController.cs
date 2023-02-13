@@ -147,6 +147,18 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        //Funcion que consultará la informacion de una sede de cliente basandose en el Codigo de BagPro, Ciudad y Dirección
+        [HttpGet("getSedeCliente/{cod}/{ciudad}/{direccion}")]
+        public ActionResult GetSedeCliente(string cod, string ciudad, string direccion)
+        {
+            var con = from sd in _context.Set<SedesClientes>()
+                      where sd.SedeCli_CodBagPro == cod
+                            && sd.SedeCliente_Ciudad == ciudad
+                            && sd.SedeCliente_Direccion == direccion
+                      select sd;
+            return Ok(con);
+        }
+
         [HttpGet("getDireccionesCliente/{cliente}/{ciudad}")]
         public ActionResult GetDireccionesCliente(long cliente, string ciudad)
         {

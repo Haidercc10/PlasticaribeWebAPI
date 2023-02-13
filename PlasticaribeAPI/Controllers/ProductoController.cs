@@ -165,6 +165,28 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        // Funcion que obtendrá toda la información de un producto basamdose en su Id y Presentacion
+        [HttpGet("getInfoProducto_Prod_Presentacion/{prod}/{pres}")]
+        public ActionResult getInfoProducto_Prod_Presentacion(int prod, string pres)
+        {
+            var con = from exis in _context.Set<Existencia_Productos>()
+                      from produ in _context.Set<Producto>()
+                      where exis.Prod_Id == prod
+                            && exis.UndMed_Id == pres
+                            && exis.Prod_Id == produ.Prod_Id
+                      select new
+                      {
+                          produ,
+                          exis,
+                          Tipo_Producto = produ.TpProd.TpProd_Nombre,
+                          Tipo_Sellado = produ.TiposSellados.TpSellados_Nombre,
+                          Material = produ.MaterialMP.Material_Nombre,
+                          Pigmento = produ.Pigmt.Pigmt_Nombre,
+                      };
+
+            return Ok(con);
+        }
+
         // PUT: api/Producto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

@@ -211,7 +211,9 @@ namespace PlasticaribeAPI.Controllers
 
         /** Movimientos Desperdicios*/
         [HttpGet("getMovDesperdicios/{fecha1}/{fecha2}")]
+#pragma warning disable CS8632 // La anotación para tipos de referencia que aceptan valores NULL solo debe usarse en el código dentro de un contexto de anotaciones "#nullable".
         public ActionResult<Desperdicio> GetDesperdicios(DateTime fecha1, DateTime fecha2, string? OT = "", string? material = "", string? item = "", string? falla = "", string? proceso = "", string? maquina = "")
+#pragma warning restore CS8632 // La anotación para tipos de referencia que aceptan valores NULL solo debe usarse en el código dentro de un contexto de anotaciones "#nullable".
         {
             var Desperdicio = (from des in _context.Set<Desperdicio>()
                                where des.Desp_Fecha >= fecha1 &&

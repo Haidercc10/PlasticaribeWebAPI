@@ -27,5 +27,8 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "date")]
         public DateTime PedExtProd_FechaEntrega { get; set; }
 
+        [Precision(18, 2)]
+        public decimal PedExtProd_CantidadFacturada { get; set; }
+
     }
 }

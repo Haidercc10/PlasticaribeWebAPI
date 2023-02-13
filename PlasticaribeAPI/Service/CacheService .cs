@@ -20,9 +20,13 @@ namespace PlasticaribeAPI.Service
             var value = _db.StringGet(key);
             if (!string.IsNullOrEmpty(value))
             {
+#pragma warning disable CS8603 // Posible tipo de valor devuelto de referencia nulo
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
                 return JsonConvert.DeserializeObject<T>(value);
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
             }
             return default;
+#pragma warning restore CS8603 // Posible tipo de valor devuelto de referencia nulo
         }
         public bool SetData<T>(string key, T value, DateTimeOffset expirationTime)
         {

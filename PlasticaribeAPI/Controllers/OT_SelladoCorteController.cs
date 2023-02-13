@@ -32,6 +32,23 @@ namespace PlasticaribeAPI.Controllers
             return await _context.OT_Sellado_Corte.ToListAsync();
         }
 
+        [HttpGet("getTipoSellado_Formato/{tipoSellado}/{formato}")]
+        public ActionResult GetTipoSellado_Formato(string tipoSellado, string formato)
+        {
+            var con = (from tpSel in _context.Set<Tipos_Sellados>()
+                       from form in _context.Set<Tipo_Producto>()
+                       where tpSel.TpSellados_Nombre == tipoSellado
+                              && form.TpProd_Nombre == formato
+                       select new
+                       {
+                           tpSel.TpSellado_Id,
+                           form.TpProd_Id,
+                       }).FirstOrDefault();
+
+            if (con != null) return Ok(con);
+            return NoContent();
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<OT_Sellado_Corte>> GetOT_Sellado_Corte(int id)
         {
