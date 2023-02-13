@@ -51,6 +51,16 @@ namespace PlasticaribeAPI.Controllers
             return oT_Laminado;
         }
 
+        // Funcion que consultará los datos en el proceso de laminado de una orden de trabajo
+        [HttpGet("getOT_Laminado/{ot}")]
+        public ActionResult getOt_Laminado(long ot)
+        {
+            var con = from lam in _context.Set<OT_Laminado>()
+                      where lam.OT_Id == ot
+                      select lam;
+            return Ok(con);
+        }
+
         // PUT: api/OT_Laminado/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

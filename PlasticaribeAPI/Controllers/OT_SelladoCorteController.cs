@@ -66,6 +66,16 @@ namespace PlasticaribeAPI.Controllers
             return OT_Sellado_Corte;
         }
 
+        // Funcion que consultará los datos en el proceso de sellado o corte de una orden de trabajo
+        [HttpGet("getOT_Sellado_Corte/{ot}")]
+        public ActionResult getOt_Sellado_Corte(long ot)
+        {
+            var con = from selcor in _context.Set<OT_Sellado_Corte>()
+                      where selcor.Ot_Id == ot
+                      select selcor;
+            return Ok(con);
+        }
+
         // PUT: api/OT_Impresion/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

@@ -51,6 +51,16 @@ namespace PlasticaribeAPI.Controllers
             return oT_Impresion;
         }
 
+        // Funcion que consultará los datos en el proceso de impresion de una orden de trabajo
+        [HttpGet("getOT_Impresion/{ot}")]
+        public ActionResult getOt_Impresion(long ot)
+        {
+            var con = from imp in _context.Set<OT_Impresion>()
+                      where imp.Ot_Id == ot
+                      select imp;
+            return Ok(con);
+        }
+
         // PUT: api/OT_Impresion/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

@@ -51,6 +51,16 @@ namespace PlasticaribeAPI.Controllers
             return oT_Extrusion;
         }
 
+        // Funcion que consultará los datos en el proceso de extrusion de una orden de trabajo
+        [HttpGet("getOT_Extrusion/{ot}")]
+        public ActionResult getOt_Extrusion (long ot)
+        {
+            var con = from ext in _context.Set<OT_Extrusion>()
+                      where ext.Ot_Id == ot
+                      select ext;
+            return Ok(con);
+        }
+
         // PUT: api/OT_Extrusion/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
