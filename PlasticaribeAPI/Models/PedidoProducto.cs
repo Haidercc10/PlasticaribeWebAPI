@@ -30,5 +30,8 @@ namespace PlasticaribeAPI.Models
         [Precision(18, 2)]
         public decimal PedExtProd_CantidadFacturada { get; set; }
 
+        [Precision(18, 2)]
+        public decimal PedExtProd_CantidadFaltante { get; set; }
+
     }
 }
