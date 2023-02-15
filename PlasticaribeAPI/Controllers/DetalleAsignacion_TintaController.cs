@@ -160,8 +160,13 @@ namespace PlasticaribeAPI.Controllers
                .Where(dtAsg => dtAsg.AsigMp.AsigMP_OrdenTrabajo == OT).Sum(da => da.DtAsigMp_Cantidad);
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var devoluciones = _context.DetallesDevoluciones_MateriasPrimas
+                .Where(dev => dev.DevMatPri.DevMatPri_OrdenTrabajo == OT).Sum(dev => dev.DtDevMatPri_CantidadDevuelta);
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
-            var union_Asignaciones3 = union_Asignaciones + union_Asignaciones2;
+
+            var union_Asignaciones3 = (union_Asignaciones + union_Asignaciones2) - devoluciones;
 
             return Ok(union_Asignaciones3);
             
