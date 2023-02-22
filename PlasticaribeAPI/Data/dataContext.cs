@@ -517,6 +517,9 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Activo).WithMany().HasForeignKey(desp => desp.Actv_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("TR_MovimientosApp_Areas"));
+
+            //Log Transacciones
+            modelBuilder.Entity<Log_Transacciones>().HasOne(trn => trn.Usuario).WithMany().HasForeignKey(trn => trn.Transac_Usuario).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
         }
 
 
@@ -691,6 +694,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.Tipos_Sellados> Tipos_Sellados { get; set; }
 
         public DbSet<PlasticaribeAPI.Models.OT_Sellado_Corte> OT_Sellado_Corte { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Log_Transacciones> Log_Transacciones { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Log_Errores> Log_Errores { get; set; }
     }
 
 }
