@@ -39,7 +39,7 @@ namespace PlasticaribeAPI.Models
         public DateTime? Prov_Fecha { get; set; }
 
         [Column(TypeName = "varchar(10)")]
-        public string? Prod_Hora { get; set; }
+        public string? Prov_Hora { get; set; }
 
         //Lista requerida para relación proveedor-materiaprima
         public IList<Provedor_MateriaPrima>? ProvMatPri { get; set; } 

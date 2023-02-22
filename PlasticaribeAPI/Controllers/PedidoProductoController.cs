@@ -128,7 +128,7 @@ namespace PlasticaribeAPI.Controllers
             var producto = from p in _context.Set<PedidoExterno>()
                            from pp in _context.Set<PedidoProducto>()
                            from ex in _context.Set<Existencia_Productos>()
-                           where (p.Estado_Id == 11 || p.Estado_Id == 12)
+                           where (p.Estado_Id == 11)
                            && p.PedExt_Id == pp.PedExt_Id
                            && pp.Prod_Id == ex.Prod_Id
                            select new
@@ -155,7 +155,7 @@ namespace PlasticaribeAPI.Controllers
             var producto = from p in _context.Set<PedidoExterno>()
                            from pp in _context.Set<PedidoProducto>()
                            from ex in _context.Set<Existencia_Productos>()
-                           where (p.Estado_Id == 11 || p.Estado_Id == 12)
+                           where (p.Estado_Id == 11)
                            && p.PedExt_Id == pp.PedExt_Id
                            && pp.Prod_Id == ex.Prod_Id
                            select new
@@ -186,7 +186,7 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult getPedidosPendientesAgrupados()
         {
             var con = from p in _context.Set<PedidoExterno>()
-                      where (p.Estado_Id == 11 || p.Estado_Id == 12)
+                      where (p.Estado_Id == 11)
                       select new
                       {
                           p.PedExt_Id,
@@ -207,7 +207,7 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult getPedidosPendientesAgrupadosxId(long Id)
         {
             var con = from p in _context.Set<PedidoExterno>()
-                      where (p.Estado_Id == 11 || p.Estado_Id == 12)
+                      where (p.Estado_Id == 11)
                       && p.PedExt_Id == Id
                       select new
                       {
