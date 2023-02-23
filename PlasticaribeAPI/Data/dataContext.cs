@@ -506,7 +506,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetallesAsgRollos_Extrusion>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Relaciones Rollo_Desecho
-            modelBuilder.Entity<Rollo_Desecho>().ToTable(tb => tb.HasTrigger("Auditoria_Rollo_Desecho"));
+            modelBuilder.Entity<Rollo_Desecho>().ToTable(tb => tb.HasTrigger("Auditoria_Rollos_Desechos"));
             modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.Prod).WithMany().HasForeignKey(erp => erp.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Producto
             modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.Proceso).WithMany().HasForeignKey(erp => erp.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
             modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.UndMedida).WithMany().HasForeignKey(erp => erp.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Unidad_Medida
@@ -594,8 +594,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Falla).WithMany().HasForeignKey(desp => desp.Falla_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Activo).WithMany().HasForeignKey(desp => desp.Actv_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("TR_MovimientosApp_Areas"));
-
+            
             //Log Transacciones
             modelBuilder.Entity<Log_Transacciones>().HasOne(trn => trn.Usuario).WithMany().HasForeignKey(trn => trn.Transac_Usuario).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
@@ -604,9 +603,34 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Tipos_Sellados>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Sellados"));
             modelBuilder.Entity<MovimientosAplicacion>().ToTable(tb => tb.HasTrigger("Auditoria_MovimientosAplicacion"));
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
-            modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
-            modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
-            modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
+            modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
+            modelBuilder.Entity<Tipo_Moneda>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Monedas"));
+            modelBuilder.Entity<Turno>().ToTable(tb => tb.HasTrigger("Auditoria_Turnos"));
+            modelBuilder.Entity<Tipo_Estado>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Estados"));
+            modelBuilder.Entity<Tipo_Proveedor>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Proveedores"));
+            modelBuilder.Entity<Tipo_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Usuarios"));
+            modelBuilder.Entity<Tipo_Recuperado>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Recuperados"));
+            modelBuilder.Entity<Tipo_Producto>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Productos"));
+            modelBuilder.Entity<TipoDevolucion_ProductoFacturado>().ToTable(tb => tb.HasTrigger("Auditoria_TipoDevoluciones_ProductosFacturados"));
+            modelBuilder.Entity<Tipo_Mantenimiento>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Mantenimientos"));
+            modelBuilder.Entity<Tipos_Impresion>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Impresion"));
+            modelBuilder.Entity<Tipo_FallaTecnica>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_FallasTecnicas"));
+            modelBuilder.Entity<TiposClientes>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Clientes"));
+            modelBuilder.Entity<Tipo_Activo>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Activos"));
+            modelBuilder.Entity<Tipo_Documento>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Documentos"));
+            modelBuilder.Entity<TipoIdentificacion>().ToTable(tb => tb.HasTrigger("Auditoria_TipoIdentificaciones"));
+            modelBuilder.Entity<Rodillos>().ToTable(tb => tb.HasTrigger("Auditoria_Rodillos"));
+            modelBuilder.Entity<Proceso>().ToTable(tb => tb.HasTrigger("Auditoria_Procesos"));
+            modelBuilder.Entity<Pistas>().ToTable(tb => tb.HasTrigger("Auditoria_Pistas"));
+            modelBuilder.Entity<Pigmento>().ToTable(tb => tb.HasTrigger("Auditoria_Pigmentos"));
+            modelBuilder.Entity<Material_MatPrima>().ToTable(tb => tb.HasTrigger("Auditoria_Materiales_MatPrima"));
+            modelBuilder.Entity<Laminado_Capa>().ToTable(tb => tb.HasTrigger("Auditoria_Laminado_Capa"));
+            modelBuilder.Entity<Insumo>().ToTable(tb => tb.HasTrigger("Auditoria_Insumos"));
+            modelBuilder.Entity<Formato>().ToTable(tb => tb.HasTrigger("Auditoria_Formatos"));
+            modelBuilder.Entity<Archivos>().ToTable(tb => tb.HasTrigger("Auditoria_Archivos"));
+            modelBuilder.Entity<Categoria_Insumo>().ToTable(tb => tb.HasTrigger("Auditoria_Categorias_Insumos"));
+            modelBuilder.Entity<Categoria_MatPrima>().ToTable(tb => tb.HasTrigger("Auditoria_Categorias_MatPrima"));
+            modelBuilder.Entity<Categorias_Archivos>().ToTable(tb => tb.HasTrigger("Auditoria_Categorias_Archivos"));
         }
 
 
