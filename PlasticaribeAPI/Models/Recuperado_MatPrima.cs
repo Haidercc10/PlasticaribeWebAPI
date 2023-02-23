@@ -16,7 +16,7 @@ namespace PlasticaribeAPI.Models
         public Usuario? Usua { get; set; } //Propiedad de navegación Usuario 
 
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string? RecMp_Observacion { get; set; }
 
         [Column(TypeName = "varchar(10)")]

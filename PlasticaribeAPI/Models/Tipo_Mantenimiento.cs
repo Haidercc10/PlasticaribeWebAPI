@@ -11,7 +11,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(100)")]
         public string TpMtto_Nombre { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string? TpMtto_Descripcion { get; set; }
 
     }

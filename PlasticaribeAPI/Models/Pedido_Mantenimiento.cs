@@ -24,7 +24,7 @@ namespace PlasticaribeAPI.Models
         public Estado? Estado { get; set; }
 
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string? PedMtto_Observacion { get; set; }
 
     }

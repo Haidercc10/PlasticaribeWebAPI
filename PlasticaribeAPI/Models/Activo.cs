@@ -41,7 +41,7 @@ namespace PlasticaribeAPI.Models
         public DateTime? Actv_FechaUltimoMtto { get; set; }
 
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string? Actv_Observacion { get; set; }
 
 

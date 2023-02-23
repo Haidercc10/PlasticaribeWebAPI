@@ -15,17 +15,16 @@ namespace PlasticaribeAPI.Migrations
                 name: "Log_Errores",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Base_Datos = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false) .Annotation("SqlServer:Identity", "1, 1"),
+                    Base_Datos = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Fecha = table.Column<DateTime>(type: "date", nullable: false),
                     Hora = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ErrorNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ErrorState = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ErrorSeverity = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ErrorProcedure = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ErrorLine = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ErrorMessage = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ErrorNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ErrorState = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ErrorSeverity = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ErrorProcedure = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ErrorLine = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ErrorMessage = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -36,20 +35,19 @@ namespace PlasticaribeAPI.Migrations
                 name: "Log_Transacciones",
                 columns: table => new
                 {
-                    Transac_Codigo = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Transac_Id = table.Column<long>(type: "bigint", nullable: false),
-                    Transac_Tipo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Transac_Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Transac_Tabla = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Transac_LlavePK = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Transac_Campo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Transac_ValorOriginal = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Transac_valorNuevo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Transac_Codigo = table.Column<int>(type: "int", nullable: false) .Annotation("SqlServer:Identity", "1, 1"),
+                    Transac_Id = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Transac_Tipo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Transac_Nombre = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Transac_Tabla = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Transac_LlavePK = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Transac_Campo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Transac_ValorOriginal = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Transac_valorNuevo = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Transac_Fecha = table.Column<DateTime>(type: "date", nullable: false),
                     Transac_Hora = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Transac_Usuario = table.Column<long>(type: "bigint", nullable: false, defaultValue: 123456789),
-                    Transac_BaseDatos = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Transac_BaseDatos = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

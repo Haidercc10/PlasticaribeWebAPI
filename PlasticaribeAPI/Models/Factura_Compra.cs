@@ -27,7 +27,7 @@ namespace PlasticaribeAPI.Models
         [Precision(18, 2)]
         public decimal Facco_ValorTotal { get; set; }
        
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string? Facco_Observacion { get; set; }
 
         public int Estado_Id { get; set; } //Llave foranea de estado

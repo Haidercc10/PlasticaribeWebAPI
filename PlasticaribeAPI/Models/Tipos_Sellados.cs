@@ -9,7 +9,7 @@ namespace PlasticaribeAPI.Models
         public int TpSellado_Id { get; set; }
         [Column(TypeName = "varchar(100)")]
         public string TpSellados_Nombre { get; set; }
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string TpSellado_Descripcion{ get; set; }
     }
 }

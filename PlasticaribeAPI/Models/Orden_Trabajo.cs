@@ -27,7 +27,7 @@ namespace PlasticaribeAPI.Models
         public long PedExt_Id { get; set; }
         public PedidoExterno? PedidoExterno { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string Ot_Observacion { get; set; }
 
         [Column(TypeName = "varchar(10)")]

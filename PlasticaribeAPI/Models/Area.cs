@@ -12,7 +12,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(50)")]
         public String Area_Nombre { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public String? Area_Descripcion { get; set; }
 
     }

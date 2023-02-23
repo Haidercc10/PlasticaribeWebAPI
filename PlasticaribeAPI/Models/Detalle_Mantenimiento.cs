@@ -26,7 +26,7 @@ namespace PlasticaribeAPI.Models
         public decimal? DtMtto_Precio { get; set; }
 
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string? DtMtto_Descripcion { get; set; }
 
         public int Estado_Id { get; set; }

@@ -17,7 +17,7 @@ namespace PlasticaribeAPI.Models
         public long Usua_Id { get; set; }
         public Usuario? Usua { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string? EntTinta_Observacion { get; set; }
     }
 }

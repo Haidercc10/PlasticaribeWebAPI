@@ -16,7 +16,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(50)")]
         public string Proceso_Nombre { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string Proceso_Descripcion { get; set; }
     }
 }

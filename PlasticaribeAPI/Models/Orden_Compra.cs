@@ -41,7 +41,7 @@ namespace PlasticaribeAPI.Models
         public Tipo_Documento? TipoDoc { get; set; }
 
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string? Oc_Observacion { get; set; }
         public IList<OrdenesCompras_FacturasCompras>? OrdenFactura { get; set; }
         public IList<Remision_OrdenCompra>? OrdenRemision { get; set; }

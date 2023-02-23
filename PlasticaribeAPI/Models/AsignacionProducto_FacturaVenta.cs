@@ -27,7 +27,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string? AsigProdFV_Hora { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string? AsigProdFV_Observacion { get; set; }
 
         public long Cli_Id { get; set; }

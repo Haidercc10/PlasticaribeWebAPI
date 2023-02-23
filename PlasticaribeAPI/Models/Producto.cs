@@ -25,7 +25,7 @@ namespace PlasticaribeAPI.Models
         
         public string Prod_Nombre { get; set; } /** NOMBRE | ClienteItemsNom */
 
-        [Column(TypeName = "text", Order = 3)]
+        [Column(TypeName = "varchar(max)")]
         public string? Prod_Descripcion { get; set; } /** DESCRIPCION |   */
 
         //Llave tipos productos agregada. 

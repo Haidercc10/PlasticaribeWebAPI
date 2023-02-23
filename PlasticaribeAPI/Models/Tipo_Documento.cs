@@ -16,7 +16,7 @@ namespace PlasticaribeAPI.Models
         public string TpDoc_Nombre { get; set; }
 
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string TpDoc_Descripcion { get; set; }
     }
 }

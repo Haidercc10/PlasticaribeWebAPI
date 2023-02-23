@@ -24,7 +24,7 @@ namespace PlasticaribeAPI.Models
         public string? DevProdFact_Hora { get; set; }
 
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string? DevProdFact_Observacion { get; set; }
 
 

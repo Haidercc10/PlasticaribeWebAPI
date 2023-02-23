@@ -13,7 +13,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(200)")]
         public string MovApp_Nombre { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string MovApp_Descripcion { get; set; }
 
         [Column(TypeName = "date")]

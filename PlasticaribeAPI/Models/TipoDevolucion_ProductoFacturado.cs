@@ -15,7 +15,7 @@ namespace PlasticaribeAPI.Models
         public int TipoDevProdFact_Nombre { get; set; }
 
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public int TipoDevProdFact_Descripcion { get; set; }
     }
 }

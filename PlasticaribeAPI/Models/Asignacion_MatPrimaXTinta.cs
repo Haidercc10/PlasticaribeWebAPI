@@ -29,7 +29,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string? AsigMPxTinta_Hora { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string? AsigMPxTinta_Observacion { get; set; }
 
         public long Usua_Id { get; set; } //Llave foranea de usuario que asigna materia prima

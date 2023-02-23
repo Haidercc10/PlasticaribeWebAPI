@@ -34,7 +34,7 @@ namespace PlasticaribeAPI.Models
         public string TpDoc_Id { get; set; }  //Llave foranea de Tipo_Documento. 
         public Tipo_Documento? TpDoc { get; set; } //Propiedad de navegación de Tipo_Documento.
 
-        [Column(TypeName = "text")] 
+        [Column(TypeName = "varchar(max)")] 
         public string? Rem_Observacion { get; set; }
 
         //public IList<Remision_MateriaPrima>? RemiMatPri { get; set; }

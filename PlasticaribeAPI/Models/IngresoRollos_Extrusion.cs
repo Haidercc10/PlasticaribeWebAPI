@@ -8,7 +8,7 @@ namespace PlasticaribeAPI.Models
         [Key]
         public long IngRollo_Id { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string? IngRollo_Observacion { get; set; }
         public long Usua_Id { get; set; }
         public Usuario? Usua { get; set; }

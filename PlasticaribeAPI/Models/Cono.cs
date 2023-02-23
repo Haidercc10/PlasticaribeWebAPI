@@ -21,7 +21,7 @@ namespace PlasticaribeAPI.Models
         public decimal Cono_KgXCmsAncho { get; set; }
 
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string? Cono_Descripcion { get; set; }
     }
 }

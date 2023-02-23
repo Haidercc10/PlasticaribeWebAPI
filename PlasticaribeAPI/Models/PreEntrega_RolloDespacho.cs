@@ -16,7 +16,7 @@ namespace PlasticaribeAPI.Models
         public string? PreEntRollo_Hora { get; set; }
 
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string? PreEntRollo_Observacion { get; set; }
 
 

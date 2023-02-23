@@ -12,7 +12,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(150)")]
         public string MezPigmto_Nombre { get; set; }
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string? MezPigmto_Descripcion { get; set; }
     }
 }

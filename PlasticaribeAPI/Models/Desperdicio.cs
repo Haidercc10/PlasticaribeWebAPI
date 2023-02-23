@@ -51,7 +51,7 @@ namespace PlasticaribeAPI.Models
 
 
 
-        [Column(TypeName = "text")]
+        [Column(TypeName = "varchar(max)")]
         public string? Desp_Observacion { get; set; }
 
 
