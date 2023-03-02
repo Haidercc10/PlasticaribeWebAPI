@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -6,6 +6,7 @@ using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Service;
 using System.Text;
 using ConfigurationManager = PlasticaribeAPI.Service.ConfigurationManager;
+using PlasticaribeAPI.Controllers;
 
 var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
