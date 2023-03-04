@@ -97,14 +97,14 @@ namespace PlasticaribeAPI.Controllers
 
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(web_ContactoCorreo.Nombre, web_ContactoCorreo.Correo));
-            message.To.Add(new MailboxAddress("Recipient Name", "recipientemail@example.com"));
+            message.To.Add(new MailboxAddress("Plasticaribe SAS", "prueba20230227@gmail.com"));
             message.Subject = web_ContactoCorreo.Asunto;
             message.Body = new TextPart("plain") { Text = web_ContactoCorreo.Mensaje };
 
             using (var client = new SmtpClient())
             {
                 client.Connect("smtp.gmail.com", 587, false);
-                client.Authenticate("prueba20230227@gmail.com", "20230227");
+                client.Authenticate("prueba20230227@gmail.com", "lestlxcvbrpkmonh");
                 client.Send(message);
                 client.Disconnect(true);
             }
