@@ -51,6 +51,15 @@ namespace PlasticaribeAPI.Controllers
             return materia_Prima;
         }
 
+
+        // GET: api/Materia_Prima/5
+        [HttpGet("getMaximoIdMatPrima")]
+        public  ActionResult GetMaxMateria_Prima()
+        {           
+            var materia_Prima =  _context.Materias_Primas.Select(m => m.MatPri_Id).Max();
+            return Ok(materia_Prima);
+        }
+
         //
         [HttpGet("ConsultaInventario1/{fecha1}/{fecha2}/{id}/{categoria}")]
         public ActionResult Get(DateTime fecha1, DateTime fecha2, long id, long categoria)
