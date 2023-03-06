@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
@@ -11,5 +13,9 @@ namespace PlasticaribeAPI.Models
         public string Correo { get; set; }
         public string Asunto { get; set; }
         public string Mensaje { get; set; }
+
+        [Column(TypeName = "Date")]
+        public DateTime Fecha_Envio { get; set; }
+        public string Hora_Envio { get; set; }
     }
 }

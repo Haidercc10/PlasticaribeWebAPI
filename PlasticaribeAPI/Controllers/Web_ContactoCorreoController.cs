@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
+using MimeKit.Utils;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 
@@ -96,10 +97,38 @@ namespace PlasticaribeAPI.Controllers
             await _context.SaveChangesAsync();
 
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(web_ContactoCorreo.Nombre, web_ContactoCorreo.Correo));
-            message.To.Add(new MailboxAddress("Plasticaribe SAS", "prueba20230227@gmail.com"));
+            message.From.Add(new MailboxAddress("Plasticaribe SAS", web_ContactoCorreo.Correo));
+            message.To.Add(new MailboxAddress(web_ContactoCorreo.Nombre, web_ContactoCorreo.Correo));
             message.Subject = web_ContactoCorreo.Asunto;
-            message.Body = new TextPart("plain") { Text = web_ContactoCorreo.Mensaje };
+
+            var builder = new BodyBuilder();
+
+            string logo = "C:\\Users\\SANDRA\\Desktop\\logo-footer.png"; //Variable que tendrá la ruta del logo de la empresa
+
+            // Set the plain-text version of the message text
+            builder.TextBody = web_ContactoCorreo.Mensaje;
+
+            // In order to reference selfie.jpg from the html text, we'll need to add it
+            // to builder.LinkedResources and then use its Content-Id value in the img src.
+            var image = builder.LinkedResources.Add(@"" + logo);
+            image.ContentId = MimeUtils.GenerateMessageId();
+
+            // Mensaje n
+            builder.HtmlBody = string.Format(@"
+                <center><img src=""cid:{0}""></center>
+                    <h2>" + web_ContactoCorreo.Nombre + "</h2> " +
+                    "<p>" +
+                    web_ContactoCorreo.Mensaje +
+                    "</p> ", image.ContentId);
+
+            // Podemos añadir archivos con la linea siguiente linea
+            //builder.Attachments.Add(@"C:\\Users\\SANDRA\\Desktop\\logo-footer.png");
+
+            // Cambiamos el cuerpo del correo
+            message.Body = builder.ToMessageBody();
+
+
+            //message.Body = new TextPart("plain") { Text = web_ContactoCorreo.Mensaje };
 
             using (var client = new SmtpClient())
             {
