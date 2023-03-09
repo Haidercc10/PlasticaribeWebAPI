@@ -528,7 +528,7 @@ namespace PlasticaribeAPI.Controllers
                             //Materia Prima
                             MatPri_Id = Convert.ToInt16(y.Key.MatPri_Id),
                             Tinta_Id = Convert.ToInt16(2001),
-                            Bopp_Id = Convert.ToInt16(0),
+                            Bopp_Id = Convert.ToInt16(449),
                             MateriaPrima = y.Key.MatPri_Id,
                             NombreMP = y.Key.MatPri_Nombre,
                             CantMP = y.Sum(Asgmp => Asgmp.DtAsigMp_Cantidad),
@@ -555,7 +555,7 @@ namespace PlasticaribeAPI.Controllers
                                 //Tintas
                                 MatPri_Id = Convert.ToInt16(84),
                                 Tinta_Id = Convert.ToInt16(y.Key.Tinta_Id),
-                                Bopp_Id = Convert.ToInt16(0),
+                                Bopp_Id = Convert.ToInt16(449),
                                 MateriaPrima = y.Key.Tinta_Id,
                                 NombreMP = y.Key.Tinta_Nombre,
                                 CantMP = y.Sum(AsgTinta => AsgTinta.DtAsigTinta_Cantidad),

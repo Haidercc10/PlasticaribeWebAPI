@@ -30,7 +30,6 @@ namespace PlasticaribeAPI.Controllers
             return await _context.Empresas.ToListAsync();
         }
 
-        [Authorize]
         // GET: api/Empresas/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Empresa>> GetEmpresa(long id)
