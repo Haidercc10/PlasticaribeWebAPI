@@ -622,6 +622,23 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        //Consulta que traerá la cantidad de materia prima asignada, teniendo en cuenta la materia prima devuelta
+        [HttpGet("getMateriaPrimaAsignada/{ot}")]
+        public ActionResult GetMateriaPrimaAsignada(int ot)
+        {
+            var asig = from asg in _context.Set<DetalleAsignacion_MateriaPrima>()
+                       where asg.AsigMp.AsigMP_OrdenTrabajo == ot
+                       group asg by asg.AsigMp.AsigMP_OrdenTrabajo into asg
+                       select asg.Sum(x => x.DtAsigMp_Cantidad);
+
+            var devol = from dev in _context.Set<DetalleDevolucion_MateriaPrima>()
+                        where dev.DevMatPri.DevMatPri_OrdenTrabajo == ot
+                        group dev by dev.DevMatPri.DevMatPri_OrdenTrabajo into dev
+                        select dev.Sum(x => x.DtDevMatPri_CantidadDevuelta);
+
+            return Ok(asig.Concat(devol));
+        }
+
         // PUT: api/DetalleAsignacion_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

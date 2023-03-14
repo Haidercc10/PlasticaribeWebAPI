@@ -815,6 +815,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.Log_Transacciones> Log_Transacciones { get; set; }
         public DbSet<PlasticaribeAPI.Models.Log_Errores> Log_Errores { get; set; }
         public DbSet<PlasticaribeAPI.Models.Web_ContactoCorreo> Web_ContactoCorreo { get; set; }
+
     }
 
 }

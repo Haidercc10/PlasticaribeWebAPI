@@ -222,7 +222,6 @@ namespace PlasticaribeAPI.Controllers
                 client.Send(message);
                 client.Disconnect(true);
             }
-
             return Ok("El correo ha sido enviado");
         }
 
