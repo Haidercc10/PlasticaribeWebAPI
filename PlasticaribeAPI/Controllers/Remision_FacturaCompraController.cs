@@ -35,13 +35,13 @@ namespace PlasticaribeAPI.Controllers
 
         // GET: api/Remision_FacturaCompra/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Remision_FacturaCompra>> GetRemision_FacturaCompra(long Codigo)
+        public async Task<ActionResult<Remision_FacturaCompra>> GetRemision_FacturaCompra(long id)
         {
           if (_context.Remisiones_FacturasCompras == null)
           {
               return NotFound();
           }
-            var remision_FacturaCompra = await _context.Remisiones_FacturasCompras.FindAsync(Codigo);
+            var remision_FacturaCompra = await _context.Remisiones_FacturasCompras.FindAsync(id);
 
             if (remision_FacturaCompra == null)
             {

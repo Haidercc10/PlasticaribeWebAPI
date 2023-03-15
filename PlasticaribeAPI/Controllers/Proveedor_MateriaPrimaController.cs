@@ -35,13 +35,13 @@ namespace PlasticaribeAPI.Controllers
 
         // GET: api/Provedor_MateriaPrima/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Provedor_MateriaPrima>> GetProvedor_MateriaPrima(long Codigo)
+        public async Task<ActionResult<Provedor_MateriaPrima>> GetProvedor_MateriaPrima(long id)
         {
           if (_context.Proveedores_MateriasPrimas == null)
           {
               return NotFound();
           }
-            var provedor_MateriaPrima = await _context.Proveedores_MateriasPrimas.FindAsync(Codigo);
+            var provedor_MateriaPrima = await _context.Proveedores_MateriasPrimas.FindAsync(id);
 
             if (provedor_MateriaPrima == null)
             {

@@ -35,13 +35,13 @@ namespace PlasticaribeAPI.Controllers
 
         // GET: api/DetalleRecuperado_MateriaPrima/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<DetalleRecuperado_MateriaPrima>> GetDetalleRecuperado_MateriaPrima(long Codigo)
+        public async Task<ActionResult<DetalleRecuperado_MateriaPrima>> GetDetalleRecuperado_MateriaPrima(long id)
         {
           if (_context.DetallesRecuperados_MateriasPrimas == null)
           {
               return NotFound();
           }
-            var detalleRecuperado_MateriaPrima = await _context.DetallesRecuperados_MateriasPrimas.FindAsync(Codigo);
+            var detalleRecuperado_MateriaPrima = await _context.DetallesRecuperados_MateriasPrimas.FindAsync(id);
 
             if (detalleRecuperado_MateriaPrima == null)
             {

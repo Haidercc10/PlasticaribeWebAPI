@@ -67,13 +67,13 @@ namespace PlasticaribeAPI.Controllers
 
         // GET: api/Cliente_Producto/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Cliente_Producto>> GetCliente_Producto(long Codigo)
+        public async Task<ActionResult<Cliente_Producto>> GetCliente_Producto(long id)
         {
           if (_context.Clientes_Productos == null)
           {
               return NotFound();
           }
-            var cliente_Producto = await _context.Clientes_Productos.FindAsync(Codigo);
+            var cliente_Producto = await _context.Clientes_Productos.FindAsync(id);
 
             if (cliente_Producto == null)
             {
