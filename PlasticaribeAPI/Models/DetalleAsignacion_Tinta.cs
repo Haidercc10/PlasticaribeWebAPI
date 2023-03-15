@@ -9,7 +9,9 @@ namespace PlasticaribeAPI.Models
 
         /**Este ID será igual al de la asignación de Materia Prima para crear
         la relación entre el ID de la asignación de Materia Prima y tintas en una OT**/
-        
+        [Key]
+        public long Codigo { get; set; } //Primaria
+
         public long AsigMp_Id { get; set; } //Llave foranea de tinta
         public Asignacion_MatPrima? AsigMp { get; set; } //Propiedad de navegación de tinta
 

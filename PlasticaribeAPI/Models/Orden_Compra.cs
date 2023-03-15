@@ -43,7 +43,7 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(max)")]
         public string? Oc_Observacion { get; set; }
-        public IList<OrdenesCompras_FacturasCompras>? OrdenFactura { get; set; }
-        public IList<Remision_OrdenCompra>? OrdenRemision { get; set; }
+        //public IList<OrdenesCompras_FacturasCompras>? OrdenFactura { get; set; }
+        //public IList<Remision_OrdenCompra>? OrdenRemision { get; set; }
     }
 }

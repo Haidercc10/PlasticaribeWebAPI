@@ -55,7 +55,7 @@ namespace PlasticaribeAPI.Models
         public decimal PedExt_PrecioTotalFinal { get; set; }
         public long? Creador_Id { get; set; }
         public Usuario? Creador { get; set; }
-        public IList<PedidoProducto>? PedExtProd { get; set; }
+       // public IList<PedidoProducto>? PedExtProd { get; set; }
 
     }
 }

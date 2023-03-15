@@ -50,9 +50,9 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string? Tinta_Hora { get; set; }
 
-        public IList<Tinta_MateriaPrima>? TintaMatPri { get; set; }
+        //public IList<Tinta_MateriaPrima>? TintaMatPri { get; set; }
 
         //Lista requerida para relación detalles asignacion_matpri - tintas
-        public IList<DetalleAsignacion_Tinta>? DetAsigTinta { get; set; }
+        //public IList<DetalleAsignacion_Tinta>? DetAsigTinta { get; set; }
     }
 }

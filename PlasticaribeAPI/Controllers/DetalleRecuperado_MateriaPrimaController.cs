@@ -35,13 +35,13 @@ namespace PlasticaribeAPI.Controllers
 
         // GET: api/DetalleRecuperado_MateriaPrima/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<DetalleRecuperado_MateriaPrima>> GetDetalleRecuperado_MateriaPrima(long RecMp_Id, long MatPri_Id)
+        public async Task<ActionResult<DetalleRecuperado_MateriaPrima>> GetDetalleRecuperado_MateriaPrima(long Codigo)
         {
           if (_context.DetallesRecuperados_MateriasPrimas == null)
           {
               return NotFound();
           }
-            var detalleRecuperado_MateriaPrima = await _context.DetallesRecuperados_MateriasPrimas.FindAsync(RecMp_Id, MatPri_Id);
+            var detalleRecuperado_MateriaPrima = await _context.DetallesRecuperados_MateriasPrimas.FindAsync(Codigo);
 
             if (detalleRecuperado_MateriaPrima == null)
             {
@@ -1300,7 +1300,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (DbUpdateException)
             {
-                if (DetalleRecuperado_MateriaPrimaExists(detalleRecuperado_MateriaPrima.RecMp_Id))
+                if (DetalleRecuperado_MateriaPrimaExists(detalleRecuperado_MateriaPrima.Codigo))
                 {
                     return Conflict();
                 }
@@ -1310,7 +1310,7 @@ namespace PlasticaribeAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetDetalleRecuperado_MateriaPrima", new { id = detalleRecuperado_MateriaPrima.RecMp_Id }, detalleRecuperado_MateriaPrima);
+            return CreatedAtAction("GetDetalleRecuperado_MateriaPrima", new { id = detalleRecuperado_MateriaPrima.Codigo }, detalleRecuperado_MateriaPrima);
         }
 
         // DELETE: api/DetalleRecuperado_MateriaPrima/5
@@ -1335,7 +1335,7 @@ namespace PlasticaribeAPI.Controllers
 
         private bool DetalleRecuperado_MateriaPrimaExists(long id)
         {
-            return (_context.DetallesRecuperados_MateriasPrimas?.Any(e => e.RecMp_Id == id)).GetValueOrDefault();
+            return (_context.DetallesRecuperados_MateriasPrimas?.Any(e => e.Codigo == id)).GetValueOrDefault();
         }
     }
 }

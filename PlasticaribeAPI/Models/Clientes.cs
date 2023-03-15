@@ -48,7 +48,7 @@ namespace PlasticaribeAPI.Models
         public Estado? Estado { get; set; }
         
         //Lista requerida para relación clientes-productos
-        public IList<Cliente_Producto>? CliProd { get; set; } /**POSIBLE: CLIENTEOT_ITEMS */
+        //public IList<Cliente_Producto>? CliProd { get; set; } /**POSIBLE: CLIENTEOT_ITEMS */
 
         [Column(TypeName = "date")]
         public DateTime? Cli_Fecha { get; set; }

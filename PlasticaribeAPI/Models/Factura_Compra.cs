@@ -46,8 +46,8 @@ namespace PlasticaribeAPI.Models
 
         //public IList<FacturaCompra_MateriaPrima>? FaccoMatPri { get; set; }
 
-        public IList<Remision_FacturaCompra>? RemiFacco { get; set; }
-        public IList<OrdenesCompras_FacturasCompras>? OrdenFactura { get; set; }
+        //public IList<Remision_FacturaCompra>? RemiFacco { get; set; }
+        //public IList<OrdenesCompras_FacturasCompras>? OrdenFactura { get; set; }
 
     }
 }

@@ -84,9 +84,10 @@ namespace PlasticaribeAPI.Models
         public Material_MatPrima? MaterialMP { get; set; }
 
 
-        public IList<PedidoProducto>? PedExtProd { get; set; }
+        //public IList<PedidoProducto>? PedExtProd { get; set; }
+        
         //Lista requerida para relación clientes-productos
-        public IList<Cliente_Producto>? CliProd { get; set; }
+        //public IList<Cliente_Producto>? CliProd { get; set; }
 
         public int? TpSellado_Id { get; set; }
         public Tipos_Sellados? TiposSellados { get; set; }

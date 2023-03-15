@@ -1,7 +1,12 @@
-﻿namespace PlasticaribeAPI.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PlasticaribeAPI.Models
 {
     public class Remision_FacturaCompra
     {
+        [Key]
+        public long Codigo { get; set; }
+
         public int Rem_Id { get; set; }
         public Remision? Remi { get; set; }
 

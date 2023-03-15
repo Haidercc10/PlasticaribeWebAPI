@@ -7,6 +7,8 @@ namespace PlasticaribeAPI.Models
     public class DetalleRecuperado_MateriaPrima
     {
         [Key]
+        public long Codigo { get; set; }
+
         public long RecMp_Id { get; set; }
         public Recuperado_MatPrima? RecMp { get; set; }
 

@@ -1021,7 +1021,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (DbUpdateException)
             {
-                if (DetalleAsignacion_TintaExists(detalleAsignacion_Tinta.AsigMp_Id))
+                if (DetalleAsignacion_TintaExists(detalleAsignacion_Tinta.Codigo))
                 {
                     return Conflict();
                 }
@@ -1031,7 +1031,7 @@ namespace PlasticaribeAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetDetalleAsignacion_Tinta", new { id = detalleAsignacion_Tinta.AsigMp_Id }, detalleAsignacion_Tinta);
+            return CreatedAtAction("GetDetalleAsignacion_Tinta", new { id = detalleAsignacion_Tinta.Codigo }, detalleAsignacion_Tinta);
         }
 
         // DELETE: api/DetalleAsignacion_Tinta/5
@@ -1056,7 +1056,7 @@ namespace PlasticaribeAPI.Controllers
 
         private bool DetalleAsignacion_TintaExists(long id)
         {
-            return (_context.DetalleAsignaciones_Tintas?.Any(e => e.AsigMp_Id == id)).GetValueOrDefault();
+            return (_context.DetalleAsignaciones_Tintas?.Any(e => e.Codigo == id)).GetValueOrDefault();
         }
     }
 }

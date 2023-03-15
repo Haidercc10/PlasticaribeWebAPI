@@ -35,10 +35,10 @@ namespace PlasticaribeAPI.Models
 
 
         //Lista requerida para relación detalles asignacion - materias primas
-        public IList<DetalleAsignacion_MateriaPrima>? DtAsigMatPri { get; set; }
+        //public IList<DetalleAsignacion_MateriaPrima>? DtAsigMatPri { get; set; }
 
         //Lista requerida para relación detalles asignacion_matpri - tintas
-        public IList<DetalleAsignacion_Tinta>? DetAsigTinta { get; set; }
+        //public IList<DetalleAsignacion_Tinta>? DetAsigTinta { get; set; }
 
     }
 }

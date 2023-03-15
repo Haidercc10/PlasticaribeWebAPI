@@ -98,7 +98,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (DbUpdateException)
             {
-                if (Tinta_MateriaPrimaExists(tinta_MateriaPrima.Tinta_Id))
+                if (Tinta_MateriaPrimaExists(tinta_MateriaPrima.Codigo))
                 {
                     return Conflict();
                 }
@@ -108,7 +108,7 @@ namespace PlasticaribeAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetTinta_MateriaPrima", new { id = tinta_MateriaPrima.Tinta_Id }, tinta_MateriaPrima);
+            return CreatedAtAction("GetTinta_MateriaPrima", new { id = tinta_MateriaPrima.Codigo }, tinta_MateriaPrima);
         }
 
         // DELETE: api/Tinta_MateriaPrima/5
@@ -133,7 +133,7 @@ namespace PlasticaribeAPI.Controllers
 
         private bool Tinta_MateriaPrimaExists(long id)
         {
-            return (_context.Tintas_MateriasPrimas?.Any(e => e.Tinta_Id == id)).GetValueOrDefault();
+            return (_context.Tintas_MateriasPrimas?.Any(e => e.Codigo == id)).GetValueOrDefault();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
@@ -6,6 +7,9 @@ namespace PlasticaribeAPI.Models
     //CLASE DE RELACIÓN ENTRE ASIGNACIONES DE MATERIAS PRIMAS Y MATERIAS PRIMAS
     public class DetalleAsignacion_MateriaPrima
     {
+        [Key]
+        public long Codigo { get; set; }
+
         public long AsigMp_Id { get; set; }
         public Asignacion_MatPrima? AsigMp { get; set; }
 

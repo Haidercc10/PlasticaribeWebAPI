@@ -30,13 +30,13 @@ namespace PlasticaribeAPI.Controllers
 
         // GET: api/DetalleAsignacion_MateriaPrima/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<DetalleAsignacion_MateriaPrima>> GetDetalleAsignacion_MateriaPrima(long AsigMp_Id, long MatPri_Id)
+        public async Task<ActionResult<DetalleAsignacion_MateriaPrima>> GetDetalleAsignacion_MateriaPrima(long Codigo)
         {
           if (_context.DetallesAsignaciones_MateriasPrimas == null)
           {
               return NotFound();
           }
-            var detalleAsignacion_MateriaPrima = await _context.DetallesAsignaciones_MateriasPrimas.FindAsync(AsigMp_Id, MatPri_Id);
+            var detalleAsignacion_MateriaPrima = await _context.DetallesAsignaciones_MateriasPrimas.FindAsync(Codigo);
 
             if (detalleAsignacion_MateriaPrima == null)
             {
@@ -686,7 +686,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (DbUpdateException)
             {
-                if (DetalleAsignacion_MateriaPrimaExists(detalleAsignacion_MateriaPrima.AsigMp_Id))
+                if (DetalleAsignacion_MateriaPrimaExists(detalleAsignacion_MateriaPrima.Codigo))
                 {
                     return Conflict();
                 }
@@ -696,7 +696,7 @@ namespace PlasticaribeAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetDetalleAsignacion_MateriaPrima", new { id = detalleAsignacion_MateriaPrima.AsigMp_Id }, detalleAsignacion_MateriaPrima);
+            return CreatedAtAction("GetDetalleAsignacion_MateriaPrima", new { id = detalleAsignacion_MateriaPrima.Codigo }, detalleAsignacion_MateriaPrima);
         }
 
         // DELETE: api/DetalleAsignacion_MateriaPrima/5
@@ -721,7 +721,7 @@ namespace PlasticaribeAPI.Controllers
 
         private bool DetalleAsignacion_MateriaPrimaExists(long id)
         {
-            return (_context.DetallesAsignaciones_MateriasPrimas?.Any(e => e.AsigMp_Id == id)).GetValueOrDefault();
+            return (_context.DetallesAsignaciones_MateriasPrimas?.Any(e => e.Codigo == id)).GetValueOrDefault();
         }
     }
 }

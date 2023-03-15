@@ -6,6 +6,10 @@ namespace PlasticaribeAPI.Models
 {
     public class OrdenesCompras_FacturasCompras
     {
+
+        [Key]
+        public long Codigo { get; set; }
+
         public long Oc_Id { get; set; }
         public Orden_Compra? Orden_Compra { get; set; }
 

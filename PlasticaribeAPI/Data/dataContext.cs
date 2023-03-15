@@ -119,16 +119,22 @@ namespace PlasticaribeAPI.Data
 
             //Relación de pedidos_productos
             //modelBuilder.Entity<PedidoProducto>().ToTable(tb => tb.HasTrigger("Auditoria_PedidosExternos_Productos"));
-            modelBuilder.Entity<PedidoProducto>().HasKey(pep => new { pep.Prod_Id, pep.PedExt_Id }); //Llave compuesta
-            modelBuilder.Entity<PedidoProducto>().HasOne<Producto>(ppp => ppp.Product).WithMany(pp => pp.PedExtProd).HasForeignKey(ppp => ppp.Prod_Id); //Foranea 1
-            modelBuilder.Entity<PedidoProducto>().HasOne<PedidoExterno>(ppp => ppp.PedidoExt).WithMany(pp => pp.PedExtProd).HasForeignKey(ppp => ppp.PedExt_Id); //Foranea 2
+            //modelBuilder.Entity<PedidoProducto>().HasKey(pep => new { pep.Prod_Id, pep.PedExt_Id }); //Llave compuesta
+            //modelBuilder.Entity<PedidoProducto>().HasOne<Producto>(ppp => ppp.Product).WithMany(pp => pp.PedExtProd).HasForeignKey(ppp => ppp.Prod_Id); //Foranea 1
+            //modelBuilder.Entity<PedidoProducto>().HasOne<PedidoExterno>(ppp => ppp.PedidoExt).WithMany(pp => pp.PedExtProd).HasForeignKey(ppp => ppp.PedExt_Id); //Foranea 2
+
+            modelBuilder.Entity<PedidoProducto>().HasOne(pUnd => pUnd.PedidoExt).WithMany().HasForeignKey(pUnd => pUnd.PedExt_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<PedidoProducto>().HasOne(pUnd => pUnd.Product).WithMany().HasForeignKey(pUnd => pUnd.Prod_Id).OnDelete(DeleteBehavior.Restrict);
             //Llave foranea aparte unidad medida
             modelBuilder.Entity<PedidoProducto>().HasOne(pUnd => pUnd.UndMed).WithMany().HasForeignKey(pUnd => pUnd.UndMed_Id).OnDelete(DeleteBehavior.Restrict);
 
             //Relaciones clientes_productos
-            modelBuilder.Entity<Cliente_Producto>().HasKey(cpro => new { cpro.Prod_Id, cpro.Cli_Id }); //Llave Compuesta
-            modelBuilder.Entity<Cliente_Producto>().HasOne<Clientes>(clipro => clipro.Cli).WithMany(clprod => clprod.CliProd).HasForeignKey(clipro => clipro.Cli_Id);
-            modelBuilder.Entity<Cliente_Producto>().HasOne<Producto>(clipro => clipro.Prod).WithMany(clprod => clprod.CliProd).HasForeignKey(clipro => clipro.Prod_Id);
+            //modelBuilder.Entity<Cliente_Producto>().HasKey(cpro => new { cpro.Prod_Id, cpro.Cli_Id }); //Llave Compuesta
+            //modelBuilder.Entity<Cliente_Producto>().HasOne<Clientes>(clipro => clipro.Cli).WithMany(clprod => clprod.CliProd).HasForeignKey(clipro => clipro.Cli_Id);
+            //modelBuilder.Entity<Cliente_Producto>().HasOne<Producto>(clipro => clipro.Prod).WithMany(clprod => clprod.CliProd).HasForeignKey(clipro => clipro.Prod_Id);
+            modelBuilder.Entity<Cliente_Producto>().HasOne(clipro => clipro.Prod).WithMany().HasForeignKey(clipro => clipro.Prod_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Cliente_Producto>().HasOne(clipro => clipro.Cli).WithMany().HasForeignKey(clipro => clipro.Cli_Id).OnDelete(DeleteBehavior.Restrict); ;
+
 
             //Relaciones Materias_Primas
             //modelBuilder.Entity<Materia_Prima>().ToTable(tb => tb.HasTrigger("Auditoria_Materias_Primas"));
@@ -145,9 +151,11 @@ namespace PlasticaribeAPI.Data
 
             //Relaciones Provedor_MateriaPrima
             //modelBuilder.Entity<Provedor_MateriaPrima>().ToTable(tb => tb.HasTrigger("Auditoria_Proveedores_MateriasPrimas"));
-            modelBuilder.Entity<Provedor_MateriaPrima>().HasKey(provmp => new { provmp.Prov_Id, provmp.MatPri_Id }); //Llave Compuesta Provedor_MateriaPrima 
-            modelBuilder.Entity<Provedor_MateriaPrima>().HasOne<Proveedor>(prvmp => prvmp.Prov).WithMany(prvMtp => prvMtp.ProvMatPri).HasForeignKey(prvmp => prvmp.Prov_Id); //Foranea proveedor
-            modelBuilder.Entity<Provedor_MateriaPrima>().HasOne<Materia_Prima>(prvmp => prvmp.MatPri).WithMany(prvMtp => prvMtp.ProvMatPri).HasForeignKey(prvmp => prvmp.MatPri_Id); //Foranea materiaprima
+            //modelBuilder.Entity<Provedor_MateriaPrima>().HasKey(provmp => new { provmp.Prov_Id, provmp.MatPri_Id }); //Llave Compuesta Provedor_MateriaPrima 
+            //modelBuilder.Entity<Provedor_MateriaPrima>().HasOne<Proveedor>(prvmp => prvmp.Prov).WithMany(prvMtp => prvMtp.ProvMatPri).HasForeignKey(prvmp => prvmp.Prov_Id); //Foranea proveedor
+            // modelBuilder.Entity<Provedor_MateriaPrima>().HasOne<Materia_Prima>(prvmp => prvmp.MatPri).WithMany(prvMtp => prvMtp.ProvMatPri).HasForeignKey(prvmp => prvmp.MatPri_Id); //Foranea materiaprima
+            modelBuilder.Entity<Provedor_MateriaPrima>().HasOne(fcco => fcco.Prov).WithMany().HasForeignKey(facco => facco.Prov_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de proveedor
+            modelBuilder.Entity<Provedor_MateriaPrima>().HasOne(fcco => fcco.MatPri).WithMany().HasForeignKey(facco => facco.MatPri_Id).OnDelete(DeleteBehavior.Restrict); //Foranea de estado
 
             //Relaciones Facturas Compras
             //modelBuilder.Entity<Factura_Compra>().ToTable(tb => tb.HasTrigger("Auditoria_Facturas_Compras"));
@@ -175,10 +183,12 @@ namespace PlasticaribeAPI.Data
 
             //Relaciones DetallesAsignaciones_MateriasPrimas
             //modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().ToTable(tb => tb.HasTrigger("Auditoria_DetallesAsignaciones_MateriasPrimas"));
-            modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().ToTable(tb => tb.HasTrigger("ActualizarMatPrima_AsignadaEPOT"));
-            modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasKey(damp => new { damp.AsigMp_Id, damp.MatPri_Id }); //Llave Compuesta DetalleAsignacion_MateriaPrima 
-            modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasOne<Asignacion_MatPrima>(dasigmp => dasigmp.AsigMp).WithMany(dasimp => dasimp.DtAsigMatPri).HasForeignKey(dasigmp => dasigmp.AsigMp_Id); //Foranea Asignacion_matpri
-            modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasOne<Materia_Prima>(dasigmp => dasigmp.MatPri).WithMany(dasimp => dasimp.DtAsigMatPri).HasForeignKey(dasigmp => dasigmp.MatPri_Id); //Foranea materiaprima
+            //modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().ToTable(tb => tb.HasTrigger("ActualizarMatPrima_AsignadaEPOT"));
+            //modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasKey(damp => new { damp.AsigMp_Id, damp.MatPri_Id }); //Llave Compuesta DetalleAsignacion_MateriaPrima 
+            //modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasOne<Asignacion_MatPrima>(dasigmp => dasigmp.AsigMp).WithMany(dasimp => dasimp.DtAsigMatPri).HasForeignKey(dasigmp => dasigmp.AsigMp_Id); //Foranea Asignacion_matpri
+            //modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasOne<Materia_Prima>(dasigmp => dasigmp.MatPri).WithMany(dasimp => dasimp.DtAsigMatPri).HasForeignKey(dasigmp => dasigmp.MatPri_Id); //Foranea materiaprima
+            modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasOne(damp => damp.AsigMp).WithMany().HasForeignKey(damp => damp.AsigMp_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
+            modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasOne(damp => damp.MatPri).WithMany().HasForeignKey(damp => damp.MatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso 
             modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasOne(damp => damp.UndMed).WithMany().HasForeignKey(damp => damp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasOne(damp => damp.Proceso).WithMany().HasForeignKey(damp => damp.Proceso_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso 
 
@@ -209,9 +219,12 @@ namespace PlasticaribeAPI.Data
 
             //Relaciones Remisiones_FacturasCompras
             //modelBuilder.Entity<Remision_FacturaCompra>().ToTable(tb => tb.HasTrigger("Auditoria_Remisiones_FacturasCompras"));
-            modelBuilder.Entity<Remision_FacturaCompra>().HasKey(remfc => new { remfc.Facco_Id, remfc.Rem_Id }); //Llave Compuesta de facturas compras y remisiones 
-            modelBuilder.Entity<Remision_FacturaCompra>().HasOne<Factura_Compra>(refc => refc.Faccom).WithMany(refco => refco.RemiFacco).HasForeignKey(refc => refc.Facco_Id); //Foranea Facturas compras
-            modelBuilder.Entity<Remision_FacturaCompra>().HasOne<Remision>(refc => refc.Remi).WithMany(refco => refco.RemiFacco).HasForeignKey(refc => refc.Rem_Id); //Foranea Remisiones
+            //modelBuilder.Entity<Remision_FacturaCompra>().HasKey(remfc => new { remfc.Facco_Id, remfc.Rem_Id }); //Llave Compuesta de facturas compras y remisiones 
+            //modelBuilder.Entity<Remision_FacturaCompra>().HasOne<Factura_Compra>(refc => refc.Faccom).WithMany(refco => refco.RemiFacco).HasForeignKey(refc => refc.Facco_Id); //Foranea Facturas compras
+            //modelBuilder.Entity<Remision_FacturaCompra>().HasOne<Remision>(refc => refc.Remi).WithMany(refco => refco.RemiFacco).HasForeignKey(refc => refc.Rem_Id); //Foranea Remisiones
+            modelBuilder.Entity<Remision_FacturaCompra>().HasOne(rmp => rmp.Faccom).WithMany().HasForeignKey(rmp => rmp.Facco_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario
+            modelBuilder.Entity<Remision_FacturaCompra>().HasOne(rmp => rmp.Remi).WithMany().HasForeignKey(rmp => rmp.Rem_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
+
 
             //Relaciones Recuperado_MatPrima
             //modelBuilder.Entity<Recuperado_MatPrima>().ToTable(tb => tb.HasTrigger("Auditoria_Recuperados_MatPrima"));
@@ -223,9 +236,11 @@ namespace PlasticaribeAPI.Data
 
             //Relaciones DetallesRecuperados_MateriasPrimas
             //modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().ToTable(tb => tb.HasTrigger("Auditoria_DetallesRecuperados_MateriasPrimas"));
-            modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasKey(dremp => new { dremp.RecMp_Id, dremp.MatPri_Id }); //Llave Compuesta de recuperadosmatpri y materias primas 
-            modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasOne<Recuperado_MatPrima>(remp => remp.RecMp).WithMany(rempr => rempr.DetRecMatPri).HasForeignKey(remp => remp.RecMp_Id); //Foranea Recuperado_MatPrima
-            modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasOne<Materia_Prima>(remp => remp.MatPri).WithMany(rempr => rempr.DetRecMatPri).HasForeignKey(remp => remp.MatPri_Id); //Foranea Materia_Prima
+            //modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasKey(dremp => new { dremp.RecMp_Id, dremp.MatPri_Id }); //Llave Compuesta de recuperadosmatpri y materias primas 
+            //modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasOne<Recuperado_MatPrima>(remp => remp.RecMp).WithMany(rempr => rempr.DetRecMatPri).HasForeignKey(remp => remp.RecMp_Id); //Foranea Recuperado_MatPrima
+            //modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasOne<Materia_Prima>(remp => remp.MatPri).WithMany(rempr => rempr.DetRecMatPri).HasForeignKey(remp => remp.MatPri_Id); //Foranea Materia_Prima
+            modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasOne(dremp => dremp.RecMp).WithMany().HasForeignKey(dremp => dremp.RecMp_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
+            modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasOne(dremp => dremp.MatPri).WithMany().HasForeignKey(dremp => dremp.MatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasOne(dremp => dremp.UndMed).WithMany().HasForeignKey(dremp => dremp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasOne(dremp => dremp.TpRecu).WithMany().HasForeignKey(dremp => dremp.TpRecu_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
 
@@ -257,14 +272,16 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Tinta>().HasOne(tin => tin.UndMed).WithMany().HasForeignKey(tint => tint.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<Tinta>().HasOne(tin => tin.CatMP).WithMany().HasForeignKey(tint => tint.CatMP_Id).OnDelete(DeleteBehavior.Restrict); //foranea categorias matprima
             modelBuilder.Entity<Tinta>().HasOne(tin => tin.TpBod).WithMany().HasForeignKey(tint => tint.TpBod_Id).OnDelete(DeleteBehavior.Restrict); //foranea Tipo de bodega
-            //modelBuilder.Entity<Tinta>().Property(prop => prop.Tinta_Id).UseIdentityColumn(2000, 1);
+                                                                                                                                                     //modelBuilder.Entity<Tinta>().Property(prop => prop.Tinta_Id).UseIdentityColumn(2000, 1);
 
 
             //Relaciones Tintas_MateriasPrimas
             //modelBuilder.Entity<Tinta_MateriaPrima>().ToTable(tb => tb.HasTrigger("Auditoria_Tintas_MateriasPrimas"));
-            modelBuilder.Entity<Tinta_MateriaPrima>().HasKey(tmp => new { tmp.Tinta_Id, tmp.MatPri_Id }); //Llave Compuesta Tinta_MateriaPrima 
-            modelBuilder.Entity<Tinta_MateriaPrima>().HasOne<Tinta>(tinmp => tinmp.Tinta).WithMany(ttmp => ttmp.TintaMatPri).HasForeignKey(ddmp => ddmp.Tinta_Id); //Foranea tintas
-            modelBuilder.Entity<Tinta_MateriaPrima>().HasOne<Materia_Prima>(tinmp => tinmp.MatPri).WithMany(ttmp => ttmp.TintaMatPri).HasForeignKey(ddmp => ddmp.MatPri_Id); //Foranea materiaprima 
+            //modelBuilder.Entity<Tinta_MateriaPrima>().HasKey(tmp => new { tmp.Tinta_Id, tmp.MatPri_Id }); //Llave Compuesta Tinta_MateriaPrima 
+            //modelBuilder.Entity<Tinta_MateriaPrima>().HasOne<Tinta>(tinmp => tinmp.Tinta).WithMany(ttmp => ttmp.TintaMatPri).HasForeignKey(ddmp => ddmp.Tinta_Id); //Foranea tintas
+            //modelBuilder.Entity<Tinta_MateriaPrima>().HasOne<Materia_Prima>(tinmp => tinmp.MatPri).WithMany(ttmp => ttmp.TintaMatPri).HasForeignKey(ddmp => ddmp.MatPri_Id); //Foranea materiaprima 
+            modelBuilder.Entity<Tinta_MateriaPrima>().HasOne(tin => tin.Tinta).WithMany().HasForeignKey(tint => tint.Tinta_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
+            modelBuilder.Entity<Tinta_MateriaPrima>().HasOne(tin => tin.MatPri).WithMany().HasForeignKey(tint => tint.MatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
 
 
             //Relaciones Asignacion_MatPrimaXTintas
@@ -287,9 +304,12 @@ namespace PlasticaribeAPI.Data
 
             //Relaciones Detalles Asignacion Tintas Para una OT
             //modelBuilder.Entity<DetalleAsignacion_Tinta>().ToTable(tb => tb.HasTrigger("Auditoria_DetalleAsignaciones_Tintas"));
-            modelBuilder.Entity<DetalleAsignacion_Tinta>().HasKey(dat => new { dat.AsigMp_Id, dat.Tinta_Id }); //Llave Compuesta DetalleAsignacion_Tinta
-            modelBuilder.Entity<DetalleAsignacion_Tinta>().HasOne<Asignacion_MatPrima>(dasigmp => dasigmp.AsigMp).WithMany(dastin => dastin.DetAsigTinta).HasForeignKey(dasigmp => dasigmp.AsigMp_Id); //Foranea Asignacion_matpri
-            modelBuilder.Entity<DetalleAsignacion_Tinta>().HasOne<Tinta>(dasigmp => dasigmp.Tinta).WithMany(dastin => dastin.DetAsigTinta).HasForeignKey(dasigmp => dasigmp.Tinta_Id); //Foranea tintas
+            //modelBuilder.Entity<DetalleAsignacion_Tinta>().HasKey(dat => new { dat.AsigMp_Id, dat.Tinta_Id }); //Llave Compuesta DetalleAsignacion_Tinta
+            //modelBuilder.Entity<DetalleAsignacion_Tinta>().HasOne<Asignacion_MatPrima>(dasigmp => dasigmp.AsigMp).WithMany(dastin => dastin.DetAsigTinta).HasForeignKey(dasigmp => dasigmp.AsigMp_Id); //Foranea Asignacion_matpri
+            //modelBuilder.Entity<DetalleAsignacion_Tinta>().HasOne<Tinta>(dasigmp => dasigmp.Tinta).WithMany(dastin => dastin.DetAsigTinta).HasForeignKey(dasigmp => dasigmp.Tinta_Id); //Foranea tintas
+            modelBuilder.Entity<DetalleAsignacion_Tinta>().HasOne(dat => dat.AsigMp).WithMany().HasForeignKey(dat => dat.AsigMp_Id).OnDelete(DeleteBehavior.Restrict); //Foranea Unidad Medida
+            modelBuilder.Entity<DetalleAsignacion_Tinta>().HasOne(dat => dat.Tinta).WithMany().HasForeignKey(dat => dat.Tinta_Id).OnDelete(DeleteBehavior.Restrict); //Foranea Unidad Medida
+
             modelBuilder.Entity<DetalleAsignacion_Tinta>().HasOne(dat => dat.UndMed).WithMany().HasForeignKey(dat => dat.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //Foranea Unidad Medida
             modelBuilder.Entity<DetalleAsignacion_Tinta>().HasOne(dat => dat.Proceso).WithMany().HasForeignKey(dat => dat.Proceso_Id).OnDelete(DeleteBehavior.Restrict); //Foranea Proceso
 
@@ -534,15 +554,23 @@ namespace PlasticaribeAPI.Data
 
             //Ordenes Compras Facturas Compras
             //modelBuilder.Entity<OrdenesCompras_FacturasCompras>().ToTable(tb => tb.HasTrigger("Auditoria_OrdenesCompras_FacturasCompras"));
-            modelBuilder.Entity<OrdenesCompras_FacturasCompras>().HasKey(x => new { x.Oc_Id, x.Facco_Id }); //Llave Compuesta Provedor_MateriaPrima 
-            modelBuilder.Entity<OrdenesCompras_FacturasCompras>().HasOne<Orden_Compra>(x => x.Orden_Compra).WithMany(x => x.OrdenFactura).HasForeignKey(x => x.Oc_Id);
-            modelBuilder.Entity<OrdenesCompras_FacturasCompras>().HasOne<Factura_Compra>(x => x.Facco).WithMany(x => x.OrdenFactura).HasForeignKey(x => x.Facco_Id);
+            //modelBuilder.Entity<OrdenesCompras_FacturasCompras>().HasKey(x => new { x.Oc_Id, x.Facco_Id }); //Llave Compuesta Provedor_MateriaPrima 
+            //modelBuilder.Entity<OrdenesCompras_FacturasCompras>().HasOne<Orden_Compra>(x => x.Orden_Compra).WithMany(x => x.OrdenFactura).HasForeignKey(x => x.Oc_Id);
+            //modelBuilder.Entity<OrdenesCompras_FacturasCompras>().HasOne<Factura_Compra>(x => x.Facco).WithMany(x => x.OrdenFactura).HasForeignKey(x => x.Facco_Id);
+            modelBuilder.Entity<OrdenesCompras_FacturasCompras>().HasOne(erp => erp.Orden_Compra).WithMany().HasForeignKey(erp => erp.Oc_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<OrdenesCompras_FacturasCompras>().HasOne(erp => erp.Facco).WithMany().HasForeignKey(erp => erp.Facco_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+
 
             //Remision Ordenes de Compras
             //modelBuilder.Entity<Remision_OrdenCompra>().ToTable(tb => tb.HasTrigger("Auditoria_Remision_OrdenCompra"));
-            modelBuilder.Entity<Remision_OrdenCompra>().HasKey(x => new { x.Oc_Id, x.Rem_Id }); //Llave Compuesta Provedor_MateriaPrima 
-            modelBuilder.Entity<Remision_OrdenCompra>().HasOne<Orden_Compra>(x => x.Orden_Compra).WithMany(x => x.OrdenRemision).HasForeignKey(x => x.Oc_Id);
-            modelBuilder.Entity<Remision_OrdenCompra>().HasOne<Remision>(x => x.Remision).WithMany(x => x.OrdenRemision).HasForeignKey(x => x.Rem_Id);
+            //modelBuilder.Entity<Remision_OrdenCompra>().HasKey(x => new { x.Oc_Id, x.Rem_Id }); //Llave Compuesta Provedor_MateriaPrima 
+            //modelBuilder.Entity<Remision_OrdenCompra>().HasOne<Orden_Compra>(x => x.Orden_Compra).WithMany(x => x.OrdenRemision).HasForeignKey(x => x.Oc_Id);
+            //modelBuilder.Entity<Remision_OrdenCompra>().HasOne<Remision>(x => x.Remision).WithMany(x => x.OrdenRemision).HasForeignKey(x => x.Rem_Id);
+            modelBuilder.Entity<Remision_OrdenCompra>().HasOne(erp => erp.Orden_Compra).WithMany().HasForeignKey(erp => erp.Oc_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Remision_OrdenCompra>().HasOne(erp => erp.Remision).WithMany().HasForeignKey(erp => erp.Rem_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+
 
             //Vistas Favoritas
             //modelBuilder.Entity<VistasFavoritas>().ToTable(tb => tb.HasTrigger("Auditoria_VistasFavoritas"));

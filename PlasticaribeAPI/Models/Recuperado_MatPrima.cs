@@ -41,7 +41,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(20)", Order = 2) ]
         public string RecMp_HoraIngreso { get; set; } 
 
-        public IList<DetalleRecuperado_MateriaPrima>? DetRecMatPri { get; set; }
+        //public IList<DetalleRecuperado_MateriaPrima>? DetRecMatPri { get; set; }
 
     }
 }

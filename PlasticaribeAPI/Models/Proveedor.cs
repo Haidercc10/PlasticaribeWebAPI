@@ -42,6 +42,6 @@ namespace PlasticaribeAPI.Models
         public string? Prov_Hora { get; set; }
 
         //Lista requerida para relación proveedor-materiaprima
-        public IList<Provedor_MateriaPrima>? ProvMatPri { get; set; } 
+        //public IList<Provedor_MateriaPrima>? ProvMatPri { get; set; } 
     }
 }

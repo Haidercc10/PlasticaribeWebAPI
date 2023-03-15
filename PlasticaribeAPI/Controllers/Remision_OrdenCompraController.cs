@@ -177,7 +177,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (DbUpdateException)
             {
-                if (Remision_OrdenCompraExists(Remision_OrdenCompra.Oc_Id))
+                if (Remision_OrdenCompraExists(Remision_OrdenCompra.Codigo))
                 {
                     return Conflict();
                 }
@@ -187,7 +187,7 @@ namespace PlasticaribeAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetRemision_OrdenCompra", new { id = Remision_OrdenCompra.Oc_Id }, Remision_OrdenCompra);
+            return CreatedAtAction("GetRemision_OrdenCompra", new { id = Remision_OrdenCompra.Codigo }, Remision_OrdenCompra);
         }
 
         // DELETE: api/OrdenesCompras_FacturasCompras/5
@@ -208,7 +208,7 @@ namespace PlasticaribeAPI.Controllers
 
         private bool Remision_OrdenCompraExists(long id)
         {
-            return _context.Remision_OrdenCompra.Any(e => e.Oc_Id == id);
+            return _context.Remision_OrdenCompra.Any(e => e.Codigo == id);
         }
     }
 }

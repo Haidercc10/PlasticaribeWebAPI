@@ -35,13 +35,13 @@ namespace PlasticaribeAPI.Controllers
 
         // GET: api/Provedor_MateriaPrima/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Provedor_MateriaPrima>> GetProvedor_MateriaPrima(long Prov_Id, long MatPri_Id)
+        public async Task<ActionResult<Provedor_MateriaPrima>> GetProvedor_MateriaPrima(long Codigo)
         {
           if (_context.Proveedores_MateriasPrimas == null)
           {
               return NotFound();
           }
-            var provedor_MateriaPrima = await _context.Proveedores_MateriasPrimas.FindAsync(Prov_Id, MatPri_Id);
+            var provedor_MateriaPrima = await _context.Proveedores_MateriasPrimas.FindAsync(Codigo);
 
             if (provedor_MateriaPrima == null)
             {
@@ -98,7 +98,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (DbUpdateException)
             {
-                if (Provedor_MateriaPrimaExists(provedor_MateriaPrima.Prov_Id))
+                if (Provedor_MateriaPrimaExists(provedor_MateriaPrima.Codigo))
                 {
                     return Conflict();
                 }
@@ -108,7 +108,7 @@ namespace PlasticaribeAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetProvedor_MateriaPrima", new { id = provedor_MateriaPrima.Prov_Id }, provedor_MateriaPrima);
+            return CreatedAtAction("GetProvedor_MateriaPrima", new { id = provedor_MateriaPrima.Codigo }, provedor_MateriaPrima);
         }
 
         // DELETE: api/Provedor_MateriaPrima/5
@@ -133,7 +133,7 @@ namespace PlasticaribeAPI.Controllers
 
         private bool Provedor_MateriaPrimaExists(long id)
         {
-            return (_context.Proveedores_MateriasPrimas?.Any(e => e.Prov_Id == id)).GetValueOrDefault();
+            return (_context.Proveedores_MateriasPrimas?.Any(e => e.Codigo == id)).GetValueOrDefault();
         }
     }
 }

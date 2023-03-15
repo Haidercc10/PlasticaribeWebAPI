@@ -35,13 +35,13 @@ namespace PlasticaribeAPI.Controllers
 
         // GET: api/Remision_FacturaCompra/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Remision_FacturaCompra>> GetRemision_FacturaCompra(long Facco_Id, int Rem_Id)
+        public async Task<ActionResult<Remision_FacturaCompra>> GetRemision_FacturaCompra(long Codigo)
         {
           if (_context.Remisiones_FacturasCompras == null)
           {
               return NotFound();
           }
-            var remision_FacturaCompra = await _context.Remisiones_FacturasCompras.FindAsync(Facco_Id, Rem_Id);
+            var remision_FacturaCompra = await _context.Remisiones_FacturasCompras.FindAsync(Codigo);
 
             if (remision_FacturaCompra == null)
             {
@@ -114,7 +114,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (DbUpdateException)
             {
-                if (Remision_FacturaCompraExists(remision_FacturaCompra.Facco_Id))
+                if (Remision_FacturaCompraExists(remision_FacturaCompra.Codigo))
                 {
                     return Conflict();
                 }
@@ -124,7 +124,7 @@ namespace PlasticaribeAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetRemision_FacturaCompra", new { id = remision_FacturaCompra.Facco_Id }, remision_FacturaCompra);
+            return CreatedAtAction("GetRemision_FacturaCompra", new { id = remision_FacturaCompra.Codigo }, remision_FacturaCompra);
         }
 
         // DELETE: api/Remision_FacturaCompra/5
@@ -149,7 +149,7 @@ namespace PlasticaribeAPI.Controllers
 
         private bool Remision_FacturaCompraExists(long id)
         {
-            return (_context.Remisiones_FacturasCompras?.Any(e => e.Facco_Id == id)).GetValueOrDefault();
+            return (_context.Remisiones_FacturasCompras?.Any(e => e.Codigo == id)).GetValueOrDefault();
         }
     }
 }

@@ -35,13 +35,13 @@ namespace PlasticaribeAPI.Controllers
 
         // GET: api/PedidoProducto/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PedidoProducto>> GetPedidoProducto(int Prod_Id, long PedExt_Id)
+        public async Task<ActionResult<PedidoProducto>> GetPedidoProducto(long Codigo)
         {
           if (_context.PedidosExternos_Productos == null)
           {
               return NotFound();
           }
-            var pedidoProducto = await _context.PedidosExternos_Productos.FindAsync(Prod_Id, PedExt_Id);
+            var pedidoProducto = await _context.PedidosExternos_Productos.FindAsync(Codigo);
 
             if (pedidoProducto == null)
             {
@@ -272,7 +272,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (DbUpdateException)
             {
-                if (PedidoProductoExists(pedidoProducto.Prod_Id))
+                if (PedidoProductoExists(pedidoProducto.Codigo))
                 {
                     return Conflict();
                 }
@@ -282,7 +282,7 @@ namespace PlasticaribeAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetPedidoProducto", new { id = pedidoProducto.Prod_Id }, pedidoProducto);
+            return CreatedAtAction("GetPedidoProducto", new { id = pedidoProducto.Codigo }, pedidoProducto);
         }
 
         // DELETE: api/PedidoProducto/5
@@ -305,9 +305,9 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        private bool PedidoProductoExists(int id)
+        private bool PedidoProductoExists(long id)
         {
-            return (_context.PedidosExternos_Productos?.Any(e => e.Prod_Id == id)).GetValueOrDefault();
+            return (_context.PedidosExternos_Productos?.Any(e => e.Codigo == id)).GetValueOrDefault();
         }
     }
 }
