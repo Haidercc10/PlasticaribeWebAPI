@@ -4,20 +4,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
-    //Esta clase guardará el inventario con el que se inicia cada día. 
-    public class InventarioInicialXDia_MatPrima
+    public class Inventario_Mensual_Productos
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public long MatPri_Id { get; set; }
-        public long Tinta_Id { get; set; }
-
-        [Precision(14, 2)]
-        public decimal InvInicial_Stock { get; set; }
+        public long Codigo { get; set; }
+        public long Prod_Id { get; set; }
 
         [Column(TypeName = "varchar(10)")]
-        public string UndMed_Id { get; set; } //Llave foranea Unidad_Medida           
-        public Unidad_Medida? UndMed { get; set; } //Propiedad de Navegación Unidad_Medida
+        public string UndMed_Id { get; set; }        
+        public Unidad_Medida? Und { get; set; }
 
         [Precision(14, 2)]
         public decimal Enero { get; set; }
@@ -54,6 +49,5 @@ namespace PlasticaribeAPI.Models
 
         [Precision(14, 2)]
         public decimal Diciembre { get; set; }
-
     }
 }

@@ -209,7 +209,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDetalleEntradaRollo_Producto(long id, DetalleEntradaRollo_Producto detalleEntradaRollo_Producto)
         {
-            if (id != detalleEntradaRollo_Producto.DtEntRolloProd_Codigo)
+            if (id != detalleEntradaRollo_Producto.Codigo)
             {
                 return BadRequest();
             }
@@ -243,7 +243,7 @@ namespace PlasticaribeAPI.Controllers
             _context.DetallesEntradasRollos_Productos.Add(detalleEntradaRollo_Producto);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetDetalleEntradaRollo_Producto", new { id = detalleEntradaRollo_Producto.DtEntRolloProd_Codigo }, detalleEntradaRollo_Producto);
+            return CreatedAtAction("GetDetalleEntradaRollo_Producto", new { id = detalleEntradaRollo_Producto.Codigo }, detalleEntradaRollo_Producto);
         }
 
         // DELETE: api/DetalleEntradaRollo_Producto/5
@@ -283,7 +283,7 @@ namespace PlasticaribeAPI.Controllers
 
         private bool DetalleEntradaRollo_ProductoExists(long id)
         {
-            return _context.DetallesEntradasRollos_Productos.Any(e => e.DtEntRolloProd_Codigo == id);
+            return _context.DetallesEntradasRollos_Productos.Any(e => e.Codigo == id);
         }
     }
 }

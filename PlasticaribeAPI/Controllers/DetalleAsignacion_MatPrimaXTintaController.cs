@@ -125,7 +125,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDetalleAsignacion_MatPrimaXTinta(long id, DetalleAsignacion_MatPrimaXTinta detalleAsignacion_MatPrimaXTinta)
         {
-            if (id != detalleAsignacion_MatPrimaXTinta.DtAsigMPxTinta_Codigo)
+            if (id != detalleAsignacion_MatPrimaXTinta.Codigo)
             {
                 return BadRequest();
             }
@@ -168,7 +168,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (DbUpdateException)
             {
-                if (DetalleAsignacion_MatPrimaXTintaExists(detalleAsignacion_MatPrimaXTinta.DtAsigMPxTinta_Codigo))
+                if (DetalleAsignacion_MatPrimaXTintaExists(detalleAsignacion_MatPrimaXTinta.Codigo))
                 {
                     return Conflict();
                 }
@@ -178,7 +178,7 @@ namespace PlasticaribeAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetDetalleAsignacion_MatPrimaXTinta", new { id = detalleAsignacion_MatPrimaXTinta.DtAsigMPxTinta_Codigo }, detalleAsignacion_MatPrimaXTinta);
+            return CreatedAtAction("GetDetalleAsignacion_MatPrimaXTinta", new { id = detalleAsignacion_MatPrimaXTinta.Codigo }, detalleAsignacion_MatPrimaXTinta);
         }
 
         // DELETE: api/DetalleAsignacion_MatPrimaXTinta/5

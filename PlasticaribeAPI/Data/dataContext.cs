@@ -628,6 +628,8 @@ namespace PlasticaribeAPI.Data
             //Log Transacciones
             modelBuilder.Entity<Log_Transacciones>().HasOne(trn => trn.Usuario).WithMany().HasForeignKey(trn => trn.Transac_Usuario).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            //Inventario mensual de productos
+            modelBuilder.Entity<Inventario_Mensual_Productos>().HasOne(x => x.Und).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             /*modelBuilder.Entity<Log_Errores>().ToTable(tb => tb.HasTrigger("Auditoria_Log_Errores"));
             modelBuilder.Entity<Tipos_Sellados>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Sellados"));
@@ -843,6 +845,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.Log_Transacciones> Log_Transacciones { get; set; }
         public DbSet<PlasticaribeAPI.Models.Log_Errores> Log_Errores { get; set; }
         public DbSet<PlasticaribeAPI.Models.Web_ContactoCorreo> Web_ContactoCorreo { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Inventario_Mensual_Productos> Inventario_Mensual_Productos { get; set; }
 
     }
 

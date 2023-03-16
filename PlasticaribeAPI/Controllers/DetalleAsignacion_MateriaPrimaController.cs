@@ -632,7 +632,7 @@ namespace PlasticaribeAPI.Controllers
                        select asg.Sum(x => x.DtAsigMp_Cantidad);
 
             var devol = from dev in _context.Set<DetalleDevolucion_MateriaPrima>()
-                        where dev.DevMatPri.DevMatPri_OrdenTrabajo == ot
+                        where dev.DevMatPri.DevMatPri_OrdenTrabajo == ot && dev.MatPri_Id != 84
                         group dev by dev.DevMatPri.DevMatPri_OrdenTrabajo into dev
                         select dev.Sum(x => x.DtDevMatPri_CantidadDevuelta);
 

@@ -7,7 +7,7 @@ namespace PlasticaribeAPI.Models
     public class DetalleEntradaRollo_Producto
     {
         [Key]
-        public long DtEntRolloProd_Codigo { get; set; }
+        public long Codigo { get; set; }
 
         public long EntRolloProd_Id { get; set; }
         public EntradaRollo_Producto? EntRollo_Producto { get; set; }

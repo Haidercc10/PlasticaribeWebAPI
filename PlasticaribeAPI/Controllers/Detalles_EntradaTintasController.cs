@@ -35,7 +35,7 @@ namespace PlasticaribeAPI.Controllers
 
         // GET: api/Detalles_EntradaTintas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Detalles_EntradaTintas>> GetDetalles_EntradaTintas(int id)
+        public async Task<ActionResult<Detalles_EntradaTintas>> GetDetalles_EntradaTintas(long id)
         {
           if (_context.Detalles_EntradaTintas == null)
           {
@@ -72,9 +72,9 @@ namespace PlasticaribeAPI.Controllers
         // PUT: api/Detalles_EntradaTintas/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDetalles_EntradaTintas(int id, Detalles_EntradaTintas detalles_EntradaTintas)
+        public async Task<IActionResult> PutDetalles_EntradaTintas(long id, Detalles_EntradaTintas detalles_EntradaTintas)
         {
-            if (id != detalles_EntradaTintas.EntTinta_Id)
+            if (id != detalles_EntradaTintas.Codigo)
             {
                 return BadRequest();
             }
@@ -116,7 +116,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (DbUpdateException)
             {
-                if (Detalles_EntradaTintasExists(detalles_EntradaTintas.EntTinta_Id))
+                if (Detalles_EntradaTintasExists(detalles_EntradaTintas.Codigo))
                 {
                     return Conflict();
                 }
@@ -126,12 +126,12 @@ namespace PlasticaribeAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetDetalles_EntradaTintas", new { id = detalles_EntradaTintas.EntTinta_Id }, detalles_EntradaTintas);
+            return CreatedAtAction("GetDetalles_EntradaTintas", new { id = detalles_EntradaTintas.Codigo }, detalles_EntradaTintas);
         }
 
         // DELETE: api/Detalles_EntradaTintas/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDetalles_EntradaTintas(int id)
+        public async Task<IActionResult> DeleteDetalles_EntradaTintas(long id)
         {
             if (_context.Detalles_EntradaTintas == null)
             {
@@ -149,9 +149,9 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        private bool Detalles_EntradaTintasExists(int id)
+        private bool Detalles_EntradaTintasExists(long id)
         {
-            return (_context.Detalles_EntradaTintas?.Any(e => e.EntTinta_Id == id)).GetValueOrDefault();
+            return (_context.Detalles_EntradaTintas?.Any(e => e.Codigo == id)).GetValueOrDefault();
         }
     }
 }

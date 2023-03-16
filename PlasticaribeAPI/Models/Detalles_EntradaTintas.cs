@@ -6,6 +6,8 @@ namespace PlasticaribeAPI.Models
 {
     public class Detalles_EntradaTintas
     {
+        [Key]
+        public long Codigo { get; set; }
         public int EntTinta_Id { get; set; }
         public Entrada_Tintas? Entrada_Tinta { get; set; }
 
