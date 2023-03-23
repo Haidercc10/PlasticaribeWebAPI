@@ -71,6 +71,19 @@ namespace PlasticaribeAPI.Controllers
             //return tinta;
         }
 
+        //Consulta que traerá las categorias de materia prima de la tabla Tintas
+        [HttpGet("getCategoriasTintas")]
+        public ActionResult GetCategoriasTintas()
+        {
+            var con = from tt in _context.Set<Tinta>()
+                      group tt by new
+                      {
+                          tt.CatMP_Id
+                      } into tt
+                      select tt.Key.CatMP_Id;
+            return Ok(con);
+        }
+
         [HttpGet("consultaImpresion/{Tinta_Nombre1}/{Tinta_Nombre2}/{Tinta_Nombre3}/{Tinta_Nombre4}/{Tinta_Nombre5}/{Tinta_Nombre6}/{Tinta_Nombre7}/{Tinta_Nombre8}")]
         public ActionResult GetConsultaImpresion(string Tinta_Nombre1, string Tinta_Nombre2, string Tinta_Nombre3, string Tinta_Nombre4, string Tinta_Nombre5, string Tinta_Nombre6, string Tinta_Nombre7, string Tinta_Nombre8)
         {

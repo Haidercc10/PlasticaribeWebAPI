@@ -864,7 +864,7 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        //Consulta que traerá la materia prima, tintas, bopp
+        //Consulta que traerá la materia prima, tintas, bopp generico
         [HttpGet("getMpTintaBopp")]
         public ActionResult getMpTintaBopp()
         {
@@ -898,7 +898,98 @@ namespace PlasticaribeAPI.Controllers
             return Ok(materiaPrima.Concat(tinta).Concat(bopp));
         }
 
+        //Consulta que traerá las categorias de materia prima de la tabla Materia_Prima
+        [HttpGet("getCategoriasMateriaPrima")]
+        public ActionResult GetCategoriasMateriaPrima()
+        {
+            var con = from mp in _context.Set<Materia_Prima>()
+                      group mp by new
+                      {
+                          mp.CatMP_Id
+                      } into mp
+                      select mp.Key.CatMP_Id;
+            return Ok(con);
+        }
+
         //Consulta que traerá la materia prima, tintas, bopp
+        [HttpGet("getInfo_MPTintasBOPP")]
+        public ActionResult GetInfo_MPTintasBOPP()
+        {
+            var materiaPrima = from mp in _context.Set<Materia_Prima>()
+                               where mp.MatPri_Id != 84
+                               select new
+                               {
+                                   Id = mp.MatPri_Id,
+                                   Nombre = mp.MatPri_Nombre,
+                                   Categoria = mp.CatMP_Id,
+                               };
+
+            var tinta = from tt in _context.Set<Tinta>()
+                        where tt.Tinta_Id != 2001
+                        select new
+                        {
+                            Id = tt.Tinta_Id,
+                            Nombre = tt.Tinta_Nombre,
+                            Categoria = tt.CatMP_Id,
+                        };
+
+            var bopp = from bp in _context.Set<BOPP>()
+                       where bp.BOPP_Id != 449
+                             && bp.BOPP_Stock > 0
+                       select new
+                       {
+                           Id = bp.BOPP_Id,
+                           Nombre = bp.BOPP_Nombre,
+                           Categoria = bp.CatMP_Id,
+                       };
+
+            return Ok(materiaPrima.Concat(tinta).Concat(bopp));
+        }
+
+        //Consulta que traerá la materia prima, tintas, bopp por un ID
+        [HttpGet("getInfo_MpTintasBopp_Id/{id}")]
+        public ActionResult getInfo_MpTintaBopp_Id(long id)
+        {
+            var materiaPrima = from mp in _context.Set<Materia_Prima>()
+                               where mp.MatPri_Id == id
+                               select new
+                               {
+                                   Id = mp.MatPri_Id,
+                                   Nombre = mp.MatPri_Nombre,
+                                   UndMedida = Convert.ToString(mp.UndMed_Id),
+                                   Precio = mp.MatPri_Precio,
+                                   Categoria = mp.CatMP_Id,
+                                   Stock = Convert.ToDecimal(mp.MatPri_Stock),
+                               };
+
+            var tinta = from tt in _context.Set<Tinta>()
+                        where tt.Tinta_Id == id
+                        select new
+                        {
+                            Id = tt.Tinta_Id,
+                            Nombre = tt.Tinta_Nombre,
+                            UndMedida = Convert.ToString(tt.UndMed_Id),
+                            Precio = tt.Tinta_Precio,
+                            Categoria = tt.CatMP_Id,
+                            Stock = Convert.ToDecimal(tt.Tinta_Stock),
+                        };
+
+            var bopp = from bp in _context.Set<BOPP>()
+                       where bp.BOPP_Id == id
+                       select new
+                       {
+                           Id = bp.BOPP_Id,
+                           Nombre = bp.BOPP_Nombre,
+                           UndMedida = Convert.ToString("Kg"),
+                           Precio = bp.BOPP_Precio,
+                           Categoria = bp.CatMP_Id,
+                           Stock = bp.BOPP_Stock,
+                       };
+
+            return Ok(materiaPrima.Concat(tinta).Concat(bopp));
+        }
+
+        //Consulta que traerá la materia prima, tintas, bopp generico por un ID
         [HttpGet("getInfoMpTintaBopp/{id}")]
         public ActionResult getInfoMpTintaBopp(long id)
         {

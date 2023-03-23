@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ using PlasticaribeAPI.Models;
 namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class Inventario_Mensual_ProductosController : ControllerBase
     {
         private readonly dataContext _context;
@@ -48,6 +49,38 @@ namespace PlasticaribeAPI.Controllers
             }
 
             return inventario_Mensual_Productos;
+        }
+
+        // Consulta que traerá la cantidad de cada producto en cada mes
+        [HttpGet("getCantidadMes_Producto/{prod}/{und}")]
+        public ActionResult GetCantidadMes_Producto(long prod, string und)
+        {
+            var con = from inv in _context.Set<Inventario_Mensual_Productos>()
+                      from exi in _context.Set<Existencia_Productos>()
+                      where inv.Prod_Id == prod
+                            && inv.UndMed_Id == und
+                            && inv.Prod_Id == exi.Prod_Id
+                            && inv.UndMed_Id == exi.UndMed_Id
+                      select new { 
+                        Id = exi.Prod_Id,
+                        Nombre = exi.Prod.Prod_Nombre,
+                        Stock = exi.ExProd_Cantidad,
+                        Und = exi.UndMed_Id,
+                        Cant_Minima = exi.ExProd_CantMinima,
+                        Enero = inv.Enero,
+                        Febrero = inv.Febrero,
+                        Marzo = inv.Marzo,
+                        Abril = inv.Abril,
+                        Mayo = inv.Mayo,
+                        Junio = inv.Junio,
+                        Julio = inv.Julio,
+                        Agosto = inv.Agosto,
+                        Septiembre = inv.Septiembre,
+                        Octubre = inv.Octubre,
+                        Noviembre = inv.Noviembre,
+                        Diciembre = inv.Diciembre,
+                      };
+            return Ok(con);
         }
 
         // PUT: api/Inventario_Mensual_Productos/5

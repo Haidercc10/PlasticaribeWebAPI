@@ -68,6 +68,13 @@ namespace PlasticaribeAPI.Models
         public Usuario? Usua { get; set; }
 
 
+        [Column(TypeName = "varchar(10)")]
+        public string? BOPP_TipoDoc { get; set; }
+
+
+        [Column(TypeName = "varchar(50)")]
+        public string? BOPP_CodigoDoc { get; set; }
+
         //Lista requerida para relacion con BOPP en detalles asignaciones bopp
         public IList<DetalleAsignacion_BOPP>? DetAsigBOPP { get; set; }
     }

@@ -341,6 +341,8 @@ namespace PlasticaribeAPI.Controllers
                 doc.Tinta.Tinta_Nombre,
                 doc.BOPP_Id,
                 doc.BOPP.BoppGen_Nombre,
+                doc.BOPP.BoppGen_Micra,
+                doc.BOPP.BoppGen_Ancho,
                 doc.Doc_CantidadPedida,
                 doc.UndMed_Id,
                 doc.Doc_PrecioUnitario,
@@ -426,7 +428,7 @@ namespace PlasticaribeAPI.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
+        }   
 
         private bool Detalle_OrdenCompraExists(long id)
         {

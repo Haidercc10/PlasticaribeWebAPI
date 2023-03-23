@@ -11,7 +11,7 @@ namespace PlasticaribeAPI.Models
         public long Prod_Id { get; set; }
 
         [Column(TypeName = "varchar(10)")]
-        public string UndMed_Id { get; set; }        
+        public string UndMed_Id { get; set; }
         public Unidad_Medida? Und { get; set; }
 
         [Precision(14, 2)]

@@ -26,14 +26,11 @@ namespace PlasticaribeAPI.Data
         public DbSet<Models.Tipo_Producto> Tipos_Productos { get; set; }
         public DbSet<Models.TiposClientes> Tipos_Clientes { get; set; }
         public DbSet<Models.Tipo_Bodega> Tipos_Bodegas { get; set; }
-        public DbSet<Models.Clientes> Clientes { get; set; }    
-
+        public DbSet<Models.Clientes> Clientes { get; set; }
         public DbSet<Models.Unidad_Medida> Unidades_Medidas { get; set; }
         public DbSet<Models.SedesClientes> Sedes_Clientes { get; set; }
         public DbSet<Models.Tipo_Moneda> Tipos_Monedas { get; set; }
-
         public DbSet<Models.Producto> Productos { get; set; }
-
         public DbSet<Models.PedidoExterno> Pedidos_Externos { get; set; }
 
         //Fluent API
@@ -68,6 +65,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Usuario>().HasOne(Usu => Usu.cajComp).WithMany().HasForeignKey(Usu => Usu.cajComp_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Usuario>().HasOne(Usu => Usu.EPS).WithMany().HasForeignKey(Usu => Usu.eps_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Usuario>().HasOne(Usu => Usu.fPen).WithMany().HasForeignKey(Usu => Usu.fPen_Id).OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Usuario>().Property(c => c.Usua_Codigo).UseIdentityColumn().ValueGeneratedOnAddOrUpdate();
             //Relaciones pedido externo
             //modelBuilder.Entity<PedidoExterno>().ToTable(tb => tb.HasTrigger("Auditoria_Pedidos_Externos"));
@@ -327,7 +325,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Asignacion_BOPP>().HasOne(asgb => asgb.Usua).WithMany().HasForeignKey(asig => asig.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario
 
             //Relaciones DetalleAsignacion_BOPP
-            //modelBuilder.Entity<DetalleAsignacion_BOPP>().HasKey(dat => new { dat.AsigBOPP_Id, dat.BOPP_Id }); //Llave Compuesta DetalleAsignacion_BOPP
+            modelBuilder.Entity<DetalleAsignacion_BOPP>().HasKey(dat => new { dat.AsigBOPP_Id, dat.BOPP_Id }); //Llave Compuesta DetalleAsignacion_BOPP
             modelBuilder.Entity<DetalleAsignacion_BOPP>().ToTable(tb => tb.HasTrigger("SumarCantAsignada_EPOT"));
             modelBuilder.Entity<DetalleAsignacion_BOPP>().ToTable(tb => tb.HasTrigger("TR_EstadosOTDetAsigBOPP"));
             modelBuilder.Entity<DetalleAsignacion_BOPP>().ToTable(tb => tb.HasTrigger("TR_IU_ActualizaEstados_EnEstadosProcesosOT2"));
@@ -382,7 +380,7 @@ namespace PlasticaribeAPI.Data
 
             //OT_Laminado
             modelBuilder.Entity<OT_Laminado>().ToTable(tb => tb.HasTrigger("TR_ActualizarCampos_OTLaminado"));
-            //modelBuilder.Entity<OT_Laminado>().ToTable(tb => tb.HasTrigger("Auditoria_OT_Laminado"));
+            modelBuilder.Entity<OT_Laminado>().ToTable(tb => tb.HasTrigger("Auditoria_OT_Laminado"));
             modelBuilder.Entity<OT_Laminado>().HasOne(ot_lam => ot_lam.Orden_Trabajo).WithMany().HasForeignKey(ot_lam => ot_lam.OT_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<OT_Laminado>().HasOne(ot_lam => ot_lam.Laminado_Capa).WithMany().HasForeignKey(ot_lam => ot_lam.Capa_Id1).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<OT_Laminado>().HasOne(ot_lam => ot_lam.Laminado_Capa2).WithMany().HasForeignKey(ot_lam => ot_lam.Capa_Id2).OnDelete(DeleteBehavior.Restrict);
@@ -404,7 +402,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP1C3).WithMany().HasForeignKey(mez => mez.MezMaterial_Id1xCapa3).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP2C1).WithMany().HasForeignKey(mez => mez.MezMaterial_Id2xCapa1).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP2C2).WithMany().HasForeignKey(mez => mez.MezMaterial_Id2xCapa2).OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP2C3).WithMany().HasForeignKey(mez => mez.MezMaterial_Id2xCapa3).OnDelete(DeleteBehavior.Restrict); 
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP2C3).WithMany().HasForeignKey(mez => mez.MezMaterial_Id2xCapa3).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP3C1).WithMany().HasForeignKey(mez => mez.MezMaterial_Id3xCapa1).OnDelete(DeleteBehavior.Restrict); /** Llave Primaria Mezcla_Material*/
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP3C2).WithMany().HasForeignKey(mez => mez.MezMaterial_Id3xCapa2).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP3C3).WithMany().HasForeignKey(mez => mez.MezMaterial_Id3xCapa3).OnDelete(DeleteBehavior.Restrict);
@@ -416,7 +414,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento1C3).WithMany().HasForeignKey(mez => mez.MezPigmto_Id1xCapa3).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento2C1).WithMany().HasForeignKey(mez => mez.MezPigmto_Id2xCapa1).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento2C2).WithMany().HasForeignKey(mez => mez.MezPigmto_Id2xCapa2).OnDelete(DeleteBehavior.Restrict); /** Llave Primaria Mezcla_Pigmento*/
-            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento2C3).WithMany().HasForeignKey(mez => mez.MezPigmto_Id2xCapa3).OnDelete(DeleteBehavior.Restrict);            
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento2C3).WithMany().HasForeignKey(mez => mez.MezPigmto_Id2xCapa3).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.Usua).WithMany().HasForeignKey(mez => mez.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario 
             /** Triggers tablas Mezclas*/
             //modelBuilder.Entity<Mezcla_Pigmento>().ToTable(tb => tb.HasTrigger("Auditoria_Mezclas_Pigmentos"));
@@ -425,7 +423,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Mezcla_Pigmento>().ToTable(tb => tb.HasTrigger("Crear_Mezcla_Pigmento"));
 
             //Relaciones EstadosProcesos_OT
-            //modelBuilder.Entity<Estados_ProcesosOT>().ToTable(tb => tb.HasTrigger("Auditoria_Estados_ProcesosOT"));
+            modelBuilder.Entity<Estados_ProcesosOT>().ToTable(tb => tb.HasTrigger("Auditoria_Estados_ProcesosOT"));
             modelBuilder.Entity<Estados_ProcesosOT>().HasOne(eOT => eOT.UnidadMedida).WithMany().HasForeignKey(eOT => eOT.UndMed_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Estados_ProcesosOT>().HasOne(eOT => eOT.FallaTecnica).WithMany().HasForeignKey(eOT => eOT.Falla_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Estados_ProcesosOT>().HasOne(eOT => eOT.Estado_OT).WithMany().HasForeignKey(eOT => eOT.Estado_Id).OnDelete(DeleteBehavior.Restrict);
@@ -456,7 +454,7 @@ namespace PlasticaribeAPI.Data
             //Relaciones Detalles Entradas Rollos Productos
             modelBuilder.Entity<DetalleEntradaRollo_Producto>().ToTable(tb => tb.HasTrigger("TR_ActualizarCantIngresada"));
             modelBuilder.Entity<DetalleEntradaRollo_Producto>().ToTable(tb => tb.HasTrigger("TR_ActualizarCantIngresada_Facturada"));
-            //modelBuilder.Entity<DetalleEntradaRollo_Producto>().ToTable(tb => tb.HasTrigger("Auditoria_DetallesEntradasRollos_Productos"));
+           // modelBuilder.Entity<DetalleEntradaRollo_Producto>().ToTable(tb => tb.HasTrigger("Auditoria_DetallesEntradasRollos_Productos"));
             modelBuilder.Entity<DetalleEntradaRollo_Producto>().HasOne(erp => erp.Estado).WithMany().HasForeignKey(erp => erp.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<DetalleEntradaRollo_Producto>().HasOne(erp => erp.UndMedida_Rollo).WithMany().HasForeignKey(erp => erp.UndMed_Rollo).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<DetalleEntradaRollo_Producto>().HasOne(erp => erp.EntRollo_Producto).WithMany().HasForeignKey(erp => erp.EntRolloProd_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
@@ -473,8 +471,8 @@ namespace PlasticaribeAPI.Data
             //Relaciones Detalles Asignacion Productos a facturas ventas
             //modelBuilder.Entity<DetallesAsignacionProducto_FacturaVenta>().HasKey(erp => new { erp.AsigProdFV_Id, erp.Prod_Id });
             //modelBuilder.Entity<DetallesAsignacionProducto_FacturaVenta>().ToTable(tb => tb.HasTrigger("Auditoria_DetallesAsignacionesProductos_FacturasVentas"));
-            modelBuilder.Entity<DetallesAsignacionProducto_FacturaVenta>().HasOne<AsignacionProducto_FacturaVenta>(dapfv => dapfv.AsigProducto_FV).WithMany(remmp => remmp.DtAsigProd_FVTA).HasForeignKey(dapfv => dapfv.AsigProdFV_Id); 
-            modelBuilder.Entity<DetallesAsignacionProducto_FacturaVenta>().HasOne<Producto>(dapfv => dapfv.Prod).WithMany(remmp => remmp.DtAsigProd_FVTA).HasForeignKey(dapfv => dapfv.Prod_Id); 
+            modelBuilder.Entity<DetallesAsignacionProducto_FacturaVenta>().HasOne<AsignacionProducto_FacturaVenta>(dapfv => dapfv.AsigProducto_FV).WithMany(remmp => remmp.DtAsigProd_FVTA).HasForeignKey(dapfv => dapfv.AsigProdFV_Id);
+            modelBuilder.Entity<DetallesAsignacionProducto_FacturaVenta>().HasOne<Producto>(dapfv => dapfv.Prod).WithMany(remmp => remmp.DtAsigProd_FVTA).HasForeignKey(dapfv => dapfv.Prod_Id);
             modelBuilder.Entity<DetallesAsignacionProducto_FacturaVenta>().HasOne(erp => erp.UndMedida).WithMany().HasForeignKey(erp => erp.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Relaciones Devolucion_ProductoFacturado
@@ -528,7 +526,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetallesAsgRollos_Extrusion>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Relaciones Rollo_Desecho
-            //modelBuilder.Entity<Rollo_Desecho>().ToTable(tb => tb.HasTrigger("Auditoria_Rollos_Desechos"));
+           // modelBuilder.Entity<Rollo_Desecho>().ToTable(tb => tb.HasTrigger("Auditoria_Rollos_Desechos"));
             modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.Prod).WithMany().HasForeignKey(erp => erp.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Producto
             modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.Proceso).WithMany().HasForeignKey(erp => erp.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
             modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.UndMedida).WithMany().HasForeignKey(erp => erp.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Unidad_Medida
@@ -545,7 +543,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Orden_Compra>().HasOne(erp => erp.Usua).WithMany().HasForeignKey(erp => erp.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
 
             //Relaciones Detalle_OrdenCompra
-            //modelBuilder.Entity<Detalle_OrdenCompra>().ToTable(tb => tb.HasTrigger("Auditoria_Detalles_OrdenesCompras"));
+           // modelBuilder.Entity<Detalle_OrdenCompra>().ToTable(tb => tb.HasTrigger("Auditoria_Detalles_OrdenesCompras"));
             modelBuilder.Entity<Detalle_OrdenCompra>().HasOne(erp => erp.Orden_Compra).WithMany().HasForeignKey(erp => erp.Oc_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Producto
             modelBuilder.Entity<Detalle_OrdenCompra>().HasOne(erp => erp.MatPrima).WithMany().HasForeignKey(erp => erp.MatPri_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
             modelBuilder.Entity<Detalle_OrdenCompra>().HasOne(erp => erp.Tinta).WithMany().HasForeignKey(erp => erp.Tinta_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
@@ -605,7 +603,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Pedido_Mantenimiento>().HasOne(erp => erp.Estado).WithMany().HasForeignKey(erp => erp.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //DetallePedido_Mtto
-            //modelBuilder.Entity<DetallePedido_Mantenimiento>().ToTable(tb => tb.HasTrigger("Auditoria_DetallesPedidos_Mantenimientos"));
+           // modelBuilder.Entity<DetallePedido_Mantenimiento>().ToTable(tb => tb.HasTrigger("Auditoria_DetallesPedidos_Mantenimientos"));
             modelBuilder.Entity<DetallePedido_Mantenimiento>().HasOne(erp => erp.PedidoMtto).WithMany().HasForeignKey(erp => erp.PedMtto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<DetallePedido_Mantenimiento>().HasOne(erp => erp.Tipo_Mtto).WithMany().HasForeignKey(erp => erp.TpMtto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<DetallePedido_Mantenimiento>().HasOne(erp => erp.Act).WithMany().HasForeignKey(erp => erp.Actv_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
@@ -624,12 +622,45 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Falla).WithMany().HasForeignKey(desp => desp.Falla_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Activo).WithMany().HasForeignKey(desp => desp.Actv_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
-            
             //Log Transacciones
             modelBuilder.Entity<Log_Transacciones>().HasOne(trn => trn.Usuario).WithMany().HasForeignKey(trn => trn.Transac_Usuario).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Inventario mensual de productos
             modelBuilder.Entity<Inventario_Mensual_Productos>().HasOne(x => x.Und).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Terceros
+            modelBuilder.Entity<Terceros>().HasOne(x => x.TipoIdentificacion).WithMany().HasForeignKey(x => x.TipoIdentificacion_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Orden de Maquila
+            modelBuilder.Entity<Orden_Maquila>().HasOne(x => x.Tercero).WithMany().HasForeignKey(x => x.Tercero_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Orden_Maquila>().HasOne(x => x.TipoDoc).WithMany().HasForeignKey(x => x.TpDoc_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Orden_Maquila>().HasOne(x => x.Estado).WithMany().HasForeignKey(x => x.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Orden_Maquila>().HasOne(x => x.Usua).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            // Detalles de la Orden de Maquila
+            modelBuilder.Entity<Detalle_OrdenMaquila>().HasOne(x => x.Orden_Maquila).WithMany().HasForeignKey(x => x.OM_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalle_OrdenMaquila>().HasOne(x => x.MatPrima).WithMany().HasForeignKey(x => x.MatPri_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalle_OrdenMaquila>().HasOne(x => x.Tinta).WithMany().HasForeignKey(x => x.Tinta_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalle_OrdenMaquila>().HasOne(x => x.BOPP).WithMany().HasForeignKey(x => x.BOPP_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalle_OrdenMaquila>().HasOne(x => x.UndMed).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Facturacion Orden de Maquila
+            modelBuilder.Entity<Facturacion_OrdenMaquila>().HasOne(x => x.Tercero).WithMany().HasForeignKey(x => x.Tercero_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Facturacion_OrdenMaquila>().HasOne(x => x.TipoDoc).WithMany().HasForeignKey(x => x.TpDoc_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Facturacion_OrdenMaquila>().HasOne(x => x.Estado).WithMany().HasForeignKey(x => x.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Facturacion_OrdenMaquila>().HasOne(x => x.Usua).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Detalle de la Facturacion de Orden de Maquila
+            modelBuilder.Entity<DetalleFacturacion_OrdenMaquila>().HasOne(x => x.FacOM).WithMany().HasForeignKey(x => x.FacOM_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<DetalleFacturacion_OrdenMaquila>().HasOne(x => x.MatPrima).WithMany().HasForeignKey(x => x.MatPri_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<DetalleFacturacion_OrdenMaquila>().HasOne(x => x.Tinta).WithMany().HasForeignKey(x => x.Tinta_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<DetalleFacturacion_OrdenMaquila>().HasOne(x => x.BOPP).WithMany().HasForeignKey(x => x.Bopp_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<DetalleFacturacion_OrdenMaquila>().HasOne(x => x.UndMed).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Relación de Orden de Maquila con Facturación
+            modelBuilder.Entity<OrdenMaquila_Facturacion>().HasOne(x => x.Orden_Maquila).WithMany().HasForeignKey(x => x.OM_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<OrdenMaquila_Facturacion>().HasOne(x => x.FacOM).WithMany().HasForeignKey(x => x.FacOM_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
 
             /*modelBuilder.Entity<Log_Errores>().ToTable(tb => tb.HasTrigger("Auditoria_Log_Errores"));
             modelBuilder.Entity<Tipos_Sellados>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Sellados"));
@@ -671,182 +702,107 @@ namespace PlasticaribeAPI.Data
         }
 
 
+
         //Fluent API
         public DbSet<Models.Existencia_Productos> Existencias_Productos { get; set; }
-
         public DbSet<Models.Tipo_Estado> Tipos_Estados { get; set; }
-
         public DbSet<Models.Categoria_Insumo> Categorias_Insumos { get; set; }
-
         public DbSet<Models.Insumo> Insumos { get; set; }
-
         public DbSet<Models.PedidoProducto> PedidosExternos_Productos { get; set; }
-
         public DbSet<Models.Cliente_Producto> Clientes_Productos { get; set; }
-
         public DbSet<Models.Pigmento> Pigmentos { get; set; }
-
         public DbSet<Models.Material_MatPrima> Materiales_MatPrima { get; set; }
-
         public DbSet<Models.Materia_Prima> Materias_Primas { get; set; }
-
         public DbSet<Models.Categoria_MatPrima> Categorias_MatPrima { get; set; }
-
         public DbSet<Models.Tipo_Proveedor> Tipos_Proveedores { get; set; }
-
         public DbSet<Models.Proveedor> Proveedores { get; set; }
-
         public DbSet<Models.Provedor_MateriaPrima> Proveedores_MateriasPrimas { get; set; }
-
         public DbSet<Models.Factura_Compra> Facturas_Compras { get; set; }
-
-        public DbSet<Models.FacturaCompra_MateriaPrima> FacturasCompras_MateriaPrimas { get; set; }
-                    
+        public DbSet<Models.FacturaCompra_MateriaPrima> FacturasCompras_MateriaPrimas { get; set; }                    
         public DbSet<Models.Proceso> Procesos { get; set; }
-
         public DbSet<Models.Asignacion_MatPrima> Asignaciones_MatPrima { get; set; }
-
         public DbSet<Models.DetalleAsignacion_MateriaPrima> DetallesAsignaciones_MateriasPrimas { get; set; }
-
-        /*public DbSet<Models.Existencia_MatPrima> Existencias_MatPrima { get; set; }*/
-
         public DbSet<Models.Tipo_Documento> Tipos_Documentos{ get; set; }
-
         public DbSet<Models.Remision> Remisiones { get; set; }
-
         public DbSet<Models.Remision_MateriaPrima> Remisiones_MateriasPrimas { get; set; }
-
         public DbSet<Models.Remision_FacturaCompra> Remisiones_FacturasCompras { get; set; }
-
         public DbSet<Models.Tipo_Recuperado> Tipos_Recuperados { get; set; }
-
         public DbSet<Models.Recuperado_MatPrima> Recuperados_MatPrima { get; set; }
-
         public DbSet<Models.DetalleRecuperado_MateriaPrima> DetallesRecuperados_MateriasPrimas { get; set; }
-
         public DbSet<Models.InventarioInicialXDia_MatPrima> InventarioInicialXDias_MatPrima { get; set; }
-
         public DbSet<Models.Devolucion_MatPrima> Devoluciones_MatPrima { get; set; }
-
         public DbSet<Models.DetalleDevolucion_MateriaPrima> DetallesDevoluciones_MateriasPrimas { get; set; }
-
         public DbSet<Models.Tinta> Tintas { get; set; }
-
         public DbSet<Models.Tinta_MateriaPrima> Tintas_MateriasPrimas { get; set; } 
-
         public DbSet<Models.Asignacion_MatPrimaXTinta> Asignaciones_MatPrimasXTintas { get; set; }
-
         public DbSet<Models.DetalleAsignacion_MatPrimaXTinta> DetallesAsignaciones_MatPrimasXTintas { get; set; }
-
         public DbSet<Models.DetalleAsignacion_Tinta> DetalleAsignaciones_Tintas { get; set; }
-
         public DbSet<Models.BOPP> BOPP { get; set; }
-
         public DbSet<Models.Asignacion_BOPP> Asignaciones_BOPP { get; set; }
-
         public DbSet<Models.DetalleAsignacion_BOPP> DetallesAsignaciones_BOPP { get; set; }
-
         public DbSet<Models.Archivos> Archivos { get; set; }
-
         public DbSet<Models.Categorias_Archivos> Categorias_Archivos { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Orden_Trabajo>? Orden_Trabajo { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Tratado>? Tratado { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Formato>? Formato { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Tipos_Impresion>? Tipos_Impresion { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Pistas>? Pistas { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Rodillos>? Rodillos { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Laminado_Capa>? Laminado_Capa { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Mezcla_Material>? Mezclas_Materiales { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Mezcla_Pigmento>? Mezclas_Pigmentos { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Mezcla> Mezclas { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.OT_Extrusion>? OT_Extrusion { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.OT_Impresion> OT_Impresion { get; set; }
-
-        public DbSet<PlasticaribeAPI.Models.OT_Laminado> OT_Laminado { get; set; }
-      
+        public DbSet<PlasticaribeAPI.Models.OT_Laminado> OT_Laminado { get; set; }      
         public DbSet<PlasticaribeAPI.Models.Estados_ProcesosOT> Estados_ProcesosOT { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Falla_Tecnica> Fallas_Tecnicas { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Tipo_FallaTecnica> Tipos_FallasTecnicas { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Entrada_Tintas> Entradas_Tintas { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Detalles_EntradaTintas> Detalles_EntradaTintas { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.EntradaRollo_Producto> EntradasRollos_Productos { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.DetalleEntradaRollo_Producto> DetallesEntradasRollos_Productos { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.AsignacionProducto_FacturaVenta> AsignacionesProductos_FacturasVentas { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.DetallesAsignacionProducto_FacturaVenta> DetallesAsignacionesProductos_FacturasVentas { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Devolucion_ProductoFacturado> Devoluciones_ProductosFacturados { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.DetalleDevolucion_ProductoFacturado> DetallesDevoluciones_ProductosFacturados { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.TipoDevolucion_ProductoFacturado> TiposDevoluciones_ProductosFacturados { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.PreEntrega_RolloDespacho> PreEntrega_RollosDespacho { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.DetallePreEntrega_RolloDespacho> DetallesPreEntrega_RollosDespacho { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Turno> Turnos { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.IngresoRollos_Extrusion> IngresoRollos_Extrusion { get; set; }
         public DbSet<PlasticaribeAPI.Models.DetallesIngRollos_Extrusion> DetallesIngRollos_Extrusion { get; set; }
         public DbSet<PlasticaribeAPI.Models.AsignacionRollos_Extrusion> AsignacionRollos_Extrusion { get; set; }
         public DbSet<PlasticaribeAPI.Models.DetallesAsgRollos_Extrusion> DetallesAsgRollos_Extrusion { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Cono> Conos { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Rollo_Desecho> Rollos_Desechos { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Orden_Compra> Ordenes_Compras { get; set; }
         public DbSet<PlasticaribeAPI.Models.Detalle_OrdenCompra> Detalles_OrdenesCompras { get; set; }
         public DbSet<PlasticaribeAPI.Models.Bopp_Generico> Bopp_Generico { get; set; }
         public DbSet<PlasticaribeAPI.Models.OrdenesCompras_FacturasCompras> OrdenesCompras_FacturasCompras { get; set; }
         public DbSet<PlasticaribeAPI.Models.Remision_OrdenCompra> Remision_OrdenCompra { get; set; }
         public DbSet<PlasticaribeAPI.Models.VistasFavoritas> VistasFavoritas { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Tipo_Activo> Tipos_Activos { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Tipo_Mantenimiento> Tipos_Mantenimientos { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Activo> Activos { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Mantenimiento> Mantenimientos { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Detalle_Mantenimiento> Detalles_Mantenimientos { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Pedido_Mantenimiento> Pedidos_Mantenimientos { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.DetallePedido_Mantenimiento> DetallesPedidos_Mantenimientos { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.MovimientosAplicacion> MovimientosAplicacion { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.Desperdicio> Desperdicios { get; set; }
         public DbSet<PlasticaribeAPI.Models.Tipos_Sellados> Tipos_Sellados { get; set; }
-
         public DbSet<PlasticaribeAPI.Models.OT_Sellado_Corte> OT_Sellado_Corte { get; set; }
         public DbSet<PlasticaribeAPI.Models.Log_Transacciones> Log_Transacciones { get; set; }
         public DbSet<PlasticaribeAPI.Models.Log_Errores> Log_Errores { get; set; }
         public DbSet<PlasticaribeAPI.Models.Web_ContactoCorreo> Web_ContactoCorreo { get; set; }
         public DbSet<PlasticaribeAPI.Models.Inventario_Mensual_Productos> Inventario_Mensual_Productos { get; set; }
-
+        public DbSet<PlasticaribeAPI.Models.Terceros> Terceros { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Orden_Maquila> Orden_Maquila { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Detalle_OrdenMaquila> Detalle_OrdenMaquila { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Facturacion_OrdenMaquila> Facturacion_OrdenMaquila { get; set; }
+        public DbSet<PlasticaribeAPI.Models.DetalleFacturacion_OrdenMaquila> DetalleFacturacion_OrdenMaquila { get; set; }
+        public DbSet<PlasticaribeAPI.Models.OrdenMaquila_Facturacion> OrdenMaquila_Facturacion { get; set; }
     }
 
 }

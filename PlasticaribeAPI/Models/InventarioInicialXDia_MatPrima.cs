@@ -8,7 +8,7 @@ namespace PlasticaribeAPI.Models
     public class InventarioInicialXDia_MatPrima
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public long Codigo { get; set; }
         public long MatPri_Id { get; set; }
         public long Tinta_Id { get; set; }
 

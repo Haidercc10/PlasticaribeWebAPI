@@ -339,6 +339,20 @@ y cantidad en Kilos agrupados BOPP por Nombre */
         }
 
 
+        //Consulta que traerá las categorias de materia prima de la tabla BOPP
+        [HttpGet("getCategoriasBOPP")]
+        public ActionResult GetCategoriasBOPP()
+        {
+            var con = from bp in _context.Set<BOPP>()
+                      group bp by new
+                      {
+                          bp.CatMP_Id
+                      } into bp
+                      select bp.Key.CatMP_Id;
+            return Ok(con);
+        }
+
+
         [HttpGet("consultaMovimientos6/{Bopp}/{FechaInicial}")]
         public ActionResult Get9(int Bopp, DateTime FechaInicial)
         {
@@ -359,69 +373,6 @@ y cantidad en Kilos agrupados BOPP por Nombre */
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
-
-        /** Obtener datos recurrentes al momento de ingresar BOPP */
-
-        [HttpGet("getDescripcion")]
-        public ActionResult GetNombresRepetitivos()
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
-            var con = _context.BOPP.GroupBy(a => a.BOPP_Descripcion)
-                                   .Where(b => b.Count() > 10)
-                                   .Select(b => b.Key).Distinct().ToList(); 
-
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL. 
-            return Ok(con);
-        }
-
-        [HttpGet("getMicras")]
-        public ActionResult GetMicrasRepetitivas()
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.BOPP.GroupBy(a => a.BOPP_CantidadMicras)
-                                   .Where(b => b.Count() > 10)
-                                   .Select(b => b.Key).Distinct().ToList();
-
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
-        [HttpGet("getPrecios")]
-        public ActionResult GePreciosRepetitivos()
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.BOPP.GroupBy(a => a.BOPP_Precio)
-                                   .Where(b => b.Count() > 10)
-                                   .Select(b => b.Key).Distinct().ToList();
-
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
-        [HttpGet("getAnchos")]
-        public ActionResult GetAnchosRepetitivos()
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.BOPP.GroupBy(a => a.BOPP_Ancho)
-                                   .Where(b => b.Count() > 10)
-                                   .Select(b => b.Key).Distinct().ToList();
-
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
-        [HttpGet("getSeriales")]
-        public ActionResult GetSerialesRepetitivos()
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.BOPP.GroupBy(a => Convert.ToString(a.BOPP_Serial).Substring(0, 5))
-                                   .Where(b => b.Count() > 10)
-                                   .Select(b => b.Key.Substring(0, 5)).Distinct().ToList();
-
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
 
         /*[HttpGet("pdfMovimientos/{Ot}")]
         public ActionResult Get(long Ot)
