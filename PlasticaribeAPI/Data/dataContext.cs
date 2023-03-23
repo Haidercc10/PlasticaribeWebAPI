@@ -181,7 +181,7 @@ namespace PlasticaribeAPI.Data
 
             //Relaciones DetallesAsignaciones_MateriasPrimas
             //modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().ToTable(tb => tb.HasTrigger("Auditoria_DetallesAsignaciones_MateriasPrimas"));
-            //modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().ToTable(tb => tb.HasTrigger("ActualizarMatPrima_AsignadaEPOT"));
+            modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().ToTable(tb => tb.HasTrigger("ActualizarMatPrima_AsignadaEPOT"));
             //modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasKey(damp => new { damp.AsigMp_Id, damp.MatPri_Id }); //Llave Compuesta DetalleAsignacion_MateriaPrima 
             //modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasOne<Asignacion_MatPrima>(dasigmp => dasigmp.AsigMp).WithMany(dasimp => dasimp.DtAsigMatPri).HasForeignKey(dasigmp => dasigmp.AsigMp_Id); //Foranea Asignacion_matpri
             //modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().HasOne<Materia_Prima>(dasigmp => dasigmp.MatPri).WithMany(dasimp => dasimp.DtAsigMatPri).HasForeignKey(dasigmp => dasigmp.MatPri_Id); //Foranea materiaprima
@@ -380,7 +380,7 @@ namespace PlasticaribeAPI.Data
 
             //OT_Laminado
             modelBuilder.Entity<OT_Laminado>().ToTable(tb => tb.HasTrigger("TR_ActualizarCampos_OTLaminado"));
-            modelBuilder.Entity<OT_Laminado>().ToTable(tb => tb.HasTrigger("Auditoria_OT_Laminado"));
+            //modelBuilder.Entity<OT_Laminado>().ToTable(tb => tb.HasTrigger("Auditoria_OT_Laminado"));
             modelBuilder.Entity<OT_Laminado>().HasOne(ot_lam => ot_lam.Orden_Trabajo).WithMany().HasForeignKey(ot_lam => ot_lam.OT_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<OT_Laminado>().HasOne(ot_lam => ot_lam.Laminado_Capa).WithMany().HasForeignKey(ot_lam => ot_lam.Capa_Id1).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<OT_Laminado>().HasOne(ot_lam => ot_lam.Laminado_Capa2).WithMany().HasForeignKey(ot_lam => ot_lam.Capa_Id2).OnDelete(DeleteBehavior.Restrict);
