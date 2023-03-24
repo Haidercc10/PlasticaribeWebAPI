@@ -325,7 +325,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Asignacion_BOPP>().HasOne(asgb => asgb.Usua).WithMany().HasForeignKey(asig => asig.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario
 
             //Relaciones DetalleAsignacion_BOPP
-            modelBuilder.Entity<DetalleAsignacion_BOPP>().HasKey(dat => new { dat.AsigBOPP_Id, dat.BOPP_Id }); //Llave Compuesta DetalleAsignacion_BOPP
+            //modelBuilder.Entity<DetalleAsignacion_BOPP>().HasKey(dat => new { dat.AsigBOPP_Id, dat.BOPP_Id }); //Llave Compuesta DetalleAsignacion_BOPP
             modelBuilder.Entity<DetalleAsignacion_BOPP>().ToTable(tb => tb.HasTrigger("SumarCantAsignada_EPOT"));
             modelBuilder.Entity<DetalleAsignacion_BOPP>().ToTable(tb => tb.HasTrigger("TR_EstadosOTDetAsigBOPP"));
             modelBuilder.Entity<DetalleAsignacion_BOPP>().ToTable(tb => tb.HasTrigger("TR_IU_ActualizaEstados_EnEstadosProcesosOT2"));
@@ -441,7 +441,7 @@ namespace PlasticaribeAPI.Data
 
             //Relaciones Detalles Entrada de Tintas
             //modelBuilder.Entity<Detalles_EntradaTintas>().ToTable(tb => tb.HasTrigger("Auditoria_Detalles_EntradaTintas"));
-            modelBuilder.Entity<Detalles_EntradaTintas>().HasKey(dtET => new { dtET.EntTinta_Id, dtET.Tinta_Id });
+            //modelBuilder.Entity<Detalles_EntradaTintas>().HasKey(dtET => new { dtET.EntTinta_Id, dtET.Tinta_Id });
             modelBuilder.Entity<Detalles_EntradaTintas>().HasOne(dtET => dtET.Entrada_Tinta).WithMany().HasForeignKey(dtET => dtET.EntTinta_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalles_EntradaTintas>().HasOne(dtET => dtET.Tintas).WithMany().HasForeignKey(dtET => dtET.Tinta_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalles_EntradaTintas>().HasOne(dtET => dtET.UndMed).WithMany().HasForeignKey(dtET => dtET.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);

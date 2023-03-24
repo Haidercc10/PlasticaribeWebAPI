@@ -100,6 +100,57 @@ namespace PlasticaribeAPI.Controllers
             return Ok(ordenes.Concat(facturacion));
         }
 
+        [HttpGet("getConsultaConsolidado/{fechaInicial}/{fechaFinal}")]
+        public ActionResult GetConsultaConsolidado(DateTime fechaInicial, DateTime fechaFinal, string? doc = "", string? estado = "", string? tercero = "")
+        {
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var facturacion = from fac in _context.Set<DetalleFacturacion_OrdenMaquila>()
+                              where fac.FacOM.FacOM_Fecha.Year >= fechaInicial.Year
+                                    && fac.FacOM.FacOM_Fecha.Year <= fechaFinal.Year
+                                    && fac.FacOM.FacOM_Fecha.Month >= fechaInicial.Month
+                                    && fac.FacOM.FacOM_Fecha.Month <= fechaFinal.Month
+                                    && Convert.ToString(fac.FacOM.FacOM_Codigo).Contains(doc)
+                                    && Convert.ToString(fac.FacOM.Estado_Id).Contains(estado)
+                                    && Convert.ToString(fac.FacOM.Tercero_Id).Contains(tercero)
+                              group fac by new
+                              {
+                                  Anio = fac.FacOM.FacOM_Fecha.Year,
+                                  Mes = fac.FacOM.FacOM_Fecha.Month,
+                                  Tipo = fac.FacOM.TipoDoc.TpDoc_Nombre,
+                                  Tercero = fac.FacOM.Tercero.Tercero_Nombre,
+                                  MateriaPrima_Id = fac.MatPri_Id,
+                                  MateriaPrima = fac.MatPrima.MatPri_Nombre,
+                                  Tinta_Id = fac.Tinta_Id,
+                                  Tinta = fac.Tinta.Tinta_Nombre,
+                                  Bopp_Id = fac.Bopp_Id,
+                                  Bopp = fac.BOPP.BOPP_Nombre,
+                                  Presentacion = fac.UndMed_Id,
+                                  Precio = fac.DtFacOM_ValorUnitario,
+                              } into fac
+                              select new
+                              {
+                                  fac.Key.Anio,
+                                  fac.Key.Mes,
+                                  fac.Key.Tipo,
+                                  fac.Key.Tercero,
+                                  fac.Key.MateriaPrima_Id,
+                                  fac.Key.MateriaPrima,
+                                  fac.Key.Tinta_Id,
+                                  fac.Key.Tinta,
+                                  fac.Key.Bopp_Id,
+                                  fac.Key.Bopp,
+                                  fac.Key.Presentacion,
+                                  fac.Key.Precio,
+                                  Cantidad = fac.Sum(x => x.DtFacOM_Cantidad),
+                                  SubTotal = fac.Sum(x => x.DtFacOM_Cantidad) * fac.Key.Precio,
+                              };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
+
+            return Ok(facturacion);
+        }
+
         // PUT: api/Orden_Maquila/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

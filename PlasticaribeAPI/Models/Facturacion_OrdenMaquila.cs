@@ -23,10 +23,10 @@ namespace PlasticaribeAPI.Models
         public Usuario? Usua { get; set; }
 
         [Column(TypeName = "Date")]
-        public DateTime? FacOM_Fecha { get; set; }
+        public DateTime FacOM_Fecha { get; set; }
 
         [Column(TypeName = "varchar(10)")]
-        public string? FacOM_Hora { get; set; }
+        public string FacOM_Hora { get; set; }
 
     }
 }
