@@ -51,6 +51,136 @@ namespace PlasticaribeAPI.Controllers
             return orden_Compra;
         }
 
+        [HttpGet("getOrdenCompraFacturada/{id}/{mp}")]
+        public ActionResult GetOrdenCompraFacturada(long id, long mp)
+        {
+            var factura = from oc in _context.Set<Detalle_OrdenCompra>()
+                          from fac in _context.Set<FacturaCompra_MateriaPrima>()
+                          from ocfac in _context.Set<OrdenesCompras_FacturasCompras>()
+                          where oc.Oc_Id == id
+                                && (oc.MatPri_Id == mp || oc.Tinta_Id == mp || oc.BOPP_Id == mp)
+                                && oc.Oc_Id == ocfac.Oc_Id
+                                && ocfac.Facco_Id == fac.Facco_Id
+                                && (fac.MatPri_Id == mp || fac.Tinta_Id == mp || fac.Bopp_Id == mp)
+                          group fac by new
+                          {
+                              Proveedor = oc.Orden_Compra.Proveedor.Prov_Nombre,
+                              Proveedor_Id = oc.Orden_Compra.Prov_Id,
+                              Observacion = oc.Orden_Compra.Oc_Observacion,
+                              MP_Id = oc.MatPri_Id,
+                              MP = oc.MatPrima.MatPri_Nombre,
+                              Tinta_Id = oc.Tinta_Id,
+                              Tinta = oc.Tinta.Tinta_Nombre,
+                              Bopp_Id = oc.BOPP_Id,
+                              Bopp = oc.BOPP.BoppGen_Nombre,
+                              Cantidad_Total = oc.Doc_CantidadPedida,
+                              Presentacion = oc.UndMed_Id,
+                              Precio = oc.Doc_PrecioUnitario,
+                          } into fac
+                          select new
+                          {
+                              fac.Key.Proveedor,
+                              fac.Key.Proveedor_Id,
+                              fac.Key.Observacion,
+                              fac.Key.MP_Id,
+                              fac.Key.MP,
+                              fac.Key.Tinta_Id,
+                              fac.Key.Tinta,
+                              fac.Key.Bopp_Id,
+                              fac.Key.Bopp,
+                              fac.Key.Cantidad_Total,
+                              fac.Key.Presentacion,
+                              fac.Key.Precio,
+                              Cantidad_Ingresada = fac.Sum(x => x.FaccoMatPri_Cantidad),
+                              Cantidad_Faltante = (fac.Key.Cantidad_Total - fac.Sum(x => x.FaccoMatPri_Cantidad)),
+                              Tipo = "FACCO"
+                          };
+
+            var remision = from oc in _context.Set<Detalle_OrdenCompra>()
+                           from rem in _context.Set<Remision_MateriaPrima>()
+                           from ocrem in _context.Set<Remision_OrdenCompra>()
+                           where oc.Oc_Id == id
+                                 && (oc.MatPri_Id == mp || oc.Tinta_Id == mp || oc.BOPP_Id == mp)
+                                 && oc.Oc_Id == ocrem.Oc_Id
+                                 && ocrem.Rem_Id == rem.Rem_Id
+                                && (rem.MatPri_Id == mp || rem.Tinta_Id == mp || rem.Bopp_Id == mp)
+                           group rem by new
+                           {
+                               Proveedor = oc.Orden_Compra.Proveedor.Prov_Nombre,
+                               Proveedor_Id = oc.Orden_Compra.Prov_Id,
+                               Observacion = oc.Orden_Compra.Oc_Observacion,
+                               MP_Id = oc.MatPri_Id,
+                               MP = oc.MatPrima.MatPri_Nombre,
+                               Tinta_Id = oc.Tinta_Id,
+                               Tinta = oc.Tinta.Tinta_Nombre,
+                               Bopp_Id = oc.BOPP_Id,
+                               Bopp = oc.BOPP.BoppGen_Nombre,
+                               Cantidad_Total = oc.Doc_CantidadPedida,
+                               Presentacion = oc.UndMed_Id,
+                               Precio = oc.Doc_PrecioUnitario,
+                           } into oc
+                           select new
+                           {
+                               oc.Key.Proveedor,
+                               oc.Key.Proveedor_Id,
+                               oc.Key.Observacion,
+                               oc.Key.MP_Id,
+                               oc.Key.MP,
+                               oc.Key.Tinta_Id,
+                               oc.Key.Tinta,
+                               oc.Key.Bopp_Id,
+                               oc.Key.Bopp,
+                               oc.Key.Cantidad_Total,
+                               oc.Key.Presentacion,
+                               oc.Key.Precio,
+                               Cantidad_Ingresada = oc.Sum(x => x.RemiMatPri_Cantidad),
+                               Cantidad_Faltante = (oc.Key.Cantidad_Total - oc.Sum(x => x.RemiMatPri_Cantidad)),
+                               Tipo = "REM"
+                           };
+
+            if (factura.Count() > 0 || remision.Count() > 0) return Ok(factura.Concat(remision));
+            else
+            {
+                var con = from oc in _context.Set<Detalle_OrdenCompra>()
+                          where oc.Oc_Id == id
+                                && (oc.MatPri_Id == mp || oc.Tinta_Id == mp || oc.BOPP_Id == mp)
+                          group oc by new
+                          {
+                              Proveedor = oc.Orden_Compra.Proveedor.Prov_Nombre,
+                              Proveedor_Id = oc.Orden_Compra.Prov_Id,
+                              Observacion = oc.Orden_Compra.Oc_Observacion,
+                              MP_Id = oc.MatPri_Id,
+                              MP = oc.MatPrima.MatPri_Nombre,
+                              Tinta_Id = oc.Tinta_Id,
+                              Tinta = oc.Tinta.Tinta_Nombre,
+                              Bopp_Id = oc.BOPP_Id,
+                              Bopp = oc.BOPP.BoppGen_Nombre,
+                              Cantidad_Total = oc.Doc_CantidadPedida,
+                              Presentacion = oc.UndMed_Id,
+                              Precio = oc.Doc_PrecioUnitario,
+                          } into oc
+                          select new
+                          {
+                              oc.Key.Proveedor,
+                              oc.Key.Proveedor_Id,
+                              oc.Key.Observacion,
+                              oc.Key.MP_Id,
+                              oc.Key.MP,
+                              oc.Key.Tinta_Id,
+                              oc.Key.Tinta,
+                              oc.Key.Bopp_Id,
+                              oc.Key.Bopp,
+                              oc.Key.Cantidad_Total,
+                              oc.Key.Presentacion,
+                              oc.Key.Precio,
+                              Cantidad_Ingresada = 0,
+                              Cantidad_Faltante = oc.Key.Cantidad_Total,
+                              Tipo = "NA"
+                          };
+                return Ok(con);
+            }
+        }
+
         // PUT: api/Orden_Compra/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

@@ -14,46 +14,46 @@ namespace PlasticaribeAPI.Models
 
 
         [Precision(18,2)]
-        public decimal EstProcOT_ExtrusionKg { get; set; }
+        public decimal? EstProcOT_ExtrusionKg { get; set; }
 
 
         [Precision(18, 2)]
-        public decimal EstProcOT_ImpresionKg { get; set; }
+        public decimal? EstProcOT_ImpresionKg { get; set; }
 
 
         [Precision(18, 2)]
-        public decimal EstProcOT_RotograbadoKg { get; set; }
+        public decimal? EstProcOT_RotograbadoKg { get; set; }
 
 
         [Precision(18, 2)]
-        public decimal EstProcOT_LaminadoKg { get; set; }
+        public decimal? EstProcOT_LaminadoKg { get; set; }
 
 
         [Precision(18, 2)]
-        public decimal EstProcOT_CorteKg { get; set; }
+        public decimal? EstProcOT_CorteKg { get; set; }
 
 
         [Precision(18, 2)]
-        public decimal EstProcOT_DobladoKg { get; set; }
+        public decimal? EstProcOT_DobladoKg { get; set; }
 
 
         [Precision(18, 2)]
-        public decimal EstProcOT_EmpaqueKg { get; set; }
+        public decimal? EstProcOT_EmpaqueKg { get; set; }
 
         [Precision(18, 2)]
-        public decimal EstProcOT_SelladoKg { get; set; }
-
-
-        [Precision(18, 2)]
-        public decimal EstProcOT_SelladoUnd { get; set; }
+        public decimal? EstProcOT_SelladoKg { get; set; }
 
 
         [Precision(18, 2)]
-        public decimal EstProcOT_WiketiadoKg { get; set; }
+        public decimal? EstProcOT_SelladoUnd { get; set; }
 
 
         [Precision(18, 2)]
-        public decimal EstProcOT_WiketiadoUnd { get; set; }
+        public decimal? EstProcOT_WiketiadoKg { get; set; }
+
+
+        [Precision(18, 2)]
+        public decimal? EstProcOT_WiketiadoUnd { get; set; }
 
 
         [Precision(18, 2)]
