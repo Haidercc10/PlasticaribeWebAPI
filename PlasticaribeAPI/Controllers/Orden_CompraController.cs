@@ -54,6 +54,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getOrdenCompraFacturada/{id}/{mp}")]
         public ActionResult GetOrdenCompraFacturada(long id, long mp)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var factura = from oc in _context.Set<Detalle_OrdenCompra>()
                           from fac in _context.Set<FacturaCompra_MateriaPrima>()
                           from ocfac in _context.Set<OrdenesCompras_FacturasCompras>()
@@ -179,6 +180,7 @@ namespace PlasticaribeAPI.Controllers
                           };
                 return Ok(con);
             }
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
         }
 
         // PUT: api/Orden_Compra/5

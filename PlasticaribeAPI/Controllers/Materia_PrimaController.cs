@@ -938,7 +938,7 @@ namespace PlasticaribeAPI.Controllers
                              && bp.BOPP_Stock > 0
                        select new
                        {
-                           Id = bp.BOPP_Id,
+                           Id = bp.BOPP_Serial,
                            Nombre = bp.BOPP_Nombre,
                            Categoria = bp.CatMP_Id,
                        };
@@ -975,10 +975,10 @@ namespace PlasticaribeAPI.Controllers
                         };
 
             var bopp = from bp in _context.Set<BOPP>()
-                       where bp.BOPP_Id == id
+                       where bp.BOPP_Serial == id
                        select new
                        {
-                           Id = bp.BOPP_Id,
+                           Id = bp.BOPP_Serial,
                            Nombre = bp.BOPP_Nombre,
                            UndMedida = Convert.ToString("Kg"),
                            Precio = bp.BOPP_Precio,
