@@ -265,6 +265,35 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpPost("getRollos")]
+        public IActionResult getRollos([FromBody] List<long> rollos)
+        {
+            return Ok(from pre in _context.Set<DetallePreEntrega_RolloDespacho>() where rollos.Contains(pre.Rollo_Id) select new { pre.Rollo_Id, pre.Proceso_Id });
+        }
+
+        [HttpGet("getRollos_Ingresar/{fechaInicial}/{fechaFinal}/{proceso}")]
+        public ActionResult getRollosIngresar(DateTime fechaInicial, DateTime fechaFinal, string proceso, string? ot = "", string? rollo = "")
+        {
+            var con = from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
+                      where pre.PreEntregaRollo.PreEntRollo_Fecha >= fechaInicial
+                            && pre.PreEntregaRollo.PreEntRollo_Fecha <= fechaFinal
+                            && pre.Proceso_Id == proceso
+                            && Convert.ToString(pre.DtlPreEntRollo_OT).Contains(ot)
+                            && Convert.ToString(pre.Rollo_Id).Contains(rollo)
+                      select new
+                      {
+                          Orden = pre.DtlPreEntRollo_OT,
+                          Rollo = pre.Rollo_Id,
+                          Id_Producto = pre.Prod_Id,
+                          Producto = pre.Prod.Prod_Nombre,
+                          Fecha_Ingreso = pre.PreEntregaRollo.PreEntRollo_Fecha,
+                          Cantidad = pre.DtlPreEntRollo_Cantidad,
+                          Presentacion = pre.UndMed_Rollo,
+                          Proceso = pre.Proceso_Id,
+                      };
+            return Ok(con);
+        }
+
         // PUT: api/DetallePreEntrega_RolloDespacho/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

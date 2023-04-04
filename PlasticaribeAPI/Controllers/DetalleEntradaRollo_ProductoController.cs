@@ -204,6 +204,12 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con2);
         }
 
+        [HttpPost("getRollos")]
+        public IActionResult getRollos([FromBody] List<long> rollos)
+        {
+            return Ok(from e in _context.Set<DetalleEntradaRollo_Producto>() where rollos.Contains(e.Rollo_Id) select new { e.Rollo_Id, e.Proceso_Id });
+        }
+
         // PUT: api/DetalleEntradaRollo_Producto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
