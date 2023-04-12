@@ -1246,6 +1246,7 @@ namespace PlasticaribeAPI.Controllers
             return Ok(AsignacionMp.Concat(CreacionTinta).Concat(AsignacionTinta));
         }
 
+        // Materias primas, Tintas, Biorientados
         [HttpGet("getInventarioMateriasPrimas")]
         public ActionResult getInventarioMateriasPrimas()
         {
@@ -1448,6 +1449,503 @@ namespace PlasticaribeAPI.Controllers
 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con.Concat(conBopp).Concat(conTinta));
+        }
+
+        //Movimientos de Materia Prima, Tintas, Biorientados
+        [HttpGet("getMovimientos/{fecha1}/{fecha2}")]
+        public ActionResult GetMoviemientos(DateTime fecha1, DateTime fecha2, string? codigo = "", string? tipoMov = "", string? materiaPrima = "")
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+            //Asignaciones de Materia Prima
+            var conAsg = from asg in _context.Set<DetalleAsignacion_MateriaPrima>()
+                         where asg.AsigMp.AsigMp_FechaEntrega >= fecha1
+                               && asg.AsigMp.AsigMp_FechaEntrega <= fecha2
+                               && Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo).Contains(codigo)
+                               && "ASIGMP".Contains(tipoMov)
+                               && Convert.ToString(asg.MatPri_Id).Contains(materiaPrima)
+                         select new
+                         {
+                             Id = asg.AsigMp_Id,
+                             Codigo = Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo),
+                             Movimiento = Convert.ToString("ASIGMP"),
+                             Tipo_Movimiento = Convert.ToString("Asigmación de Materia Prima"),
+                             Fecha = asg.AsigMp.AsigMp_FechaEntrega,
+                             Usuario = asg.AsigMp.Usua.Usua_Nombre,
+                             Materia_Prima_Id = Convert.ToInt16(asg.MatPri_Id),
+                             Materia_Prima = Convert.ToString(asg.MatPri.MatPri_Nombre),
+                             Tinta_Id = Convert.ToInt16(2001),
+                             Tinta = Convert.ToString(""),
+                             Bopp_Id = Convert.ToInt64(449),
+                             Bopp = Convert.ToString(""),
+                             Cantidad = Convert.ToDecimal(asg.DtAsigMp_Cantidad),
+                             Unidad_Medida = asg.UndMed_Id,
+                         };
+
+            //Asignacion de Materia Prima para la creacion de Tintas
+            var conAsgMPCreacionTintas = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
+                                         where cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega >= fecha1
+                                               && cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= fecha2
+                                               && Convert.ToString(cr.AsigMPxTinta.Tinta_Id).Contains(codigo)
+                                               && "CRTINTAS".Contains(tipoMov)
+                                               && (Convert.ToString(cr.Tinta_Id).Contains(materiaPrima)
+                                                  || Convert.ToString(cr.MatPri_Id).Contains(materiaPrima))
+                                         select new 
+                                         {
+                                             Id = cr.AsigMPxTinta_Id,
+                                             Codigo = Convert.ToString((Convert.ToString(cr.AsigMPxTinta.Tinta_Id)) + " " + (cr.AsigMPxTinta.Tinta.Tinta_Nombre)),
+                                             Movimiento = Convert.ToString("CRTINTAS"),
+                                             Tipo_Movimiento = Convert.ToString("Creación de Tintas"),
+                                             Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
+                                             Usuario = cr.AsigMPxTinta.Usua.Usua_Nombre,
+                                             Materia_Prima_Id = Convert.ToInt16(cr.MatPri_Id),
+                                             Materia_Prima = Convert.ToString(cr.MatPri.MatPri_Nombre),
+                                             Tinta_Id = Convert.ToInt16(cr.Tinta_Id),
+                                             Tinta = Convert.ToString(cr.TintasDAMPxT.Tinta_Nombre),
+                                             Bopp_Id = Convert.ToInt64(449),
+                                             Bopp = Convert.ToString(""),
+                                             Cantidad = Convert.ToDecimal(cr.DetAsigMPxTinta_Cantidad),
+                                             Unidad_Medida = cr.UndMed_Id,
+                                         };
+
+            //Devoluciones de Materia Prima
+            var conDevoluciones = from dev in _context.Set<DetalleDevolucion_MateriaPrima>()
+                                  where dev.DevMatPri.DevMatPri_Fecha >= fecha1
+                                        && dev.DevMatPri.DevMatPri_Fecha <= fecha2
+                                        && Convert.ToString(dev.DevMatPri.DevMatPri_OrdenTrabajo).Contains(codigo)
+                                        && "DEVMP".Contains(tipoMov)
+                                        && (Convert.ToString(dev.MatPri_Id).Contains(materiaPrima)
+                                           || Convert.ToString(dev.Tinta.Tinta_Id).Contains(materiaPrima)
+                                           || Convert.ToString(dev.Bopp.BOPP_Serial).Contains(materiaPrima))
+                                  select new
+                                  {
+                                      Id = dev.DevMatPri_Id,
+                                      Codigo = Convert.ToString(dev.DevMatPri.DevMatPri_OrdenTrabajo),
+                                      Movimiento = Convert.ToString("DEVMP"),
+                                      Tipo_Movimiento = Convert.ToString("Devolución de Materia Prima"),
+                                      Fecha = dev.DevMatPri.DevMatPri_Fecha,
+                                      Usuario = dev.DevMatPri.Usua.Usua_Nombre,
+                                      Materia_Prima_Id = Convert.ToInt16(dev.MatPri_Id),
+                                      Materia_Prima = Convert.ToString(dev.MatPri.MatPri_Nombre),
+                                      Tinta_Id = Convert.ToInt16(dev.Tinta.Tinta_Id),
+                                      Tinta = Convert.ToString(dev.Tinta.Tinta_Nombre),
+                                      Bopp_Id = Convert.ToInt64(dev.Bopp.BOPP_Serial),
+                                      Bopp = Convert.ToString(dev.Bopp.BOPP_Nombre),
+                                      Cantidad = Convert.ToDecimal(dev.DtDevMatPri_CantidadDevuelta),
+                                      Unidad_Medida = dev.UndMed_Id,
+                                  };
+
+            //Facturas de Materia Prima
+            var conFacturas = from fac in _context.Set<FacturaCompra_MateriaPrima>()
+                              where fac.Facco.Facco_FechaFactura >= fecha1
+                                    && fac.Facco.Facco_FechaFactura <= fecha2
+                                    && Convert.ToString(fac.Facco.Facco_Codigo).Contains(codigo)
+                                    && fac.Facco.TpDoc_Id.Contains(tipoMov)
+                                    && (Convert.ToString(fac.MatPri_Id).Contains(materiaPrima)
+                                       || Convert.ToString(fac.Tinta.Tinta_Id).Contains(materiaPrima)
+                                       || Convert.ToString(fac.Bopp_Generico.BoppGen_Id).Contains(materiaPrima))
+                              select new
+                              {
+                                  Id = fac.Facco_Id,
+                                  Codigo = Convert.ToString(fac.Facco.Facco_Codigo),
+                                  Movimiento = Convert.ToString(fac.Facco.TpDoc.TpDoc_Id),
+                                  Tipo_Movimiento = Convert.ToString(fac.Facco.TpDoc.TpDoc_Nombre),
+                                  Fecha = fac.Facco.Facco_FechaFactura,
+                                  Usuario = fac.Facco.Usua.Usua_Nombre,
+                                  Materia_Prima_Id = Convert.ToInt16(fac.MatPri_Id),
+                                  Materia_Prima = Convert.ToString(fac.MatPri.MatPri_Nombre),
+                                  Tinta_Id = Convert.ToInt16(fac.Tinta.Tinta_Id),
+                                  Tinta = Convert.ToString(fac.Tinta.Tinta_Nombre),
+                                  Bopp_Id = Convert.ToInt64(fac.Bopp_Generico.BoppGen_Id),
+                                  Bopp = Convert.ToString(fac.Bopp_Generico.BoppGen_Nombre),
+                                  Cantidad = Convert.ToDecimal(fac.FaccoMatPri_Cantidad),
+                                  Unidad_Medida = fac.UndMed_Id,
+                              };
+
+            //Remisiones de Materia Prima
+            var conRemisiones = from rem in _context.Set<Remision_MateriaPrima>()
+                                where rem.Rem.Rem_Fecha >= fecha1
+                                      && rem.Rem.Rem_Fecha <= fecha2
+                                      && Convert.ToString(rem.Rem.Rem_Codigo).Contains(codigo)
+                                      && rem.Rem.TpDoc_Id.Contains(tipoMov)
+                                      && (Convert.ToString(rem.MatPri_Id).Contains(materiaPrima)
+                                          || Convert.ToString(rem.Tinta.Tinta_Id).Contains(materiaPrima)
+                                          || Convert.ToString(rem.Bopp.BoppGen_Id).Contains(materiaPrima))
+                                select new
+                                {
+                                    Id = Convert.ToInt64(rem.Rem_Id),
+                                    Codigo = Convert.ToString(rem.Rem.Rem_Codigo),
+                                    Movimiento = Convert.ToString(rem.Rem.TpDoc.TpDoc_Id),
+                                    Tipo_Movimiento = Convert.ToString(rem.Rem.TpDoc.TpDoc_Nombre),
+                                    Fecha = rem.Rem.Rem_Fecha,
+                                    Usuario = rem.Rem.Usua.Usua_Nombre,
+                                    Materia_Prima_Id = Convert.ToInt16(rem.MatPri_Id),
+                                    Materia_Prima = Convert.ToString(rem.MatPri.MatPri_Nombre),
+                                    Tinta_Id = Convert.ToInt16(rem.Tinta.Tinta_Id),
+                                    Tinta = Convert.ToString(rem.Tinta.Tinta_Nombre),
+                                    Bopp_Id = Convert.ToInt64(rem.Bopp.BoppGen_Id),
+                                    Bopp = Convert.ToString(rem.Bopp.BoppGen_Nombre),
+                                    Cantidad = Convert.ToDecimal(rem.RemiMatPri_Cantidad),
+                                    Unidad_Medida = rem.UndMed_Id,
+                                };
+
+            //Asignaciones de BOPP
+            var conAsgBopp = from asg in _context.Set<DetalleAsignacion_BOPP>()
+                             where asg.AsigBOPP.AsigBOPP_FechaEntrega >= fecha1
+                                   && asg.AsigBOPP.AsigBOPP_FechaEntrega <= fecha2
+                                   && Convert.ToString(asg.DtAsigBOPP_OrdenTrabajo).Contains(codigo)
+                                   && Convert.ToString(asg.TpDoc_Id).Contains(tipoMov)
+                                   && Convert.ToString(asg.BOPP_Id).Contains(materiaPrima)
+                             select new
+                             {
+                                 Id = Convert.ToInt64(asg.AsigBOPP_Id),
+                                 Codigo = Convert.ToString(asg.DtAsigBOPP_OrdenTrabajo),
+                                 Movimiento = Convert.ToString(asg.Tipo_Documento.TpDoc_Id),
+                                 Tipo_Movimiento = Convert.ToString(asg.Tipo_Documento.TpDoc_Nombre),
+                                 Fecha = asg.AsigBOPP.AsigBOPP_FechaEntrega,
+                                 Usuario = asg.AsigBOPP.Usua.Usua_Nombre,
+                                 Materia_Prima_Id = Convert.ToInt16(84),
+                                 Materia_Prima = Convert.ToString(""),
+                                 Tinta_Id = Convert.ToInt16(2001),
+                                 Tinta = Convert.ToString(""),
+                                 Bopp_Id = Convert.ToInt64(asg.BOPP_Id),
+                                 Bopp = Convert.ToString(asg.BOPP.BOPP_Nombre),
+                                 Cantidad = Convert.ToDecimal(asg.DtAsigBOPP_Cantidad),
+                                 Unidad_Medida = asg.UndMed_Id,
+                             };
+
+            //Entrada de BOPP
+            var conEntradaBOPP = from ent in _context.Set<BOPP>()
+                                 where ent.BOPP_FechaIngreso >= fecha1
+                                       && ent.BOPP_FechaIngreso <= fecha2
+                                       && Convert.ToString(ent.BOPP_Id).Contains(codigo)
+                                       && Convert.ToString("ENTBIO").Contains(tipoMov)
+                                       && Convert.ToString(ent.BOPP_Serial).Contains(materiaPrima)
+                                 select new
+                                 {
+                                     Id = Convert.ToInt64(ent.BOPP_Id),
+                                     Codigo = Convert.ToString(ent.BOPP_Id),
+                                     Movimiento = Convert.ToString("ENTBIO"),
+                                     Tipo_Movimiento = Convert.ToString("Entrada de Biorientado"),
+                                     Fecha = ent.BOPP_FechaIngreso,
+                                     Usuario = ent.Usua.Usua_Nombre,
+                                     Materia_Prima_Id = Convert.ToInt16(84),
+                                     Materia_Prima = Convert.ToString(""),
+                                     Tinta_Id = Convert.ToInt16(2001),
+                                     Tinta = Convert.ToString(""),
+                                     Bopp_Id = Convert.ToInt64(ent.BOPP_Serial),
+                                     Bopp = Convert.ToString(ent.BOPP_Nombre),
+                                     Cantidad = Convert.ToDecimal(ent.BOPP_Stock),
+                                     Unidad_Medida = ent.UndMed_Kg,
+                                 };
+
+            //Asignacion de Tinta
+           var conAsgTinta = from asg in _context.Set<DetalleAsignacion_Tinta>()
+                              where asg.AsigMp.AsigMp_FechaEntrega >= fecha1
+                                    && asg.AsigMp.AsigMp_FechaEntrega <= fecha2
+                                    && Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo).Contains(codigo)
+                                    && Convert.ToString("ASIGTINTAS").Contains(tipoMov)
+                                    && Convert.ToString(asg.Tinta_Id).Contains(materiaPrima)
+                              select new
+                              {
+                                  Id = Convert.ToInt64(asg.AsigMp_Id),
+                                  Codigo = Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo),
+                                  Movimiento = Convert.ToString("ASIGTINTAS"),
+                                  Tipo_Movimiento = Convert.ToString("Asignación de Tintas"),
+                                  Fecha = asg.AsigMp.AsigMp_FechaEntrega,
+                                  Usuario = asg.AsigMp.Usua.Usua_Nombre,
+                                  Materia_Prima_Id = Convert.ToInt16(84),
+                                  Materia_Prima = Convert.ToString(""),
+                                  Tinta_Id = Convert.ToInt16(asg.Tinta_Id),
+                                  Tinta = Convert.ToString(asg.Tinta.Tinta_Nombre),
+                                  Bopp_Id = Convert.ToInt64(449),
+                                  Bopp = Convert.ToString(""),
+                                  Cantidad = Convert.ToDecimal(asg.DtAsigTinta_Cantidad),
+                                  Unidad_Medida = asg.UndMed_Id,
+                              };
+
+            return Ok(conAsg.Concat(conAsgMPCreacionTintas).Concat(conDevoluciones).Concat(conFacturas).Concat(conRemisiones).Concat(conAsgBopp).Concat(conEntradaBOPP).Concat(conAsgTinta));
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
+        }
+
+        [HttpGet("getInfoMovimientoAsignaciones/{codigo}/{tipoMov}")]
+        public ActionResult GetInfoMovimientoAsignaciones(string codigo, string tipoMov)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            //Asignaciones de Materia Prima
+            var conAsg = from asg in _context.Set<DetalleAsignacion_MateriaPrima>()
+                         from emp in _context.Set<Empresa>()
+                         where Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo).Contains(codigo)
+                               && "ASIGMP".Contains(tipoMov)
+                               && emp.Empresa_Id == 800188732
+                         select new
+                         {
+                             Id = asg.AsigMp_Id,
+                             Codigo = Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo),
+                             Movimiento = Convert.ToString("ASIGMP"),
+                             Tipo_Movimiento = Convert.ToString("Asigmación de Materia Prima"),
+                             Fecha = asg.AsigMp.AsigMp_FechaEntrega,
+                             Hora = asg.AsigMp.AsigMp_Hora,
+                             Usuario = asg.AsigMp.Usua.Usua_Nombre,
+                             Maquina = Convert.ToString(asg.AsigMp.AsigMp_Maquina),
+                             Materia_Prima_Id = Convert.ToInt16(asg.MatPri_Id),
+                             Materia_Prima = Convert.ToString(asg.MatPri.MatPri_Nombre),
+                             Tinta_Id = Convert.ToInt16(2001),
+                             Tinta = Convert.ToString(""),
+                             Bopp_Id = Convert.ToInt64(449),
+                             Bopp = Convert.ToString(""),
+                             Cantidad = Convert.ToDecimal(asg.DtAsigMp_Cantidad),
+                             Unidad_Medida = asg.UndMed_Id,
+                             Precio = Convert.ToDecimal(asg.MatPri.MatPri_Precio),
+                             SubTotal = Convert.ToDecimal(asg.MatPri.MatPri_Precio * asg.DtAsigMp_Cantidad),
+                             Observacion = asg.AsigMp.AsigMp_Observacion,
+                             emp.Empresa_Id,
+                             emp.Empresa_Ciudad,
+                             emp.Empresa_COdigoPostal,
+                             emp.Empresa_Correo,
+                             emp.Empresa_Direccion,
+                             emp.Empresa_Telefono,
+                             emp.Empresa_Nombre
+                         };
+
+            //Asignaciones de BOPP
+            var conAsgBopp = from asg in _context.Set<DetalleAsignacion_BOPP>()
+                             from emp in _context.Set<Empresa>()
+                             where Convert.ToString(asg.AsigBOPP_Id).Contains(codigo)
+                                   && asg.TpDoc_Id.Contains(tipoMov)
+                                   && emp.Empresa_Id == 800188732
+                             select new
+                             {
+                                 Id = Convert.ToInt64(asg.AsigBOPP_Id),
+                                 Codigo = Convert.ToString(asg.DtAsigBOPP_OrdenTrabajo),
+                                 Movimiento = Convert.ToString(asg.Tipo_Documento.TpDoc_Id),
+                                 Tipo_Movimiento = Convert.ToString(asg.Tipo_Documento.TpDoc_Nombre),
+                                 Fecha = asg.AsigBOPP.AsigBOPP_FechaEntrega,
+                                 Hora = asg.AsigBOPP.AsigBOPP_Hora,
+                                 Usuario = asg.AsigBOPP.Usua.Usua_Nombre,
+                                 Maquina = Convert.ToString(""),
+                                 Materia_Prima_Id = Convert.ToInt16(84),
+                                 Materia_Prima = Convert.ToString(""),
+                                 Tinta_Id = Convert.ToInt16(2001),
+                                 Tinta = Convert.ToString(""),
+                                 Bopp_Id = Convert.ToInt64(asg.BOPP_Id),
+                                 Bopp = Convert.ToString(asg.BOPP.BOPP_Nombre),
+                                 Cantidad = Convert.ToDecimal(asg.DtAsigBOPP_Cantidad),
+                                 Unidad_Medida = asg.UndMed_Id,
+                                 Precio = Convert.ToDecimal(asg.BOPP.BOPP_Precio),
+                                 SubTotal = Convert.ToDecimal(asg.BOPP.BOPP_Precio * asg.DtAsigBOPP_Cantidad),
+                                 Observacion = asg.AsigBOPP.AsigBOPP_Observacion,
+                                 emp.Empresa_Id,
+                                 emp.Empresa_Ciudad,
+                                 emp.Empresa_COdigoPostal,
+                                 emp.Empresa_Correo,
+                                 emp.Empresa_Direccion,
+                                 emp.Empresa_Telefono,
+                                 emp.Empresa_Nombre
+                             };
+
+            //Asignacion de Tinta
+            var conAsgTinta = from asg in _context.Set<DetalleAsignacion_Tinta>()
+                              from emp in _context.Set<Empresa>()
+                              where "ASIGTINTAS".Contains(tipoMov)
+                                    && Convert.ToString(asg.AsigMp_Id).Contains(codigo)
+                                    && emp.Empresa_Id == 800188732
+                              select new
+                              {
+                                  Id = Convert.ToInt64(asg.AsigMp_Id),
+                                  Codigo = Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo),
+                                  Movimiento = Convert.ToString("ASIGTINTAS"),
+                                  Tipo_Movimiento = Convert.ToString("Asignación de Tintas"),
+                                  Fecha = asg.AsigMp.AsigMp_FechaEntrega,
+                                  Hora = asg.AsigMp.AsigMp_Hora,
+                                  Usuario = asg.AsigMp.Usua.Usua_Nombre,
+                                  Maquina = Convert.ToString(asg.AsigMp.AsigMp_Maquina),
+                                  Materia_Prima_Id = Convert.ToInt16(84),
+                                  Materia_Prima = Convert.ToString(""),
+                                  Tinta_Id = Convert.ToInt16(asg.Tinta_Id),
+                                  Tinta = Convert.ToString(asg.Tinta.Tinta_Nombre),
+                                  Bopp_Id = Convert.ToInt64(449),
+                                  Bopp = Convert.ToString(""),
+                                  Cantidad = Convert.ToDecimal(asg.DtAsigTinta_Cantidad),
+                                  Unidad_Medida = asg.UndMed_Id,
+                                  Precio = Convert.ToDecimal(asg.Tinta.Tinta_Precio),
+                                  SubTotal = Convert.ToDecimal(asg.Tinta.Tinta_Precio * asg.DtAsigTinta_Cantidad),
+                                  Observacion = asg.AsigMp.AsigMp_Observacion,
+                                  emp.Empresa_Id,
+                                  emp.Empresa_Ciudad,
+                                  emp.Empresa_COdigoPostal,
+                                  emp.Empresa_Correo,
+                                  emp.Empresa_Direccion,
+                                  emp.Empresa_Telefono,
+                                  emp.Empresa_Nombre
+                              };
+
+            return Ok(conAsg.Concat(conAsgBopp).Concat(conAsgTinta));
+        }
+
+        [HttpGet("getInfoMovimientoCreacionTinta/{codigo}")]
+        public ActionResult GetInfoMovimientoCreacionTinta(long codigo)
+        {
+            var creacion = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
+                           from emp in _context.Set<Empresa>()
+                           where cr.AsigMPxTinta_Id == codigo
+                                 && emp.Empresa_Id == 800188732
+                           select new
+                           {
+                               Id = cr.AsigMPxTinta_Id,
+                               Tinta_Creada_Id = cr.AsigMPxTinta.Tinta_Id,
+                               Tinta_Creada = cr.AsigMPxTinta.Tinta.Tinta_Nombre,
+                               Cantidad_Creada = cr.AsigMPxTinta.AsigMPxTinta_Cantidad,
+                               Movimiento = Convert.ToString("CRTINTAS"),
+                               Tipo_Movimiento = Convert.ToString("Creación de Tintas"),
+                               Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
+                               Hora = cr.AsigMPxTinta.AsigMPxTinta_Hora,
+                               Usuario = cr.AsigMPxTinta.Usua.Usua_Nombre,
+                               Materia_Prima_Id = Convert.ToInt16(cr.MatPri_Id),
+                               Materia_Prima = Convert.ToString(cr.MatPri.MatPri_Nombre),
+                               Tinta_Id = Convert.ToInt16(cr.Tinta_Id),
+                               Tinta = Convert.ToString(cr.TintasDAMPxT.Tinta_Nombre),
+                               Cantidad = Convert.ToDecimal(cr.DetAsigMPxTinta_Cantidad),
+                               Unidad_Medida = cr.UndMed_Id,
+                               Precio = 0,
+                               SubTotal = 0,
+                               Observacion = cr.AsigMPxTinta.AsigMPxTinta_Observacion,
+                               emp.Empresa_Id,
+                               emp.Empresa_Ciudad,
+                               emp.Empresa_COdigoPostal,
+                               emp.Empresa_Correo,
+                               emp.Empresa_Direccion,
+                               emp.Empresa_Telefono,
+                               emp.Empresa_Nombre
+                           };
+            return Ok(creacion);
+        }
+
+        [HttpGet("getInfoMovimientosDevoluciones/{codigo}")]
+        public ActionResult GetInfoMovimientosDevoluciones(long codigo)
+        {
+            var conDevoluciones = from dev in _context.Set<DetalleDevolucion_MateriaPrima>()
+                                  from emp in _context.Set<Empresa>()
+                                  where dev.DevMatPri_Id == codigo
+                                        && emp.Empresa_Id == 800188732
+                                  select new
+                                  {
+                                      Id = dev.DevMatPri_Id,
+                                      Codigo = Convert.ToString(dev.DevMatPri.DevMatPri_OrdenTrabajo),
+                                      Movimiento = Convert.ToString("DEVMP"),
+                                      Tipo_Movimiento = Convert.ToString("Devolución de Materia Prima"),
+                                      Fecha = dev.DevMatPri.DevMatPri_Fecha,
+                                      Hora = dev.DevMatPri.DevMatPri_Hora,
+                                      Usuario = dev.DevMatPri.Usua.Usua_Nombre,
+                                      Materia_Prima_Id = Convert.ToInt16(dev.MatPri_Id),
+                                      Materia_Prima = Convert.ToString(dev.MatPri.MatPri_Nombre),
+                                      Tinta_Id = Convert.ToInt16(dev.Tinta.Tinta_Id),
+                                      Tinta = Convert.ToString(dev.Tinta.Tinta_Nombre),
+                                      Bopp_Id = Convert.ToInt64(dev.Bopp.BOPP_Serial),
+                                      Bopp = Convert.ToString(dev.Bopp.BOPP_Nombre),
+                                      Cantidad = Convert.ToDecimal(dev.DtDevMatPri_CantidadDevuelta),
+                                      Unidad_Medida = dev.UndMed_Id,
+                                      Precio = 0,
+                                      SubTotal = 0,
+                                      Observacion = dev.DevMatPri.DevMatPri_Motivo,
+                                      emp.Empresa_Id,
+                                      emp.Empresa_Ciudad,
+                                      emp.Empresa_COdigoPostal,
+                                      emp.Empresa_Correo,
+                                      emp.Empresa_Direccion,
+                                      emp.Empresa_Telefono,
+                                      emp.Empresa_Nombre
+                                  };
+            return Ok(conDevoluciones);
+        }
+
+        [HttpGet("getInfoMovimientosEntradas/{codigo}/{tipoMov}")]
+        public ActionResult GetInfoMovimientosEntradas(string codigo, string tipoMov)
+        {
+            //Facturas de Materia Prima
+            var conFacturas = from fac in _context.Set<FacturaCompra_MateriaPrima>()
+                              from emp in _context.Set<Empresa>()
+                              where Convert.ToString(fac.Facco.Facco_Id).Contains(codigo)
+                                    && fac.Facco.TpDoc_Id.Contains(tipoMov)
+                                    && emp.Empresa_Id == 800188732
+                              select new
+                              {
+                                  Id = fac.Facco_Id,
+                                  Codigo = Convert.ToString(fac.Facco.Facco_Codigo),
+                                  Movimiento = Convert.ToString(fac.Facco.TpDoc.TpDoc_Id),
+                                  Tipo_Movimiento = Convert.ToString(fac.Facco.TpDoc.TpDoc_Nombre),
+                                  Fecha = fac.Facco.Facco_FechaFactura,
+                                  Hora = fac.Facco.Facco_Hora,
+                                  Usuario = fac.Facco.Usua.Usua_Nombre,
+                                  Materia_Prima_Id = Convert.ToInt16(fac.MatPri_Id),
+                                  Materia_Prima = Convert.ToString(fac.MatPri.MatPri_Nombre),
+                                  Tinta_Id = Convert.ToInt16(fac.Tinta.Tinta_Id),
+                                  Tinta = Convert.ToString(fac.Tinta.Tinta_Nombre),
+                                  Bopp_Id = Convert.ToInt64(fac.Bopp_Generico.BoppGen_Id),
+                                  Bopp = Convert.ToString(fac.Bopp_Generico.BoppGen_Nombre),
+                                  Cantidad = Convert.ToDecimal(fac.FaccoMatPri_Cantidad),
+                                  Unidad_Medida = fac.UndMed_Id,
+                                  Precio = 0,
+                                  SubTotal = 0,
+                                  Observacion = fac.Facco.Facco_Observacion,
+                                  emp.Empresa_Id,
+                                  emp.Empresa_Ciudad,
+                                  emp.Empresa_COdigoPostal,
+                                  emp.Empresa_Correo,
+                                  emp.Empresa_Direccion,
+                                  emp.Empresa_Telefono,
+                                  emp.Empresa_Nombre,
+                                  Tipo_Id_Proveedor = fac.Facco.Prov.TipoIdentificacion_Id,
+                                  Proveedor_Id = fac.Facco.Prov_Id,
+                                  Proveedor = fac.Facco.Prov.Prov_Nombre,
+                                  Tipo_Proveedor = fac.Facco.Prov.TpProv.TpProv_Nombre,
+                                  Telefono_Proveedor = fac.Facco.Prov.Prov_Telefono,
+                                  Ciudad_Proveedor = fac.Facco.Prov.Prov_Ciudad,
+                                  Correo_Proveedor = fac.Facco.Prov.Prov_Email,
+                              };
+
+            //Remisiones de Materia Prima
+            var conRemisiones = from rem in _context.Set<Remision_MateriaPrima>()
+                                from emp in _context.Set<Empresa>()
+                                where Convert.ToString(rem.Rem.Rem_Id).Contains(codigo)
+                                      && rem.Rem.TpDoc_Id.Contains(tipoMov)
+                                      && emp.Empresa_Id == 800188732
+                                select new
+                                {
+                                    Id = Convert.ToInt64(rem.Rem_Id),
+                                    Codigo = Convert.ToString(rem.Rem.Rem_Codigo),
+                                    Movimiento = Convert.ToString(rem.Rem.TpDoc.TpDoc_Id),
+                                    Tipo_Movimiento = Convert.ToString(rem.Rem.TpDoc.TpDoc_Nombre),
+                                    Fecha = rem.Rem.Rem_Fecha,
+                                    Hora = rem.Rem.Rem_Hora,
+                                    Usuario = rem.Rem.Usua.Usua_Nombre,
+                                    Materia_Prima_Id = Convert.ToInt16(rem.MatPri_Id),
+                                    Materia_Prima = Convert.ToString(rem.MatPri.MatPri_Nombre),
+                                    Tinta_Id = Convert.ToInt16(rem.Tinta.Tinta_Id),
+                                    Tinta = Convert.ToString(rem.Tinta.Tinta_Nombre),
+                                    Bopp_Id = Convert.ToInt64(rem.Bopp.BoppGen_Id),
+                                    Bopp = Convert.ToString(rem.Bopp.BoppGen_Nombre),
+                                    Cantidad = Convert.ToDecimal(rem.RemiMatPri_Cantidad),
+                                    Unidad_Medida = rem.UndMed_Id,
+                                    Precio = 0,
+                                    SubTotal = 0,
+                                    Observacion = rem.Rem.Rem_Observacion,
+                                    emp.Empresa_Id,
+                                    emp.Empresa_Ciudad,
+                                    emp.Empresa_COdigoPostal,
+                                    emp.Empresa_Correo,
+                                    emp.Empresa_Direccion,
+                                    emp.Empresa_Telefono,
+                                    emp.Empresa_Nombre,
+                                    Tipo_Id_Proveedor = rem.Rem.Prov.TipoIdentificacion_Id,
+                                    Proveedor_Id = rem.Rem.Prov_Id,
+                                    Proveedor = rem.Rem.Prov.Prov_Nombre,
+                                    Tipo_Proveedor = rem.Rem.Prov.TpProv.TpProv_Nombre,
+                                    Telefono_Proveedor = rem.Rem.Prov.Prov_Telefono,
+                                    Ciudad_Proveedor = rem.Rem.Prov.Prov_Ciudad,
+                                    Correo_Proveedor = rem.Rem.Prov.Prov_Email,
+                                };
+            return Ok(conFacturas.Concat(conRemisiones));
         }
 
         // PUT: api/Materia_Prima/5
