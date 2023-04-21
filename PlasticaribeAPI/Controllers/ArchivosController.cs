@@ -98,7 +98,7 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        [HttpGet("/CrearCarpetas")]
+        [HttpGet("CrearCarpetas")]
         public ActionResult CrearCarpetas(string? filePath)
         {
             if (filePath != null)
@@ -119,8 +119,7 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("/download/")]
+        [HttpGet("download")]
         public async Task<IActionResult> Download(string file, string filePath)
         {
             filePath = Path.Combine(filePath, file);
@@ -140,7 +139,7 @@ namespace PlasticaribeAPI.Controllers
 
         }
 
-        [HttpGet("/Carpetas")]
+        [HttpGet("Carpetas")]
         public IActionResult Carpetas(string? filePath)
         {
             if (filePath == null)
@@ -158,7 +157,7 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        [HttpGet("/Archivos")]
+        [HttpGet("Archivos")]
         public IActionResult Archivos(string? filePath)
         {
             if (filePath == null)
@@ -176,7 +175,7 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        [HttpGet("/EliminarArchivos")]
+        [HttpGet("EliminarArchivos")]
         public IActionResult EliminarArchivos(string? filePath)
         {
             if (System.IO.File.Exists(filePath))
@@ -197,7 +196,7 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        [HttpGet("/EliminarCarpeta")]
+        [HttpGet("EliminarCarpeta")]
         public IActionResult EliminarCarpeta(string? filePath)
         {
             if (System.IO.Directory.Exists(filePath))
@@ -219,28 +218,28 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        [HttpGet("/MoverArchivos")]
+        [HttpGet("MoverArchivos")]
         public IActionResult MoverArchivos(string filePathInicial, string filePathFinal)
         {            
             System.IO.File.Move(filePathInicial, filePathFinal);
             return Ok();                
         }
 
-        [HttpGet("/MoverCarpeta")]
+        [HttpGet("MoverCarpeta")]
         public IActionResult MoverCarpeta(string filePathInicial, string filePathFinal)
         {
             System.IO.Directory.Move(filePathInicial, filePathFinal);
             return Ok();
         }
 
-        [HttpGet("/CopiarArchivos")]
+        [HttpGet("CopiarArchivos")]
         public IActionResult CopiarArchivos(string filePathInicial, string filePathFinal)
         {
             System.IO.File.Copy(filePathInicial, filePathFinal, true);
             return Ok();
         }
 
-        [HttpGet("/CopiarCarpetas")]
+        [HttpGet("CopiarCarpetas")]
         public void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
         {
             // Get information about the source directory
