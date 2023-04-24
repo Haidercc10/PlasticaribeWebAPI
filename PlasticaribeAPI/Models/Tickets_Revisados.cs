@@ -14,7 +14,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string TicketRev_Hora { get; set; }
         public long Usua_Id { get; set; }
-        public Usuario Usuario { get; set; }
+        public Usuario? Usuario { get; set; }
 
         [Column(TypeName = "varchar(max)")]
         public string TicketRev_Descripcion { get; set; }

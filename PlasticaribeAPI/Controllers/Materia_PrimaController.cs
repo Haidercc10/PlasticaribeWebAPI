@@ -955,6 +955,7 @@ namespace PlasticaribeAPI.Controllers
                                select new
                                {
                                    Id = mp.MatPri_Id,
+                                   Serial = mp.MatPri_Id,
                                    Nombre = mp.MatPri_Nombre,
                                    UndMedida = Convert.ToString(mp.UndMed_Id),
                                    Precio = mp.MatPri_Precio,
@@ -967,6 +968,7 @@ namespace PlasticaribeAPI.Controllers
                         select new
                         {
                             Id = tt.Tinta_Id,
+                            Serial = tt.Tinta_Id,
                             Nombre = tt.Tinta_Nombre,
                             UndMedida = Convert.ToString(tt.UndMed_Id),
                             Precio = tt.Tinta_Precio,
@@ -978,7 +980,8 @@ namespace PlasticaribeAPI.Controllers
                        where bp.BOPP_Serial == id
                        select new
                        {
-                           Id = bp.BOPP_Serial,
+                           Id = bp.BOPP_Id,
+                           Serial = bp.BOPP_Serial,
                            Nombre = bp.BOPP_Nombre,
                            UndMedida = Convert.ToString("Kg"),
                            Precio = bp.BOPP_Precio,

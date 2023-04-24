@@ -135,7 +135,7 @@ namespace PlasticaribeAPI.Data
 
 
             //Relaciones Materias_Primas
-            //modelBuilder.Entity<Materia_Prima>().ToTable(tb => tb.HasTrigger("Auditoria_Materias_Primas"));
+            modelBuilder.Entity<Materia_Prima>().ToTable(tb => tb.HasTrigger("Auditoria_Materias_Primas"));
             modelBuilder.Entity<Materia_Prima>().ToTable(tb => tb.HasTrigger("TR_InventarioDiarioMateriasPrimas"));
             modelBuilder.Entity<Materia_Prima>().HasOne(mtp => mtp.CatMP).WithMany().HasForeignKey(mtp => mtp.CatMP_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Materia_Prima>().HasOne(mtp => mtp.UndMed).WithMany().HasForeignKey(mtp => mtp.UndMed_Id).OnDelete(DeleteBehavior.Restrict);

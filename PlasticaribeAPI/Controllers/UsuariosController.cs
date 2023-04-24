@@ -196,6 +196,14 @@ namespace PlasticaribeAPI.Controllers
            
         }
 
+        [HttpGet("getVendedores")]
+        public ActionResult GetVendedores()
+        {
+            var usuario = from usu in _context.Set<Usuario>()
+                          where usu.RolUsu_Id == 2 && usu.Estado_Id == 1
+                          select usu;
+            return Ok(usuario);
+        }
 
         // PUT: api/Usuarios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
