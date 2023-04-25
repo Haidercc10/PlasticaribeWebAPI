@@ -146,6 +146,10 @@ namespace PlasticaribeAPI.Controllers
                     devMp.DevMatPri.Usua.Usua_Nombre,
                     devMp.MatPri_Id,
                     devMp.MatPri.MatPri_Nombre,
+                    devMp.Tinta_Id, 
+                    devMp.Tinta.Tinta_Nombre, 
+                    devMp.BOPP_Id, 
+                    devMp.Bopp.BOPP_Nombre,
                     devMp.DtDevMatPri_CantidadDevuelta
                 }).ToList();
             return Ok(con);
