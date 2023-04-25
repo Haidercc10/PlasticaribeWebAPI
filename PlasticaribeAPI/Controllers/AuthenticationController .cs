@@ -29,7 +29,7 @@ namespace PlasticaribeAPI.Controllers {
                     issuer: ConfigurationManager.AppSetting["JWT:ValidIssuer"],
                     audience: ConfigurationManager.AppSetting["JWT:ValidAudience"],
                     claims: new List<Claim>(),
-                    expires: DateTime.Now.AddMinutes(600),
+                    expires: DateTime.Now.AddMinutes(30),
                     signingCredentials: signinCredentials
                 );
                 var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
