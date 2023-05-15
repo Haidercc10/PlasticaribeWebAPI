@@ -43,30 +43,17 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult PostArchivo([FromForm] List<IFormFile> archivo, DateTime Fecha, int categoria_Id, long usua_Id, string? filePath)
         {
             List<Archivos> archivos = new();
-            if (filePath != null)
-            {
-                try
-                {
-                    if (!Directory.Exists(filePath))
-                    {
-                        Directory.CreateDirectory(filePath);
-                    }
-                    if (archivo != null)
-                    {
-                        if (archivo.Count > 0)
-                        {
-                            foreach (var item in archivo)
-                            {
-                                var crearArchivo = filePath + "\\" + item.FileName;
-
-                                using (var stream = System.IO.File.Create(crearArchivo))
-                                {
-                                    item.CopyToAsync(stream);
-                                }
-                                Archivos archivo2 = new()
-                                {
+            if (filePath != null) {
+                try {
+                    if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);
+                    if (archivo != null) {
+                        if (archivo.Count > 0) {
+                            foreach (var item in archivo) {
+                                using var stream = System.IO.File.Create(filePath + "\\" + item.FileName, 100000, FileOptions.Asynchronous);
+                                archivo[0].CopyToAsync(stream);
+                                Archivos archivo2 = new() {
                                     Nombre = item.FileName,
-                                    Ubicacion = crearArchivo,
+                                    Ubicacion = filePath + "\\" + item.FileName,
                                     Fecha = Fecha,
                                     Categoria_Id = categoria_Id,
                                     Usua_Id = usua_Id
@@ -75,27 +62,13 @@ namespace PlasticaribeAPI.Controllers
                             }
                             _context.Archivos.AddRange(archivos);
                             _context.SaveChanges();
-                        }
-                        else
-                        {
-                            return BadRequest();
-                        }
-                    }
-                    else
-                    {
-                        return Ok(filePath);
-                    }
-                }
-                catch (Exception ex)
-                {
+                        } else return BadRequest();
+                    } else return Ok(filePath);
+                } catch (Exception ex) {
                     return BadRequest(ex.Message);
                 }
                 return Ok(archivo);
-            }
-            else
-            {
-                return BadRequest();
-            }
+            } else return BadRequest();
         }
 
         [HttpGet("CrearCarpetas")]

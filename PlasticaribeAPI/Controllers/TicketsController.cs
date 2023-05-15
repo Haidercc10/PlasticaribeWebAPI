@@ -59,10 +59,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("get_IdSigTicket")]
         public ActionResult Get_IdSigTicket()
         {
-            var con = (from tk in _context.Set<Tickets>()
-                      orderby tk.Ticket_Id descending
-                      select tk.Ticket_Id + 1).FirstOrDefault();
-            return Ok(con);
+            return Ok((from tk in _context.Set<Tickets>() orderby tk.Ticket_Id descending select tk.Ticket_Id + 1).FirstOrDefault());
         }
 
         // Consulta que va a devolver la información con la que se llenará el pdf que se enviará despues de crear cada ticket
@@ -212,10 +209,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Tickets>> PostTickets(Tickets tickets)
         {
-          if (_context.Tickets == null)
-          {
-              return Problem("Entity set 'dataContext.Tickets'  is null.");
-          }
+          if (_context.Tickets == null) return Problem("Entity set 'dataContext.Tickets'  is null.");
             _context.Tickets.Add(tickets);
             await _context.SaveChangesAsync();
 
@@ -254,15 +248,9 @@ namespace PlasticaribeAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTickets(long id)
         {
-            if (_context.Tickets == null)
-            {
-                return NotFound();
-            }
+            if (_context.Tickets == null) return NotFound();
             var tickets = await _context.Tickets.FindAsync(id);
-            if (tickets == null)
-            {
-                return NotFound();
-            }
+            if (tickets == null) return NotFound();
 
             _context.Tickets.Remove(tickets);
             await _context.SaveChangesAsync();
@@ -277,15 +265,11 @@ namespace PlasticaribeAPI.Controllers
 
         private static string GetContentType(string path)
         {
-            var provider = new FileExtensionContentTypeProvider();
-
 #pragma warning disable CS8600 // Se va a convertir un literal nulo o un posible valor nulo en un tipo que no acepta valores NULL
-            if (!provider.TryGetContentType(path, out string contentType))
-            {
-                contentType = "application/octet-stream";
-            }
-#pragma warning restore CS8600 // Se va a convertir un literal nulo o un posible valor nulo en un tipo que no acepta valores NULL
+            var provider = new FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(path, out string contentType)) contentType = "application/octet-stream";
             return contentType;
+#pragma warning restore CS8600 // Se va a convertir un literal nulo o un posible valor nulo en un tipo que no acepta valores NULL
         }
     }
 }
