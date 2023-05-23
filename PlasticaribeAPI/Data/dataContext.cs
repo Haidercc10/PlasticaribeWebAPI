@@ -270,7 +270,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Tinta>().HasOne(tin => tin.UndMed).WithMany().HasForeignKey(tint => tint.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<Tinta>().HasOne(tin => tin.CatMP).WithMany().HasForeignKey(tint => tint.CatMP_Id).OnDelete(DeleteBehavior.Restrict); //foranea categorias matprima
             modelBuilder.Entity<Tinta>().HasOne(tin => tin.TpBod).WithMany().HasForeignKey(tint => tint.TpBod_Id).OnDelete(DeleteBehavior.Restrict); //foranea Tipo de bodega
-                                                                                                                                                     //modelBuilder.Entity<Tinta>().Property(prop => prop.Tinta_Id).UseIdentityColumn(2000, 1);
+            //modelBuilder.Entity<Tinta>().Property(prop => prop.Tinta_Id).UseIdentityColumn(2000, 1);
 
 
             //Relaciones Tintas_MateriasPrimas
@@ -671,6 +671,26 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Tickets_Revisados>().HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Tickets_Revisados>().HasOne(x => x.Tickets).WithMany().HasForeignKey(x => x.Ticket_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            //Solicitud de Materia Prima
+            modelBuilder.Entity<Solicitud_MateriaPrima>().ToTable(tb => tb.HasTrigger("Auditoria_Solicitud_MateriaPrima"));
+            modelBuilder.Entity<Solicitud_MateriaPrima>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Solicitud_MateriaPrima>().HasOne(x => x.Estado).WithMany().HasForeignKey(y => y.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            // Detalles de solicitud de materia prima
+            modelBuilder.Entity<Detalles_SolicitudMateriaPrima>().ToTable(tb => tb.HasTrigger("Auditoria_Detalles_SolicitudMateriaPrima"));
+            modelBuilder.Entity<Detalles_SolicitudMateriaPrima>().HasOne(x => x.Solicitud_MateriaPrima).WithMany().HasForeignKey(y => y.Solicitud_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_SolicitudMateriaPrima>().HasOne(x => x.Materia_Prima).WithMany().HasForeignKey(y => y.MatPri_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_SolicitudMateriaPrima>().HasOne(x => x.Tinta).WithMany().HasForeignKey(y => y.Tinta_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_SolicitudMateriaPrima>().HasOne(x => x.Bopp).WithMany().HasForeignKey(y => y.Bopp_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_SolicitudMateriaPrima>().HasOne(x => x.UndMed).WithMany().HasForeignKey(y => y.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_SolicitudMateriaPrima>().HasOne(x => x.Estado).WithMany().HasForeignKey(y => y.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Solicitudes de Materia Prima y Orden de Compra
+            modelBuilder.Entity<SolicitudesMP_OrdenesCompra>().ToTable(tb => tb.HasTrigger("Auditoria_SolicitudesMP_OrdenesCompra"));
+            modelBuilder.Entity<SolicitudesMP_OrdenesCompra>().HasOne(x => x.Solicitud_MateriaPrima).WithMany().HasForeignKey(y => y.Solicitud_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<SolicitudesMP_OrdenesCompra>().HasOne(x => x.Orden_Compra).WithMany().HasForeignKey(y => y.Oc_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
             modelBuilder.Entity<Tipo_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Usuarios"));
@@ -814,6 +834,9 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.OrdenMaquila_Facturacion> OrdenMaquila_Facturacion { get; set; }
         public DbSet<PlasticaribeAPI.Models.Tickets> Tickets { get; set; }
         public DbSet<PlasticaribeAPI.Models.Tickets_Revisados> Tickets_Revisados { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Detalles_SolicitudMateriaPrima> Detalles_SolicitudMateriaPrima { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Solicitud_MateriaPrima> Solicitud_MateriaPrima { get; set; }
+        public DbSet<PlasticaribeAPI.Models.SolicitudesMP_OrdenesCompra> SolicitudesMP_OrdenesCompra { get; set; }
     }
 
 }

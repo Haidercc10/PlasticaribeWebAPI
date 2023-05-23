@@ -286,18 +286,12 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // DELETE: api/PedidoProducto/5
-        [HttpDelete("{id}")]
+        [HttpDelete()]
         public async Task<IActionResult> DeletePedidoProducto(int Prod_Id, long PedExt_Id)
         {
-            if (_context.PedidosExternos_Productos == null)
-            {
-                return NotFound();
-            }
-            var pedidoProducto = await _context.PedidosExternos_Productos.FindAsync(Prod_Id, PedExt_Id);
-            if (pedidoProducto == null)
-            {
-                return NotFound();
-            }
+            if (_context.PedidosExternos_Productos == null) return NotFound();
+            var pedidoProducto = (from ped in _context.Set<PedidoProducto>() where ped.PedExt_Id == PedExt_Id && ped.Prod_Id == Prod_Id select ped).FirstOrDefault();
+            if (pedidoProducto == null) return NotFound();
 
             _context.PedidosExternos_Productos.Remove(pedidoProducto);
             await _context.SaveChangesAsync();
