@@ -50,6 +50,50 @@ namespace PlasticaribeAPI.Controllers
             return detalles_SolicitudMateriaPrima;
         }
 
+        //Consulta que devolverá toda la información de una solicitud
+        [HttpGet("getInfoSolicitud/{solicitud_Id}")]
+        public ActionResult GetInfoSolicitud (long solicitud_Id)
+        {
+            var con = from dtSol in _context.Set<Detalles_SolicitudMateriaPrima>()
+                      from Emp in _context.Set<Empresa>()
+                      where dtSol.Solicitud_Id == solicitud_Id
+                            && Emp.Empresa_Id == 800188732
+                      select new
+                      {
+                          Consecutivo = dtSol.Solicitud_Id,
+                          Fecha = dtSol.Solicitud_MateriaPrima.Solicitud_Fecha,
+                          Hora = dtSol.Solicitud_MateriaPrima.Solicitud_Hora,
+                          Estado_Solicitud_Id = dtSol.Solicitud_MateriaPrima.Estado_Id,
+                          Estado_Solicitud = dtSol.Solicitud_MateriaPrima.Estado.Estado_Nombre,
+
+                          Observacion = dtSol.Solicitud_MateriaPrima.Solicitud_Observacion,
+                          Usuario_Id = dtSol.Solicitud_MateriaPrima.Usua_Id,
+                          Usuario = dtSol.Solicitud_MateriaPrima.Usuario.Usua_Nombre,
+
+                          Empresa_Id = Emp.Empresa_Id,
+                          Empresa_Ciudad = Emp.Empresa_Ciudad,
+                          Empresa_Codigo = Emp.Empresa_COdigoPostal,
+                          Empresa_Correo = Emp.Empresa_Correo,
+                          Empresa_Direccion = Emp.Empresa_Direccion,
+                          Empresa_Telefono = Emp.Empresa_Telefono,
+                          Empresa = Emp.Empresa_Nombre,
+
+                          MP_Id = dtSol.MatPri_Id,
+                          MP = dtSol.Materia_Prima.MatPri_Nombre,
+                          Tinta_Id = dtSol.Tinta_Id,
+                          Tinta = dtSol.Tinta.Tinta_Nombre,
+                          Bopp_Id = dtSol.Bopp_Id,
+                          Bopp = dtSol.Bopp.BoppGen_Nombre,
+                          Cantidad = dtSol.DtSolicitud_Cantidad,
+                          Unidad_Medida = dtSol.UndMed_Id,
+                          Estado_MP_Id = dtSol.Estado_Id,
+                          Estado_MP = dtSol.Estado.Estado_Nombre,
+                      };
+
+            if (con.Count() > 0) return Ok(con);
+            else return BadRequest("No hay información de la solicitud");
+        }
+
         // PUT: api/Detalles_SolicitudMateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

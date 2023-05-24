@@ -50,6 +50,15 @@ namespace PlasticaribeAPI.Controllers
             return solicitud_MateriaPrima;
         }
 
+        //Consulta que devolverá consecutivo que tendrá la nueva solicitud
+        [HttpGet("getNuevoConsecutivo")]
+        public ActionResult GetSiguienteConsecutivo()
+        {
+            var con = (from sol in _context.Set<Solicitud_MateriaPrima>() orderby sol.Solicitud_Id descending select sol.Solicitud_Id + 1).FirstOrDefault();
+            if (con == 0) return Ok(1);
+            else return Ok(con);
+        }
+
         // PUT: api/Solicitud_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
