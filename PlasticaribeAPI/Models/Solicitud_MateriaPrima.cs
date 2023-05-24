@@ -18,7 +18,7 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(10)")]
         public string Solicitud_Hora { get; set; }
-        public Estado Estado { get; set; } 
+        public Estado? Estado { get; set; } 
         public int Estado_Id { get; set; }
     }
 }

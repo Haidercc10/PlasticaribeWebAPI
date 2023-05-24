@@ -94,6 +94,19 @@ namespace PlasticaribeAPI.Controllers
             else return BadRequest("No hay información de la solicitud");
         }
 
+        // Consulta que devolverá 
+        [HttpGet("getMateriaPrimaSolicitud/{mp}/{solicitud}")]
+        public ActionResult GetMateriaPrimaSolicitud(long mp, long solicitud)
+        {
+            var con = from dtSol in _context.Set<Detalles_SolicitudMateriaPrima>()
+                      where dtSol.Solicitud_Id == solicitud
+                            && (dtSol.MatPri_Id == mp || dtSol.Tinta_Id == mp || dtSol.Bopp_Id == mp)
+                      select dtSol;
+
+            if (con.Count() > 0) return Ok(con);
+            else return BadRequest("No se ha encontrada la materia prima en la solicitud");
+        }
+
         // PUT: api/Detalles_SolicitudMateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
