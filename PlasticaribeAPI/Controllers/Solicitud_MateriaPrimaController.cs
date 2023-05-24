@@ -59,6 +59,63 @@ namespace PlasticaribeAPI.Controllers
             else return Ok(con);
         }
 
+        /** Consultas para obtener solicitudes de mat. prima por fechas y estados */
+        [HttpGet("getFechasEstado/{fecha1}/{fecha2}/{estado}")]
+        public ActionResult GetSolicitudes_FechasEstados(DateTime fecha1, DateTime fecha2, int estado)
+        {
+            var query = from sol in _context.Set<Solicitud_MateriaPrima>()
+                        where sol.Solicitud_Fecha >= fecha1 &&
+                        sol.Solicitud_Fecha <= fecha2 &&
+                        sol.Estado_Id == estado
+                        select new
+                        {
+                            IdSolicitud = sol.Solicitud_Id,
+                            IdUsuario = sol.Usua_Id,
+                            Nombre = sol.Usuario.Usua_Nombre,
+                            Fecha = sol.Solicitud_Fecha,
+                            IdEstado = sol.Estado_Id,
+                            Estado = sol.Estado.Estado_Nombre
+                        };
+            return Ok(query);
+        }
+
+        /** Consultas para obtener solicitudes de mat. prima por fechas */
+        [HttpGet("getFechas/{fecha1}/{fecha2}")]
+        public ActionResult GetSolicitudes_Fechas(DateTime fecha1, DateTime fecha2)
+        {
+            var query = from sol in _context.Set<Solicitud_MateriaPrima>()
+                        where sol.Solicitud_Fecha >= fecha1 &&
+                        sol.Solicitud_Fecha <= fecha2
+                        select new
+                        {
+                            IdSolicitud = sol.Solicitud_Id,
+                            IdUsuario = sol.Usua_Id,
+                            Nombre = sol.Usuario.Usua_Nombre,
+                            Fecha = sol.Solicitud_Fecha,
+                            IdEstado = sol.Estado_Id,
+                            Estado = sol.Estado.Estado_Nombre
+                        };
+            return Ok(query);
+        }
+
+        /** Consultas para obtener solicitudes de mat. prima por estados */
+        [HttpGet("getEstados/{estado}")]
+        public ActionResult GetSolicitudes_Estado(int estado)
+        {
+            var query = from sol in _context.Set<Solicitud_MateriaPrima>()
+                        where sol.Estado_Id == estado
+                        select new
+                        {
+                            IdSolicitud = sol.Solicitud_Id,
+                            IdUsuario = sol.Usua_Id,
+                            Nombre = sol.Usuario.Usua_Nombre,
+                            Fecha = sol.Solicitud_Fecha,
+                            IdEstado = sol.Estado_Id,
+                            Estado = sol.Estado.Estado_Nombre
+                        };
+            return Ok(query);
+        }
+
         // PUT: api/Solicitud_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
