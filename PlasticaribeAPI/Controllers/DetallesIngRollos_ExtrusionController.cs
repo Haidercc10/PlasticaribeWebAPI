@@ -256,6 +256,12 @@ namespace PlasticaribeAPI.Controllers
             return Ok(ingreso);
         }
 
+        [HttpPost("getRollos")]
+        public IActionResult getRollos([FromBody] List<long> rollos)
+        {
+            return Ok(from e in _context.Set<DetallesIngRollos_Extrusion>() where rollos.Contains(e.Rollo_Id) select new { e.Rollo_Id, e.Proceso_Id });
+        }
+
         /* Funcion que consultará y devolverá un consolidado de los ingresos y las salidas de rollos realizadas,
          * esto servirá para el reporte de la bodega de extrusion*/
         [HttpGet("getconsultaRollosOT/{ot}")]
