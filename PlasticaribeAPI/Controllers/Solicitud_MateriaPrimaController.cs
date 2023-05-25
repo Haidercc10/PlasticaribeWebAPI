@@ -70,12 +70,12 @@ namespace PlasticaribeAPI.Controllers
                         sol.Estado_Id == estado
                         select new
                         {
-                            IdSolicitud = sol.Solicitud_Id,
-                            IdUsuario = sol.Usua_Id,
-                            Nombre = sol.Usuario.Usua_Nombre,
+                            Consecutivo = sol.Solicitud_Id,
+                            Usuario_Id = sol.Usua_Id,
+                            Usuario = sol.Usuario.Usua_Nombre,
                             Fecha = sol.Solicitud_Fecha,
-                            IdEstado = sol.Estado_Id,
-                            Estado = sol.Estado.Estado_Nombre
+                            Estado_Solicitud_Id = sol.Estado_Id,
+                            Estado_Solicitud = sol.Estado.Estado_Nombre
                         };
             return Ok(query);
         }
@@ -89,12 +89,12 @@ namespace PlasticaribeAPI.Controllers
                         sol.Solicitud_Fecha <= fecha2
                         select new
                         {
-                            IdSolicitud = sol.Solicitud_Id,
-                            IdUsuario = sol.Usua_Id,
-                            Nombre = sol.Usuario.Usua_Nombre,
+                            Consecutivo = sol.Solicitud_Id,
+                            Usuario_Id = sol.Usua_Id,
+                            Usuario = sol.Usuario.Usua_Nombre,
                             Fecha = sol.Solicitud_Fecha,
-                            IdEstado = sol.Estado_Id,
-                            Estado = sol.Estado.Estado_Nombre
+                            Estado_Solicitud_Id = sol.Estado_Id,
+                            Estado_Solicitud = sol.Estado.Estado_Nombre
                         };
             return Ok(query);
         }
@@ -107,12 +107,12 @@ namespace PlasticaribeAPI.Controllers
                         where sol.Estado_Id == estado
                         select new
                         {
-                            IdSolicitud = sol.Solicitud_Id,
-                            IdUsuario = sol.Usua_Id,
-                            Nombre = sol.Usuario.Usua_Nombre,
+                            Consecutivo = sol.Solicitud_Id,
+                            Usuario_Id = sol.Usua_Id,
+                            Usuario = sol.Usuario.Usua_Nombre,
                             Fecha = sol.Solicitud_Fecha,
-                            IdEstado = sol.Estado_Id,
-                            Estado = sol.Estado.Estado_Nombre
+                            Estado_Solicitud_Id = sol.Estado_Id,
+                            Estado_Solicitud = sol.Estado.Estado_Nombre
                         };
             return Ok(query);
         }
