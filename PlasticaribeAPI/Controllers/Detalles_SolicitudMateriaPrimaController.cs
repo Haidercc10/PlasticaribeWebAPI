@@ -112,7 +112,7 @@ namespace PlasticaribeAPI.Controllers
             else return BadRequest("No se ha encontrada la materia prima en la solicitud");
         }
 
-        [HttpGet("getEstadosMateriasPrimaG/{solicitud}")]
+        [HttpGet("getEstadosMateriasPrimas/{solicitud}")]
         public ActionResult GetEstadosMateriasPrimas(long solicitud)
         {
             var pendientes = (from dt in _context.Set<Detalles_SolicitudMateriaPrima>() where dt.Solicitud_Id == solicitud && dt.Estado_Id == 11 select dt.Estado_Id).Count();
