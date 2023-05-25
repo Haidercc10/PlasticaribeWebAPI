@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ using PlasticaribeAPI.Models;
 namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class Detalles_SolicitudMateriaPrimaController : ControllerBase
     {
         private readonly dataContext _context;
@@ -80,21 +81,25 @@ namespace PlasticaribeAPI.Controllers
 
                           MP_Id = dtSol.MatPri_Id,
                           MP = dtSol.Materia_Prima.MatPri_Nombre,
+                          Precio_MP = dtSol.Materia_Prima.MatPri_Precio,
                           Tinta_Id = dtSol.Tinta_Id,
                           Tinta = dtSol.Tinta.Tinta_Nombre,
+                          Precio_Tinta = dtSol.Tinta.Tinta_Precio,
                           Bopp_Id = dtSol.Bopp_Id,
                           Bopp = dtSol.Bopp.BoppGen_Nombre,
+                          Precio_Bopp = 0,
                           Cantidad = dtSol.DtSolicitud_Cantidad,
                           Unidad_Medida = dtSol.UndMed_Id,
                           Estado_MP_Id = dtSol.Estado_Id,
                           Estado_MP = dtSol.Estado.Estado_Nombre,
+
                       };
 
             if (con.Count() > 0) return Ok(con);
             else return BadRequest("No hay información de la solicitud");
         }
 
-        // Consulta que devolverá 
+        // Consulta que devolverá la infomación de una de las materias primas que tiene la solicitud
         [HttpGet("getMateriaPrimaSolicitud/{mp}/{solicitud}")]
         public ActionResult GetMateriaPrimaSolicitud(long mp, long solicitud)
         {
@@ -105,6 +110,18 @@ namespace PlasticaribeAPI.Controllers
 
             if (con.Count() > 0) return Ok(con);
             else return BadRequest("No se ha encontrada la materia prima en la solicitud");
+        }
+
+        [HttpGet("getEstadosMateriasPrimaG/{solicitud}")]
+        public ActionResult GetEstadosMateriasPrimas(long solicitud)
+        {
+            var pendientes = (from dt in _context.Set<Detalles_SolicitudMateriaPrima>() where dt.Solicitud_Id == solicitud && dt.Estado_Id == 11 select dt.Estado_Id).Count();
+            var parciales = (from dt in _context.Set<Detalles_SolicitudMateriaPrima>() where dt.Solicitud_Id == solicitud && dt.Estado_Id == 12 select dt.Estado_Id).Count();
+            var totales = (from dt in _context.Set<Detalles_SolicitudMateriaPrima>() where dt.Solicitud_Id == solicitud && dt.Estado_Id == 5 select dt.Estado_Id).Count();
+            var CantMp = (from dt in _context.Set<Detalles_SolicitudMateriaPrima>() where dt.Solicitud_Id == solicitud select dt.Estado_Id).Count();
+
+            long[] datos = { pendientes, parciales, totales, CantMp };
+            return Ok(datos);
         }
 
         // PUT: api/Detalles_SolicitudMateriaPrima/5
