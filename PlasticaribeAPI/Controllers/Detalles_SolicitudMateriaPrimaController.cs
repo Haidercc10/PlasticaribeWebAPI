@@ -61,6 +61,7 @@ namespace PlasticaribeAPI.Controllers
                             && Emp.Empresa_Id == 800188732
                       select new
                       {
+                          Codigo = dtSol.DtSolicitud_Id,
                           Consecutivo = dtSol.Solicitud_Id,
                           Fecha = dtSol.Solicitud_MateriaPrima.Solicitud_Fecha,
                           Hora = dtSol.Solicitud_MateriaPrima.Solicitud_Hora,
