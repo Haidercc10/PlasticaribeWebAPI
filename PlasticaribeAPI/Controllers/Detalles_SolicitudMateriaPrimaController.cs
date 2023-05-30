@@ -124,9 +124,46 @@ namespace PlasticaribeAPI.Controllers
             return Ok(datos);
         }
 
-        // PUT: api/Detalles_SolicitudMateriaPrima/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpGet("getRelacionSolicitudesMp_Oc/{solicitud}")]
+        public ActionResult getRelacionSolicitudesMp_Oc(long solicitud)
+
+        {
+            var relacion = (from smpOc in _context.Set<SolicitudesMP_OrdenesCompra>() where smpOc.Solicitud_Id == solicitud select smpOc.Oc_Id).ToList();
+
+            if (relacion.Count() == 0) return BadRequest("No se encontraron ordenes de compra asociadas a la solicitud N° " + solicitud);
+            else
+            {
+                var ordenCompra = from Oc in _context.Set<Detalle_OrdenCompra>()
+                                  where relacion.Contains(Oc.Oc_Id)
+                                  group Oc by new {
+                                    Oc.MatPri_Id,
+                                    Oc.MatPrima.MatPri_Nombre,
+                                    Oc.Tinta_Id,
+                                    Oc.Tinta.Tinta_Nombre,
+                                    Oc.BOPP_Id,
+                                    Oc.BOPP.BoppGen_Nombre,
+                                    Oc.UndMed_Id,
+                                  } 
+                                  into Oc
+                                  select new
+                                  {
+                                    IdMatPrima = Oc.Key.MatPri_Id,
+                                    MatPrima = Oc.Key.MatPri_Nombre,
+                                    IdTinta = Oc.Key.Tinta_Id,
+                                    Tinta = Oc.Key.Tinta_Nombre,
+                                    IdBopp = Oc.Key.BOPP_Id,
+                                    Bopp = Oc.Key.BoppGen_Nombre,
+                                    Cantidad = Oc.Sum(oc => oc.Doc_CantidadPedida),
+                                    Unidad = Oc.Key.UndMed_Id,
+                                  };
+                return Ok(ordenCompra);
+            }
+        }
+
+
+            // PUT: api/Detalles_SolicitudMateriaPrima/5
+            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+            [HttpPut("{id}")]
         public async Task<IActionResult> PutDetalles_SolicitudMateriaPrima(long id, Detalles_SolicitudMateriaPrima detalles_SolicitudMateriaPrima)
         {
             if (id != detalles_SolicitudMateriaPrima.DtSolicitud_Id)
