@@ -97,7 +97,7 @@ namespace PlasticaribeAPI.Controllers
                       };
 
             if (con.Count() > 0) return Ok(con);
-            else return BadRequest("No hay información de la solicitud");
+            else return BadRequest("No se encontró información sobre una solicitud con el número '" + solicitud_Id +"'");
         }
 
         // Consulta que devolverá la infomación de una de las materias primas que tiene la solicitud
@@ -105,8 +105,7 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetMateriaPrimaSolicitud(long mp, long solicitud)
         {
             var con = from dtSol in _context.Set<Detalles_SolicitudMateriaPrima>()
-                      where dtSol.Solicitud_Id == solicitud
-                            && (dtSol.MatPri_Id == mp || dtSol.Tinta_Id == mp || dtSol.Bopp_Id == mp)
+                      where dtSol.Solicitud_Id == solicitud && (dtSol.MatPri_Id == mp || dtSol.Tinta_Id == mp || dtSol.Bopp_Id == mp)
                       select dtSol;
 
             if (con.Count() > 0) return Ok(con);

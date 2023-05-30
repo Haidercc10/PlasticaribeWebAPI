@@ -626,17 +626,20 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getMateriaPrimaAsignada/{ot}")]
         public ActionResult GetMateriaPrimaAsignada(int ot)
         {
-            var asig = from asg in _context.Set<DetalleAsignacion_MateriaPrima>()
+            var asig = (from asg in _context.Set<DetalleAsignacion_MateriaPrima>()
                        where asg.AsigMp.AsigMP_OrdenTrabajo == ot
-                       group asg by asg.AsigMp.AsigMP_OrdenTrabajo into asg
-                       select asg.Sum(x => x.DtAsigMp_Cantidad);
+                       select asg.DtAsigMp_Cantidad).Sum();
 
-            var devol = from dev in _context.Set<DetalleDevolucion_MateriaPrima>()
-                        where dev.DevMatPri.DevMatPri_OrdenTrabajo == ot && dev.MatPri_Id != 84
-                        group dev by dev.DevMatPri.DevMatPri_OrdenTrabajo into dev
-                        select dev.Sum(x => x.DtDevMatPri_CantidadDevuelta);
+            var asgBopp = (from asgbopp in _context.Set<DetalleAsignacion_BOPP>()
+                          where asgbopp.DtAsigBOPP_OrdenTrabajo == ot
+                          select asgbopp.DtAsigBOPP_Cantidad).Sum();
 
-            return Ok(asig.Concat(devol));
+            var devol = (from dev in _context.Set<DetalleDevolucion_MateriaPrima>()
+                        where dev.DevMatPri.DevMatPri_OrdenTrabajo == ot
+                        select dev.DtDevMatPri_CantidadDevuelta).Sum();
+
+            var asigs = (asig + asgBopp) - devol;
+            return Ok(asigs);
         }
 
         // PUT: api/DetalleAsignacion_MateriaPrima/5

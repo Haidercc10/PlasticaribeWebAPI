@@ -39,13 +39,13 @@ namespace PlasticaribeAPI.Controllers
         {
           if (_context.Solicitud_MateriaPrima == null)
           {
-              return NotFound();
+              return NotFound("No hay registros en la tabla");
           }
             var solicitud_MateriaPrima = await _context.Solicitud_MateriaPrima.FindAsync(id);
 
             if (solicitud_MateriaPrima == null)
             {
-                return NotFound();
+                return NotFound("No se ecnontró la solicitud consultada");
             }
 
             return solicitud_MateriaPrima;

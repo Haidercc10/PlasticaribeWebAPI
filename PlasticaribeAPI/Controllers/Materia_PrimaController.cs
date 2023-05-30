@@ -1032,6 +1032,7 @@ namespace PlasticaribeAPI.Controllers
                            Stock = Convert.ToDecimal(0),
                        };
 
+            if (materiaPrima.Count() == 0 && tinta.Count() == 0 && bopp.Count() == 0) return BadRequest("No se encontró una materia prima con el Id " + id);
             return Ok(materiaPrima.Concat(tinta).Concat(bopp));
         }
 
