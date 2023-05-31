@@ -120,6 +120,7 @@ namespace PlasticaribeAPI.Controllers
                           Usuario = Oc.Usua.Usua_Nombre,
                           Valor_Total = Oc.Oc_ValorTotal,
                           Peso_Total = Oc.Oc_PesoTotal,
+                          iva = Oc.IVA,
 
                           Empresa_Id = Emp.Empresa_Id,
                           Empresa_Ciudad = Emp.Empresa_Ciudad,
