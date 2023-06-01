@@ -83,6 +83,19 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        [HttpGet("getClientesVendedores_LikeNombre/{vendedor}/{nombre}")]
+        public ActionResult GetClientes_LikeNombre(long vendedor, string nombre)
+        {
+            var cliente = from cli in _context.Set<Clientes>() 
+                          where cli.Estado_Id == 1
+                                && cli.usua_Id == vendedor
+                                && cli.Cli_Nombre.Contains(nombre)
+                          select cli;
+
+            if (cliente == null || cliente.Count() == 0) return BadRequest("No se encontró ningún cliente");
+            else return Ok(cliente);
+        }
+
         // PUT: api/Clientes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
