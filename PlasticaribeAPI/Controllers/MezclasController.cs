@@ -57,8 +57,14 @@ namespace PlasticaribeAPI.Controllers
             var con = (from mez in _context.Set<Mezcla>()
                       where mez.Mezcla_Nombre == nombre
                       select mez).FirstOrDefault();
-            if (con == null) return NotFound();
-            else return Ok(con);
+            if (con == null)
+            {
+                var mezcla = (from mez in _context.Set<Mezcla>()
+                              where mez.Mezcla_Id == Convert.ToInt32(nombre)
+                              select mez).FirstOrDefault();
+                if (mezcla == null) NotFound("No se encontró una mezcla con el Nombre o ID " + nombre);
+                return Ok(mezcla);
+            } else return Ok(con);
         }
 
         [HttpGet("combinacionMezclas/{Mezcla_Nombre}")]

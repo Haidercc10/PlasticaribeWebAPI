@@ -18,7 +18,7 @@ namespace PlasticaribeAPI.Controllers {
 
         [HttpPost("login")]
         public IActionResult Login([FromBody] Login user) {
-            if (user is null) return BadRequest("Invalid user request!!!");
+            if (user is null) return BadRequest("Usuairo Invalido");
             var con = _context.Usuarios.Where(x => x.Usua_Id == user.Id_Usuario && x.Usua_Contrasena == user.Contrasena  && x.Empresa_Id == user.Empresa && x.Estado_Id == 1).First();
 
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
