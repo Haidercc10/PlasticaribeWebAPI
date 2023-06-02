@@ -86,7 +86,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getClientesVendedores_LikeNombre/{vendedor}/{nombre}")]
         public ActionResult GetClientes_LikeNombre(long vendedor, string nombre)
         {
-            var cliente = from cli in _context.Set<Clientes>() 
+            var cliente = from cli in _context.Set<Clientes>()
                           where cli.Estado_Id == 1
                                 && cli.usua_Id == vendedor
                                 && cli.Cli_Nombre.Contains(nombre)
@@ -94,6 +94,16 @@ namespace PlasticaribeAPI.Controllers
 
             if (cliente == null || cliente.Count() == 0) return BadRequest("No se encontró ningún cliente");
             else return Ok(cliente);
+        }
+
+        [HttpGet("LikeGetClientes/{Cli_Nombre}")]
+        public ActionResult<Clientes> LikeGetClientes(string Cli_Nombre)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var clientes = _context.Clientes.Where(pp => pp.Cli_Nombre.Contains(Cli_Nombre)).Select(cl => new { cl.Cli_Id, cl.Cli_Nombre }).ToList();
+
+            if (clientes == null) return NotFound();
+            else return Ok(clientes);
         }
 
         // PUT: api/Clientes/5
