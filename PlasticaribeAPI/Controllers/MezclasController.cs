@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -179,6 +180,60 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        //Consuta para verificar si en la base de datos hay una mezcla con las mismas carateristicas que se le están pasando
+        [HttpPost("getMezclaExistente")]
+        public ActionResult GetMezclaExistente(Mezcla mezcla)
+        {
+            if (mezcla == null) return NoContent();
+
+            var con = from mez in _context.Set<Mezcla>()
+                      where mez.Mezcla_Nombre.Equals(mezcla.Mezcla_Nombre)
+                            && mez.Mezcla_NroCapas.Equals(mezcla.Mezcla_NroCapas)
+                            && mez.Material_Id.Equals(mezcla.Material_Id)
+                            && mez.Mezcla_PorcentajeCapa1.Equals(mezcla.Mezcla_PorcentajeCapa1)
+                            && mez.MezMaterial_Id1xCapa1.Equals(mezcla.MezMaterial_Id1xCapa1)
+                            && mez.Mezcla_PorcentajeMaterial1_Capa1.Equals(mezcla.Mezcla_PorcentajeMaterial1_Capa1)
+                            && mez.MezMaterial_Id2xCapa1.Equals(mezcla.MezMaterial_Id2xCapa1)
+                            && mez.Mezcla_PorcentajeMaterial2_Capa1.Equals(mezcla.Mezcla_PorcentajeMaterial2_Capa1)
+                            && mez.MezMaterial_Id3xCapa1.Equals(mezcla.MezMaterial_Id3xCapa1)
+                            && mez.Mezcla_PorcentajeMaterial3_Capa1.Equals(mezcla.Mezcla_PorcentajeMaterial3_Capa1)
+                            && mez.MezMaterial_Id4xCapa1.Equals(mezcla.MezMaterial_Id4xCapa1)
+                            && mez.Mezcla_PorcentajeMaterial4_Capa1.Equals(mezcla.Mezcla_PorcentajeMaterial4_Capa1)
+                            && mez.MezPigmto_Id1xCapa1.Equals(mezcla.MezPigmto_Id1xCapa1)
+                            && mez.Mezcla_PorcentajePigmto1_Capa1.Equals(mezcla.Mezcla_PorcentajePigmto1_Capa1)
+                            && mez.MezPigmto_Id2xCapa1.Equals(mezcla.MezPigmto_Id2xCapa1)
+                            && mez.Mezcla_PorcentajePigmto2_Capa1.Equals(mezcla.Mezcla_PorcentajePigmto2_Capa1)
+                            && mez.Mezcla_PorcentajeCapa2.Equals(mezcla.Mezcla_PorcentajeCapa2)
+                            && mez.MezMaterial_Id1xCapa2.Equals(mezcla.MezMaterial_Id1xCapa2)
+                            && mez.Mezcla_PorcentajeMaterial1_Capa2.Equals(mezcla.Mezcla_PorcentajeMaterial1_Capa2)
+                            && mez.MezMaterial_Id2xCapa2.Equals(mezcla.MezMaterial_Id2xCapa2)
+                            && mez.Mezcla_PorcentajeMaterial2_Capa2.Equals(mezcla.Mezcla_PorcentajeMaterial2_Capa2)
+                            && mez.MezMaterial_Id3xCapa2.Equals(mezcla.MezMaterial_Id3xCapa2)
+                            && mez.Mezcla_PorcentajeMaterial3_Capa2.Equals(mezcla.Mezcla_PorcentajeMaterial3_Capa2)
+                            && mez.MezMaterial_Id4xCapa2.Equals(mezcla.MezMaterial_Id4xCapa2)
+                            && mez.Mezcla_PorcentajeMaterial4_Capa2.Equals(mezcla.Mezcla_PorcentajeMaterial4_Capa2)
+                            && mez.MezPigmto_Id1xCapa2.Equals(mezcla.MezPigmto_Id1xCapa2)
+                            && mez.Mezcla_PorcentajePigmto1_Capa2.Equals(mezcla.Mezcla_PorcentajePigmto1_Capa2)
+                            && mez.MezPigmto_Id2xCapa2.Equals(mezcla.MezPigmto_Id2xCapa2)
+                            && mez.Mezcla_PorcentajePigmto2_Capa2.Equals(mezcla.Mezcla_PorcentajePigmto2_Capa2)
+                            && mez.Mezcla_PorcentajeCapa3.Equals(mezcla.Mezcla_PorcentajeCapa3)
+                            && mez.MezMaterial_Id1xCapa3.Equals(mezcla.MezMaterial_Id1xCapa3)
+                            && mez.Mezcla_PorcentajeMaterial1_Capa3.Equals(mezcla.Mezcla_PorcentajeMaterial1_Capa3)
+                            && mez.MezMaterial_Id2xCapa3.Equals(mezcla.MezMaterial_Id2xCapa3)
+                            && mez.Mezcla_PorcentajeMaterial2_Capa3.Equals(mezcla.Mezcla_PorcentajeMaterial2_Capa3)
+                            && mez.MezMaterial_Id3xCapa3.Equals(mezcla.MezMaterial_Id3xCapa3)
+                            && mez.Mezcla_PorcentajeMaterial3_Capa3.Equals(mezcla.Mezcla_PorcentajeMaterial3_Capa3)
+                            && mez.MezMaterial_Id4xCapa3.Equals(mezcla.MezMaterial_Id4xCapa3)
+                            && mez.Mezcla_PorcentajeMaterial4_Capa3.Equals(mezcla.Mezcla_PorcentajeMaterial4_Capa3)
+                            && mez.MezPigmto_Id1xCapa3.Equals(mezcla.MezPigmto_Id1xCapa3)
+                            && mez.Mezcla_PorcentajePigmto1_Capa3.Equals(mezcla.Mezcla_PorcentajePigmto1_Capa3)
+                            && mez.MezPigmto_Id2xCapa3.Equals(mezcla.MezPigmto_Id2xCapa3)
+                            && mez.Mezcla_PorcentajePigmto2_Capa3.Equals(mezcla.Mezcla_PorcentajePigmto2_Capa3)
+                      select mez;
+            if (con.Count() > 0) return BadRequest("Ya existe un mezcla con estas mismas caracteristicas");
+            else return Ok("No hay ninguna mezcla con estas caracteristicas");
+        }
+
         // PUT: api/Mezclas/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -215,14 +270,57 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Mezcla>> PostMezcla(Mezcla mezcla)
         {
-          if (_context.Mezclas == null)
-          {
-              return Problem("Entity set 'dataContext.Mezclas'  is null.");
-          }
-            _context.Mezclas.Add(mezcla);
-            await _context.SaveChangesAsync();
+          if (_context.Mezclas == null) return Problem("Entity set 'dataContext.Mezclas'  is null.");
 
-            return CreatedAtAction("GetMezcla", new { id = mezcla.Mezcla_Id }, mezcla);
+            var con = from mez in _context.Set<Mezcla>()
+                      where mez.Mezcla_NroCapas.Equals(mezcla.Mezcla_NroCapas)
+                            && mez.Material_Id.Equals(mezcla.Material_Id)
+                            && mez.Mezcla_PorcentajeCapa1.Equals(mezcla.Mezcla_PorcentajeCapa1)
+                            && mez.MezMaterial_Id1xCapa1.Equals(mezcla.MezMaterial_Id1xCapa1)
+                            && mez.Mezcla_PorcentajeMaterial1_Capa1.Equals(mezcla.Mezcla_PorcentajeMaterial1_Capa1)
+                            && mez.MezMaterial_Id2xCapa1.Equals(mezcla.MezMaterial_Id2xCapa1)
+                            && mez.Mezcla_PorcentajeMaterial2_Capa1.Equals(mezcla.Mezcla_PorcentajeMaterial2_Capa1)
+                            && mez.MezMaterial_Id3xCapa1.Equals(mezcla.MezMaterial_Id3xCapa1)
+                            && mez.Mezcla_PorcentajeMaterial3_Capa1.Equals(mezcla.Mezcla_PorcentajeMaterial3_Capa1)
+                            && mez.MezMaterial_Id4xCapa1.Equals(mezcla.MezMaterial_Id4xCapa1)
+                            && mez.Mezcla_PorcentajeMaterial4_Capa1.Equals(mezcla.Mezcla_PorcentajeMaterial4_Capa1)
+                            && mez.MezPigmto_Id1xCapa1.Equals(mezcla.MezPigmto_Id1xCapa1)
+                            && mez.Mezcla_PorcentajePigmto1_Capa1.Equals(mezcla.Mezcla_PorcentajePigmto1_Capa1)
+                            && mez.MezPigmto_Id2xCapa1.Equals(mezcla.MezPigmto_Id2xCapa1)
+                            && mez.Mezcla_PorcentajePigmto2_Capa1.Equals(mezcla.Mezcla_PorcentajePigmto2_Capa1)
+                            && mez.Mezcla_PorcentajeCapa2.Equals(mezcla.Mezcla_PorcentajeCapa2)
+                            && mez.MezMaterial_Id1xCapa2.Equals(mezcla.MezMaterial_Id1xCapa2)
+                            && mez.Mezcla_PorcentajeMaterial1_Capa2.Equals(mezcla.Mezcla_PorcentajeMaterial1_Capa2)
+                            && mez.MezMaterial_Id2xCapa2.Equals(mezcla.MezMaterial_Id2xCapa2)
+                            && mez.Mezcla_PorcentajeMaterial2_Capa2.Equals(mezcla.Mezcla_PorcentajeMaterial2_Capa2)
+                            && mez.MezMaterial_Id3xCapa2.Equals(mezcla.MezMaterial_Id3xCapa2)
+                            && mez.Mezcla_PorcentajeMaterial3_Capa2.Equals(mezcla.Mezcla_PorcentajeMaterial3_Capa2)
+                            && mez.MezMaterial_Id4xCapa2.Equals(mezcla.MezMaterial_Id4xCapa2)
+                            && mez.Mezcla_PorcentajeMaterial4_Capa2.Equals(mezcla.Mezcla_PorcentajeMaterial4_Capa2)
+                            && mez.MezPigmto_Id1xCapa2.Equals(mezcla.MezPigmto_Id1xCapa2)
+                            && mez.Mezcla_PorcentajePigmto1_Capa2.Equals(mezcla.Mezcla_PorcentajePigmto1_Capa2)
+                            && mez.MezPigmto_Id2xCapa2.Equals(mezcla.MezPigmto_Id2xCapa2)
+                            && mez.Mezcla_PorcentajePigmto2_Capa2.Equals(mezcla.Mezcla_PorcentajePigmto2_Capa2)
+                            && mez.Mezcla_PorcentajeCapa3.Equals(mezcla.Mezcla_PorcentajeCapa3)
+                            && mez.MezMaterial_Id1xCapa3.Equals(mezcla.MezMaterial_Id1xCapa3)
+                            && mez.Mezcla_PorcentajeMaterial1_Capa3.Equals(mezcla.Mezcla_PorcentajeMaterial1_Capa3)
+                            && mez.MezMaterial_Id2xCapa3.Equals(mezcla.MezMaterial_Id2xCapa3)
+                            && mez.Mezcla_PorcentajeMaterial2_Capa3.Equals(mezcla.Mezcla_PorcentajeMaterial2_Capa3)
+                            && mez.MezMaterial_Id3xCapa3.Equals(mezcla.MezMaterial_Id3xCapa3)
+                            && mez.Mezcla_PorcentajeMaterial3_Capa3.Equals(mezcla.Mezcla_PorcentajeMaterial3_Capa3)
+                            && mez.MezMaterial_Id4xCapa3.Equals(mezcla.MezMaterial_Id4xCapa3)
+                            && mez.Mezcla_PorcentajeMaterial4_Capa3.Equals(mezcla.Mezcla_PorcentajeMaterial4_Capa3)
+                            && mez.MezPigmto_Id1xCapa3.Equals(mezcla.MezPigmto_Id1xCapa3)
+                            && mez.Mezcla_PorcentajePigmto1_Capa3.Equals(mezcla.Mezcla_PorcentajePigmto1_Capa3)
+                            && mez.MezPigmto_Id2xCapa3.Equals(mezcla.MezPigmto_Id2xCapa3)
+                            && mez.Mezcla_PorcentajePigmto2_Capa3.Equals(mezcla.Mezcla_PorcentajePigmto2_Capa3)
+                      select mez;
+            if (con.Count() > 0) return BadRequest("Ya existe un mezcla con estas mismas caracteristicas");
+            else {
+                _context.Mezclas.Add(mezcla);
+                await _context.SaveChangesAsync();
+                return CreatedAtAction("GetMezcla", new { id = mezcla.Mezcla_Id }, mezcla);
+            }
         }
 
         // DELETE: api/Mezclas/5
