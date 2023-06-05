@@ -214,6 +214,7 @@ namespace PlasticaribeAPI.Controllers
                           otSelCor.SelladoCorte_PrecioSelladoDia,
                           otSelCor.SelladoCorte_PrecioSelladoNoche,
                           otSelCor.SelladoCorte_PesoPaquete,
+                          otSelCor.SelladoCorte_PesoProducto,
 
                           // Información de Mezclas
                           ot.Mezcla_Id,
