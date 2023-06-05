@@ -44,5 +44,8 @@ namespace PlasticaribeAPI.Models
         public decimal SelladoCorte_PesoPaquete { get; set; }
         [Precision(14, 2)]
         public decimal SelladoCorte_PesoBulto { get; set; }
+
+        [Precision(14, 2)]
+        public decimal SelladoCorte_PesoProducto { get; set; }
     }
 }
