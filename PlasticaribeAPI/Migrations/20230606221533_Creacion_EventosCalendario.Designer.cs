@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20230606221533_Creacion_EventosCalendario")]
+    partial class Creacion_EventosCalendario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2005,8 +2008,9 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<DateTime>("EventoCal_FechaCreacion")
                         .HasColumnType("date");
 
-                    b.Property<DateTime>("EventoCal_FechaFinal")
-                        .HasColumnType("date");
+                    b.Property<string>("EventoCal_FechaFinal")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)");
 
                     b.Property<DateTime>("EventoCal_FechaInicial")
                         .HasColumnType("date");

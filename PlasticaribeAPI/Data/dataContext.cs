@@ -690,6 +690,9 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<SolicitudesMP_OrdenesCompra>().HasOne(x => x.Solicitud_MateriaPrima).WithMany().HasForeignKey(y => y.Solicitud_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<SolicitudesMP_OrdenesCompra>().HasOne(x => x.Orden_Compra).WithMany().HasForeignKey(y => y.Oc_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            //Eventos de Calendario
+            modelBuilder.Entity<EventosCalendario>().ToTable(tb => tb.HasTrigger("Auditoria_EventosCalendario"));
+            modelBuilder.Entity<EventosCalendario>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
@@ -837,6 +840,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.Detalles_SolicitudMateriaPrima> Detalles_SolicitudMateriaPrima { get; set; }
         public DbSet<PlasticaribeAPI.Models.Solicitud_MateriaPrima> Solicitud_MateriaPrima { get; set; }
         public DbSet<PlasticaribeAPI.Models.SolicitudesMP_OrdenesCompra> SolicitudesMP_OrdenesCompra { get; set; }
+        public DbSet<PlasticaribeAPI.Models.EventosCalendario> EventosCalendario { get; set; }
     }
 
 }
