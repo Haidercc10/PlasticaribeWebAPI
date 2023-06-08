@@ -55,11 +55,23 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetEventosUsuario(long id, string rol, DateTime fechaInicio, DateTime fechaFin)
         {
             var con = from ev in _context.Set<EventosCalendario>()
-                      where ev.EventoCal_FechaInicial.Month >= (fechaInicio.Month - 1)
-                            && ev.EventoCal_FechaFinal.Month <= (fechaFin.Month + 1)
+                      where ev.EventoCal_FechaInicial.Month >= (fechaInicio.Month - 3)
+                            && ev.EventoCal_FechaFinal.Month <= (fechaFin.Month + 3)
                             && (ev.Usua_Id == id || ev.EventoCal_Visibilidad.Contains("|"+rol+"|"))
                       select ev;
             return con.Count() > 0 ? Ok(con) : NotFound("No se encontraron eventos");
+        }
+
+        //Get que devolverá la cantidad de eventos que hay para el mes actual
+        [HttpGet("getCantidadEventos/{id}/{rol}/{fechaInicio}/{fechaFin}")]
+        public ActionResult GetCantidadEventos(long id, string rol, DateTime fechaInicio, DateTime fechaFin)
+        {
+            var con = from ev in _context.Set<EventosCalendario>()
+                      where ev.EventoCal_FechaInicial >= fechaInicio
+                            && ev.EventoCal_FechaFinal <= fechaFin
+                            && (ev.Usua_Id == id || ev.EventoCal_Visibilidad.Contains("|" + rol + "|"))
+                      select ev;
+            return con.Count() > 0 ? Ok(con.Count()) : NotFound("No se encontraron eventos");
         }
 
         // PUT: api/EventosCalendarios/5
