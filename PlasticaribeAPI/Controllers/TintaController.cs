@@ -106,13 +106,21 @@ namespace PlasticaribeAPI.Controllers
                       select new
                       {
                           Tinta_Id1 = t1.Tinta_Id,
+                          Tinta_Nombre1 = t1.Tinta_Nombre,
                           Tinta_Id2 = t2.Tinta_Id,
+                          Tinta_Nombre2 = t2.Tinta_Nombre,
                           Tinta_Id3 = t3.Tinta_Id,
+                          Tinta_Nombre3 = t3.Tinta_Nombre,
                           Tinta_Id4 = t4.Tinta_Id,
+                          Tinta_Nombre4 = t4.Tinta_Nombre,
                           Tinta_Id5 = t5.Tinta_Id,
+                          Tinta_Nombre5 = t5.Tinta_Nombre,
                           Tinta_Id6 = t6.Tinta_Id,
+                          Tinta_Nombre6 = t6.Tinta_Nombre,
                           Tinta_Id7 = t7.Tinta_Id,
+                          Tinta_Nombre7 = t7.Tinta_Nombre,
                           Tinta_Id8 = t8.Tinta_Id,
+                          Tinta_Nombre8 = t8.Tinta_Nombre,
                       };
 
             return Ok(con);
