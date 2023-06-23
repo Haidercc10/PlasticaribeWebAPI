@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ using PlasticaribeAPI.Models;
 namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class EventosCalendariosController : ControllerBase
     {
         private readonly dataContext _context;
@@ -72,6 +73,17 @@ namespace PlasticaribeAPI.Controllers
                             && (ev.Usua_Id == id || ev.EventoCal_Visibilidad.Contains("|" + rol + "|"))
                       select ev;
             return con.Count() > 0 ? Ok(con.Count()) : NotFound("No se encontraron eventos");
+        }
+
+        //Get que devolverá la cantidad de eventos que hay para el mes actual
+        [HttpGet("getEventosDia/{id}/{rol}")]
+        public ActionResult GetEventosDia(long id, string rol)
+        {
+            var con = from ev in _context.Set<EventosCalendario>()
+                      where ev.EventoCal_FechaInicial == DateTime.Today
+                            && (ev.Usua_Id == id || ev.EventoCal_Visibilidad.Contains("|" + rol + "|"))
+                      select ev;
+            return con.Count() > 0 ? Ok(con) : NotFound("No se encontraron eventos");
         }
 
         // PUT: api/EventosCalendarios/5
