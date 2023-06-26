@@ -50,6 +50,15 @@ namespace PlasticaribeAPI.Controllers
             return bodegas_Rollos;
         }
 
+        // Consulta que validará que los rollos que le sean pasado en el array estén en la base de datos, retornará los rollos que estén en la base de datos.
+        [HttpPost("getRollos")]
+        public IActionResult GetRollos([FromBody] List<long> rollos)
+        {
+            return Ok(from e in _context.Set<Bodegas_Rollos>() 
+                      where rollos.Contains(e.BgRollo_Rollo) 
+                      select new { e.BgRollo_Rollo, e.BgRollo_BodegaActual });
+        }
+
         // PUT: api/Bodegas_Rollos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
