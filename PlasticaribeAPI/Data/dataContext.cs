@@ -698,22 +698,33 @@ namespace PlasticaribeAPI.Data
             //Solicitud de Rollos a Areas
             modelBuilder.Entity<Solicitud_Rollos_Areas>().ToTable(tb => tb.HasTrigger("Auditoria_Solicitud_Rollos_Areas"));
             modelBuilder.Entity<Solicitud_Rollos_Areas>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Solicitud_Rollos_Areas>().HasOne(x => x.UsuarioRespuesta).WithMany().HasForeignKey(y => y.Usua_Respuesta).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Solicitud_Rollos_Areas>().HasOne(x => x.Estado).WithMany().HasForeignKey(y => y.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
-            modelBuilder.Entity<Solicitud_Rollos_Areas>().HasOne(x => x.Bodega_Solicitante).WithMany().HasForeignKey(y => y.SolRollo_BodegaSolicitante).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
-            modelBuilder.Entity<Solicitud_Rollos_Areas>().HasOne(x => x.Bodega_Solicitada).WithMany().HasForeignKey(y => y.SolRollo_BodegaSolicitada).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
-            modelBuilder.Entity<Solicitud_Rollos_Areas>().HasOne(x => x.Und).WithMany().HasForeignKey(y => y.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Solicitud_Rollos_Areas>().HasOne(x => x.Tipo_solicitud).WithMany().HasForeignKey(y => y.TpSol_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Detalles Solicitud de Rollos a Areas
+            modelBuilder.Entity<Detalles_SolicitudRollos>().ToTable(tb => tb.HasTrigger("Auditoria_Detalles_SolicitudRollos"));
+            modelBuilder.Entity<Detalles_SolicitudRollos>().HasOne(x => x.SolicitudRollos).WithMany().HasForeignKey(y => y.SolRollo_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_SolicitudRollos>().HasOne(x => x.Bodega_Solicitante).WithMany().HasForeignKey(y => y.DtSolRollo_BodegaSolicitante).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_SolicitudRollos>().HasOne(x => x.Bodega_Solicitada).WithMany().HasForeignKey(y => y.DtSolRollo_BodegaSolicitada).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_SolicitudRollos>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_SolicitudRollos>().HasOne(x => x.Und).WithMany().HasForeignKey(y => y.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Bodegas Rollo
             modelBuilder.Entity<Bodegas_Rollos>().ToTable(tb => tb.HasTrigger("Auditoria_Bodegas_Rollos"));
-            modelBuilder.Entity<Bodegas_Rollos>().HasOne(x => x.Und).WithMany().HasForeignKey(y => y.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
-            modelBuilder.Entity<Bodegas_Rollos>().HasOne(x => x.Bodega_Actual).WithMany().HasForeignKey(y => y.BgRollo_BodegaActual).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Detalles Bodegas Rollo
+            modelBuilder.Entity<Detalles_BodegasRollos>().ToTable(tb => tb.HasTrigger("Auditoria_Detalles_BodegasRollos"));
+            modelBuilder.Entity<Detalles_BodegasRollos>().HasOne(x => x.Bodegas_Rollos).WithMany().HasForeignKey(y => y.BgRollo_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_BodegasRollos>().HasOne(x => x.Und).WithMany().HasForeignKey(y => y.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_BodegasRollos>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_BodegasRollos>().HasOne(x => x.Bodega_Actual).WithMany().HasForeignKey(y => y.BgRollo_BodegaActual).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
             modelBuilder.Entity<Tipo_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Usuarios"));
             modelBuilder.Entity<Archivos>().ToTable(tb => tb.HasTrigger("Auditoria_Archivos"));
-            modelBuilder.Entity<Solicitud_Rollos_Areas>().ToTable(tb => tb.HasTrigger("Auditoria_Tipo_Solicitud_Rollos_Areas"));
+            modelBuilder.Entity<Tipo_Solicitud_Rollos_Areas>().ToTable(tb => tb.HasTrigger("Auditoria_Tipo_Solicitud_Rollos_Areas"));
             /*modelBuilder.Entity<Log_Errores>().ToTable(tb => tb.HasTrigger("Auditoria_Log_Errores"));
             modelBuilder.Entity<Tipos_Sellados>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Sellados"));
             modelBuilder.Entity<MovimientosAplicacion>().ToTable(tb => tb.HasTrigger("Auditoria_MovimientosAplicacion"));
@@ -859,7 +870,9 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.EventosCalendario> EventosCalendario { get; set; }
         public DbSet<PlasticaribeAPI.Models.Tipo_Solicitud_Rollos_Areas> Tipo_Solicitud_Rollos_Areas { get; set; }
         public DbSet<PlasticaribeAPI.Models.Solicitud_Rollos_Areas> Solicitud_Rollos_Areas { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Detalles_SolicitudRollos> Detalles_SolicitudRollos { get; set; }
         public DbSet<PlasticaribeAPI.Models.Bodegas_Rollos> Bodegas_Rollos { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Detalles_BodegasRollos> Detalles_BodegasRollos { get; set; }
     }
 
 }

@@ -449,23 +449,6 @@ namespace PlasticaribeAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("BgRollo_Id"));
 
-                    b.Property<string>("BgRollo_BodegaActual")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<decimal>("BgRollo_Cantidad")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<bool>("BgRollo_Corte")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("BgRollo_Despacho")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("BgRollo_Extrusion")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("BgRollo_FechaEntrada")
                         .HasColumnType("date");
 
@@ -480,34 +463,11 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(10)");
 
-                    b.Property<bool>("BgRollo_Impresion")
-                        .HasColumnType("bit");
-
                     b.Property<string>("BgRollo_Observacion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("BgRollo_ProdIntermedio")
-                        .HasColumnType("bit");
-
-                    b.Property<long>("BgRollo_Rollo")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("BgRollo_Rotograbado")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("BgRollo_Sellado")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UndMed_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
                     b.HasKey("BgRollo_Id");
-
-                    b.HasIndex("BgRollo_BodegaActual");
-
-                    b.HasIndex("UndMed_Id");
 
                     b.ToTable("Bodegas_Rollos", t =>
                         {
@@ -1586,6 +1546,75 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("DetallesIngRollos_Extrusion");
                 });
 
+            modelBuilder.Entity("PlasticaribeAPI.Models.Detalles_BodegasRollos", b =>
+                {
+                    b.Property<long>("Codigo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Codigo"));
+
+                    b.Property<string>("BgRollo_BodegaActual")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<long>("BgRollo_Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("BgRollo_OrdenTrabajo")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("DtBgRollo_Cantidad")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("decimal(14,2)");
+
+                    b.Property<bool>("DtBgRollo_Corte")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("DtBgRollo_Despacho")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("DtBgRollo_Extrusion")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("DtBgRollo_Impresion")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("DtBgRollo_ProdIntermedio")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("DtBgRollo_Rollo")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("DtBgRollo_Rotograbado")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("DtBgRollo_Sellado")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Prod_Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UndMed_Id")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)");
+
+                    b.HasKey("Codigo");
+
+                    b.HasIndex("BgRollo_BodegaActual");
+
+                    b.HasIndex("BgRollo_Id");
+
+                    b.HasIndex("Prod_Id");
+
+                    b.HasIndex("UndMed_Id");
+
+                    b.ToTable("Detalles_BodegasRollos", t =>
+                        {
+                            t.HasTrigger("Auditoria_Detalles_BodegasRollos");
+                        });
+                });
+
             modelBuilder.Entity("PlasticaribeAPI.Models.Detalles_EntradaTintas", b =>
                 {
                     b.Property<long>("Codigo")
@@ -1667,6 +1696,63 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Detalles_SolicitudMateriaPrima", t =>
                         {
                             t.HasTrigger("Auditoria_Detalles_SolicitudMateriaPrima");
+                        });
+                });
+
+            modelBuilder.Entity("PlasticaribeAPI.Models.Detalles_SolicitudRollos", b =>
+                {
+                    b.Property<long>("Codigo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Codigo"));
+
+                    b.Property<string>("DtSolRollo_BodegaSolicitada")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<string>("DtSolRollo_BodegaSolicitante")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<decimal>("DtSolRollo_Cantidad")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("decimal(14,2)");
+
+                    b.Property<long>("DtSolRollo_Maquina")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("DtSolRollo_OrdenTrabajo")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("DtSolRollo_Rollo")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Prod_Id")
+                        .HasColumnType("int");
+
+                    b.Property<long>("SolRollo_Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UndMed_Id")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)");
+
+                    b.HasKey("Codigo");
+
+                    b.HasIndex("DtSolRollo_BodegaSolicitada");
+
+                    b.HasIndex("DtSolRollo_BodegaSolicitante");
+
+                    b.HasIndex("Prod_Id");
+
+                    b.HasIndex("SolRollo_Id");
+
+                    b.HasIndex("UndMed_Id");
+
+                    b.ToTable("Detalles_SolicitudRollos", t =>
+                        {
+                            t.HasTrigger("Auditoria_Detalles_SolicitudRollos");
                         });
                 });
 
@@ -4579,74 +4665,45 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Estado_Id")
                         .HasColumnType("int");
 
-                    b.Property<string>("SolRollo_BodegaSolicitada")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("SolRollo_BodegaSolicitante")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<decimal>("SolRollo_Cantidad")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<DateTime>("SolRollo_FechaRespues")
+                    b.Property<DateTime?>("SolRollo_FechaRespuesta")
                         .HasColumnType("date");
 
                     b.Property<DateTime>("SolRollo_FechaSolicitud")
                         .HasColumnType("date");
 
                     b.Property<string>("SolRollo_HoraRespuesta")
-                        .IsRequired()
                         .HasColumnType("varchar(10)");
 
                     b.Property<string>("SolRollo_HoraSolicitud")
                         .IsRequired()
                         .HasColumnType("varchar(10)");
 
-                    b.Property<long>("SolRollo_Maquina")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("SolRollo_Observacion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("SolRollo_OrdenTrabajo")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("SolRollo_Rollo")
-                        .HasColumnType("bigint");
-
                     b.Property<int>("TpSol_Id")
                         .HasColumnType("int");
 
-                    b.Property<string>("UndMed_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
                     b.Property<long>("Usua_Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Usua_Respuesta")
                         .HasColumnType("bigint");
 
                     b.HasKey("SolRollo_Id");
 
                     b.HasIndex("Estado_Id");
 
-                    b.HasIndex("SolRollo_BodegaSolicitada");
-
-                    b.HasIndex("SolRollo_BodegaSolicitante");
-
                     b.HasIndex("TpSol_Id");
 
-                    b.HasIndex("UndMed_Id");
-
                     b.HasIndex("Usua_Id");
+
+                    b.HasIndex("Usua_Respuesta");
 
                     b.ToTable("Solicitud_Rollos_Areas", t =>
                         {
                             t.HasTrigger("Auditoria_Solicitud_Rollos_Areas");
-
-                            t.HasTrigger("Auditoria_Tipo_Solicitud_Rollos_Areas");
                         });
                 });
 
@@ -5154,7 +5211,10 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("TpSol_Id");
 
-                    b.ToTable("Tipo_Solicitud_Rollos_Areas");
+                    b.ToTable("Tipo_Solicitud_Rollos_Areas", t =>
+                        {
+                            t.HasTrigger("Auditoria_Tipo_Solicitud_Rollos_Areas");
+                        });
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Usuario", b =>
@@ -5770,25 +5830,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("UndMed2");
 
                     b.Navigation("Usua");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Bodegas_Rollos", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Proceso", "Bodega_Actual")
-                        .WithMany()
-                        .HasForeignKey("BgRollo_BodegaActual")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "Und")
-                        .WithMany()
-                        .HasForeignKey("UndMed_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Bodega_Actual");
-
-                    b.Navigation("Und");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Cliente_Producto", b =>
@@ -6574,6 +6615,41 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Unidad_Medida");
                 });
 
+            modelBuilder.Entity("PlasticaribeAPI.Models.Detalles_BodegasRollos", b =>
+                {
+                    b.HasOne("PlasticaribeAPI.Models.Proceso", "Bodega_Actual")
+                        .WithMany()
+                        .HasForeignKey("BgRollo_BodegaActual")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Bodegas_Rollos", "Bodegas_Rollos")
+                        .WithMany()
+                        .HasForeignKey("BgRollo_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Producto", "Producto")
+                        .WithMany()
+                        .HasForeignKey("Prod_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "Und")
+                        .WithMany()
+                        .HasForeignKey("UndMed_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Bodega_Actual");
+
+                    b.Navigation("Bodegas_Rollos");
+
+                    b.Navigation("Producto");
+
+                    b.Navigation("Und");
+                });
+
             modelBuilder.Entity("PlasticaribeAPI.Models.Detalles_EntradaTintas", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.Entrada_Tintas", "Entrada_Tinta")
@@ -6650,6 +6726,49 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Tinta");
 
                     b.Navigation("UndMed");
+                });
+
+            modelBuilder.Entity("PlasticaribeAPI.Models.Detalles_SolicitudRollos", b =>
+                {
+                    b.HasOne("PlasticaribeAPI.Models.Proceso", "Bodega_Solicitada")
+                        .WithMany()
+                        .HasForeignKey("DtSolRollo_BodegaSolicitada")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Proceso", "Bodega_Solicitante")
+                        .WithMany()
+                        .HasForeignKey("DtSolRollo_BodegaSolicitante")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Producto", "Producto")
+                        .WithMany()
+                        .HasForeignKey("Prod_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Solicitud_Rollos_Areas", "SolicitudRollos")
+                        .WithMany()
+                        .HasForeignKey("SolRollo_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "Und")
+                        .WithMany()
+                        .HasForeignKey("UndMed_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Bodega_Solicitada");
+
+                    b.Navigation("Bodega_Solicitante");
+
+                    b.Navigation("Producto");
+
+                    b.Navigation("SolicitudRollos");
+
+                    b.Navigation("Und");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Devolucion_MatPrima", b =>
@@ -8056,27 +8175,9 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Proceso", "Bodega_Solicitada")
-                        .WithMany()
-                        .HasForeignKey("SolRollo_BodegaSolicitada")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Proceso", "Bodega_Solicitante")
-                        .WithMany()
-                        .HasForeignKey("SolRollo_BodegaSolicitante")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.Tipo_Solicitud_Rollos_Areas", "Tipo_solicitud")
                         .WithMany()
                         .HasForeignKey("TpSol_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "Und")
-                        .WithMany()
-                        .HasForeignKey("UndMed_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -8086,17 +8187,19 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Bodega_Solicitada");
-
-                    b.Navigation("Bodega_Solicitante");
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "UsuarioRespuesta")
+                        .WithMany()
+                        .HasForeignKey("Usua_Respuesta")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Estado");
 
                     b.Navigation("Tipo_solicitud");
 
-                    b.Navigation("Und");
-
                     b.Navigation("Usuario");
+
+                    b.Navigation("UsuarioRespuesta");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.SolicitudesMP_OrdenesCompra", b =>
