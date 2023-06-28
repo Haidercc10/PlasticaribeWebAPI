@@ -33,8 +33,8 @@ namespace PlasticaribeAPI.Models
         public int? Estado_OrdenTrabajo { get; set; } //Llave foranea de estado de la OT segun condiciones.
         public Estado? EstadoOT { get; set; } //Propiedad de navegación estado de la OT segun condiciones.
 
-        //public long? SolMpExt_Id { get; set; } 
-        //public Solicitud_MatPrimaExtrusion? SolMatPrima_Extrusion { get; set; }
+        public long? SolMpExt_Id { get; set; } 
+        public Solicitud_MatPrimaExtrusion? SolMatPrima_Extrusion { get; set; }
 
         //Lista requerida para relación detalles asignacion - materias primas
         //public IList<DetalleAsignacion_MateriaPrima>? DtAsigMatPri { get; set; }
