@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20230627164447_Bodegas_Areas_Rollos")]
+    partial class Bodegas_Areas_Rollos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -740,44 +743,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Usua_Operario");
 
                     b.ToTable("Desperdicios");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.DetSolicitud_MatPrimaExtrusion", b =>
-                {
-                    b.Property<long>("Codigo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Codigo"));
-
-                    b.Property<decimal>("DtSolMpExt_Cantidad")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<long>("MatPri_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("SolMpExt_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Tinta_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("UndMed_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.HasKey("Codigo");
-
-                    b.HasIndex("MatPri_Id");
-
-                    b.HasIndex("SolMpExt_Id");
-
-                    b.HasIndex("Tinta_Id");
-
-                    b.HasIndex("UndMed_Id");
-
-                    b.ToTable("DetSolicitud_MatPrimaExtrusion");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.DetalleAsignacion_BOPP", b =>
@@ -4655,50 +4620,6 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Sedes_Clientes");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Solicitud_MatPrimaExtrusion", b =>
-                {
-                    b.Property<long>("SolMpExt_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SolMpExt_Id"));
-
-                    b.Property<int>("Estado_Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Proceso_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<DateTime>("SolMpExt_Fecha")
-                        .HasColumnType("Date");
-
-                    b.Property<string>("SolMpExt_Hora")
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<int>("SolMpExt_Maquina")
-                        .HasColumnType("int");
-
-                    b.Property<long>("SolMpExt_OT")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("SolMpExt_Observacion")
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<long>("Usua_Id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("SolMpExt_Id");
-
-                    b.HasIndex("Estado_Id");
-
-                    b.HasIndex("Proceso_Id");
-
-                    b.HasIndex("Usua_Id");
-
-                    b.ToTable("Solicitud_MatPrimaExtrusion");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Solicitud_MateriaPrima", b =>
                 {
                     b.Property<long>("Solicitud_Id")
@@ -6024,41 +5945,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Usuario1");
 
                     b.Navigation("Usuario2");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.DetSolicitud_MatPrimaExtrusion", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Materia_Prima", "MatPrima")
-                        .WithMany()
-                        .HasForeignKey("MatPri_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Solicitud_MatPrimaExtrusion", "SolMatPriExt")
-                        .WithMany()
-                        .HasForeignKey("SolMpExt_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Tinta", "Tinta")
-                        .WithMany()
-                        .HasForeignKey("Tinta_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "UndMed")
-                        .WithMany()
-                        .HasForeignKey("UndMed_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("MatPrima");
-
-                    b.Navigation("SolMatPriExt");
-
-                    b.Navigation("Tinta");
-
-                    b.Navigation("UndMed");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.DetalleAsignacion_BOPP", b =>
@@ -8263,33 +8149,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Cli");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Solicitud_MatPrimaExtrusion", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Estado", "Estado")
-                        .WithMany()
-                        .HasForeignKey("Estado_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Proceso", "Proceso")
-                        .WithMany()
-                        .HasForeignKey("Proceso_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usua")
-                        .WithMany()
-                        .HasForeignKey("Usua_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Estado");
-
-                    b.Navigation("Proceso");
-
-                    b.Navigation("Usua");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Solicitud_MateriaPrima", b =>
