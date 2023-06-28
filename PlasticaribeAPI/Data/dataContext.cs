@@ -177,7 +177,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Estado).WithMany().HasForeignKey(asigmp => asigmp.Estado_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado
             modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Usua).WithMany().HasForeignKey(asgmpr => asgmpr.Usua_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.EstadoOT).WithMany().HasForeignKey(asigmp => asigmp.Estado_OrdenTrabajo).OnDelete(DeleteBehavior.Restrict); //foranea estado OrdenTrabajo
-            //modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.SolMatPrima_Extrusion).WithMany().HasForeignKey(asigmp => asigmp.SolMpExt_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado OrdenTrabajo
+            modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.SolMatPrima_Extrusion).WithMany().HasForeignKey(asigmp => asigmp.SolMpExt_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado OrdenTrabajo
 
 
             //Relaciones DetallesAsignaciones_MateriasPrimas
