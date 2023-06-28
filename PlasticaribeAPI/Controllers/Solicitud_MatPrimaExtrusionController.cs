@@ -68,7 +68,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!Solicitud_MatPrimaExtrusionExists(id))
+                if (!Solicitud_MatPrimaExtrusionExists(id)) 
                 {
                     return NotFound();
                 }

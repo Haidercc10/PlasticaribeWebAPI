@@ -32,6 +32,16 @@ namespace PlasticaribeAPI.Controllers
             return await _context.DetSolicitud_MatPrimaExtrusion.ToListAsync();
         }
 
+        public ActionResult GetTodoDetSolicitud_MatPrimaExtrusion()
+        {
+            if (_context.Solicitud_MatPrimaExtrusion == null)  return NotFound();
+
+            var todo = _context.DetSolicitud_MatPrimaExtrusion.Take(100).OrderByDescending(p => p.SolMpExt_Id);
+
+            if (todo != null) return Ok(todo);
+            else return BadRequest("No se encontraron registros de solicitudes de material de producción");
+        }
+
         // GET: api/DetSolicitud_MatPrimaExtrusion/5
         [HttpGet("{id}")]
         public async Task<ActionResult<DetSolicitud_MatPrimaExtrusion>> GetDetSolicitud_MatPrimaExtrusion(long id)
@@ -71,6 +81,7 @@ namespace PlasticaribeAPI.Controllers
                                                      Proceso = smpe.Proceso_Id,
                                                      Observacion = smpe.SolMpExt_Observacion,
                                                      Estado = smpe.Estado_Id,
+                                                     Nombre_Estado = smpe.Estado.Estado_Nombre,
                                                      Usuario = smpe.Usua_Id,
                                                      Nombre_Usuario = smpe.Usua.Usua_Nombre,
                                                      Fecha = smpe.SolMpExt_Fecha, 
@@ -98,7 +109,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // GET: api/DetSolicitud_MatPrimaExtrusion/5
-        [HttpGet("getQuerySolicitudesMp_Extrusion/{id}")]
+        [HttpGet("getQuerySolicitudesMp_Extrusion/{fecha1}/{fecha2}")]
         public ActionResult GetQuerySolicitudesMp_Extrusion(DateTime fecha1, DateTime fecha2, string? id = "", string? estado = "")
         {
             if (_context.DetSolicitud_MatPrimaExtrusion == null) return NotFound();
