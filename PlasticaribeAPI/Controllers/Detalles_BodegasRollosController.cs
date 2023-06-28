@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ using PlasticaribeAPI.Models;
 namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class Detalles_BodegasRollosController : ControllerBase
     {
         private readonly dataContext _context;
@@ -48,6 +49,15 @@ namespace PlasticaribeAPI.Controllers
             }
 
             return detalles_BodegasRollos;
+        }
+
+        // Consulta que validará que los rollos que le sean pasado en el array estén en la base de datos, retornará los rollos que estén en la base de datos.
+        [HttpPost("getRollos")]
+        public IActionResult GetRollos([FromBody] List<long> rollos)
+        {
+            return Ok(from e in _context.Set<Detalles_BodegasRollos>()
+                      where rollos.Contains(e.DtBgRollo_Rollo)
+                      select new { e.DtBgRollo_Rollo, e.BgRollo_BodegaActual });
         }
 
         //Consulta que validará que un rollo existe en una bodega y devolverá toda su información
