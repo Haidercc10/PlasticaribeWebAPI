@@ -177,6 +177,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Estado).WithMany().HasForeignKey(asigmp => asigmp.Estado_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado
             modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Usua).WithMany().HasForeignKey(asgmpr => asgmpr.Usua_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.EstadoOT).WithMany().HasForeignKey(asigmp => asigmp.Estado_OrdenTrabajo).OnDelete(DeleteBehavior.Restrict); //foranea estado OrdenTrabajo
+            //modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.SolMatPrima_Extrusion).WithMany().HasForeignKey(asigmp => asigmp.SolMpExt_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado OrdenTrabajo
 
 
             //Relaciones DetallesAsignaciones_MateriasPrimas
@@ -695,6 +696,18 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<EventosCalendario>().ToTable(tb => tb.HasTrigger("Auditoria_EventosCalendario"));
             modelBuilder.Entity<EventosCalendario>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            //Solicitudes_MatPrimaExtrusion
+            modelBuilder.Entity<Solicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.Estado).WithMany().HasForeignKey(asigmp => asigmp.Estado_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado
+            modelBuilder.Entity<Solicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.Usua).WithMany().HasForeignKey(asgmpr => asgmpr.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario
+            modelBuilder.Entity<Solicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.Proceso).WithMany().HasForeignKey(asigmp => asigmp.Proceso_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
+
+            //DetSolicitudes_MatPrimaExtrusion
+            modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.MatPrima).WithMany().HasForeignKey(asigmp => asigmp.MatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado
+            modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.Tinta).WithMany().HasForeignKey(asgmpr => asgmpr.Tinta_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario
+            modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.UndMed).WithMany().HasForeignKey(asigmp => asigmp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
+            modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.SolMatPriExt).WithMany().HasForeignKey(asigmp => asigmp.SolMpExt_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
+
+
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
             modelBuilder.Entity<Tipo_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Usuarios"));
@@ -842,6 +855,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.Solicitud_MateriaPrima> Solicitud_MateriaPrima { get; set; }
         public DbSet<PlasticaribeAPI.Models.SolicitudesMP_OrdenesCompra> SolicitudesMP_OrdenesCompra { get; set; }
         public DbSet<PlasticaribeAPI.Models.EventosCalendario> EventosCalendario { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Solicitud_MatPrimaExtrusion> Solicitud_MatPrimaExtrusion { get; set; }
+        public DbSet<PlasticaribeAPI.Models.DetSolicitud_MatPrimaExtrusion> DetSolicitud_MatPrimaExtrusion { get; set; }
     }
 
 }
