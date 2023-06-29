@@ -98,6 +98,17 @@ namespace PlasticaribeAPI.Controllers
             else return Ok(detSolicitud_MatPrimaExtrusion);
         }
 
+        /** Obtener solicitudes y materias primas asociadas para actualizar detalles  */
+        [HttpGet("getSolicitudesConMatPrimas/{solicitud}/{mp}")]
+        public ActionResult GetSolicitudesConMatPrimas(long solicitud, long mp)
+        {
+            var con = from sol in _context.Set<DetSolicitud_MatPrimaExtrusion>()
+                      where sol.SolMpExt_Id == solicitud
+                            && (sol.MatPri_Id == mp || sol.Tinta_Id == mp)
+                      select sol.Codigo;
+            return Ok(con);
+        }
+
         // GET: api/DetSolicitud_MatPrimaExtrusion/5
         [HttpGet("getQuerySolicitudesMp_Extrusion/{fecha1}/{fecha2}")]
         public ActionResult GetQuerySolicitudesMp_Extrusion(DateTime fecha1, DateTime fecha2, string? id = "", string? estado = "")
@@ -122,6 +133,7 @@ namespace PlasticaribeAPI.Controllers
                                                      Proceso = smpe.Proceso_Id,
                                                      Observacion = smpe.SolMpExt_Observacion,
                                                      Estado = smpe.Estado_Id,
+                                                     Nombre_Estado = smpe.Estado.Estado_Nombre,
                                                      Usuario = smpe.Usua_Id,
                                                      Nombre_Usuario = smpe.Usua.Usua_Nombre,
                                                      Fecha = smpe.SolMpExt_Fecha,
