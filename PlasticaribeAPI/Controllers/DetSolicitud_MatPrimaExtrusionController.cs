@@ -32,16 +32,6 @@ namespace PlasticaribeAPI.Controllers
             return await _context.DetSolicitud_MatPrimaExtrusion.ToListAsync();
         }
 
-        public ActionResult GetTodoDetSolicitud_MatPrimaExtrusion()
-        {
-            if (_context.Solicitud_MatPrimaExtrusion == null)  return NotFound();
-
-            var todo = _context.DetSolicitud_MatPrimaExtrusion.Take(100).OrderByDescending(p => p.SolMpExt_Id);
-
-            if (todo != null) return Ok(todo);
-            else return BadRequest("No se encontraron registros de solicitudes de material de producción");
-        }
-
         // GET: api/DetSolicitud_MatPrimaExtrusion/5
         [HttpGet("{id}")]
         public async Task<ActionResult<DetSolicitud_MatPrimaExtrusion>> GetDetSolicitud_MatPrimaExtrusion(long id)

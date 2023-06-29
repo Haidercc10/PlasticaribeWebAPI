@@ -50,6 +50,30 @@ namespace PlasticaribeAPI.Controllers
             return solicitud_MatPrimaExtrusion;
         }
 
+        /** Obtener las ultimas 100 solicitudes para mostrar en los estados */
+        [HttpGet("getUltimas100Solicitudes")]
+        public ActionResult GetUltimasSolicitudes()
+        {
+            if (_context.Solicitud_MatPrimaExtrusion == null) return NotFound();
+
+            var todo = _context.Solicitud_MatPrimaExtrusion.Take(100).OrderByDescending(p => p.SolMpExt_Id);
+
+            if (todo != null) return Ok(todo);
+            else return BadRequest("No se encontraron registros de solicitudes de material de producción");
+        }
+
+        /** Obtener ultima solicitud */
+        [HttpGet("getUltimaSolicitud")]
+        public ActionResult GetUltimaSolicitud()
+        {
+            if (_context.Solicitud_MatPrimaExtrusion == null) return NotFound();
+
+            var ultima = _context.Solicitud_MatPrimaExtrusion.Max(p => p.SolMpExt_Id);
+
+            if (ultima != 0) return Ok(ultima);
+            else return BadRequest("No se encontraron registros de solicitudes de material de producción");
+        }
+
         // PUT: api/Solicitud_MatPrimaExtrusion/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
