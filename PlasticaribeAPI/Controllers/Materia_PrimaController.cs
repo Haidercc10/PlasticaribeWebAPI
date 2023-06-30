@@ -875,6 +875,7 @@ namespace PlasticaribeAPI.Controllers
                                    Id = mp.MatPri_Id,
                                    Nombre = mp.MatPri_Nombre,
                                    Categoria = mp.CatMP_Id,
+                                   Stock = mp.MatPri_Stock,
                                };
 
             var tinta = from tt in _context.Set<Tinta>()
@@ -884,6 +885,7 @@ namespace PlasticaribeAPI.Controllers
                             Id = tt.Tinta_Id,
                             Nombre = tt.Tinta_Nombre,
                             Categoria = tt.CatMP_Id,
+                            Stock = tt.Tinta_Stock,
                         };
 
             var bopp = from bp in _context.Set<Bopp_Generico>()
@@ -893,6 +895,7 @@ namespace PlasticaribeAPI.Controllers
                            Id = bp.BoppGen_Id,
                            Nombre = bp.BoppGen_Nombre,
                            Categoria = 6,
+                           Stock = Convert.ToDecimal(0.00)
                        };
 
             return Ok(materiaPrima.Concat(tinta).Concat(bopp));

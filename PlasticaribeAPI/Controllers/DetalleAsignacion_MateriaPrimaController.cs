@@ -642,6 +642,54 @@ namespace PlasticaribeAPI.Controllers
             return Ok(asigs);
         }
 
+        /** Obtener las materias primas asignadas en base a solicitudes de material */
+        [HttpGet("getAsignacionesConSolicitudes/{idSolicitud}")]
+        public ActionResult GetAsignacionesConSolicitudes(long idSolicitud)
+        {
+            var conMp = (from Asgmp in _context.Set<DetalleAsignacion_MateriaPrima>()
+                         where Asgmp.AsigMp.SolMpExt_Id == idSolicitud
+                         group Asgmp by new
+                         {
+                             Asgmp.MatPri_Id,
+                             Asgmp.MatPri.MatPri_Nombre,
+                             Asgmp.UndMed_Id,
+                             Asgmp.MatPri.MatPri_Precio
+                         } into y
+                         select new
+                         {
+                             //Materia Prima
+                             MatPri_Id = Convert.ToInt16(y.Key.MatPri_Id),
+                             Tinta_Id = Convert.ToInt16(2001),
+                             MateriaPrima = y.Key.MatPri_Id,
+                             NombreMP = y.Key.MatPri_Nombre,
+                             CantMP = y.Sum(Asgmp => Asgmp.DtAsigMp_Cantidad),
+                             UndMedida = y.Key.UndMed_Id,
+                         });
+
+            var conTinta = (from AsgTinta in _context.Set<DetalleAsignacion_Tinta>()
+                            where AsgTinta.AsigMp.SolMpExt_Id == idSolicitud
+                            group AsgTinta by new
+                            {
+                                AsgTinta.Tinta_Id,
+                                AsgTinta.Tinta.Tinta_Nombre,
+                                AsgTinta.UndMed_Id,
+                            } into y
+                            select new
+                            {
+                                //Tintas
+                                MatPri_Id = Convert.ToInt16(84),
+                                Tinta_Id = Convert.ToInt16(y.Key.Tinta_Id),
+                                MateriaPrima = y.Key.Tinta_Id,
+                                NombreMP = y.Key.Tinta_Nombre,
+                                CantMP = y.Sum(AsgTinta => AsgTinta.DtAsigTinta_Cantidad),
+                                UndMedida = y.Key.UndMed_Id,
+                            });
+
+            var con = conMp.Concat(conTinta);
+            if (con == null) return BadRequest("No se encontraron datos de la solicitud consultada");
+            return Ok(con);
+        }
+
         // PUT: api/DetalleAsignacion_MateriaPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
