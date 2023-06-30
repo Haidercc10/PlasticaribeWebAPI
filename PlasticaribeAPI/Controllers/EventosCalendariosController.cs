@@ -72,7 +72,7 @@ namespace PlasticaribeAPI.Controllers
                             && ev.EventoCal_FechaFinal <= fechaFin
                             && (ev.Usua_Id == id || ev.EventoCal_Visibilidad.Contains("|" + rol + "|"))
                       select ev;
-            return con.Count() > 0 ? Ok(con.Count()) : NotFound("No se encontraron eventos");
+            return Ok(con.Count());
         }
 
         //Get que devolverá la cantidad de eventos que hay para el mes actual
@@ -83,7 +83,7 @@ namespace PlasticaribeAPI.Controllers
                       where ev.EventoCal_FechaInicial == DateTime.Today
                             && (ev.Usua_Id == id || ev.EventoCal_Visibilidad.Contains("|" + rol + "|"))
                       select ev;
-            return con.Count() > 0 ? Ok(con) : NotFound("No se encontraron eventos");
+            return Ok(con);
         }
 
         // PUT: api/EventosCalendarios/5

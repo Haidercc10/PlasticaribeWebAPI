@@ -95,6 +95,65 @@ namespace PlasticaribeAPI.Controllers
             else return BadRequest("No hay rollos disponobles en la bodega solicitada");
         }
 
+        //Consulta que devolverá la información del inventario de cada una de las bodegas de rollos
+        [HttpGet("getInventarioRollos")]
+        public ActionResult GetInventarioRollos()
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from bg in _context.Set<Detalles_BodegasRollos>()
+                      group bg by new
+                      {
+                          bg.BgRollo_OrdenTrabajo,
+                          bg.Prod_Id,
+                          bg.Producto.Prod_Nombre,
+                          bg.UndMed_Id,
+                          bg.BgRollo_BodegaActual,
+                          bg.Bodega_Actual.Proceso_Nombre,
+                      } into bg
+                      select new
+                      {
+                          bg.Key.BgRollo_OrdenTrabajo,
+                          bg.Key.Prod_Id,
+                          bg.Key.Prod_Nombre,
+                          Cantidad = bg.Sum(x => x.DtBgRollo_Cantidad),
+                          bg.Key.UndMed_Id,
+                          bg.Key.BgRollo_BodegaActual,
+                          bg.Key.Proceso_Nombre,
+                          Rollos = bg.Count(),
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        //Consulta que devolverá los rollos que hay en una bodega, dependiendo de la orden de trabajo
+        [HttpGet("getInventarioRollos_OrdenTrabajo/{orden}/{bodega}")]
+        public ActionResult GetInventarioRollos_OrdenTrabajo(long orden, string bodega)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from bg in _context.Set<Detalles_BodegasRollos>()
+                      where bg.BgRollo_OrdenTrabajo == orden &&
+                            bg.BgRollo_BodegaActual == bodega
+                      select new
+                      {
+                          bg.DtBgRollo_Rollo,
+                          bg.BgRollo_OrdenTrabajo,
+                          bg.Prod_Id,
+                          bg.Producto.Prod_Nombre,
+                          bg.DtBgRollo_Cantidad,
+                          bg.UndMed_Id,
+                          bg.BgRollo_BodegaActual,
+                          bg.Bodegas_Rollos.BgRollo_FechaEntrada,
+                          bg.DtBgRollo_Extrusion,
+                          bg.DtBgRollo_ProdIntermedio,
+                          bg.DtBgRollo_Impresion,
+                          bg.DtBgRollo_Rotograbado,
+                          bg.DtBgRollo_Sellado,
+                          bg.DtBgRollo_Despacho,
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
         // PUT: api/Detalles_BodegasRollos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
