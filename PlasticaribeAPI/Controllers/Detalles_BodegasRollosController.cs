@@ -72,13 +72,11 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //
-        [HttpGet("getRollosDisponibles/{bodega}/{fechaInicial}/{fechaFinal}/{ot}")]
-        public ActionResult GetRollosDisponibles(string bodega, DateTime fechaInicial, DateTime fechaFinal, long ot, string? rollo = "")
+        [HttpGet("getRollosDisponibles/{bodega}/{ot}")]
+        public ActionResult GetRollosDisponibles(string bodega, long ot, string? rollo = "")
         {
             var con = from bg in _context.Set<Detalles_BodegasRollos>()
                       where bg.BgRollo_BodegaActual == bodega
-                            && bg.Bodegas_Rollos.BgRollo_FechaModifica >= fechaInicial
-                            && bg.Bodegas_Rollos.BgRollo_FechaModifica <= fechaFinal
                             && bg.BgRollo_OrdenTrabajo == ot
                             && Convert.ToString(bg.DtBgRollo_Rollo).Contains(rollo)
                       select new
