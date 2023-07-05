@@ -373,6 +373,8 @@ y cantidad en Kilos agrupados BOPP por Nombre */
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
+
+
         [HttpGet("getDescripcion")]
         public ActionResult GetNombresRepetitivos()
         {
@@ -384,6 +386,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL. 
             return Ok(con);
         }
+
 
         [HttpGet("getMicras")]
         public ActionResult GetMicrasRepetitivas()
@@ -397,6 +400,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             return Ok(con);
         }
 
+
         [HttpGet("getPrecios")]
         public ActionResult GePreciosRepetitivos()
         {
@@ -409,6 +413,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             return Ok(con);
         }
 
+
         [HttpGet("getAnchos")]
         public ActionResult GetAnchosRepetitivos()
         {
@@ -420,6 +425,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
+
 
         [HttpGet("getSeriales")]
         public ActionResult GetSerialesRepetitivos()
@@ -459,6 +465,36 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             return Ok(con);
         }
         */
+
+        [HttpGet("getInventarioBoppsGenericos")]
+        public ActionResult GetInventarioBoppsGenericos()
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from b in _context.Set<BOPP>()
+                      from bg in _context.Set<Bopp_Generico>()
+                      from cat in _context.Set<Categoria_MatPrima>()
+                      where b.BoppGen_Id == bg.BoppGen_Id &&
+                      b.BOPP_Stock > 0 &&
+                      b.CatMP_Id == cat.CatMP_Id
+                      group b by new { b.BoppGen_Id, bg.BoppGen_Nombre, bg.BoppGen_Micra, bg.BoppGen_Ancho, cat.CatMP_Id, cat.CatMP_Nombre, b.UndMed_Kg }
+                      into b
+                      select new
+                      {
+                          Id = b.Key.BoppGen_Id,
+                          Nombre = b.Key.BoppGen_Nombre,
+                          Micras = b.Key.BoppGen_Micra, 
+                          Ancho = b.Key.BoppGen_Ancho, 
+                          IdCategoria = b.Key.CatMP_Id,
+                          NombreCategoria = b.Key.CatMP_Nombre,
+                          Rollos = b.Count(),
+                          Medida = b.Key.UndMed_Kg,
+                          Stock = b.Sum(xx => xx.BOPP_Stock),
+                      };
+
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            if (con != null) return Ok(con);
+            else return BadRequest("No se encontrar Biorientados asociados a Bopps genéricos");
+        }
 
         // PUT: api/BOPP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
