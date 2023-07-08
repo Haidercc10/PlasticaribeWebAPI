@@ -165,7 +165,9 @@ namespace PlasticaribeAPI.Controllers
 
         // Consulta que va a devolver la informacion de las imagenes que se adjuntaron al ticket
         [HttpGet("get_ImagenesTicket")]
+#pragma warning disable CS1998 // El método asincrónico carece de operadores "await" y se ejecutará de forma sincrónica
         public async Task<IActionResult> Get_ImagenesTicket(string file, string filePath)
+#pragma warning restore CS1998 // El método asincrónico carece de operadores "await" y se ejecutará de forma sincrónica
         {
             filePath = Path.Combine(filePath, file);
             byte[] imageArray = System.IO.File.ReadAllBytes(filePath);
