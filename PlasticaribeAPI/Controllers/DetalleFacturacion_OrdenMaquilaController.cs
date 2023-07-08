@@ -53,6 +53,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getConsultarFacturacion/{id}")]
         public ActionResult getConsultarFacturacion(long id)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from dt in _context.Set<DetalleFacturacion_OrdenMaquila>()
                       from omFac in _context.Set<OrdenMaquila_Facturacion>()
                       from Emp in _context.Set<Empresa>()
@@ -100,6 +101,7 @@ namespace PlasticaribeAPI.Controllers
                           Und_Medida = dt.UndMed_Id,
                           Precio = dt.DtFacOM_ValorUnitario,
                       };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             return Ok(con);
         }

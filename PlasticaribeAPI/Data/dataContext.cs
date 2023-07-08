@@ -733,6 +733,11 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Detalles_BodegasRollos>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalles_BodegasRollos>().HasOne(x => x.Bodega_Actual).WithMany().HasForeignKey(y => y.BgRollo_BodegaActual).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            //Vistas Permisos
+            modelBuilder.Entity<Vistas_Permisos>().ToTable(x => x.HasTrigger("Auditoria_Vistas_Permisos"));
+
+            //Formato Documentos
+            modelBuilder.Entity<Formato_Documentos>().ToTable(x => x.HasTrigger("Auditoria_Formato_Documentos"));
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
@@ -889,6 +894,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.Detalles_SolicitudRollos> Detalles_SolicitudRollos { get; set; }
         public DbSet<PlasticaribeAPI.Models.Bodegas_Rollos> Bodegas_Rollos { get; set; }
         public DbSet<PlasticaribeAPI.Models.Detalles_BodegasRollos> Detalles_BodegasRollos { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Vistas_Permisos> Vistas_Permisos { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Formato_Documentos> Formato_Documentos { get; set; }
     }
 
 }

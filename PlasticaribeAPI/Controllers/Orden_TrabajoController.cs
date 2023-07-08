@@ -307,9 +307,11 @@ namespace PlasticaribeAPI.Controllers
             var pedOt = from ot in _context.Set<Orden_Trabajo>()
                         select ot.PedExt_Id;
 
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
             var con = from ped in _context.Set<PedidoExterno>()
                       where Convert.ToString(ped.PedExt_Id).Contains(Convert.ToString(pedOt))
                       select ped;
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
 
             return Ok(con);
         }

@@ -55,6 +55,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getCantidadMes_Producto/{prod}/{und}")]
         public ActionResult GetCantidadMes_Producto(long prod, string und)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from inv in _context.Set<Inventario_Mensual_Productos>()
                       from exi in _context.Set<Existencia_Productos>()
                       where inv.Prod_Id == prod
@@ -80,6 +81,7 @@ namespace PlasticaribeAPI.Controllers
                         Noviembre = inv.Noviembre,
                         Diciembre = inv.Diciembre,
                       };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
 

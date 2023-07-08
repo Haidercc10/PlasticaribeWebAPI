@@ -64,6 +64,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getFechasEstado/{fecha1}/{fecha2}/{estado}")]
         public ActionResult GetSolicitudes_FechasEstados(DateTime fecha1, DateTime fecha2, int estado)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var query = from sol in _context.Set<Solicitud_MateriaPrima>()
                         where sol.Solicitud_Fecha >= fecha1 &&
                         sol.Solicitud_Fecha <= fecha2 &&
@@ -77,6 +78,7 @@ namespace PlasticaribeAPI.Controllers
                             Estado_Solicitud_Id = sol.Estado_Id,
                             Estado_Solicitud = sol.Estado.Estado_Nombre
                         };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(query);
         }
 
@@ -84,6 +86,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getFechas/{fecha1}/{fecha2}")]
         public ActionResult GetSolicitudes_Fechas(DateTime fecha1, DateTime fecha2)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var query = from sol in _context.Set<Solicitud_MateriaPrima>()
                         where sol.Solicitud_Fecha >= fecha1 &&
                         sol.Solicitud_Fecha <= fecha2
@@ -96,6 +99,7 @@ namespace PlasticaribeAPI.Controllers
                             Estado_Solicitud_Id = sol.Estado_Id,
                             Estado_Solicitud = sol.Estado.Estado_Nombre
                         };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(query);
         }
 
@@ -103,6 +107,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getEstados/{estado}")]
         public ActionResult GetSolicitudes_Estado(int estado)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var query = from sol in _context.Set<Solicitud_MateriaPrima>()
                         where sol.Estado_Id == estado
                         select new
@@ -114,6 +119,7 @@ namespace PlasticaribeAPI.Controllers
                             Estado_Solicitud_Id = sol.Estado_Id,
                             Estado_Solicitud = sol.Estado.Estado_Nombre
                         };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(query);
         }
 

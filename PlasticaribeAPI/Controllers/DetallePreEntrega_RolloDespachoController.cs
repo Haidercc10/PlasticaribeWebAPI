@@ -274,6 +274,8 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getRollos_Ingresar/{fechaInicial}/{fechaFinal}/{proceso}")]
         public ActionResult getRollosIngresar(DateTime fechaInicial, DateTime fechaFinal, string proceso, string? ot = "", string? rollo = "")
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
             var con = from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
                       where pre.PreEntregaRollo.PreEntRollo_Fecha >= fechaInicial
                             && pre.PreEntregaRollo.PreEntRollo_Fecha <= fechaFinal
@@ -291,6 +293,8 @@ namespace PlasticaribeAPI.Controllers
                           Presentacion = pre.UndMed_Rollo,
                           Proceso = pre.Proceso_Id,
                       };
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
 

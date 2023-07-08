@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20230705163709_Vistas_Permisos")]
+    partial class Vistas_Permisos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -411,9 +414,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<string>("BOPP_TipoDoc")
                         .HasColumnType("varchar(10)");
 
-                    b.Property<long>("BoppGen_Id")
-                        .HasColumnType("bigint");
-
                     b.Property<int>("CatMP_Id")
                         .HasColumnType("int");
 
@@ -432,8 +432,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("BOPP_Id");
-
-                    b.HasIndex("BoppGen_Id");
 
                     b.HasIndex("CatMP_Id");
 
@@ -2525,45 +2523,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("Formato_Id");
 
                     b.ToTable("Formato");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Formato_Documentos", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Codigo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Hora")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Nombre_Reporte")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Version")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Vigencia")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Formato_Documentos", t =>
-                        {
-                            t.HasTrigger("Auditoria_Formato_Documentos");
-                        });
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.IngresoRollos_Extrusion", b =>
@@ -5660,10 +5619,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("Vp_Id");
 
-                    b.ToTable("Vistas_Permisos", t =>
-                        {
-                            t.HasTrigger("Auditoria_Vistas_Permisos");
-                        });
+                    b.ToTable("Vistas_Permisos");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Web_ContactoCorreo", b =>
@@ -5969,12 +5925,6 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.BOPP", b =>
                 {
-                    b.HasOne("PlasticaribeAPI.Models.Bopp_Generico", "boppGenerico")
-                        .WithMany()
-                        .HasForeignKey("BoppGen_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.Categoria_MatPrima", "CatMP")
                         .WithMany()
                         .HasForeignKey("CatMP_Id")
@@ -6014,8 +5964,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("UndMed2");
 
                     b.Navigation("Usua");
-
-                    b.Navigation("boppGenerico");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Cliente_Producto", b =>
