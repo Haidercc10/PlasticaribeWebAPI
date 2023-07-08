@@ -496,9 +496,49 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             else return BadRequest("No se encontrar Biorientados asociados a Bopps genéricos");
         }
 
-        // PUT: api/BOPP/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpGet("getInventarioBopps/{fecha1}/{fecha2}/{id}")]
+        public ActionResult GetInventarioBopps(DateTime fecha1, DateTime fecha2, long id)
+        {
+
+            var AsgBopp = _context.DetallesAsignaciones_BOPP
+                .Where(asg => asg.BOPP.BOPP_Serial == id
+                       && asg.AsigBOPP.AsigBOPP_FechaEntrega >= fecha1
+                       && asg.AsigBOPP.AsigBOPP_FechaEntrega <= fecha2).Sum(asg => asg.DtAsigBOPP_Cantidad);
+
+            //Entrada de BOPP
+            var EntradaBOPP = _context.BOPP
+                .Where(x => x.BOPP_FechaIngreso >= fecha1
+                       && x.BOPP_FechaIngreso <= fecha2
+                       && x.BOPP_Serial == id).Sum(x => x.BOPP_CantidadInicialKg);
+
+            var con = from b in _context.Set<BOPP>()
+                      where b.BoppGen_Id == id
+                      && (b.BOPP_Stock > 0 || EntradaBOPP > 0)
+                      select new
+                      { 
+                          Id = b.BOPP_Id,
+                          Serial = b.BOPP_Serial,
+                          Nombre = b.BOPP_Nombre,
+                          Ancho = b.BOPP_Ancho,
+                          Micras = b.BOPP_CantidadMicras,
+                          Inicial = b.BOPP_CantidadInicialKg,
+                          Entrada = EntradaBOPP,
+                          Salida = AsgBopp,
+                          Stock = b.BOPP_Stock,
+                          Diferencia = (b.BOPP_Stock - b.BOPP_CantidadInicialKg), 
+                          Medida = b.UndMed_Id, 
+                          Precio = b.BOPP_Precio, 
+                          Subtotal = (b.BOPP_Stock * b.BOPP_Precio),
+                          CategoriaId = b.CatMP_Id, 
+                          Categoria = b.CatMP.CatMP_Nombre,
+                      };
+
+            if (con != null) return Ok(con);
+            else return BadRequest("No se encontraron BOPPs asociados");
+        }
+            // PUT: api/BOPP/5
+            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+            [HttpPut("{id}")]
         public async Task<IActionResult> PutBOPP(long id, BOPP bOPP)
         {
             if (id != bOPP.BOPP_Id)
