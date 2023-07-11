@@ -739,6 +739,11 @@ namespace PlasticaribeAPI.Data
             //Formato Documentos
             modelBuilder.Entity<Formato_Documentos>().ToTable(x => x.HasTrigger("Auditoria_Formato_Documentos"));
 
+            //Facturas Invergoal Inversuez
+            modelBuilder.Entity<Facturas_Invergoal_Inversuez>().ToTable(x => x.HasTrigger("Auditoria_Facturas_Invergoal_Inversuez"));
+            modelBuilder.Entity<Facturas_Invergoal_Inversuez>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Facturas_Invergoal_Inversuez>().HasOne(x => x.Proveedor).WithMany().HasForeignKey(y => y.Nit_Proveedor).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
             modelBuilder.Entity<Tipo_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Usuarios"));
@@ -896,6 +901,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.Detalles_BodegasRollos> Detalles_BodegasRollos { get; set; }
         public DbSet<PlasticaribeAPI.Models.Vistas_Permisos> Vistas_Permisos { get; set; }
         public DbSet<PlasticaribeAPI.Models.Formato_Documentos> Formato_Documentos { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Facturas_Invergoal_Inversuez> Facturas_Invergoal_Inversuez { get; set; }
     }
 
 }

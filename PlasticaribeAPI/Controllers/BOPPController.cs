@@ -500,6 +500,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
         public ActionResult GetInventarioBopps(DateTime fecha1, DateTime fecha2, long id)
         {
 
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var AsgBopp = _context.DetallesAsignaciones_BOPP
                 .Where(asg => asg.BOPP.BOPP_Serial == id
                        && asg.AsigBOPP.AsigBOPP_FechaEntrega >= fecha1
@@ -535,6 +536,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
 
             if (con != null) return Ok(con);
             else return BadRequest("No se encontraron BOPPs asociados");
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
         }
             // PUT: api/BOPP/5
             // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
