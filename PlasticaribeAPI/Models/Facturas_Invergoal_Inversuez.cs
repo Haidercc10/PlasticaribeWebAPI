@@ -29,6 +29,8 @@ namespace PlasticaribeAPI.Models
         [Precision(14, 2)]
         public decimal Valor_Factura { get; set; }
         public string Cuenta { get; set; }
+        public int Estado_Factura { get; set; }
+        public Estado? Estados { get; set; }
         public string Observacion { get; set; }
     }
 }

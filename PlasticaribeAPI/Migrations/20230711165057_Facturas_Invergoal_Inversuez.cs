@@ -28,11 +28,18 @@ namespace PlasticaribeAPI.Migrations
                     Fecha_Vencimiento = table.Column<DateTime>(type: "date", nullable: false),
                     Valor_Factura = table.Column<decimal>(type: "decimal(14,2)", precision: 14, scale: 2, nullable: false),
                     Cuenta = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Estado_Factura = table.Column<int>(type: "int", nullable: false),
                     Observacion = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Facturas_Invergoal_Inversuez", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Facturas_Invergoal_Inversuez_Estados_Estado_Factura",
+                        column: x => x.Estado_Factura,
+                        principalTable: "Estados",
+                        principalColumn: "Estado_Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Facturas_Invergoal_Inversuez_Proveedores_Nit_Proveedor",
                         column: x => x.Nit_Proveedor,
@@ -46,6 +53,11 @@ namespace PlasticaribeAPI.Migrations
                         principalColumn: "Usua_Id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Facturas_Invergoal_Inversuez_Estado_Factura",
+                table: "Facturas_Invergoal_Inversuez",
+                column: "Estado_Factura");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Facturas_Invergoal_Inversuez_Nit_Proveedor",

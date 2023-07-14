@@ -743,6 +743,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Facturas_Invergoal_Inversuez>().ToTable(x => x.HasTrigger("Auditoria_Facturas_Invergoal_Inversuez"));
             modelBuilder.Entity<Facturas_Invergoal_Inversuez>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Facturas_Invergoal_Inversuez>().HasOne(x => x.Proveedor).WithMany().HasForeignKey(y => y.Nit_Proveedor).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Facturas_Invergoal_Inversuez>().HasOne(x => x.Estados).WithMany().HasForeignKey(y => y.Estado_Factura).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));

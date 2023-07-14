@@ -12,7 +12,7 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    [Migration("20230711144837_Facturas_Invergoal_Inversuez")]
+    [Migration("20230711165057_Facturas_Invergoal_Inversuez")]
     partial class Facturas_Invergoal_Inversuez
     {
         /// <inheritdoc />
@@ -2493,6 +2493,9 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Estado_Factura")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("Fecha_Factura")
                         .HasColumnType("date");
 
@@ -2529,6 +2532,8 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("decimal(14,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Estado_Factura");
 
                     b.HasIndex("Nit_Proveedor");
 
@@ -7357,6 +7362,12 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Facturas_Invergoal_Inversuez", b =>
                 {
+                    b.HasOne("PlasticaribeAPI.Models.Estado", "Estados")
+                        .WithMany()
+                        .HasForeignKey("Estado_Factura")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("PlasticaribeAPI.Models.Proveedor", "Proveedor")
                         .WithMany()
                         .HasForeignKey("Nit_Proveedor")
@@ -7368,6 +7379,8 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("Usua_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Estados");
 
                     b.Navigation("Proveedor");
 

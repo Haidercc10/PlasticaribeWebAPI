@@ -26,10 +26,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Vistas_Permisos>>> GetVistas_Permisos()
         {
-          if (_context.Vistas_Permisos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Vistas_Permisos == null)
+            {
+                return NotFound();
+            }
             return await _context.Vistas_Permisos.ToListAsync();
         }
 
@@ -37,10 +37,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Vistas_Permisos>> GetVistas_Permisos(int id)
         {
-          if (_context.Vistas_Permisos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Vistas_Permisos == null)
+            {
+                return NotFound();
+            }
             var vistas_Permisos = await _context.Vistas_Permisos.FindAsync(id);
 
             if (vistas_Permisos == null)
@@ -89,7 +89,7 @@ namespace PlasticaribeAPI.Controllers
         {
             var con = from vp in _context.Set<Vistas_Permisos>()
                       where vp.Vp_Id_Roles.Contains($"|{rol}|")
-                      select new 
+                      select new
                       {
                           Id = vp.Vp_Id,
                           Nombre = vp.Vp_Nombre,
