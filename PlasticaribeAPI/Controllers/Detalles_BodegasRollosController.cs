@@ -72,6 +72,16 @@ namespace PlasticaribeAPI.Controllers
             return con.Any() ? Ok(con) : NotFound();
         }
 
+        //Consulta que validará que un rollo existe en una bodega y devolverá toda su información
+        [HttpGet("getIdRollo/{rollo}")]
+        public ActionResult GetIdRollo(long rollo)
+        {
+            var con = from bg in _context.Set<Detalles_BodegasRollos>()
+                      where bg.DtBgRollo_Rollo == rollo
+                      select bg;
+            return con.Any() ? Ok(con) : NotFound();
+        }
+
         //
         [HttpGet("getRollosDisponibles/{bodega}/{ot}")]
         public ActionResult GetRollosDisponibles(string bodega, long ot, string? rollo = "")
