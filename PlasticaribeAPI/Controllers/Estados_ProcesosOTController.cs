@@ -3298,6 +3298,32 @@ namespace PlasticaribeAPI.Controllers
             return Ok(ot);
         }
 
+        //Consula que devolverá la cantidad de ordenes de trabajo que se han creado en el mes, agrupadas por el estado que tienen
+        [HttpGet("getOrdenesMes_Estados")]
+        public ActionResult GetOrdenesMes_Estado()
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            int mesActual = (DateTime.Now).Month;
+            int anioActual = (DateTime.Now).Year;
+
+            var con = from ot in _context.Set<Estados_ProcesosOT>()
+                      where ot.EstProcOT_FechaCreacion.Month == mesActual &&
+                            ot.EstProcOT_FechaCreacion.Year == anioActual
+                      group ot by new
+                      {
+                          ot.Estado_Id,
+                          ot.Estado_OT.Estado_Nombre
+                      } into ot
+                      select new
+                      {
+                          ot.Key.Estado_Id,
+                          ot.Key.Estado_Nombre,
+                          Cantidad = ot.Count(),
+                      };
+            return con.Any() ? Ok(con) : NoContent();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+        }
+
         [HttpPut("ActualizacionFallaObservacion/{EstProcOT_OrdenTrabajo}")]
         public IActionResult Put(long EstProcOT_OrdenTrabajo, Estados_ProcesosOT Estados_ProcesosOT)
         {
