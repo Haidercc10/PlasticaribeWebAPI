@@ -3476,6 +3476,10 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Nomina_Observacion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<long>("Usua_Id")
                         .HasColumnType("bigint");
 

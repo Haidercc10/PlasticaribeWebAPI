@@ -12,7 +12,7 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    [Migration("20230731165255_Nomina_Plasticaribe")]
+    [Migration("20230731171839_Nomina_Plasticaribe")]
     partial class Nomina_Plasticaribe
     {
         /// <inheritdoc />
@@ -3476,6 +3476,10 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Nomina_HoraRegistro")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nomina_Observacion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

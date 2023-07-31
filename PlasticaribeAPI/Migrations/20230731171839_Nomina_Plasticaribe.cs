@@ -22,7 +22,8 @@ namespace PlasticaribeAPI.Migrations
                     Usua_Id = table.Column<long>(type: "bigint", nullable: false),
                     Nomina_FechaIncial = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Nomina_FechaFinal = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Nomina_Costo = table.Column<decimal>(type: "decimal(14,2)", precision: 14, scale: 2, nullable: false)
+                    Nomina_Costo = table.Column<decimal>(type: "decimal(14,2)", precision: 14, scale: 2, nullable: false),
+                    Nomina_Observacion = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "")
                 },
                 constraints: table =>
                 {

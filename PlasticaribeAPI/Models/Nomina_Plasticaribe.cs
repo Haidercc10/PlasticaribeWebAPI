@@ -16,5 +16,6 @@ namespace PlasticaribeAPI.Models
 
         [Precision(14, 2)]
         public decimal Nomina_Costo { get; set; }
+        public string Nomina_Observacion { get; set; }
     }
 }
