@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
@@ -7,11 +8,17 @@ namespace PlasticaribeAPI.Models
     {
         [Key]
         public int Nomina_Id { get; set; }
+
+        [Column(TypeName = "date")]
         public DateTime Nomina_FechaRegistro { get; set; }
         public string Nomina_HoraRegistro { get; set; }
         public long Usua_Id { get; set; }
         public Usuario? Usuario { get; set; }
-        public DateTime Nomina_FechaIncial { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime Nomina_FechaInicial { get; set; }
+
+        [Column(TypeName = "date")]
         public DateTime Nomina_FechaFinal { get; set; }
 
         [Precision(14, 2)]
