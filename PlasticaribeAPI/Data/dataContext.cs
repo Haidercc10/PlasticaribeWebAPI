@@ -148,6 +148,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.Formato_Documentos> Formato_Documentos { get; set; }
         public DbSet<PlasticaribeAPI.Models.Facturas_Invergoal_Inversuez> Facturas_Invergoal_Inversuez { get; set; }
         public DbSet<PlasticaribeAPI.Models.Costos_Empresas_Anios> Costos_Empresas_Anios { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Nomina_Plasticaribe> Nomina_Plasticaribe { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -852,6 +853,10 @@ namespace PlasticaribeAPI.Data
 
             //Costos Empresas Años
             modelBuilder.Entity<Costos_Empresas_Anios>().ToTable(x => x.HasTrigger("Auditoria_Costos_Empresas_Anios"));
+
+            //Nomina Plasticaribe
+            modelBuilder.Entity<Nomina_Plasticaribe>().ToTable(x => x.HasTrigger("Auditoria_Nomina_Plasticaribe"));
+            modelBuilder.Entity<Nomina_Plasticaribe>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
