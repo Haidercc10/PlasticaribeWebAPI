@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ using PlasticaribeAPI.Models;
 namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class Costos_Empresas_AniosController : ControllerBase
     {
         private readonly dataContext _context;
@@ -48,6 +49,17 @@ namespace PlasticaribeAPI.Controllers
             }
 
             return costos_Empresas_Anios;
+        }
+
+        //Consulta que va a traer los datos de la facturación del dashboard
+        [HttpGet("getCostosFacturacion/{anio}/{dato}")]
+        public ActionResult GetCostosFacturacion(int anio, string dato)
+        {
+            var con = from cea in _context.Set<Costos_Empresas_Anios>()
+                      where cea.CostosEmp_Descripcion == dato &&
+                            cea.Anio == anio
+                      select cea;
+            return Ok(con);
         }
 
         // PUT: api/Costos_Empresas_Anios/5

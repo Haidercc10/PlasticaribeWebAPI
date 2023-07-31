@@ -164,10 +164,9 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-
-            // PUT: api/Detalles_SolicitudMateriaPrima/5
+        // PUT: api/Detalles_SolicitudMateriaPrima/5
             // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-            [HttpPut("{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutDetalles_SolicitudMateriaPrima(long id, Detalles_SolicitudMateriaPrima detalles_SolicitudMateriaPrima)
         {
             if (id != detalles_SolicitudMateriaPrima.DtSolicitud_Id)

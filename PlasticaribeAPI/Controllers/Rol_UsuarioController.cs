@@ -13,7 +13,7 @@ using PlasticaribeAPI.Models;
 namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class Rol_UsuarioController : ControllerBase
     {
         private readonly dataContext _context;

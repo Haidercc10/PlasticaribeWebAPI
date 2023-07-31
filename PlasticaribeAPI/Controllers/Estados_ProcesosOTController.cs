@@ -3324,6 +3324,24 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
         }
 
+        [HttpPut("putEstadoOrden/{ot}")]
+        public IActionResult PutEstadoOrden(long ot, int estadoOt)
+        {
+            try
+            {
+                var Actualizado = _context.Estados_ProcesosOT.Where(x => x.EstProcOT_OrdenTrabajo == ot).First<Estados_ProcesosOT>();
+                Actualizado.Estado_Id = estadoOt;
+
+                _context.SaveChanges();
+
+                return Ok(Actualizado);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return NotFound();
+            }
+        }
+
         [HttpPut("ActualizacionFallaObservacion/{EstProcOT_OrdenTrabajo}")]
         public IActionResult Put(long EstProcOT_OrdenTrabajo, Estados_ProcesosOT Estados_ProcesosOT)
         {
