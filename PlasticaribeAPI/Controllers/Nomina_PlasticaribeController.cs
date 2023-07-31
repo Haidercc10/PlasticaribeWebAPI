@@ -50,47 +50,6 @@ namespace PlasticaribeAPI.Controllers
             return nomina_Plasticaribe;
         }
 
-        //Consulta que devolverá los totales de la nomina en cada uno de los meses
-        [HttpGet("getNominaMeses/{anio}")]
-        public ActionResult GetNominaMeses(int anio)
-        {
-#pragma warning disable CS8604 // Posible argumento de referencia nulo
-            var datos = new List<object>();
-            for (int i = 0; i < 12; i++)
-            {
-                var con = from nom in _context.Set<Nomina_Plasticaribe>()
-                          where nom.Nomina_FechaIncial.Month == i + 1 &&
-                                nom.Nomina_FechaFinal.Month == i + 1 &&
-                                nom.Nomina_FechaIncial.Year == anio &&
-                                nom.Nomina_FechaFinal.Year == anio
-                          group nom by new
-                          {
-                              Mes = nom.Nomina_FechaIncial.Month,
-                              Anio = nom.Nomina_FechaIncial.Year
-                          } into nom
-                          select new
-                          {
-                                nom.Key.Mes,
-                                nom.Key.Anio,
-                                Descripcion = "Nomina Plasticaribe",
-                                Valor = nom.Sum(x => x.Nomina_Costo),
-                          };
-
-                datos.Add(con);
-                if (i == 11) return Ok(datos);
-            }
-            return Ok(datos);
-#pragma warning restore CS8604 // Posible argumento de referencia nulo
-        }
-
-        //Consulta que devolverá de manera detallada los movimientos de la nomina en un mes
-        [HttpGet("getDetallesNomina/{anio}/{mes}")]
-        public ActionResult GetDetallesNomina (int anio, int mes)
-        {
-            var con = 0;
-            return Ok(con);
-        }
-
         // PUT: api/Nomina_Plasticaribe/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
