@@ -51,6 +51,31 @@ namespace PlasticaribeAPI.Controllers
             return nomina_Plasticaribe;
         }
 
+        //Consulta que devolverá los movimientos de nomina en un mes
+        [HttpGet("getMovimientosNomina/{anio}/{mes}")]
+        public ActionResult GetMovimientosNomina(int anio, int mes)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from nom in _context.Set<Nomina_Plasticaribe>()
+                      where nom.Nomina_FechaIncial.Year == anio &&
+                            nom.Nomina_FechaFinal.Year == anio &&
+                            nom.Nomina_FechaIncial.Month == mes &&
+                            nom.Nomina_FechaFinal.Month == mes
+                      select new
+                      {
+                          Fuente = "",
+                          FechaInicial = nom.Nomina_FechaIncial,
+                          FechaFinal = nom.Nomina_FechaFinal,
+                          Cuenta = "",
+                          Descripcion = nom.Tipos_Nomina.TpNomina_Nombre,
+                          Valor = nom.Nomina_Costo,
+                          FechaRegistro = nom.Nomina_FechaRegistro,
+                          Proveedor = "",
+                      };
+            return con.Any() ? Ok(con) : NoContent();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+        }
+
         // PUT: api/Nomina_Plasticaribe/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

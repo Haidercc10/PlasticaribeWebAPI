@@ -860,6 +860,7 @@ namespace PlasticaribeAPI.Data
 
             //Nomina Plasticaribe
             modelBuilder.Entity<Nomina_Plasticaribe>().ToTable(x => x.HasTrigger("Auditoria_Nomina_Plasticaribe"));
+            modelBuilder.Entity<Nomina_Plasticaribe>().ToTable(x => x.HasTrigger("Costos_Nomina_Plasticaribe"));
             modelBuilder.Entity<Nomina_Plasticaribe>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Nomina_Plasticaribe>().HasOne(x => x.Tipos_Nomina).WithMany().HasForeignKey(y => y.TpNomina_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
