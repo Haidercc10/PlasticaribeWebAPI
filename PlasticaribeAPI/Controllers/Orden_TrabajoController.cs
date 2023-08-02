@@ -301,21 +301,6 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
-        [HttpGet("getOrdenesSinPedidos")]
-        public ActionResult getOrdenesSinPedidos()
-        {
-            var pedOt = from ot in _context.Set<Orden_Trabajo>()
-                        select ot.PedExt_Id;
-
-#pragma warning disable CS8604 // Posible argumento de referencia nulo
-            var con = from ped in _context.Set<PedidoExterno>()
-                      where Convert.ToString(ped.PedExt_Id).Contains(Convert.ToString(pedOt))
-                      select ped;
-#pragma warning restore CS8604 // Posible argumento de referencia nulo
-
-            return Ok(con);
-        }
-
         //Funcion que consultará la información de la ultima orden de trabajo que se hizo de un producto con una presentación en especifico
         [HttpGet("getInfoUltOT/{producto}/{presentacion}")]
         public ActionResult GetInfoUltOT(int producto, string presentacion)

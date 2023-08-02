@@ -36,7 +36,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // GET: api/PedidoExterno/5
-        [HttpGet("{id:long}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<PedidoExterno>> GetPedidoExterno(long id)
         {
           if (_context.Pedidos_Externos == null)
@@ -944,36 +944,6 @@ namespace PlasticaribeAPI.Controllers
             {
                 return Ok(pedido_Producto);
             }
-        }
-
-        [HttpGet("PedidosSinOT/")]
-        public ActionResult<PedidoExterno> GetPedidosSinOT()
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var pedidos = from ped in _context.Set<PedidoProducto>()
-                          where ped.PedidoExt.Estado_Id != 5
-                                && ped.PedExtProd_CantidadFacturada < ped.PedExtProd_Cantidad
-                          group ped by new
-                          {
-                              ped.PedExt_Id,
-                              ped.PedidoExt.SedeCli.Cli_Id,
-                              ped.PedidoExt.SedeCli.Cli.Cli_Nombre,
-                              ped.PedidoExt.PedExt_FechaEntrega
-                          } into ped
-                          select new
-                          {
-                              Id_Pedido = ped.Key.PedExt_Id,
-                              Id_Cliente = ped.Key.Cli_Id,
-                              Nombre_Cliente = ped.Key.Cli_Nombre,
-                              Fecha_Entrega = ped.Key.PedExt_FechaEntrega,
-                              Cantidad_Productos = ped.Count(),
-                              Zeus = false,
-                          };
-            if (pedidos == null)
-            {
-                return NotFound();
-            }            
-            return Ok(pedidos);
         }
 
         // funcion que consultará la información de un pedido
