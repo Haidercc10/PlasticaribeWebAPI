@@ -51,15 +51,6 @@ namespace PlasticaribeAPI.Controllers
             return detallePreEntrega_RolloDespacho;
         }
 
-        [HttpGet("getconsultaProceso/{proceso}")]
-        public ActionResult getconsultaProceso(string proceso)
-        {
-            var con = from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
-                      where pre.Proceso_Id == proceso
-                      select pre.Rollo_Id;
-            return Ok(con);
-        }
-
         //Funcion que va a buscar la informacion que aparecerá en el PDF
         [HttpGet("crearPdf/{ot}/{proceso}")]
         public ActionResult crearPdf(long ot, string proceso)
@@ -136,28 +127,6 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
-        //Funcion que va a buscar la informacion que aparecerá en el PDF
-        [HttpGet("cantidadRollosPorOT/{ot}/{proceso}")]
-        public ActionResult cantidadRollosPorOT(long ot, string proceso)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = from rollo in _context.Set<DetallePreEntrega_RolloDespacho>()
-                      from emp in _context.Set<Empresa>()
-                      where rollo.DtlPreEntRollo_OT == ot && rollo.Proceso.Proceso_Nombre == proceso
-                      group rollo by new
-                      {
-                          rollo.Prod_Id,
-                          rollo.Prod.Prod_Nombre,
-                      }
-                      into rollos
-                      select new
-                      {
-                          cantRollos = rollos.Count(),
-                      };
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
         [HttpGet("CrearPDFUltimoID/{id}")]
         public ActionResult Get(long id )
         {
@@ -190,76 +159,6 @@ namespace PlasticaribeAPI.Controllers
                           emp.Empresa_Direccion,
                           emp.Empresa_Telefono,
                           emp.Empresa_Nombre
-                      };
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
-        //
-        [HttpGet("getRollosPreEntregadosFechas/{fechaInicial}/{fechaFinal}/{proceso}")]
-        public ActionResult getRollosPreEntregadosFechas(DateTime fechaInicial, DateTime fechaFinal, string proceso)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
-                      where pre.Proceso_Id == proceso 
-                            && pre.PreEntregaRollo.PreEntRollo_Fecha >= fechaInicial
-                            && pre.PreEntregaRollo.PreEntRollo_Fecha <= fechaFinal
-                      select new
-                      {
-                          pre.DtlPreEntRollo_OT,
-                          pre.Rollo_Id,
-                          pre.Prod_Id,
-                          pre.Prod.Prod_Nombre,
-                          pre.DtlPreEntRollo_Cantidad,
-                          pre.UndMed_Rollo,
-                          pre.Proceso.Proceso_Nombre,
-                          pre.PreEntregaRollo.PreEntRollo_Fecha
-                      };
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
-        //
-        [HttpGet("getRollosPreEntregadosRollo/{rollo}/{proceso}")]
-        public ActionResult getRollosPreEntregadosRollo(int rollo, string proceso)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
-                      where pre.Rollo_Id == rollo
-                            && pre.Proceso_Id == proceso
-                      select new
-                      {
-                          pre.DtlPreEntRollo_OT,
-                          pre.Rollo_Id,
-                          pre.Prod_Id,
-                          pre.Prod.Prod_Nombre,
-                          pre.DtlPreEntRollo_Cantidad,
-                          pre.UndMed_Rollo,
-                          pre.Proceso.Proceso_Nombre,
-                          pre.PreEntregaRollo.PreEntRollo_Fecha
-                      };
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
-        //
-        [HttpGet("getRollosPreEntregadosOT/{ot}/{proceso}")]
-        public ActionResult getRollosPreEntregadosOT(long ot, string proceso)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
-                      where pre.DtlPreEntRollo_OT == ot
-                            && pre.Proceso_Id == proceso
-                      select new
-                      {
-                          pre.DtlPreEntRollo_OT,
-                          pre.Rollo_Id,
-                          pre.Prod_Id,
-                          pre.Prod.Prod_Nombre,
-                          pre.DtlPreEntRollo_Cantidad,
-                          pre.UndMed_Rollo,
-                          pre.Proceso.Proceso_Nombre,
-                          pre.PreEntregaRollo.PreEntRollo_Fecha
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);

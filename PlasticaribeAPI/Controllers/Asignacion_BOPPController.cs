@@ -52,7 +52,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // GET: api/Asignacion_BOPP/5
-        [HttpGet("fecha/{AsigBOPP_FechaEntrega}")]
+       /* [HttpGet("fecha/{AsigBOPP_FechaEntrega}")]
         public ActionResult<Asignacion_BOPP> Getfecha(DateTime AsigBOPP_FechaEntrega)
         {
             if (_context.Asignaciones_BOPP == null)
@@ -88,11 +88,9 @@ namespace PlasticaribeAPI.Controllers
             {
                 return Ok(asignacion_BOPP);
             }
-        }
+        } */
 
         //Obtener el ultimo ID de asignacion de BOPP
-
-
         [HttpGet("ultimoId/")]
         public ActionResult<Asignacion_BOPP> GetUltimoId()
         {
@@ -177,8 +175,6 @@ namespace PlasticaribeAPI.Controllers
 
             return NoContent();
         }
-
-
 
         private bool Asignacion_BOPPExists(long id)
         {

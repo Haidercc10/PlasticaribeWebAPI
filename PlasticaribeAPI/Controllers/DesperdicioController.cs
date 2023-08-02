@@ -142,7 +142,6 @@ namespace PlasticaribeAPI.Controllers
             return Ok(Desperdicio);
         }
 
-
         /** OT */
         [HttpGet("GetDesperdicioOt/{Ot}")]
         public ActionResult<Desperdicio> GetDesperdicioOt(long Ot)

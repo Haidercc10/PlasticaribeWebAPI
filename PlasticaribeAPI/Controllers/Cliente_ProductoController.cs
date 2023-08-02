@@ -49,22 +49,6 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        [HttpGet("NombreCliente/{Cli_Nombre}/{Prod_Id}")]
-        public ActionResult<Cliente_Producto> GetNombreCliente(string Cli_Nombre, long Prod_Id)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
-            var clientes = _context.Clientes_Productos.Where(pp => pp.Cli.Cli_Nombre == Cli_Nombre && pp.Prod_Id == Prod_Id).ToList();
-
-            if (clientes == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(clientes);
-            }
-        }
-
         // GET: api/Cliente_Producto/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Cliente_Producto>> GetCliente_Producto(long id)

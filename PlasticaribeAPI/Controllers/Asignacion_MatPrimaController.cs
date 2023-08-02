@@ -51,14 +51,13 @@ namespace PlasticaribeAPI.Controllers
             return asignacion_MatPrima;
         }
 
-
-        [HttpGet("ultimoId/")]
+        /* [HttpGet("ultimoId/")]
         public ActionResult<Asignacion_MatPrima> GetUltimoId()
         {
             var asignacion = _context.Asignaciones_MatPrima.OrderBy(asg => asg.AsigMp_Id).Last();
 
             return Ok(asignacion);
-        }
+        } */
 
         //Consulta por orden de trabajo
         [HttpGet("ot/{AsigMP_OrdenTrabajo}")]
@@ -77,7 +76,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //Consulta por fecha
-        [HttpGet("fecha/{AsigMp_FechaEntrega}")]
+        /*[HttpGet("fecha/{AsigMp_FechaEntrega}")]
         public ActionResult<Asignacion_MatPrima> GetFecha(DateTime AsigMp_FechaEntrega)
         {
             var asignacion_MatPrima = _context.Asignaciones_MatPrima.Where(asg => asg.AsigMp_FechaEntrega == AsigMp_FechaEntrega).ToList();
@@ -121,9 +120,10 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(asignacion_MatPrima);
             }
         }
-
+        */
         // PUT: api/Asignacion_MatPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAsignacion_MatPrima(long id, Asignacion_MatPrima asignacion_MatPrima)
         {

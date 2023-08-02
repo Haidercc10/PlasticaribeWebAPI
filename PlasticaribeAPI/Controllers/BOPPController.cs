@@ -76,7 +76,8 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        [HttpGet("fecha/{BOPP_FechaIngreso}")]
+
+        /*[HttpGet("fecha/{BOPP_FechaIngreso}")]
         public ActionResult<BOPP> GetFecha(DateTime BOPP_FechaIngreso)
         {
             var bOPP = _context.BOPP.Where(bopp => bopp.BOPP_FechaIngreso == BOPP_FechaIngreso).ToList();
@@ -89,18 +90,16 @@ namespace PlasticaribeAPI.Controllers
             {
                 return Ok(bOPP);
             }
-        }
+        }*/
 
         /** Get para contar la cantidad de unidades, precio total segun existencias 
-y cantidad en Kilos agrupados BOPP por Nombre */
-        [HttpGet("BoppAgrupado")]
+        y cantidad en Kilos agrupados BOPP por Nombre */
+        /*[HttpGet("BoppAgrupado")]
         public ActionResult<BOPP> GetBoppAgrupado()
         {
 
-            /** Consulta la tabla de BOPP Agrupa por descripción */
-            var bOPP = _context.BOPP.Where(x => x.BOPP_Stock > 0)
+             var bOPP = _context.BOPP.Where(x => x.BOPP_Stock > 0)
                                     .GroupBy(x => new { x.BOPP_Descripcion, x.BOPP_CantidadMicras, x.BOPP_Ancho, x.CatMP_Id })
-            /** Selecciona los campos Descripción, Cantidad Micras, Suma el Precio total, Suma los Kilos, Cuenta cantidad de cada BOPP */
                                     .Select(bopp => new
                                     {
                                         bopp.Key.BOPP_Descripcion,
@@ -120,10 +119,10 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             {
                 return Ok(bOPP);
             }
-        }
+        }*/
 
         /** Get para contar la cantidad de unidades, precio total segun existencias 
-y cantidad en Kilos agrupados BOPP por Nombre */
+        y cantidad en Kilos agrupados BOPP por Nombre */
         [HttpGet("getBoppStockInventario")]
         public ActionResult<BOPP> getBoppStockInventario()
         {
@@ -150,6 +149,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             }
         }
 
+
         [HttpGet("getCantRollosIngresados_Mes/{fecha1}/{fecha2}")]
         public ActionResult getCantRollosIngresados_Mes(DateTime fecha1, DateTime fecha2)
         {
@@ -167,6 +167,8 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             return Ok(con);
 
         }
+
+
         [HttpGet("getCantRollosUtilizados_Mes/{fecha1}/{fecha2}")]
         public ActionResult getCantRollosUtilizados_Mes(DateTime fecha1, DateTime fecha2)
         {
@@ -188,7 +190,8 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             return Ok(con);
         }
 
-        [HttpGet("fechas/")]
+
+        /*[HttpGet("fechas/")]
         public ActionResult<BOPP> GetFechas(DateTime BOPP_FechaIngreso1, DateTime BOPP_FechaIngreso2)
         {
             var bOPP = _context.BOPP.Where(bopp => bopp.BOPP_FechaIngreso >= BOPP_FechaIngreso1 && bopp.BOPP_FechaIngreso <= BOPP_FechaIngreso2).ToList();
@@ -202,6 +205,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
                 return Ok(bOPP);
             }
         }
+
 
         [HttpGet("consultaMovimientos0/{FechaInicial}")]
         public ActionResult Get(DateTime FechaInicial)
@@ -222,6 +226,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
+
 
         [HttpGet("consultaMovimientos1/{Bopp}/{FechaInicial}")]
         public ActionResult GetMatPri(long Bopp, DateTime FechaInicial)
@@ -244,6 +249,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             return Ok(con);
         }
 
+
         [HttpGet("consultaMovimientos2/{Bopp}")]
         public ActionResult Get(long Bopp)
         {
@@ -264,6 +270,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             return Ok(con);
         }
 
+
         [HttpGet("consultaMovimientos3/{FechaInicial}/{FechaFinal}")]
         public ActionResult Get(DateTime FechaInicial, DateTime FechaFinal)
         {
@@ -283,18 +290,20 @@ y cantidad en Kilos agrupados BOPP por Nombre */
                 }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
-        }
+        }*/
 
-        [HttpGet("GetRollosLike/{datos}")]
+
+        /*[HttpGet("GetRollosLike/{datos}")]
         public ActionResult GetRollosLike(String datos)
         {
             var con = from bopp in _context.Set<BOPP>()
                       where bopp.BOPP_Nombre.Contains(datos)
                       select bopp;
             return Ok(con);
-        }
+        }*/
 
-        [HttpGet("consultaMovimientos4/{Bopp}/{FechaInicial}/{FechaFinal}")]
+
+        /*[HttpGet("consultaMovimientos4/{Bopp}/{FechaInicial}/{FechaFinal}")]
         public ActionResult Get(long Bopp, DateTime FechaInicial, DateTime FechaFinal)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -314,9 +323,10 @@ y cantidad en Kilos agrupados BOPP por Nombre */
                 }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
-        }
+        }*/
 
-        [HttpGet("consultaMovimientos5/{FechaInicial}/{FechaFinal}/{Bopp}")]
+
+        /*[HttpGet("consultaMovimientos5/{FechaInicial}/{FechaFinal}/{Bopp}")]
         public ActionResult Get8(DateTime FechaInicial, DateTime FechaFinal, int Bopp)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -336,7 +346,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
                 }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
-        }
+        }*/
 
 
         //Consulta que traerá las categorias de materia prima de la tabla BOPP
@@ -353,7 +363,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
         }
 
 
-        [HttpGet("consultaMovimientos6/{Bopp}/{FechaInicial}")]
+        /*[HttpGet("consultaMovimientos6/{Bopp}/{FechaInicial}")]
         public ActionResult Get9(int Bopp, DateTime FechaInicial)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -372,7 +382,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
                 }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
-        }
+        }*/
 
 
         [HttpGet("getDescripcion")]
@@ -439,32 +449,6 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             return Ok(con);
         }
 
-        /*[HttpGet("pdfMovimientos/{Ot}")]
-        public ActionResult Get(long Ot)
-        {
-            var con = _context.DetallesAsignaciones_MateriasPrimas
-                .Where(dtAsg => dtAsg.AsigMp.AsigMP_OrdenTrabajo == Ot)
-                .Include(dtAsg => dtAsg.AsigMp)
-                .Select(dtAsg => new
-                {
-                    dtAsg.AsigMp.AsigMp_Id,
-                    dtAsg.AsigMp.AsigMp_FechaEntrega,
-                    dtAsg.AsigMp.AsigMp_Observacion,
-                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
-                    dtAsg.AsigMp.AsigMp_Maquina,
-                    dtAsg.AsigMp.Usua_Id,
-                    dtAsg.AsigMp.Usua.Usua_Nombre,
-                    dtAsg.MatPri_Id,
-                    dtAsg.MatPri.MatPri_Nombre,
-                    dtAsg.UndMed_Id,
-                    dtAsg.DtAsigMp_Cantidad,
-                    dtAsg.Proceso_Id,
-                    dtAsg.Proceso.Proceso_Nombre
-                })
-                .ToList();
-            return Ok(con);
-        }
-        */
 
         [HttpGet("getInventarioBoppsGenericos")]
         public ActionResult GetInventarioBoppsGenericos()
@@ -495,6 +479,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             if (con != null) return Ok(con);
             else return BadRequest("No se encontrar Biorientados asociados a Bopps genéricos");
         }
+
 
         [HttpGet("getInventarioBopps/{fecha1}/{fecha2}/{id}")]
         public ActionResult GetInventarioBopps(DateTime fecha1, DateTime fecha2, long id)
@@ -538,9 +523,10 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             else return BadRequest("No se encontraron BOPPs asociados");
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
         }
-            // PUT: api/BOPP/5
-            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-            [HttpPut("{id}")]
+
+        // PUT: api/BOPP/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutBOPP(long id, BOPP bOPP)
         {
             if (id != bOPP.BOPP_Id)
