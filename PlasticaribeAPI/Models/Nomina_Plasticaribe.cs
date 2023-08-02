@@ -16,7 +16,7 @@ namespace PlasticaribeAPI.Models
         public Usuario? Usuario { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime Nomina_FechaInicial { get; set; }
+        public DateTime Nomina_FechaIncial { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime Nomina_FechaFinal { get; set; }
