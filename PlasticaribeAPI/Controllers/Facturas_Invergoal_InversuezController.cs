@@ -140,6 +140,20 @@ namespace PlasticaribeAPI.Controllers
             return con.Any() ? Ok(con) : NotFound("¡No se encontraron facturas por pagar!");
         }
 
+        //Consulta que recibirá los siguientes parametros: Año, Mes, Array de facturas. Las buscará sumará las cantidades de las que encuentre
+        [HttpPost("getFacturasPapel/{anio}/{mes}/{cuenta}")]
+        public ActionResult GetFacturasPapel(int anio, int mes, string cuenta, [FromBody] List<string> facturas)
+        {
+            var con = (from fac in _context.Set<Facturas_Invergoal_Inversuez>()
+                      where fac.Fecha_Factura.Year == anio &&
+                            fac.Fecha_Factura.Month == mes &&
+                            fac.Restar_DashboardCostos == true &&
+                            facturas.Contains(fac.Codigo_Factura) &&
+                            fac.Cuenta == cuenta
+                      select fac.Valor_Factura).Sum();
+            return con > 0 ? Ok(con) : Ok(0);
+        }
+
         // PUT: api/Facturas_Invergoal_Inversuez/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

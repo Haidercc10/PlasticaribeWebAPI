@@ -51,6 +51,18 @@ namespace PlasticaribeAPI.Controllers
             return formato_Documentos;
         }
 
+        //Consulta que devolverá la informacion del ultimo formato de un documento
+        [HttpGet("getUltFormatoDoc/{nombre}")]
+        public ActionResult GetUltFormadoDoc (string nombre)
+        {
+            var con = (from fmt in _context.Set<Formato_Documentos>()
+                      where fmt.Nombre_Reporte == nombre
+                      orderby fmt.Id descending
+                      select fmt).FirstOrDefault();
+            if (con != null) return Ok(con);
+            else return NoContent();
+        }
+
         // PUT: api/Formato_Documentos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
