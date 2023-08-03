@@ -32,5 +32,6 @@ namespace PlasticaribeAPI.Models
         public int Estado_Factura { get; set; }
         public Estado? Estados { get; set; }
         public string Observacion { get; set; }
+        public bool Restar_DashboardCostos { get; set; }
     }
 }
