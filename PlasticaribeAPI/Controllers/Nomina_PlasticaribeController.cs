@@ -52,15 +52,16 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //Consulta que devolverá los movimientos de nomina en un mes
-        [HttpGet("getMovimientosNomina/{anio}/{mes}")]
-        public ActionResult GetMovimientosNomina(int anio, int mes)
+        [HttpGet("getMovimientosNomina/{anio}/{mes}/{tipo}")]
+        public ActionResult GetMovimientosNomina(int anio, int mes, int tipo)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from nom in _context.Set<Nomina_Plasticaribe>()
                       where nom.Nomina_FechaIncial.Year == anio &&
                             nom.Nomina_FechaFinal.Year == anio &&
                             nom.Nomina_FechaIncial.Month == mes &&
-                            nom.Nomina_FechaFinal.Month == mes
+                            nom.Nomina_FechaFinal.Month == mes &&
+                            nom.TpNomina_Id == tipo
                       select new
                       {
                           Fuente = "",
