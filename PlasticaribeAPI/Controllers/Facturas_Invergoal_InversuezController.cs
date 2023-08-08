@@ -154,6 +154,17 @@ namespace PlasticaribeAPI.Controllers
             return con > 0 ? Ok(con) : Ok(0);
         }
 
+        //Consulta que devolverá todas las facturas de papel ingresadas en el año que le sea pasado
+        [HttpGet("getFacturasPapelIngresadas/{anio}")]
+        public ActionResult GetFacturasPapaelIngresadas(int anio)
+        {
+            var con = from fac in _context.Set<Facturas_Invergoal_Inversuez>()
+                       where fac.Fecha_Factura.Year == anio &&
+                             fac.Restar_DashboardCostos == true
+                       select fac.Codigo_Factura;
+            return con.Any() ? Ok(con) : NotFound();
+        }
+
         // PUT: api/Facturas_Invergoal_Inversuez/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
