@@ -55,6 +55,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("GetEntradaFacRem_Fechas/{fecha1}/{fecha2}")]
         public ActionResult GetEntradaFacRem_Fechas(DateTime fecha1, DateTime fecha2)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var conFac = _context.Facturas_Compras.Where(x => x.Facco_FechaFactura >= fecha1 && x.Facco_FechaFactura <= fecha2).
                 Select(fac => new
                 {
@@ -86,12 +87,14 @@ namespace PlasticaribeAPI.Controllers
                     Tipo_Doc = "REM",
                     Nombre_Doc = "Remision",
                 }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(conFac.Concat(conRem));
         }
 
         [HttpGet("GetEntradaFacRem_Codigo/{codigo}")]
         public ActionResult GetEntradaFacRem_Codigo(string codigo)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var conFac = _context.Facturas_Compras.Where(x => x.Facco_Codigo == codigo).
                 Select(fac => new
                 {
@@ -123,12 +126,14 @@ namespace PlasticaribeAPI.Controllers
                     Tipo_Doc = "REM",
                     Nombre_Doc = "Remision",
                 }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(conFac.Concat(conRem));
         }
 
         [HttpGet("GetEntradaFacRem_Proveedor/{proveedor}")]
         public ActionResult GetEntradaFacRem_Proveedor(long proveedor)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var conFac = _context.Facturas_Compras.Where(x => x.Prov_Id == proveedor).
                 Select(fac => new
                 {
@@ -160,12 +165,14 @@ namespace PlasticaribeAPI.Controllers
                     Tipo_Doc = "REM",
                     Nombre_Doc = "Remision",
                 }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(conFac.Concat(conRem));
         }
 
         [HttpGet("GetEntradaFacRem_FechasTipoDocProveedor/{fecha1}/{fecha2}/{tipoDoc}/{proveedor}")]
         public ActionResult GetEntradaFacRem_Proveedor(DateTime fecha1, DateTime fecha2, string tipoDoc, long proveedor)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var conFac = _context.Facturas_Compras.Where(fac => fac.Prov_Id == proveedor
                                && fac.Facco_FechaFactura >= fecha1
                                && fac.Facco_FechaFactura <= fecha2
@@ -203,13 +210,14 @@ namespace PlasticaribeAPI.Controllers
                     Tipo_Doc = "REM",
                     Nombre_Doc = "Remision",
                 }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(conFac.Concat(conRem));
         }
-        /************************************************************************************************************************************************/
 
         [HttpGet("pdfMovimientos/{codigo}")]
         public ActionResult Get (string codigo)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.FacturasCompras_MateriaPrimas
                 .Where(fac => fac.Facco.Facco_Codigo == codigo)
                 .Include(fac => fac.Facco)
@@ -235,6 +243,7 @@ namespace PlasticaribeAPI.Controllers
                     fac.FaccoMatPri_ValorUnitario
                 })
                 .ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
 
