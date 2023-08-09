@@ -121,33 +121,6 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        /** Obtener pedidos con estado pendiente agrupados */
-        [HttpGet("PedidosPendientesAgrupados")]
-        public ActionResult<PedidoProducto> GetPedido_PendienteAgrupado()
-        {
-            var producto = from p in _context.Set<PedidoExterno>()
-                           from pp in _context.Set<PedidoProducto>()
-                           from ex in _context.Set<Existencia_Productos>()
-                           where (p.Estado_Id == 11)
-                           && p.PedExt_Id == pp.PedExt_Id
-                           && pp.Prod_Id == ex.Prod_Id
-                           select new
-                           {
-                               p.PedExt_Id, 
-                               p.PedExt_FechaCreacion,
-                               p.PedExt_FechaEntrega,
-                               p.SedeCli.Cli_Id,
-                               p.SedeCli.Cli.Cli_Nombre,
-                               pp.Prod_Id, 
-                               pp.Product.Prod_Nombre, 
-                               p.Estado_Id,
-                               p.Estado.Estado_Nombre,
-                               p.Usua_Id,
-                               p.Usua.Usua_Nombre, 
-                           };
-
-            return Ok(producto);       
-        }
         /** Obtener pedidos con estado pendiente completos */
         [HttpGet("PedidosPendientesCompletos")]
         public ActionResult<PedidoProducto> GetPedido_PendienteCompleto()
@@ -181,7 +154,6 @@ namespace PlasticaribeAPI.Controllers
             return Ok(producto);
         }
 
-
         [HttpGet("getPedidosPendientesAgrupados")]
         public ActionResult getPedidosPendientesAgrupados()
         {
@@ -202,29 +174,7 @@ namespace PlasticaribeAPI.Controllers
 
             return Ok(con);
         }
-
-        [HttpGet("getPedidosPendientesAgrupadosxId/{Id}")]
-        public ActionResult getPedidosPendientesAgrupadosxId(long Id)
-        {
-            var con = from p in _context.Set<PedidoExterno>()
-                      where (p.Estado_Id == 11)
-                      && p.PedExt_Id == Id
-                      select new
-                      {
-                          p.PedExt_Id,
-                          p.PedExt_FechaCreacion,
-                          p.SedeCli.Cli_Id,
-                          p.SedeCli.Cli.Cli_Nombre,
-                          p.Estado_Id,
-                          p.Estado.Estado_Nombre,
-                          p.Usua_Id,
-                          p.Usua.Usua_Nombre,
-                          p.PedExt_PrecioTotalFinal,
-                      };
-
-            return Ok(con);
-        }
-
+        
         // PUT: api/PedidoProducto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

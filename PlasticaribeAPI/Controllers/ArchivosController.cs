@@ -40,8 +40,7 @@ namespace PlasticaribeAPI.Controllers
         // POST: api/Archivos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public ActionResult PostArchivo([FromForm] List<IFormFile> archivo, DateTime Fecha, int categoria_Id, long usua_Id, string? filePath)
-        {
+        public ActionResult PostArchivo([FromForm] List<IFormFile> archivo, DateTime Fecha, int categoria_Id, long usua_Id, string? filePath) {
             List<Archivos> archivos = new();
             if (filePath != null) {
                 try {
@@ -72,39 +71,23 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("CrearCarpetas")]
-        public ActionResult CrearCarpetas(string? filePath)
-        {
-            if (filePath != null)
-            {
-                if (!Directory.Exists(filePath))
-                {
+        public ActionResult CrearCarpetas(string? filePath) {
+            if (filePath != null) {
+                if (!Directory.Exists(filePath)) {
                     Directory.CreateDirectory(filePath);
                     return Ok();
-                }
-                else
-                {
-                    return Ok();
-                }
-            }
-            else
-            {
-                return BadRequest();
-            }
+                } else return Ok();
+            } else return BadRequest();
         }
 
         [HttpGet("download")]
-        public async Task<IActionResult> Download(string file, string filePath)
-        {
+        public async Task<IActionResult> Download(string file, string filePath) {
             filePath = Path.Combine(filePath, file);
-            if (!System.IO.File.Exists(filePath))
-            {
-                return NotFound();
-            }
+            if (!System.IO.File.Exists(filePath)) return NotFound();
 
             var memory = new MemoryStream();
 
-            using (var stream = new FileStream(filePath, FileMode.Open))
-            {
+            using (var stream = new FileStream(filePath, FileMode.Open)) {
                 await stream.CopyToAsync(memory);
             }
             memory.Position = 0;
@@ -113,37 +96,23 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("Carpetas")]
-        public IActionResult Carpetas(string? filePath)
-        {
-            if (filePath == null)
-            {
-                return BadRequest();
-            }
-            try
-            {
+        public IActionResult Carpetas(string? filePath) {
+            if (filePath == null) return BadRequest();
+            try {
                 string[] folders = Directory.GetDirectories(filePath);
                 return Ok(folders);
-            }
-            catch (System.IO.IOException e)
-            {
+            } catch (System.IO.IOException e) {
                 return BadRequest(e);
             }
         }
 
         [HttpGet("Archivos")]
-        public IActionResult Archivos(string? filePath)
-        {
-            if (filePath == null)
-            {
-                return BadRequest();
-            }
-            try
-            {
+        public IActionResult Archivos(string? filePath) {
+            if (filePath == null) return BadRequest();
+            try {
                 string[] files = Directory.GetFiles(filePath);
                 return Ok(files);
-            }
-            catch (System.IO.IOException e)
-            {
+            } catch (System.IO.IOException e) {
                 return NotFound(e);
             }
         }
@@ -151,44 +120,27 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("EliminarArchivos")]
         public IActionResult EliminarArchivos(string? filePath)
         {
-            if (System.IO.File.Exists(filePath))
-            {
-                try
-                {
+            if (System.IO.File.Exists(filePath)) {
+                try {
                     System.IO.File.Delete(filePath);
                     return Ok();
-                }
-                catch (System.IO.IOException e)
-                {
+                } catch (System.IO.IOException e) {
                     return (IActionResult)e;
                 }
-            }
-            else
-            {
-                return BadRequest();
-            }
+            } else return BadRequest();
         }
 
         [HttpGet("EliminarCarpeta")]
         public IActionResult EliminarCarpeta(string? filePath)
         {
-            if (System.IO.Directory.Exists(filePath))
-            {
-                try
-                {
+            if (System.IO.Directory.Exists(filePath)) {
+                try {
                     System.IO.Directory.Delete(filePath, true);
                     return Ok();
-                }
-
-                catch (System.IO.IOException e)
-                {
+                } catch (System.IO.IOException e) {
                     return BadRequest(e);
                 }
-            }
-            else
-            {
-                return BadRequest();
-            }
+            } else return BadRequest();
         }
 
         [HttpGet("MoverArchivos")]
@@ -219,8 +171,7 @@ namespace PlasticaribeAPI.Controllers
             var dir = new DirectoryInfo(sourceDir);
 
             // Check if the source directory exists
-            if (!dir.Exists)
-                throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
+            if (!dir.Exists) throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
 
             // Cache directories before we start copying
             DirectoryInfo[] dirs = dir.GetDirectories();
@@ -248,15 +199,11 @@ namespace PlasticaribeAPI.Controllers
 
         private static string GetContentType (string path)
         {
-            var provider = new FileExtensionContentTypeProvider();
-
 #pragma warning disable CS8600 // Se va a convertir un literal nulo o un posible valor nulo en un tipo que no acepta valores NULL
-            if (!provider.TryGetContentType(path, out string contentType))
-            {
-                contentType = "application/octet-stream";
-            }
-#pragma warning restore CS8600 // Se va a convertir un literal nulo o un posible valor nulo en un tipo que no acepta valores NULL
+            var provider = new FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(path, out string contentType)) contentType = "application/octet-stream";
             return contentType;
+#pragma warning restore CS8600 // Se va a convertir un literal nulo o un posible valor nulo en un tipo que no acepta valores NULL
         }
     }
 }

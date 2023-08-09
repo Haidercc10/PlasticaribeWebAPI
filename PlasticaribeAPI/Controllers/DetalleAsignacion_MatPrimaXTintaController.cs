@@ -51,33 +51,6 @@ namespace PlasticaribeAPI.Controllers
             return detalleAsignacion_MatPrimaXTinta;
         }
 
-        // Funcion que va a consultar las asignaciones de materias primas para crear OT
-        [HttpGet("getCreatPdf/{id}")]
-        public ActionResult getCreatPdf(int id)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
-                      where cr.AsigMPxTinta_Id == id
-                      select new
-                      {
-                          Tinta_Creada = cr.AsigMPxTinta.Tinta_Id,
-                          Nombre_TintaCreada = cr.AsigMPxTinta.Tinta.Tinta_Nombre,
-                          Cantidad_Creada = cr.AsigMPxTinta.AsigMPxTinta_Cantidad,
-                          cr.MatPri_Id,
-                          cr.MatPri.MatPri_Nombre,
-                          cr.Tinta_Id,
-                          cr.TintasDAMPxT.Tinta_Nombre,
-                          cr.DetAsigMPxTinta_Cantidad,
-                          cr.UndMed_Id,
-                          cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
-                          cr.AsigMPxTinta.AsigMPxTinta_Observacion,
-                          cr.AsigMPxTinta.Usua.Usua_Nombre
-                      };
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-
-        }
-
         [HttpGet("getTintasCreadasMes/{fecha1}/{fecha2}")]
         public ActionResult GetTintasCreadasMes(DateTime fecha1, DateTime fecha2)
         {

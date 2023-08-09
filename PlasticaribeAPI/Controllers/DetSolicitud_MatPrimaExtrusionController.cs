@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ using PlasticaribeAPI.Models;
 namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class DetSolicitud_MatPrimaExtrusionController : ControllerBase
     {
         private readonly dataContext _context;
@@ -56,6 +57,7 @@ namespace PlasticaribeAPI.Controllers
         {
             if (_context.DetSolicitud_MatPrimaExtrusion == null) return NotFound();
 
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var detSolicitud_MatPrimaExtrusion = from smpe in _context.Set<Solicitud_MatPrimaExtrusion>()
                                                  from dsmpe in _context.Set<DetSolicitud_MatPrimaExtrusion>()
                                                  from emp in _context.Set<Empresa>()
@@ -93,6 +95,7 @@ namespace PlasticaribeAPI.Controllers
                                                      emp.Empresa_Ciudad,
                                                      emp.Empresa_Correo
                                                  };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             if (detSolicitud_MatPrimaExtrusion == null) return NotFound();
             else return Ok(detSolicitud_MatPrimaExtrusion);
@@ -115,6 +118,8 @@ namespace PlasticaribeAPI.Controllers
         {
             if (_context.DetSolicitud_MatPrimaExtrusion == null) return NotFound();
 
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var detSolicitud_MatPrimaExtrusion = from smpe in _context.Set<Solicitud_MatPrimaExtrusion>()
                                                  from dsmpe in _context.Set<DetSolicitud_MatPrimaExtrusion>()
                                                  from emp in _context.Set<Empresa>()
@@ -155,6 +160,8 @@ namespace PlasticaribeAPI.Controllers
                                                      emp.Empresa_Ciudad,
                                                      emp.Empresa_Correo
                                                  };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
 
             if (detSolicitud_MatPrimaExtrusion == null) return NotFound();
             else return Ok(detSolicitud_MatPrimaExtrusion);

@@ -51,6 +51,122 @@ namespace PlasticaribeAPI.Controllers
             return inventarioInicialXDia_MatPrima;
         }
 
+        [HttpGet("get_Cantidad_Material_Meses")]
+        public ActionResult Get_Cantidad_Material_Meses()
+        {
+            var enero = (from inv in _context.Set<InventarioInicialXDia_MatPrima>() 
+                         join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
+                         select inv.Enero * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                                                                       join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                       select inv.Enero * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                    where bp.BOPP_FechaIngreso.Month == 1 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                    select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+
+            var febrero = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                           join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
+                           select inv.Febrero * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                                                                         join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                         select inv.Febrero * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                        where bp.BOPP_FechaIngreso.Month == 2 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                        select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+
+            var marzo = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                         join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
+                         select inv.Marzo * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                                                                       join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                       select inv.Marzo * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                    where bp.BOPP_FechaIngreso.Month == 3 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                    select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+
+            var abril = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                         join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
+                         select inv.Abril * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                                                                       join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                       select inv.Abril * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                    where bp.BOPP_FechaIngreso.Month == 4 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                    select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+
+            var mayo = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                        join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
+                        select inv.Mayo * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                                                                      join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                      select inv.Mayo * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                  where bp.BOPP_FechaIngreso.Month == 5 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                  select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+
+            var junio = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                         join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
+                         select inv.Junio * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                                                                       join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                       select inv.Junio * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                    where bp.BOPP_FechaIngreso.Month == 6 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                    select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+
+            var julio = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                         join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
+                         select inv.Julio * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                                                                       join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                       select inv.Julio * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                    where bp.BOPP_FechaIngreso.Month == 7 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                    select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+
+            var agosto = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                          join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
+                          select inv.Agosto * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                                                                        join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                        select inv.Agosto * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                      where bp.BOPP_FechaIngreso.Month == 8 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                      select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+
+            var septiembre = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                              join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
+                              select inv.Septiembre * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                                                                            join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                            select inv.Septiembre * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                              where bp.BOPP_FechaIngreso.Month == 9 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                              select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+
+            var octubre = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                           join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
+                           select inv.Octubre * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                                                                         join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                         select inv.Octubre * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                        where bp.BOPP_FechaIngreso.Month == 10 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                        select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+
+            var novimebre = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                             join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
+                             select inv.Noviembre * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                                                                           join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                           select inv.Noviembre * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                            where bp.BOPP_FechaIngreso.Month == 11 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                            select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+
+            var diciembre = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                             join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
+                             select inv.Diciembre * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
+                                                                           join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                           select inv.Diciembre * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                            where bp.BOPP_FechaIngreso.Month == 12 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                            select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+
+            var result = new List<object>();
+            result.Add($"'Enero': '{enero}'," +
+                      $"'Febrero': '{febrero}'," +
+                      $"'Marzo': '{marzo}'," +
+                      $"'Abril': '{abril}'," +
+                      $"'Mayo': '{mayo}'," +
+                      $"'Junio': '{junio}'," +
+                      $"'Julio': '{julio}'," +
+                      $"'Agosto': '{agosto}'," +
+                      $"'Septiembre': '{septiembre}'," +
+                      $"'Octubre': '{octubre}'," +
+                      $"'Noviembre': '{novimebre}'," +
+                      $"'Diciembre': '{diciembre}'");
+
+            return Ok(result);
+        }
+
         // PUT: api/InventarioInicialXDia_MatPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

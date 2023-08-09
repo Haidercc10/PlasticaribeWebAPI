@@ -43,15 +43,6 @@ namespace PlasticaribeAPI.Controllers
             return detallesIngRollos_Extrusion;
         }
 
-        //Funcion que servira para consultar y devolver todos los rollos que han sido ingresados
-        [HttpGet("consultaRollos")]
-        public ActionResult consultaRollos()
-        {
-            var con = from ing in _context.Set<DetallesIngRollos_Extrusion>()
-                      select ing.Rollo_Id;
-            return Ok(con);
-        }
-
         //Funcion que servirá para consultar y devolver la informacion de un rollo en especifico
         [HttpGet("consultaRollo/{rollo}")]
         public ActionResult consultaRollo(int rollo)

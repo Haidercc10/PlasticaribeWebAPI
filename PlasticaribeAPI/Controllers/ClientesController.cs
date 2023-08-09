@@ -139,29 +139,18 @@ namespace PlasticaribeAPI.Controllers
 
         //Funcion que actualizará el estado del cliente
         [HttpPut("putEstadoCliente/{id}")]
-        public ActionResult PutEstadoCliente(long id, Clientes clientes)
+        public ActionResult PutEstadoCliente(long id, int estado)
         {
-            if (id != clientes.Cli_Id)
-            {
-                return BadRequest();
-            }
-
             try
             {
                 var con = _context.Clientes.Where(x => x.Cli_Id == id).First<Clientes>();
-                con.Estado_Id = clientes.Estado_Id;
+                con.Estado_Id = estado;
                 _context.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ClientesExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                if (!ClientesExists(id)) return NotFound();
+                else throw;
             }
 
             return NoContent();

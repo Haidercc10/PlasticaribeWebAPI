@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -71,10 +72,22 @@ namespace PlasticaribeAPI.Controllers
             return con.Any() ? Ok(con) : NotFound();
         }
 
+        //Consulta que validará que un rollo existe en una bodega y devolverá toda su información
+        [HttpGet("getIdRollo/{rollo}")]
+        public ActionResult GetIdRollo(long rollo)
+        {
+            var con = from bg in _context.Set<Detalles_BodegasRollos>()
+                      where bg.DtBgRollo_Rollo == rollo
+                      select bg;
+            return con.Any() ? Ok(con) : NotFound();
+        }
+
         //
         [HttpGet("getRollosDisponibles/{bodega}/{ot}")]
         public ActionResult GetRollosDisponibles(string bodega, long ot, string? rollo = "")
         {
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from bg in _context.Set<Detalles_BodegasRollos>()
                       where bg.BgRollo_BodegaActual == bodega
                             && bg.BgRollo_OrdenTrabajo == ot
@@ -89,6 +102,8 @@ namespace PlasticaribeAPI.Controllers
                           Presentacion = bg.UndMed_Id,
                           Bodega = bg.Bodega_Actual.Proceso_Nombre
                       };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
             if (con.Count() > 0) return Ok(con);
             else return BadRequest("No hay rollos disponobles en la bodega solicitada");
         }
@@ -150,6 +165,40 @@ namespace PlasticaribeAPI.Controllers
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
+        }
+
+        //
+        [HttpGet("getInformacionIngreso/{id}")]
+        public ActionResult GetInformacionIngreso(long id)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from bg in _context.Set<Detalles_BodegasRollos>()
+                      from Emp in _context.Set<Empresa>()
+                      where bg.BgRollo_Id == id
+                      select new
+                      {
+                          Ingreso = bg.BgRollo_Id,
+                          Fecha = bg.Bodegas_Rollos.BgRollo_FechaEntrada,
+                          Hora = bg.Bodegas_Rollos.BgRollo_HoraEntrada,
+                          Observacion = bg.Bodegas_Rollos.BgRollo_Observacion,
+
+                          Empresa_Id = Emp.Empresa_Id,
+                          Empresa_Ciudad = Emp.Empresa_Ciudad,
+                          Empresa_Codigo = Emp.Empresa_COdigoPostal,
+                          Empresa_Correo = Emp.Empresa_Correo,
+                          Empresa_Direccion = Emp.Empresa_Direccion,
+                          Empresa_Telefono = Emp.Empresa_Telefono,
+                          Empresa = Emp.Empresa_Nombre,
+
+                          Orden_Trabajo = bg.BgRollo_OrdenTrabajo,
+                          Item = bg.Prod_Id,
+                          Referencia = bg.Producto.Prod_Nombre,
+                          Rollo = bg.DtBgRollo_Rollo,
+                          Cantidad = bg.DtBgRollo_Cantidad,
+                          Presentacion = bg.UndMed_Id,
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return con.Any() ? Ok(con) : BadRequest();
         }
 
         // PUT: api/Detalles_BodegasRollos/5

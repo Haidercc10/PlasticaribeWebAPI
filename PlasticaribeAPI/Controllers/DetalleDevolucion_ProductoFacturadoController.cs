@@ -43,46 +43,6 @@ namespace PlasticaribeAPI.Controllers
             return detalleDevolucion_ProductoFacturado;
         }
 
-        [HttpGet("consultarRollo/{Rollo}")]
-        public ActionResult GetRollo(long Rollo)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            /*var con = _context.DetallesDevoluciones_ProductosFacturados
-                .Where(x => x.Rollo_Id == Rollo)
-                .Select(x => new
-                {
-                    x.DevolucionProdFact.FacturaVta_Id,
-                    x.DevolucionProdFact.Cli_Id,
-                    x.DevolucionProdFact.Cliente.Cli_Nombre,
-                    x.Prod.Prod_Nombre,
-                    x.Prod_Id,
-                    x.Rollo_Id,
-                    x.DtDevProdFact_Cantidad,
-                    x.UndMed_Id,
-                })
-                .ToList();*/
-
-            var con = from rollo in _context.Set<DetalleEntradaRollo_Producto>()
-                      from fac in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
-                      where rollo.Rollo_Id == Rollo
-                            && fac.Rollo_Id == Rollo
-                      select new
-                      {
-                          fac.AsigProducto_FV.FacturaVta_Id,
-                          fac.AsigProducto_FV.Cli_Id,
-                          fac.AsigProducto_FV.Cliente.Cli_Nombre,
-                          fac.Prod_Id,
-                          fac.Prod.Prod_Nombre,
-                          fac.Rollo_Id,
-                          fac.DtAsigProdFV_Cantidad,
-                          fac.UndMed_Id,
-                          rollo.Estado_Id
-                      }
-                      ;
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
         [HttpGet("CrearPdf/{factura}")]
         public ActionResult GetCrearPdf(string factura)
         {

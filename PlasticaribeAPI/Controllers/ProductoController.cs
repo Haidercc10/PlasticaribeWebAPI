@@ -51,7 +51,6 @@ namespace PlasticaribeAPI.Controllers
             return producto;
         }
 
-
         [HttpGet("consultaNombreItem/{letras}")]
         public ActionResult GetItem(string letras)
         {
@@ -62,7 +61,6 @@ namespace PlasticaribeAPI.Controllers
                             
             return Ok(productos);
         }
-
 
         [HttpGet("IdProducto/{Prod_Id}")]
         public ActionResult<Producto> GetNombreCliente(int Prod_Id)
@@ -99,20 +97,6 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-
-        [HttpGet("consultaGeneral")]
-        public ActionResult Get()
-        {
-            var productos = from p in _context.Set<Producto>()
-                            select new
-                            {
-                                p.Prod_Id,
-                                p.Prod_Nombre,
-                            };
-            return Ok(productos);
-        }
-
-
         [HttpGet("consultaNombreProducto/{Id}")]
         public ActionResult GetNombreProducto(int Id)
         {
@@ -121,38 +105,6 @@ namespace PlasticaribeAPI.Controllers
                             select p.Prod_Nombre;
 
             return Ok(productos);
-        }
-
-
-        [HttpGet("ConsultaProductoExistencia/{Prod_Id}")]
-        public ActionResult<Producto> GetProductoPresentacion(int Prod_Id)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
-            var producto = (from E in _context.Set<Existencia_Productos>()
-                            from P in _context.Set<Producto>()
-                            where P.Prod_Id == Prod_Id 
-                            && E.Prod_Id == Prod_Id
-                            && E.Prod_Id == P.Prod_Id
-                            select new
-                            {
-                                E.Prod_Id,
-                                P.Prod_Nombre,
-                                E.ExProd_Cantidad, 
-                                E.ExProd_PrecioVenta,
-                                E.TpMoneda_Id,
-                                E.UndMed_Id
-                            })
-                            .ToList();
-
-            if (producto == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(producto);
-            }
-
         }
 
         //Funcion que va a consultar el id del ultimo producto creado

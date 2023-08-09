@@ -13,7 +13,7 @@ using PlasticaribeAPI.Models;
 namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class Rol_UsuarioController : ControllerBase
     {
         private readonly dataContext _context;
@@ -63,7 +63,6 @@ namespace PlasticaribeAPI.Controllers
             return Ok(rol_Usuario);
         }
 
-
         [Authorize]
         [HttpGet("getNombreRolxLike/{Nombre}")]
         public ActionResult GetNombre(string Nombre)
@@ -78,6 +77,25 @@ namespace PlasticaribeAPI.Controllers
             }
 
             return Ok(area);
+        }
+
+        [Authorize]
+        //Consulta que devolverá las información de los roles y las vistas a las que tiene acceso
+        [HttpGet("getInformacionRoles/{rol}")]
+        public ActionResult GetInformacionRoles(string rol)
+        {
+            var con = from r in _context.Set<Rol_Usuario>()
+                      from vp in _context.Set<Vistas_Permisos>() 
+                      where vp.Vp_Id_Roles.Contains($"|{rol}|") &&
+                            r.RolUsu_Id == Convert.ToInt16(rol)
+                      select new
+                      {
+                          Id_Rol = r.RolUsu_Id,
+                          Nombre_Rol = r.RolUsu_Nombre,
+                          Descripcion_Rol = r.RolUsu_Descripcion,
+                          Vistas = vp.Vp_Nombre
+                      };
+            return Ok(con);
         }
 
         [Authorize]

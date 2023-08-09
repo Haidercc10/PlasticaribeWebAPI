@@ -39,7 +39,6 @@ namespace PlasticaribeAPI.Controllers
             return Activos;
         }
 
-
         [HttpGet("getDetalleMtto/{idPedido}")]
         public ActionResult GetDetalleMttos(long idPedido)
         {
@@ -261,8 +260,6 @@ namespace PlasticaribeAPI.Controllers
 
             return NoContent();
         }
-
-
 
         [HttpPost]
         public async Task<ActionResult<Detalle_Mantenimiento>> PostDetalle_Mantenimiento(Detalle_Mantenimiento detalle_Mantenimiento)

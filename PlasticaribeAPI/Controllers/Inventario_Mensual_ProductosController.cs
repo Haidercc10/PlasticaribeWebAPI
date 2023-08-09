@@ -51,10 +51,67 @@ namespace PlasticaribeAPI.Controllers
             return inventario_Mensual_Productos;
         }
 
+        [HttpGet("get_Cantidad_Productos_Meses")]
+        public ActionResult Get_Cantidad_Productos_Meses()
+        {
+            var enero = (from inv in _context.Set<Inventario_Mensual_Productos>() join pr in _context.Set<Existencia_Productos>() on inv.Prod_Id equals pr.Prod_Id
+                         select inv.Enero * pr.ExProd_PrecioVenta).Sum();
+
+            var febrero = (from inv in _context.Set<Inventario_Mensual_Productos>() join pr in _context.Set<Existencia_Productos>() on inv.Prod_Id equals pr.Prod_Id
+                           select inv.Febrero * pr.ExProd_PrecioVenta).Sum();
+
+            var marzo = (from inv in _context.Set<Inventario_Mensual_Productos>() join pr in _context.Set<Existencia_Productos>() on inv.Prod_Id equals pr.Prod_Id
+                         select inv.Marzo * pr.ExProd_PrecioVenta).Sum();
+
+            var abril = (from inv in _context.Set<Inventario_Mensual_Productos>() join pr in _context.Set<Existencia_Productos>() on inv.Prod_Id equals pr.Prod_Id
+                         select inv.Abril * pr.ExProd_PrecioVenta).Sum();
+
+            var mayo = (from inv in _context.Set<Inventario_Mensual_Productos>() join pr in _context.Set<Existencia_Productos>() on inv.Prod_Id equals pr.Prod_Id
+                        select inv.Mayo * pr.ExProd_PrecioVenta).Sum();
+
+            var junio = (from inv in _context.Set<Inventario_Mensual_Productos>() join pr in _context.Set<Existencia_Productos>() on inv.Prod_Id equals pr.Prod_Id
+                         select inv.Junio * pr.ExProd_PrecioVenta).Sum();
+
+            var julio = (from inv in _context.Set<Inventario_Mensual_Productos>() join pr in _context.Set<Existencia_Productos>() on inv.Prod_Id equals pr.Prod_Id
+                         select inv.Julio * pr.ExProd_PrecioVenta).Sum();
+
+            var agosto = (from inv in _context.Set<Inventario_Mensual_Productos>() join pr in _context.Set<Existencia_Productos>() on inv.Prod_Id equals pr.Prod_Id
+                          select inv.Agosto * pr.ExProd_PrecioVenta).Sum();
+
+            var septiembre = (from inv in _context.Set<Inventario_Mensual_Productos>() join pr in _context.Set<Existencia_Productos>() on inv.Prod_Id equals pr.Prod_Id
+                              select inv.Septiembre * pr.ExProd_PrecioVenta).Sum();
+
+            var octubre = (from inv in _context.Set<Inventario_Mensual_Productos>() join pr in _context.Set<Existencia_Productos>() on inv.Prod_Id equals pr.Prod_Id
+                           select inv.Octubre * pr.ExProd_PrecioVenta).Sum();
+
+            var novimebre = (from inv in _context.Set<Inventario_Mensual_Productos>() join pr in _context.Set<Existencia_Productos>() on inv.Prod_Id equals pr.Prod_Id
+                             select inv.Noviembre * pr.ExProd_PrecioVenta).Sum();
+
+            var diciembre = (from inv in _context.Set<Inventario_Mensual_Productos>() join pr in _context.Set<Existencia_Productos>() on inv.Prod_Id equals pr.Prod_Id
+                             select inv.Diciembre * pr.ExProd_PrecioVenta).Sum();
+
+            var result = new List<object>();
+            result.Add($"'Enero': '{enero}'," +
+                      $"'Febrero': '{febrero}'," +
+                      $"'Marzo': '{marzo}'," +
+                      $"'Abril': '{abril}'," +
+                      $"'Mayo': '{mayo}'," +
+                      $"'Junio': '{junio}'," +
+                      $"'Julio': '{julio}'," +
+                      $"'Agosto': '{agosto}'," +
+                      $"'Septiembre': '{septiembre}'," +
+                      $"'Octubre': '{octubre}'," +
+                      $"'Noviembre': '{novimebre}'," +
+                      $"'Diciembre': '{diciembre}'");
+
+            return Ok(result);
+        }
+
         // Consulta que traerá la cantidad de cada producto en cada mes
         [HttpGet("getCantidadMes_Producto/{prod}/{und}")]
         public ActionResult GetCantidadMes_Producto(long prod, string und)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from inv in _context.Set<Inventario_Mensual_Productos>()
                       from exi in _context.Set<Existencia_Productos>()
                       where inv.Prod_Id == prod
@@ -80,6 +137,7 @@ namespace PlasticaribeAPI.Controllers
                         Noviembre = inv.Noviembre,
                         Diciembre = inv.Diciembre,
                       };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
 

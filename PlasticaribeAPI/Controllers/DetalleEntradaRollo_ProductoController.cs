@@ -51,14 +51,6 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
-        //Consulta que va a traer la información de los rollos ingresados en el proceso que sea consultado.
-        [HttpGet("GetRollosProceso/{proceso}")]
-        public ActionResult GetRollosProceso(string proceso)
-        {
-            var con = _context.DetallesEntradasRollos_Productos.Where(x => x.Proceso_Id == proceso).Select(x => x.Rollo_Id).ToList();
-            return Ok(con);
-        }
-
         //Consulta que va a traer la informacion de los rollos que esten asociados a un producto, el cual será consultado
         [HttpGet("consultarProducto/{id}")]
         public ActionResult GetConsultarProd(long id)
@@ -169,39 +161,6 @@ namespace PlasticaribeAPI.Controllers
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
-        }
-
-        [HttpGet("ConsultarOTReporteProcesosActual/{ot}")]
-        public ActionResult GetConsultaActual(long ot)
-        {
-            var con1 = from Entrada in _context.Set<DetalleEntradaRollo_Producto>()
-                       where Entrada.DtEntRolloProd_OT == ot
-                       group Entrada by Entrada.DtEntRolloProd_OT
-                       into Entrada
-                       select new
-                       {
-                           Sum = Entrada.Sum(x => x.DtEntRolloProd_Cantidad)
-                       };
-
-            return Ok(con1);
-        }
-
-        [HttpGet("ConsultarOTReporteProcesosSalidas/{ot}")]
-        public ActionResult GetConsultaSalidas(long ot)
-        {
-
-            var con2 = from Entrada in _context.Set<DetalleEntradaRollo_Producto>()
-                       from Salida in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
-                       where Entrada.DtEntRolloProd_OT == ot && Entrada.Rollo_Id == Salida.Rollo_Id
-                       group Entrada by Entrada.DtEntRolloProd_OT
-                       into Salida
-                       select new
-                       {
-                           SumTotal = Salida.Sum(x => x.DtEntRolloProd_Cantidad),
-                           SumPqt = Salida.Sum(x => x.DtEntRolloProd_Cantidad) - Salida.Sum(x => x.Prod_CantPaquetesRestantes)
-                       };
-
-            return Ok(con2);
         }
 
         [HttpPost("getRollos")]

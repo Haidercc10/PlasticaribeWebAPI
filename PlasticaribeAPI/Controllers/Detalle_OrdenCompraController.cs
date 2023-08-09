@@ -30,64 +30,6 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //Funcion que traerá la informacion de la ultima orden de compra creada
-        [HttpGet("GetUltimaOrdenCompra")]
-        public ActionResult GetUltimaOrdenCompra()
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var consecutivo = _context.Ordenes_Compras.OrderByDescending(x => x.Oc_Id).Select(x => x.Oc_Id).First();
-
-            var con = from dt in _context.Set<Detalle_OrdenCompra>()
-                      from Oc in _context.Set<Orden_Compra>()
-                      from Emp in _context.Set<Empresa>()
-                      orderby dt.Oc_Id descending
-                      where dt.Oc_Id == consecutivo 
-                            && dt.Oc_Id == Oc.Oc_Id 
-                            && Emp.Empresa_Id == 800188732
-                      select new
-                      {
-                          Consecutivo = dt.Oc_Id,
-                          Fecha = Oc.Oc_Fecha,
-                          Hora = Oc.Oc_Hora,
-                          Estado_Id = Oc.Estado_Id,
-                          Estado = Oc.Estado.Estado_Nombre,
-
-                          Proveedor_Id = Oc.Prov_Id,
-                          Tipo_Id = Oc.Proveedor.TipoIdentificacion_Id,
-                          Proveedor = Oc.Proveedor.Prov_Nombre,
-                          Tipo_Proveedor = Oc.Proveedor.TpProv.TpProv_Nombre,
-                          Telefono_Proveedor = Oc.Proveedor.Prov_Telefono,
-                          Ciudad_Proveedor = Oc.Proveedor.Prov_Ciudad,
-                          Correo_Proveedor = Oc.Proveedor.Prov_Email,
-
-                          Observacion = Oc.Oc_Observacion,
-                          Usuario_Id = Oc.Usua_Id,
-                          Usuario = Oc.Usua.Usua_Nombre,
-                          Valor_Total = Oc.Oc_ValorTotal,
-                          Peso_Total = Oc.Oc_PesoTotal,
-
-                          Empresa_Id = Emp.Empresa_Id,
-                          Empresa_Ciudad = Emp.Empresa_Ciudad,
-                          Empresa_Codigo = Emp.Empresa_COdigoPostal,
-                          Empresa_Correo = Emp.Empresa_Correo,
-                          Empresa_Direccion = Emp.Empresa_Direccion,
-                          Empresa_Telefono = Emp.Empresa_Telefono,
-                          Empresa = Emp.Empresa_Nombre,
-
-                          MP_Id = dt.MatPri_Id,
-                          MP = dt.MatPrima.MatPri_Nombre,
-                          Tinta_Id = dt.Tinta_Id,
-                          Tinta = dt.Tinta.Tinta_Nombre,
-                          Bopp_Id = dt.BOPP_Id,
-                          Bopp = dt.BOPP.BoppGen_Nombre,
-                          Cantidad = dt.Doc_CantidadPedida,
-                          Unidad_Medida = dt.UndMed_Id,
-                          Precio_Unitario = dt.Doc_PrecioUnitario,
-                      };
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
-        //Funcion que traerá la informacion de la ultima orden de compra creada
         [HttpGet("GetOrdenCompra/{orden}")]
         public ActionResult GetOrdenCompra(int orden)
         {

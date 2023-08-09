@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ using PlasticaribeAPI.Models;
 namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class OrdenMaquila_FacturacionController : ControllerBase
     {
         private readonly dataContext _context;
@@ -53,6 +54,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getOrdenMaquilaFacturada/{id}/{mp}")]
         public ActionResult GetOrdenMaquilaFacturada(long id, int mp)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from fac in _context.Set<DetalleFacturacion_OrdenMaquila>()
                       from dtOm in _context.Set<Detalle_OrdenMaquila>()
                       from omf in _context.Set<OrdenMaquila_Facturacion>()
@@ -95,8 +97,10 @@ namespace PlasticaribeAPI.Controllers
                           Cantidad_Facturada = fac.Sum(x => x.DtFacOM_Cantidad),
                           Cantidad_Faltante = (fac.Key.Cantidad_Total - fac.Sum(x => x.DtFacOM_Cantidad))
                       };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             if (con.Count() == 0)
             {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
                 var con2 = from dtOm in _context.Set<Detalle_OrdenMaquila>()
                            where dtOm.Orden_Maquila.OM_Id == id
                                  && (dtOm.MatPri_Id == mp || dtOm.Tinta_Id == mp || dtOm.BOPP_Id == mp)
@@ -135,6 +139,7 @@ namespace PlasticaribeAPI.Controllers
                                Cantidad_Faltante = (fac.Key.Cantidad_Total),
                                con = con.Count(),
                            };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
                 return Ok(con2);
             } else return Ok(con);
         }

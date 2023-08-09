@@ -76,54 +76,8 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        [HttpGet("fecha/{BOPP_FechaIngreso}")]
-        public ActionResult<BOPP> GetFecha(DateTime BOPP_FechaIngreso)
-        {
-            var bOPP = _context.BOPP.Where(bopp => bopp.BOPP_FechaIngreso == BOPP_FechaIngreso).ToList();
-
-            if (bOPP == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(bOPP);
-            }
-        }
-
         /** Get para contar la cantidad de unidades, precio total segun existencias 
-y cantidad en Kilos agrupados BOPP por Nombre */
-        [HttpGet("BoppAgrupado")]
-        public ActionResult<BOPP> GetBoppAgrupado()
-        {
-
-            /** Consulta la tabla de BOPP Agrupa por descripción */
-            var bOPP = _context.BOPP.Where(x => x.BOPP_Stock > 0)
-                                    .GroupBy(x => new { x.BOPP_Descripcion, x.BOPP_CantidadMicras, x.BOPP_Ancho, x.CatMP_Id })
-            /** Selecciona los campos Descripción, Cantidad Micras, Suma el Precio total, Suma los Kilos, Cuenta cantidad de cada BOPP */
-                                    .Select(bopp => new
-                                    {
-                                        bopp.Key.BOPP_Descripcion,
-                                        bopp.Key.BOPP_CantidadMicras,
-                                        bopp.Key.BOPP_Ancho,
-                                        sumaPrecio = bopp.Sum(x => x.BOPP_Precio),
-                                        sumaKilosIngresados = bopp.Sum(x => x.BOPP_CantidadInicialKg),
-                                        sumaKilosActual = bopp.Sum(x => x.BOPP_Stock),
-                                        conteoDescripcion = bopp.Count()
-                                    })
-                                    .ToList();
-            if (bOPP == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(bOPP);
-            }
-        }
-
-        /** Get para contar la cantidad de unidades, precio total segun existencias 
-y cantidad en Kilos agrupados BOPP por Nombre */
+        y cantidad en Kilos agrupados BOPP por Nombre */
         [HttpGet("getBoppStockInventario")]
         public ActionResult<BOPP> getBoppStockInventario()
         {
@@ -150,6 +104,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             }
         }
 
+
         [HttpGet("getCantRollosIngresados_Mes/{fecha1}/{fecha2}")]
         public ActionResult getCantRollosIngresados_Mes(DateTime fecha1, DateTime fecha2)
         {
@@ -167,6 +122,8 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             return Ok(con);
 
         }
+
+
         [HttpGet("getCantRollosUtilizados_Mes/{fecha1}/{fecha2}")]
         public ActionResult getCantRollosUtilizados_Mes(DateTime fecha1, DateTime fecha2)
         {
@@ -188,157 +145,6 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             return Ok(con);
         }
 
-        [HttpGet("fechas/")]
-        public ActionResult<BOPP> GetFechas(DateTime BOPP_FechaIngreso1, DateTime BOPP_FechaIngreso2)
-        {
-            var bOPP = _context.BOPP.Where(bopp => bopp.BOPP_FechaIngreso >= BOPP_FechaIngreso1 && bopp.BOPP_FechaIngreso <= BOPP_FechaIngreso2).ToList();
-
-            if (bOPP == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(bOPP);
-            }
-        }
-
-        [HttpGet("consultaMovimientos0/{FechaInicial}")]
-        public ActionResult Get(DateTime FechaInicial)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.BOPP
-                .Where(BOPP => BOPP.BOPP_FechaIngreso == FechaInicial)
-                .Select(BOPP => new
-                {
-                    BOPP.BOPP_Id,
-                    BOPP.BOPP_Serial,
-                    BOPP.BOPP_FechaIngreso,
-                    BOPP.BOPP_Nombre,
-                    BOPP.Usua.Usua_Nombre,
-                    BOPP.Usua_Id,
-                    BOPP.BOPP_CantidadInicialKg
-                }).ToList();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
-        [HttpGet("consultaMovimientos1/{Bopp}/{FechaInicial}")]
-        public ActionResult GetMatPri(long Bopp, DateTime FechaInicial)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.BOPP
-                .Where(dtAsg => dtAsg.BOPP_Serial == Bopp
-                       && dtAsg.BOPP_FechaIngreso == FechaInicial)
-                .Select(BOPP => new
-                {
-                    BOPP.BOPP_Id,
-                    BOPP.BOPP_Serial,
-                    BOPP.BOPP_FechaIngreso,
-                    BOPP.BOPP_Nombre,
-                    BOPP.Usua.Usua_Nombre,
-                    BOPP.Usua_Id,
-                    BOPP.BOPP_CantidadInicialKg
-                }).ToList();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
-        [HttpGet("consultaMovimientos2/{Bopp}")]
-        public ActionResult Get(long Bopp)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.BOPP
-                .Where(dtAsg => dtAsg.BOPP_Serial == Bopp)
-                .Select(BOPP => new
-                {
-                    BOPP.BOPP_Id,
-                    BOPP.BOPP_Serial,
-                    BOPP.BOPP_FechaIngreso,
-                    BOPP.BOPP_Nombre,
-                    BOPP.Usua.Usua_Nombre,
-                    BOPP.Usua_Id,
-                    BOPP.BOPP_CantidadInicialKg
-                }).ToList();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
-        [HttpGet("consultaMovimientos3/{FechaInicial}/{FechaFinal}")]
-        public ActionResult Get(DateTime FechaInicial, DateTime FechaFinal)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.BOPP
-                .Where(dtAsg => dtAsg.BOPP_FechaIngreso >= FechaInicial
-                       && dtAsg.BOPP_FechaIngreso <= FechaFinal)
-                .Select(BOPP => new
-                {
-                    BOPP.BOPP_Id,
-                    BOPP.BOPP_Serial,
-                    BOPP.BOPP_FechaIngreso,
-                    BOPP.BOPP_Nombre,
-                    BOPP.Usua.Usua_Nombre,
-                    BOPP.Usua_Id,
-                    BOPP.BOPP_CantidadInicialKg
-                }).ToList();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
-        [HttpGet("GetRollosLike/{datos}")]
-        public ActionResult GetRollosLike(String datos)
-        {
-            var con = from bopp in _context.Set<BOPP>()
-                      where bopp.BOPP_Nombre.Contains(datos)
-                      select bopp;
-            return Ok(con);
-        }
-
-        [HttpGet("consultaMovimientos4/{Bopp}/{FechaInicial}/{FechaFinal}")]
-        public ActionResult Get(long Bopp, DateTime FechaInicial, DateTime FechaFinal)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.BOPP
-                .Where(dtAsg => dtAsg.BOPP_Serial == Bopp
-                       && dtAsg.BOPP_FechaIngreso >= FechaInicial
-                       && dtAsg.BOPP_FechaIngreso <= FechaFinal)
-                .Select(BOPP => new
-                {
-                    BOPP.BOPP_Id,
-                    BOPP.BOPP_Serial,
-                    BOPP.BOPP_FechaIngreso,
-                    BOPP.BOPP_Nombre,
-                    BOPP.Usua.Usua_Nombre,
-                    BOPP.Usua_Id,
-                    BOPP.BOPP_CantidadInicialKg
-                }).ToList();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
-        [HttpGet("consultaMovimientos5/{FechaInicial}/{FechaFinal}/{Bopp}")]
-        public ActionResult Get8(DateTime FechaInicial, DateTime FechaFinal, int Bopp)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.BOPP
-                .Where(dtAsg => dtAsg.BOPP_FechaIngreso >= FechaInicial
-                       && dtAsg.BOPP_FechaIngreso <= FechaFinal
-                       && dtAsg.BOPP_Id == Bopp)
-                .Select(BOPP => new
-                {
-                    BOPP.BOPP_Id,
-                    BOPP.BOPP_Serial,
-                    BOPP.BOPP_FechaIngreso,
-                    BOPP.BOPP_Nombre,
-                    BOPP.Usua.Usua_Nombre,
-                    BOPP.Usua_Id,
-                    BOPP.BOPP_CantidadInicialKg
-                }).ToList();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
-
         //Consulta que traerá las categorias de materia prima de la tabla BOPP
         [HttpGet("getCategoriasBOPP")]
         public ActionResult GetCategoriasBOPP()
@@ -353,26 +159,6 @@ y cantidad en Kilos agrupados BOPP por Nombre */
         }
 
 
-        [HttpGet("consultaMovimientos6/{Bopp}/{FechaInicial}")]
-        public ActionResult Get9(int Bopp, DateTime FechaInicial)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.BOPP
-                .Where(dtAsg => dtAsg.BOPP_Id == Bopp
-                       && dtAsg.BOPP_FechaIngreso == FechaInicial)
-                .Select(BOPP => new
-                {
-                    BOPP.BOPP_Id,
-                    BOPP.BOPP_Serial,
-                    BOPP.BOPP_FechaIngreso,
-                    BOPP.BOPP_Nombre,
-                    BOPP.Usua.Usua_Nombre,
-                    BOPP.Usua_Id,
-                    BOPP.BOPP_CantidadInicialKg
-                }).ToList();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
         [HttpGet("getDescripcion")]
         public ActionResult GetNombresRepetitivos()
         {
@@ -384,6 +170,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL. 
             return Ok(con);
         }
+
 
         [HttpGet("getMicras")]
         public ActionResult GetMicrasRepetitivas()
@@ -397,6 +184,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             return Ok(con);
         }
 
+
         [HttpGet("getPrecios")]
         public ActionResult GePreciosRepetitivos()
         {
@@ -408,6 +196,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
+
 
         [HttpGet("getAnchos")]
         public ActionResult GetAnchosRepetitivos()
@@ -421,6 +210,7 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             return Ok(con);
         }
 
+
         [HttpGet("getSeriales")]
         public ActionResult GetSerialesRepetitivos()
         {
@@ -433,32 +223,80 @@ y cantidad en Kilos agrupados BOPP por Nombre */
             return Ok(con);
         }
 
-        /*[HttpGet("pdfMovimientos/{Ot}")]
-        public ActionResult Get(long Ot)
+
+        [HttpGet("getInventarioBoppsGenericos")]
+        public ActionResult GetInventarioBoppsGenericos()
         {
-            var con = _context.DetallesAsignaciones_MateriasPrimas
-                .Where(dtAsg => dtAsg.AsigMp.AsigMP_OrdenTrabajo == Ot)
-                .Include(dtAsg => dtAsg.AsigMp)
-                .Select(dtAsg => new
-                {
-                    dtAsg.AsigMp.AsigMp_Id,
-                    dtAsg.AsigMp.AsigMp_FechaEntrega,
-                    dtAsg.AsigMp.AsigMp_Observacion,
-                    dtAsg.AsigMp.AsigMP_OrdenTrabajo,
-                    dtAsg.AsigMp.AsigMp_Maquina,
-                    dtAsg.AsigMp.Usua_Id,
-                    dtAsg.AsigMp.Usua.Usua_Nombre,
-                    dtAsg.MatPri_Id,
-                    dtAsg.MatPri.MatPri_Nombre,
-                    dtAsg.UndMed_Id,
-                    dtAsg.DtAsigMp_Cantidad,
-                    dtAsg.Proceso_Id,
-                    dtAsg.Proceso.Proceso_Nombre
-                })
-                .ToList();
-            return Ok(con);
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from b in _context.Set<BOPP>()
+                      from bg in _context.Set<Bopp_Generico>()
+                      from cat in _context.Set<Categoria_MatPrima>()
+                      where b.BoppGen_Id == bg.BoppGen_Id &&
+                      b.BOPP_Stock > 0 &&
+                      b.CatMP_Id == cat.CatMP_Id
+                      group b by new { b.BoppGen_Id, bg.BoppGen_Nombre, bg.BoppGen_Micra, bg.BoppGen_Ancho, cat.CatMP_Id, cat.CatMP_Nombre, b.UndMed_Kg }
+                      into b
+                      select new
+                      {
+                          Id = b.Key.BoppGen_Id,
+                          Nombre = b.Key.BoppGen_Nombre,
+                          Micras = b.Key.BoppGen_Micra, 
+                          Ancho = b.Key.BoppGen_Ancho, 
+                          IdCategoria = b.Key.CatMP_Id,
+                          NombreCategoria = b.Key.CatMP_Nombre,
+                          Rollos = b.Count(),
+                          Medida = b.Key.UndMed_Kg,
+                          Stock = b.Sum(xx => xx.BOPP_Stock),
+                      };
+
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            if (con != null) return Ok(con);
+            else return BadRequest("No se encontrar Biorientados asociados a Bopps genéricos");
         }
-        */
+
+
+        [HttpGet("getInventarioBopps/{fecha1}/{fecha2}/{id}")]
+        public ActionResult GetInventarioBopps(DateTime fecha1, DateTime fecha2, long id)
+        {
+
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var AsgBopp = _context.DetallesAsignaciones_BOPP
+                .Where(asg => asg.BOPP.BOPP_Serial == id
+                       && asg.AsigBOPP.AsigBOPP_FechaEntrega >= fecha1
+                       && asg.AsigBOPP.AsigBOPP_FechaEntrega <= fecha2).Sum(asg => asg.DtAsigBOPP_Cantidad);
+
+            //Entrada de BOPP
+            var EntradaBOPP = _context.BOPP
+                .Where(x => x.BOPP_FechaIngreso >= fecha1
+                       && x.BOPP_FechaIngreso <= fecha2
+                       && x.BOPP_Serial == id).Sum(x => x.BOPP_CantidadInicialKg);
+
+            var con = from b in _context.Set<BOPP>()
+                      where b.BoppGen_Id == id
+                      && (b.BOPP_Stock > 0 || EntradaBOPP > 0)
+                      select new
+                      { 
+                          Id = b.BOPP_Id,
+                          Serial = b.BOPP_Serial,
+                          Nombre = b.BOPP_Nombre,
+                          Ancho = b.BOPP_Ancho,
+                          Micras = b.BOPP_CantidadMicras,
+                          Inicial = b.BOPP_CantidadInicialKg,
+                          Entrada = EntradaBOPP,
+                          Salida = AsgBopp,
+                          Stock = b.BOPP_Stock,
+                          Diferencia = (b.BOPP_Stock - b.BOPP_CantidadInicialKg), 
+                          Medida = b.UndMed_Id, 
+                          Precio = b.BOPP_Precio, 
+                          Subtotal = (b.BOPP_Stock * b.BOPP_Precio),
+                          CategoriaId = b.CatMP_Id, 
+                          Categoria = b.CatMP.CatMP_Nombre,
+                      };
+
+            if (con != null) return Ok(con);
+            else return BadRequest("No se encontraron BOPPs asociados");
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+        }
 
         // PUT: api/BOPP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

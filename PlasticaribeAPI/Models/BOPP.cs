@@ -75,6 +75,10 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(50)")]
         public string? BOPP_CodigoDoc { get; set; }
 
+        public long BoppGen_Id { get; set; }          
+        public Bopp_Generico? boppGenerico { get; set; }  
+
+
         //Lista requerida para relacion con BOPP en detalles asignaciones bopp
         public IList<DetalleAsignacion_BOPP>? DetAsigBOPP { get; set; }
     }

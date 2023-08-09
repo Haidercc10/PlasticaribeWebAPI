@@ -12,7 +12,7 @@ using PlasticaribeAPI.Models;
 namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class MovientosAplicacionController : ControllerBase
     {
         private readonly dataContext _context;
@@ -22,14 +22,14 @@ namespace PlasticaribeAPI.Controllers
             _context = context;
         }
 
-        // GET: api/Rol_Usuario
+        // GET: api/MovientosAplicacion
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MovimientosAplicacion>>> GetMovimientosAplicacion()
         {
             return await _context.MovimientosAplicacion.ToListAsync();
         }
 
-        // GET: api/Rol_Usuario/5
+        // GET: api/MovientosAplicacion/5
         [HttpGet("{id}")]
         public async Task<ActionResult<MovimientosAplicacion>> GetMovimientosAplicacion(int id)
         {
@@ -41,6 +41,37 @@ namespace PlasticaribeAPI.Controllers
             }
 
             return mov;
+        }
+
+        //Consulta para saber que usuario tiene la sesión iniciada y cuanto tiempo lleva en el programa
+        [HttpGet("getUsuario_SesionIniciada")]
+        public ActionResult GetUsuario_SesionIniciada()
+        {
+            var con = from mov in _context.Set<MovimientosAplicacion>()
+                      join usua in _context.Set<Usuario>() on mov.Usua_Id equals usua.Usua_Id
+                      where mov.MovApp_Nombre == "Inicio de sesión" &&
+                            mov.MovApp_Fecha >= Convert.ToDateTime("2023-07-24") &&
+                            mov.MovApp_Id == (from mov2 in _context.Set<MovimientosAplicacion>()
+                                              where mov2.MovApp_Nombre == "Inicio de sesión" &&
+                                                    mov.Usua_Id == mov2.Usua_Id &&
+                                                    mov2.MovApp_Fecha >= Convert.ToDateTime("2023-07-24")
+                                              orderby mov2.MovApp_Id descending
+                                              select mov2.MovApp_Id).First() &&
+                           mov.MovApp_Id > (from mov2 in _context.Set<MovimientosAplicacion>()
+                                            where mov2.MovApp_Nombre == "Cierre de sesión" &&
+                                                  mov.Usua_Id == mov2.Usua_Id &&
+                                                  mov2.MovApp_Fecha >= Convert.ToDateTime("2023-07-24")
+                                            orderby mov2.MovApp_Id descending
+                                            select mov2.MovApp_Id).First()
+                      select new
+                      {
+                          usua.Usua_Id,
+                          usua.Usua_Nombre,
+                          mov.MovApp_Fecha,
+                          mov.MovApp_Hora
+                      };
+
+            return Ok(con);
         }
 
         [HttpPut("{id}")]

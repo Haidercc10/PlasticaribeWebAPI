@@ -55,6 +55,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getInfoSolicitud/{solicitud_Id}")]
         public ActionResult GetInfoSolicitud (long solicitud_Id)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from dtSol in _context.Set<Detalles_SolicitudMateriaPrima>()
                       from Emp in _context.Set<Empresa>()
                       where dtSol.Solicitud_Id == solicitud_Id
@@ -95,6 +96,7 @@ namespace PlasticaribeAPI.Controllers
                           Estado_MP = dtSol.Estado.Estado_Nombre,
 
                       };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             if (con.Count() > 0) return Ok(con);
             else return BadRequest("No se encontró información sobre una solicitud con el número '" + solicitud_Id +"'");
@@ -133,6 +135,7 @@ namespace PlasticaribeAPI.Controllers
             if (relacion.Count() == 0) return BadRequest("No se encontraron ordenes de compra asociadas a la solicitud N° " + solicitud);
             else
             {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
                 var ordenCompra = from Oc in _context.Set<Detalle_OrdenCompra>()
                                   where relacion.Contains(Oc.Oc_Id)
                                   group Oc by new {
@@ -156,14 +159,14 @@ namespace PlasticaribeAPI.Controllers
                                     Cantidad = Oc.Sum(oc => oc.Doc_CantidadPedida),
                                     Unidad = Oc.Key.UndMed_Id,
                                   };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
                 return Ok(ordenCompra);
             }
         }
 
-
-            // PUT: api/Detalles_SolicitudMateriaPrima/5
+        // PUT: api/Detalles_SolicitudMateriaPrima/5
             // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-            [HttpPut("{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutDetalles_SolicitudMateriaPrima(long id, Detalles_SolicitudMateriaPrima detalles_SolicitudMateriaPrima)
         {
             if (id != detalles_SolicitudMateriaPrima.DtSolicitud_Id)

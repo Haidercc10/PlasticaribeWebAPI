@@ -166,7 +166,6 @@ namespace PlasticaribeAPI.Controllers
             return con.Any() ? Ok(con) : BadRequest("No se encontró información");
         }
 
-        //Consulta que devolverá el numero de solicitudes que hay dependiendo de un estado
 
         // PUT: api/Detalles_SolicitudRollos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

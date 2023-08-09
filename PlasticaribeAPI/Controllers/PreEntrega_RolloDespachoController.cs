@@ -29,13 +29,6 @@ namespace PlasticaribeAPI.Controllers
             return await _context.PreEntrega_RollosDespacho.ToListAsync();
         }
 
-        [HttpGet("UltimoID")]
-        public ActionResult Get()
-        {
-            var con = _context.PreEntrega_RollosDespacho.OrderByDescending(x => x.PreEntRollo_Id).First();
-            return Ok(con);
-        }
-
         // GET: api/PreEntrega_RolloDespacho/5
         [HttpGet("{id}")]
         public async Task<ActionResult<PreEntrega_RolloDespacho>> GetPreEntrega_RolloDespacho(long id)

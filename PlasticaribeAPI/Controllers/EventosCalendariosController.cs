@@ -75,12 +75,25 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con.Count());
         }
 
-        //Get que devolverá la cantidad de eventos que hay para el mes actual
+        //Get que devolverá la cantidad de eventos que hay para el dia actual
         [HttpGet("getEventosDia/{id}/{rol}")]
         public ActionResult GetEventosDia(long id, string rol)
         {
             var con = from ev in _context.Set<EventosCalendario>()
                       where ev.EventoCal_FechaInicial == DateTime.Today
+                            && (ev.Usua_Id == id || ev.EventoCal_Visibilidad.Contains("|" + rol + "|"))
+                      select ev;
+            return Ok(con);
+        }
+
+
+        //Get que devolverá la cantidad de eventos que hay para el mes actual
+        [HttpGet("getEventosMes/{id}/{rol}")]
+        public ActionResult GetEventosMes(long id, string rol)
+        {
+            var con = from ev in _context.Set<EventosCalendario>()
+                      where ev.EventoCal_FechaInicial.Month == DateTime.Today.Month
+                            && ev.EventoCal_FechaInicial >= DateTime.Today
                             && (ev.Usua_Id == id || ev.EventoCal_Visibilidad.Contains("|" + rol + "|"))
                       select ev;
             return Ok(con);
