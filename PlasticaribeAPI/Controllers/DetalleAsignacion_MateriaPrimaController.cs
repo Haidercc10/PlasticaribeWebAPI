@@ -64,6 +64,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("AsignacionesTotales/{ot}")]
         public ActionResult GetAsignacionesTotales(long ot)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var conMp = (from Asgmp in _context.Set<DetalleAsignacion_MateriaPrima>()
                         where Asgmp.AsigMp.AsigMP_OrdenTrabajo == ot
                         group Asgmp by new { 
@@ -144,6 +145,7 @@ namespace PlasticaribeAPI.Controllers
                                NombreProceso = y.Key.Proceso_Nombre
                            });
             var con = conMp.Concat(conTinta).Concat(conBopp);
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             return Ok(con);
         }
@@ -152,6 +154,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getMateriaPrimaAsignada/{ot}")]
         public ActionResult GetMateriaPrimaAsignada(int ot)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var asig = (from asg in _context.Set<DetalleAsignacion_MateriaPrima>()
                        where asg.AsigMp.AsigMP_OrdenTrabajo == ot
                        select asg.DtAsigMp_Cantidad).Sum();
@@ -165,6 +168,7 @@ namespace PlasticaribeAPI.Controllers
                         select dev.DtDevMatPri_CantidadDevuelta).Sum();
 
             var asigs = (asig + asgBopp) - devol;
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(asigs);
         }
 
@@ -172,6 +176,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getAsignacionesConSolicitudes/{idSolicitud}")]
         public ActionResult GetAsignacionesConSolicitudes(long idSolicitud)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var conMp = (from Asgmp in _context.Set<DetalleAsignacion_MateriaPrima>()
                          where Asgmp.AsigMp.SolMpExt_Id == idSolicitud
                          group Asgmp by new
@@ -212,6 +217,7 @@ namespace PlasticaribeAPI.Controllers
                             });
 
             var con = conMp.Concat(conTinta);
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             if (con == null) return BadRequest("No se encontraron datos de la solicitud consultada");
             return Ok(con);
         }

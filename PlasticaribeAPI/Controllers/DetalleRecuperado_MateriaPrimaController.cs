@@ -56,7 +56,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("MostrarMPRecuperada/{FechaEntregaInicial}/{FechaEntregaFinal}/{Operario}/{Turno}/{IDPeletizado}")]
         public ActionResult GetMPRecuperada(DateTime FechaEntregaInicial, DateTime FechaEntregaFinal, long Operario = 0, string Turno = "NE", long IDPeletizado = 0)
         {
-            //var con;
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             DateTime Hoy = DateTime.Today;
 
 #pragma warning disable CS8073 // El resultado de la expresión siempre es el mismo ya que un valor de este tipo siempre es igual a "null"
@@ -989,17 +989,17 @@ namespace PlasticaribeAPI.Controllers
                         rec.Key.UndMed_Id
                     })
               .ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
                 return Ok(con);
             }
 #pragma warning restore CS8073 // El resultado de la expresión siempre es el mismo ya que un valor de este tipo siempre es igual a "null"
-
-
         }
 
         [HttpGet("MostrarRecuperadoModal/{FechaEntregaInicial}/{FechaEntregaFinal}/{Turno}/{IDPeletizado}")]
         public ActionResult GetMPRecuperada(DateTime FechaEntregaInicial, DateTime FechaEntregaFinal, string Turno, long IDPeletizado)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                     rec => rec.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial &&
                     rec.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal &&
@@ -1028,6 +1028,7 @@ namespace PlasticaribeAPI.Controllers
                     rec.Key.RecMatPri_Cantidad,
                     rec.Key.UndMed_Id,
                 }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
 

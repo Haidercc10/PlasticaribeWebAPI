@@ -68,6 +68,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("consultaMovimientos2/{ot}")]
         public ActionResult GetOT(long ot)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.DetallesDevoluciones_MateriasPrimas
                 .Where(devMp => devMp.DevMatPri.DevMatPri_OrdenTrabajo == ot)
                 .Include(devMp => devMp.DevMatPri)
@@ -85,6 +86,7 @@ namespace PlasticaribeAPI.Controllers
                     devMp.Bopp.BOPP_Nombre,
                     devMp.DtDevMatPri_CantidadDevuelta
                 }).ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
 

@@ -54,6 +54,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("pdfMovimientos/{codigo}")]
         public ActionResult Get(string codigo)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.Remisiones_MateriasPrimas
                 .Where(rem => rem.Rem.Rem_Codigo == codigo)
                 .Include(rem => rem.Rem)
@@ -78,12 +79,14 @@ namespace PlasticaribeAPI.Controllers
                     rem.RemiMatPri_ValorUnitario
                 })
                 .ToList();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
 
         [HttpGet("GetRemisionSinFactura/{codigo}")]
         public ActionResult GetRemisionSinFactura(string codigo)
         {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.Remisiones_FacturasCompras.Where(x => x.Remi.Rem_Codigo == codigo).Select(x => x.Rem_Id).ToList();
             var remision = from rem in _context.Set<Remision>()
                             where !con.Contains(rem.Rem_Id) && rem.Rem_Codigo == codigo
@@ -100,6 +103,7 @@ namespace PlasticaribeAPI.Controllers
                                 rem.TpDoc.TpDoc_Nombre,
                                 rem.Rem_PrecioEstimado,
                             };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(remision);
         }
 
