@@ -51,6 +51,75 @@ namespace PlasticaribeAPI.Controllers
             return estados_ProcesosOT;
         }
 
+        //Consulta que tomará diferentes parametros para consultar los datos de las ordenes de trabajo
+        [HttpGet("getInfo_OrdenesTrabajo/{fechaInicial}/{fechaFinal}")]
+        public ActionResult GetInfo_OrdenesTrabajo(DateTime fechaInicial, DateTime fechaFinal, string? ot = "", string? cli = "", string? prod = "", string? estado = "", string? vendedor = "", string? falla = "")
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+            var con = from orden in _context.Set<Estados_ProcesosOT>()
+                      where orden.EstProcOT_FechaCreacion >= fechaInicial
+                            && orden.EstProcOT_FechaCreacion <= fechaFinal
+                            && Convert.ToString(orden.EstProcOT_OrdenTrabajo).Contains(ot)
+                            && Convert.ToString(orden.Falla_Id).Contains(falla)
+                            && Convert.ToString(orden.Estado_Id).Contains(estado)
+                            && Convert.ToString(orden.Usuario.Usua_Id).Contains(vendedor)
+                            && orden.EstProcOT_Cliente.Contains(cli)
+                            && Convert.ToString(orden.Prod_Id).Contains(prod)
+                      select new
+                      {
+                          orden.EstProcOT_Id,
+                          Ot = orden.EstProcOT_OrdenTrabajo,
+                          Ext = orden.EstProcOT_ExtrusionKg,
+                          Imp = orden.EstProcOT_ImpresionKg,
+                          Rot = orden.EstProcOT_RotograbadoKg,
+                          Lam = orden.EstProcOT_LaminadoKg,
+                          Dbl = orden.EstProcOT_DobladoKg,
+                          Cor = orden.EstProcOT_CorteKg,
+                          Emp = orden.EstProcOT_EmpaqueKg,
+                          Sel = orden.EstProcOT_SelladoKg,
+                          SelUnd = orden.EstProcOT_SelladoUnd,
+                          Wik = orden.EstProcOT_WiketiadoKg,
+                          WikUnd = orden.EstProcOT_WiketiadoUnd,
+                          DespUnd = (from bg in _context.Set<Detalles_BodegasRollos>()
+                                     where bg.BgRollo_BodegaActual == "DESP" &&
+                                           bg.BgRollo_OrdenTrabajo == orden.EstProcOT_OrdenTrabajo &&
+                                           bg.UndMed_Id != "Kg"
+                                     select bg.DtBgRollo_Cantidad).Sum(),
+                          Desp = (from bg in _context.Set<Detalles_BodegasRollos>()
+                                  where bg.BgRollo_BodegaActual == "DESP" &&
+                                        bg.BgRollo_OrdenTrabajo == orden.EstProcOT_OrdenTrabajo &&
+                                        bg.UndMed_Id == "Kg"
+                                  select bg.DtBgRollo_Cantidad).Sum(),
+                          orden.Falla_Id,
+                          Falla = orden.FallaTecnica.Falla_Nombre,
+                          orden.Estado_Id,
+                          Est = orden.Estado_OT.Estado_Nombre,
+                          Obs = orden.EstProcOT_Observacion,
+                          Fecha = orden.EstProcOT_FechaCreacion,
+                          Cant = orden.EstProcOT_CantidadPedida,
+                          Und = orden.UndMed_Id,
+                          orden.UnidadMedida.UndMed_Nombre,
+                          FechaInicio = orden.EstProcOT_FechaInicio,
+                          FechaFinal = orden.EstProcOT_FechaFinal,
+                          CantUnd = orden.EstProcOT_CantidadPedidaUnd,
+                          Usu = orden.Usua_Id,
+                          NombreUsu = orden.Usuario.Usua_Nombre,
+                          orden.Cli_Id,
+                          CliNombre = orden.Clientes.Cli_Nombre,
+                          orden.Prod_Id,
+                          Prod = orden.Producto.Prod_Nombre,
+                          Salida = orden.EstProcOT_CantProdFacturada,
+                          Entrada = orden.EstProcOT_CantProdIngresada,
+                          Mp = orden.EstProcOT_CantMatPrimaAsignada,
+                          Cli = orden.EstProcOT_Cliente,
+                          Ped = orden.EstProcOT_Pedido,
+                      };
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return con.Any() ? Ok(con) : NotFound("¡No se encontró información!");
+        }
+
         //Consulta por OT
         [HttpGet("consultaPorOT/{EstProcOT_OrdenTrabajo}")]
         public ActionResult GetPorOT(long EstProcOT_OrdenTrabajo)
@@ -101,428 +170,6 @@ namespace PlasticaribeAPI.Controllers
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ot);
-        }
-
-        //Consulta por fallas
-        [HttpGet("consultaPorFallas/{Falla_Id}")]
-        public ActionResult GetPorFallas(int Falla_Id)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var ot = _context.Estados_ProcesosOT.Where(epOT => epOT.Falla_Id == Falla_Id)
-                .Include(estOT => estOT.FallaTecnica)
-                .Include(estOT => estOT.Estado_OT)
-                .Include(estOt => estOt.UnidadMedida)
-                .Select(estOt => new {
-                    estOt.EstProcOT_OrdenTrabajo,
-                    estOt.EstProcOT_ExtrusionKg,
-                    estOt.EstProcOT_ImpresionKg,
-                    estOt.EstProcOT_RotograbadoKg,
-                    estOt.EstProcOT_LaminadoKg,
-                    estOt.EstProcOT_DobladoKg,
-                    estOt.EstProcOT_CorteKg,
-                    estOt.EstProcOT_EmpaqueKg,
-                    estOt.EstProcOT_SelladoKg,
-                    estOt.EstProcOT_SelladoUnd,
-                    estOt.EstProcOT_WiketiadoKg,
-                    estOt.EstProcOT_WiketiadoUnd,
-                    estOt.Falla_Id,
-                    estOt.FallaTecnica.Falla_Nombre,
-                    estOt.Estado_Id,
-                    estOt.Estado_OT.Estado_Nombre,
-                    estOt.EstProcOT_Observacion,
-                    estOt.EstProcOT_FechaCreacion,
-                    estOt.EstProcOT_CantidadPedida,
-                    estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre,
-                    estOt.EstProcOT_FechaInicio,
-                    estOt.EstProcOT_FechaFinal,
-                    estOt.EstProcOT_CantidadPedidaUnd,
-                    estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre,
-                    estOt.Cli_Id,
-                    estOt.Clientes.Cli_Nombre,
-                    estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre,
-                    estOt.EstProcOT_CantProdFacturada,
-                    estOt.EstProcOT_CantProdIngresada,
-                    estOt.EstProcOT_CantMatPrimaAsignada,
-                    estOt.EstProcOT_Cliente,
-                    estOt.EstProcOT_Pedido,
-                })
-                .ToList();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(ot);
-        }
-
-        //Consulta por OT y 2 fechas
-        [HttpGet("consultaPorOtFechas/{EstProcOT_OrdenTrabajo}")]
-        public ActionResult GetPorOtFechas(long EstProcOT_OrdenTrabajo, DateTime EstProcOT_FechaCreacion1, DateTime EstProcOT_FechaCreacion2)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var ot = _context.Estados_ProcesosOT
-                .Where(epOT => epOT.EstProcOT_OrdenTrabajo == EstProcOT_OrdenTrabajo && epOT.EstProcOT_FechaCreacion >= EstProcOT_FechaCreacion1 && epOT.EstProcOT_FechaCreacion <= EstProcOT_FechaCreacion2)
-                .Include(estOT => estOT.FallaTecnica)
-                .Include(estOT => estOT.Estado_OT)
-                .Include(estOt => estOt.UnidadMedida)
-                .Select(estOt => new {
-                    estOt.EstProcOT_OrdenTrabajo,
-                    estOt.EstProcOT_ExtrusionKg,
-                    estOt.EstProcOT_ImpresionKg,
-                    estOt.EstProcOT_RotograbadoKg,
-                    estOt.EstProcOT_LaminadoKg,
-                    estOt.EstProcOT_DobladoKg,
-                    estOt.EstProcOT_CorteKg,
-                    estOt.EstProcOT_EmpaqueKg,
-                    estOt.EstProcOT_SelladoKg,
-                    estOt.EstProcOT_SelladoUnd,
-                    estOt.EstProcOT_WiketiadoKg,
-                    estOt.EstProcOT_WiketiadoUnd,
-                    estOt.Falla_Id,
-                    estOt.FallaTecnica.Falla_Nombre,
-                    estOt.Estado_Id,
-                    estOt.Estado_OT.Estado_Nombre,
-                    estOt.EstProcOT_Observacion,
-                    estOt.EstProcOT_FechaCreacion,
-                    estOt.EstProcOT_CantidadPedida,
-                    estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre,
-                    estOt.EstProcOT_FechaInicio,
-                    estOt.EstProcOT_FechaFinal,
-                    estOt.EstProcOT_CantidadPedidaUnd,
-                    estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre,
-                    estOt.Cli_Id,
-                    estOt.Clientes.Cli_Nombre,
-                    estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre,
-                    estOt.EstProcOT_CantProdFacturada,
-                    estOt.EstProcOT_CantProdIngresada,
-                    estOt.EstProcOT_CantMatPrimaAsignada,
-                    estOt.EstProcOT_Cliente,
-                    estOt.EstProcOT_Pedido,
-                })
-                .ToList();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(ot);
-        }
-
-        //Consulta por 2 fechas y la falla
-        [HttpGet("consultaPorFechasFallas/{Falla_Id}")]
-        public ActionResult GetPorFechasFallas(DateTime EstProcOT_FechaCreacion1, DateTime EstProcOT_FechaCreacion2, int Falla_Id)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var ot = _context.Estados_ProcesosOT
-                .Where(epOT => epOT.Falla_Id == Falla_Id && epOT.EstProcOT_FechaCreacion >= EstProcOT_FechaCreacion1 && epOT.EstProcOT_FechaCreacion <= EstProcOT_FechaCreacion2)
-                .Include(estOT => estOT.FallaTecnica)
-                .Include(estOT => estOT.Estado_OT)
-                .Include(estOt => estOt.UnidadMedida)
-                .Select(estOt => new {
-                    estOt.EstProcOT_OrdenTrabajo,
-                    estOt.EstProcOT_ExtrusionKg,
-                    estOt.EstProcOT_ImpresionKg,
-                    estOt.EstProcOT_RotograbadoKg,
-                    estOt.EstProcOT_LaminadoKg,
-                    estOt.EstProcOT_DobladoKg,
-                    estOt.EstProcOT_CorteKg,
-                    estOt.EstProcOT_EmpaqueKg,
-                    estOt.EstProcOT_SelladoKg,
-                    estOt.EstProcOT_SelladoUnd,
-                    estOt.EstProcOT_WiketiadoKg,
-                    estOt.EstProcOT_WiketiadoUnd,
-                    estOt.Falla_Id,
-                    estOt.FallaTecnica.Falla_Nombre,
-                    estOt.Estado_Id,
-                    estOt.Estado_OT.Estado_Nombre,
-                    estOt.EstProcOT_Observacion,
-                    estOt.EstProcOT_FechaCreacion,
-                    estOt.EstProcOT_CantidadPedida,
-                    estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre,
-                    estOt.EstProcOT_FechaInicio,
-                    estOt.EstProcOT_FechaFinal,
-                    estOt.EstProcOT_CantidadPedidaUnd,
-                    estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre,
-                    estOt.Cli_Id,
-                    estOt.Clientes.Cli_Nombre,
-                    estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre,
-                    estOt.EstProcOT_CantProdFacturada,
-                    estOt.EstProcOT_CantProdIngresada,
-                    estOt.EstProcOT_CantMatPrimaAsignada,
-                    estOt.EstProcOT_Cliente,
-                    estOt.EstProcOT_Pedido,
-                })
-                .ToList();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(ot);
-        }
-
-         //Consulta por el estado de la orden de trabajo
-        [HttpGet("consultarPorEstados/{Estado_Id}")]
-        public ActionResult Get(int Estado_Id)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var ot = _context.Estados_ProcesosOT.Where(epOT => epOT.Estado_Id == Estado_Id)
-                .Include(estOT => estOT.FallaTecnica)
-                .Include(estOT => estOT.Estado_OT)
-                .Include(estOt => estOt.UnidadMedida)
-                .Select(estOt => new {
-                    estOt.EstProcOT_OrdenTrabajo,
-                    estOt.EstProcOT_ExtrusionKg,
-                    estOt.EstProcOT_ImpresionKg,
-                    estOt.EstProcOT_RotograbadoKg,
-                    estOt.EstProcOT_LaminadoKg,
-                    estOt.EstProcOT_DobladoKg,
-                    estOt.EstProcOT_CorteKg,
-                    estOt.EstProcOT_EmpaqueKg,
-                    estOt.EstProcOT_SelladoKg,
-                    estOt.EstProcOT_SelladoUnd,
-                    estOt.EstProcOT_WiketiadoKg,
-                    estOt.EstProcOT_WiketiadoUnd,
-                    estOt.Falla_Id,
-                    estOt.FallaTecnica.Falla_Nombre,
-                    estOt.Estado_Id,
-                    estOt.Estado_OT.Estado_Nombre,
-                    estOt.EstProcOT_Observacion,
-                    estOt.EstProcOT_FechaCreacion,
-                    estOt.EstProcOT_CantidadPedida,
-                    estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre,
-                    estOt.EstProcOT_FechaInicio,
-                    estOt.EstProcOT_FechaFinal,
-                    estOt.EstProcOT_CantidadPedidaUnd,
-                    estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre,
-                    estOt.Cli_Id,
-                    estOt.Clientes.Cli_Nombre,
-                    estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre,
-                    estOt.EstProcOT_CantProdFacturada,
-                    estOt.EstProcOT_CantProdIngresada,
-                    estOt.EstProcOT_CantMatPrimaAsignada,
-                    estOt.EstProcOT_Cliente,
-                    estOt.EstProcOT_Pedido,
-                })
-                .ToList();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-
-            return Ok(ot);
-        }
-
-        //Consulta por 2 fechas de creacionpor estados
-        [HttpGet("consultaPorFechasEstado/{EstProcOT_FechaCreacion1}/{EstProcOT_FechaCreacion2}/{Estado_Id}")]
-        public ActionResult Get(DateTime EstProcOT_FechaCreacion1, DateTime EstProcOT_FechaCreacion2, int Estado_Id)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var ot = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_FechaCreacion >= EstProcOT_FechaCreacion1 && epOT.EstProcOT_FechaCreacion <= EstProcOT_FechaCreacion2 && epOT.Estado_Id == Estado_Id)
-                .Include(estOT => estOT.FallaTecnica)
-                .Include(estOT => estOT.Estado_OT)
-                .Include(estOt => estOt.UnidadMedida)
-                .Select(estOt => new {
-                    estOt.EstProcOT_OrdenTrabajo,
-                    estOt.EstProcOT_ExtrusionKg,
-                    estOt.EstProcOT_ImpresionKg,
-                    estOt.EstProcOT_RotograbadoKg,
-                    estOt.EstProcOT_LaminadoKg,
-                    estOt.EstProcOT_DobladoKg,
-                    estOt.EstProcOT_CorteKg,
-                    estOt.EstProcOT_EmpaqueKg,
-                    estOt.EstProcOT_SelladoKg,
-                    estOt.EstProcOT_SelladoUnd,
-                    estOt.EstProcOT_WiketiadoKg,
-                    estOt.EstProcOT_WiketiadoUnd,
-                    estOt.Falla_Id,
-                    estOt.FallaTecnica.Falla_Nombre,
-                    estOt.Estado_Id,
-                    estOt.Estado_OT.Estado_Nombre,
-                    estOt.EstProcOT_Observacion,
-                    estOt.EstProcOT_FechaCreacion,
-                    estOt.EstProcOT_CantidadPedida,
-                    estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre,
-                    estOt.EstProcOT_FechaInicio,
-                    estOt.EstProcOT_FechaFinal,
-                    estOt.EstProcOT_CantidadPedidaUnd,
-                    estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre,
-                    estOt.Cli_Id,
-                    estOt.Clientes.Cli_Nombre,
-                    estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre,
-                    estOt.EstProcOT_CantProdFacturada,
-                    estOt.EstProcOT_CantProdIngresada,
-                    estOt.EstProcOT_CantMatPrimaAsignada,
-                    estOt.EstProcOT_Cliente,
-                    estOt.EstProcOT_Pedido,
-                })
-                .ToList();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(ot);
-        }
-
-        //Consulta por productos 
-        [HttpGet("consultaPorProductos/{Prod_Id}")]
-        public ActionResult GetProducto(int Prod_Id)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var ot = _context.Estados_ProcesosOT.Where(epOT => epOT.Prod_Id == Prod_Id)
-                .Include(estOT => estOT.FallaTecnica)
-                .Include(estOT => estOT.Estado_OT)
-                .Include(estOt => estOt.UnidadMedida)
-                .Include(estOt => estOt.Usuario)
-                .Select(estOt => new {
-                    estOt.EstProcOT_OrdenTrabajo,
-                    estOt.EstProcOT_ExtrusionKg,
-                    estOt.EstProcOT_ImpresionKg,
-                    estOt.EstProcOT_RotograbadoKg,
-                    estOt.EstProcOT_LaminadoKg,
-                    estOt.EstProcOT_DobladoKg,
-                    estOt.EstProcOT_CorteKg,
-                    estOt.EstProcOT_EmpaqueKg,
-                    estOt.EstProcOT_SelladoKg,
-                    estOt.EstProcOT_SelladoUnd,
-                    estOt.EstProcOT_WiketiadoKg,
-                    estOt.EstProcOT_WiketiadoUnd,
-                    estOt.Falla_Id,
-                    estOt.FallaTecnica.Falla_Nombre,
-                    estOt.Estado_Id,
-                    estOt.Estado_OT.Estado_Nombre,
-                    estOt.EstProcOT_Observacion,
-                    estOt.EstProcOT_FechaCreacion,
-                    estOt.EstProcOT_CantidadPedida,
-                    estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre,
-                    estOt.EstProcOT_FechaInicio,
-                    estOt.EstProcOT_FechaFinal,
-                    estOt.EstProcOT_CantidadPedidaUnd,
-                    estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre,
-                    estOt.Cli_Id,
-                    estOt.Clientes.Cli_Nombre,
-                    estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre,
-                    estOt.EstProcOT_CantProdFacturada,
-                    estOt.EstProcOT_CantProdIngresada,
-                    estOt.EstProcOT_CantMatPrimaAsignada,
-                    estOt.EstProcOT_Cliente,
-                    estOt.EstProcOT_Pedido,
-                })
-                .ToList();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(ot);
-        }
-
-        // Consulta por Clientes
-        [HttpGet("consultaPorClientes/{Cli_Id}")]
-        public ActionResult GetClientes(string Cli_Id)
-        {
-            
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var ot = _context.Estados_ProcesosOT.Where(epOT => epOT.EstProcOT_Cliente.Contains(Cli_Id))
-                .Include(estOT => estOT.FallaTecnica)
-                .Include(estOT => estOT.Estado_OT)
-                .Include(estOt => estOt.UnidadMedida)
-                .Include(estOt => estOt.Usuario)
-                .Select(estOt => new {
-                    estOt.EstProcOT_OrdenTrabajo,
-                    estOt.EstProcOT_ExtrusionKg,
-                    estOt.EstProcOT_ImpresionKg,
-                    estOt.EstProcOT_RotograbadoKg,
-                    estOt.EstProcOT_LaminadoKg,
-                    estOt.EstProcOT_DobladoKg,
-                    estOt.EstProcOT_CorteKg,
-                    estOt.EstProcOT_EmpaqueKg,
-                    estOt.EstProcOT_SelladoKg,
-                    estOt.EstProcOT_SelladoUnd,
-                    estOt.EstProcOT_WiketiadoKg,
-                    estOt.EstProcOT_WiketiadoUnd,
-                    estOt.Falla_Id,
-                    estOt.FallaTecnica.Falla_Nombre,
-                    estOt.Estado_Id,
-                    estOt.Estado_OT.Estado_Nombre,
-                    estOt.EstProcOT_Observacion,
-                    estOt.EstProcOT_FechaCreacion,
-                    estOt.EstProcOT_CantidadPedida,
-                    estOt.UndMed_Id,
-                    estOt.UnidadMedida.UndMed_Nombre,
-                    estOt.EstProcOT_FechaInicio,
-                    estOt.EstProcOT_FechaFinal,
-                    estOt.EstProcOT_CantidadPedidaUnd,
-                    estOt.Usua_Id,
-                    estOt.Usuario.Usua_Nombre,
-                    estOt.Cli_Id,
-                    estOt.Clientes.Cli_Nombre,
-                    estOt.Prod_Id,
-                    estOt.Producto.Prod_Nombre,
-                    estOt.EstProcOT_CantProdFacturada,
-                    estOt.EstProcOT_CantProdIngresada,
-                    estOt.EstProcOT_CantMatPrimaAsignada,
-                    estOt.EstProcOT_Cliente,
-                    estOt.EstProcOT_Pedido,
-                })
-                .ToList();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(ot);
-        }
-       
-        /* CONSULTA PARA EL REPORTE DE LOS PROCESOS DE CADA ORDEN DE TRABAJO */
-        [HttpGet("getReporteProcesosOt/{fechaInicial}/{fechaFinal}")]
-        public ActionResult getReporteProcesosOt(DateTime fechaInicial, DateTime fechaFinal, string? ot = "", string? cli = "", string? prod = "", string? falla = "", string? estado = "", string? vendedor = "")
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-#pragma warning disable CS8604 // Posible argumento de referencia nulo
-            var con = from orden in _context.Set<Estados_ProcesosOT>()
-                      where orden.EstProcOT_FechaCreacion >= fechaInicial
-                            && orden.EstProcOT_FechaCreacion <= fechaFinal
-                            && Convert.ToString(orden.EstProcOT_OrdenTrabajo).Contains(ot)
-                            && Convert.ToString(orden.Falla_Id).Contains(falla)
-                            && Convert.ToString(orden.Estado_Id).Contains(estado)
-                            && Convert.ToString(orden.Usuario.Usua_Id).Contains(vendedor)
-                            && orden.EstProcOT_Cliente.Contains(cli)
-                            && Convert.ToString(orden.Prod_Id).Contains(prod)
-                      select new
-                      {
-                          orden.EstProcOT_Id,
-                          orden.EstProcOT_OrdenTrabajo,
-                          orden.EstProcOT_ExtrusionKg,
-                          orden.EstProcOT_ImpresionKg,
-                          orden.EstProcOT_RotograbadoKg,
-                          orden.EstProcOT_LaminadoKg,
-                          orden.EstProcOT_DobladoKg,
-                          orden.EstProcOT_CorteKg,
-                          orden.EstProcOT_EmpaqueKg,
-                          orden.EstProcOT_SelladoKg,
-                          orden.EstProcOT_SelladoUnd,
-                          orden.EstProcOT_WiketiadoKg,
-                          orden.EstProcOT_WiketiadoUnd,
-                          orden.Falla_Id,
-                          orden.FallaTecnica.Falla_Nombre,
-                          orden.Estado_Id,
-                          orden.Estado_OT.Estado_Nombre,
-                          orden.EstProcOT_Observacion,
-                          orden.EstProcOT_FechaCreacion,
-                          orden.EstProcOT_CantidadPedida,
-                          orden.UndMed_Id,
-                          orden.UnidadMedida.UndMed_Nombre,
-                          orden.EstProcOT_FechaInicio,
-                          orden.EstProcOT_FechaFinal,
-                          orden.EstProcOT_CantidadPedidaUnd,
-                          orden.Usua_Id,
-                          orden.Usuario.Usua_Nombre,
-                          orden.Cli_Id,
-                          orden.Clientes.Cli_Nombre,
-                          orden.Prod_Id,
-                          orden.Producto.Prod_Nombre,
-                          orden.EstProcOT_CantProdFacturada,
-                          orden.EstProcOT_CantProdIngresada,
-                          orden.EstProcOT_CantMatPrimaAsignada,
-                          orden.EstProcOT_Cliente,
-                          orden.EstProcOT_Pedido,
-                      };
-#pragma warning restore CS8604 // Posible argumento de referencia nulo
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
         }
 
         /******************************************************** Consultas para mostrar informacion general ****************************************************************/

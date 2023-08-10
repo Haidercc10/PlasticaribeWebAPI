@@ -104,7 +104,6 @@ namespace PlasticaribeAPI.Controllers
             else return NoContent();
         }
 
-
         [HttpGet("UsuariosxId/{ID}")]
         public ActionResult<Usuario> GetUsuariosxId(long ID)
         {
@@ -201,7 +200,11 @@ namespace PlasticaribeAPI.Controllers
         {
             var usuario = from usu in _context.Set<Usuario>()
                           where usu.RolUsu_Id == 2 && usu.Estado_Id == 1
-                          select usu;
+                          select new
+                          {
+                              usu.Usua_Nombre,
+                              usu.Usua_Id
+                          };
             return Ok(usuario);
         }
 
