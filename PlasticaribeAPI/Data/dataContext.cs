@@ -149,6 +149,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.Costos_Empresas_Anios> Costos_Empresas_Anios { get; set; }
         public DbSet<PlasticaribeAPI.Models.Nomina_Plasticaribe> Nomina_Plasticaribe { get; set; }
         public DbSet<PlasticaribeAPI.Models.Tipos_Nomina> Tipos_Nomina { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Certificados_Calidad> Certificados_Calidad { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -582,7 +583,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetallesAsgRollos_Extrusion>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Relaciones Rollo_Desecho
-            // modelBuilder.Entity<Rollo_Desecho>().ToTable(tb => tb.HasTrigger("Auditoria_Rollos_Desechos"));
+            modelBuilder.Entity<Rollo_Desecho>().ToTable(tb => tb.HasTrigger("Auditoria_Rollos_Desechos"));
             modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.Prod).WithMany().HasForeignKey(erp => erp.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Producto
             modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.Proceso).WithMany().HasForeignKey(erp => erp.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
             modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.UndMedida).WithMany().HasForeignKey(erp => erp.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Unidad_Medida
@@ -592,14 +593,14 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Rollo_Desecho>().HasOne(erp => erp.Cono).WithMany().HasForeignKey(erp => erp.Cono_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Cono
 
             //Relaciones Orden_Compra
-            //modelBuilder.Entity<Orden_Compra>().ToTable(tb => tb.HasTrigger("Auditoria_Ordenes_Compras"));
+            modelBuilder.Entity<Orden_Compra>().ToTable(tb => tb.HasTrigger("Auditoria_Ordenes_Compras"));
             modelBuilder.Entity<Orden_Compra>().HasOne(erp => erp.Proveedor).WithMany().HasForeignKey(erp => erp.Prov_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Producto
             modelBuilder.Entity<Orden_Compra>().HasOne(erp => erp.TipoDoc).WithMany().HasForeignKey(erp => erp.TpDoc_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
             modelBuilder.Entity<Orden_Compra>().HasOne(erp => erp.Estado).WithMany().HasForeignKey(erp => erp.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
             modelBuilder.Entity<Orden_Compra>().HasOne(erp => erp.Usua).WithMany().HasForeignKey(erp => erp.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
 
             //Relaciones Detalle_OrdenCompra
-            // modelBuilder.Entity<Detalle_OrdenCompra>().ToTable(tb => tb.HasTrigger("Auditoria_Detalles_OrdenesCompras"));
+            modelBuilder.Entity<Detalle_OrdenCompra>().ToTable(tb => tb.HasTrigger("Auditoria_Detalles_OrdenesCompras"));
             modelBuilder.Entity<Detalle_OrdenCompra>().HasOne(erp => erp.Orden_Compra).WithMany().HasForeignKey(erp => erp.Oc_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Producto
             modelBuilder.Entity<Detalle_OrdenCompra>().HasOne(erp => erp.MatPrima).WithMany().HasForeignKey(erp => erp.MatPri_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
             modelBuilder.Entity<Detalle_OrdenCompra>().HasOne(erp => erp.Tinta).WithMany().HasForeignKey(erp => erp.Tinta_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
@@ -607,12 +608,12 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Detalle_OrdenCompra>().HasOne(erp => erp.UndMed).WithMany().HasForeignKey(erp => erp.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict); //Proceso
 
             //Ordenes Compras Facturas Compras
-            //modelBuilder.Entity<OrdenesCompras_FacturasCompras>().ToTable(tb => tb.HasTrigger("Auditoria_OrdenesCompras_FacturasCompras"));
+            modelBuilder.Entity<OrdenesCompras_FacturasCompras>().ToTable(tb => tb.HasTrigger("Auditoria_OrdenesCompras_FacturasCompras"));
             modelBuilder.Entity<OrdenesCompras_FacturasCompras>().HasOne(erp => erp.Orden_Compra).WithMany().HasForeignKey(erp => erp.Oc_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<OrdenesCompras_FacturasCompras>().HasOne(erp => erp.Facco).WithMany().HasForeignKey(erp => erp.Facco_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Remision Ordenes de Compras
-            //modelBuilder.Entity<Remision_OrdenCompra>().ToTable(tb => tb.HasTrigger("Auditoria_Remision_OrdenCompra"));
+            modelBuilder.Entity<Remision_OrdenCompra>().ToTable(tb => tb.HasTrigger("Auditoria_Remision_OrdenCompra"));
             modelBuilder.Entity<Remision_OrdenCompra>().HasOne(erp => erp.Orden_Compra).WithMany().HasForeignKey(erp => erp.Oc_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Remision_OrdenCompra>().HasOne(erp => erp.Remision).WithMany().HasForeignKey(erp => erp.Rem_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
@@ -671,6 +672,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Log_Transacciones>().HasOne(trn => trn.Usuario).WithMany().HasForeignKey(trn => trn.Transac_Usuario).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Inventario mensual de productos
+            modelBuilder.Entity<Inventario_Mensual_Productos>().ToTable(tb => tb.HasTrigger("Auditoria_Inventario_Mensual_Productos"));
             modelBuilder.Entity<Inventario_Mensual_Productos>().HasOne(x => x.Und).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Terceros
@@ -746,11 +748,13 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<EventosCalendario>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Solicitudes_MatPrimaExtrusion
+            modelBuilder.Entity<Solicitud_MatPrimaExtrusion>().ToTable(tb => tb.HasTrigger("Auditoria_Solicitud_MatPrimaExtrusion"));
             modelBuilder.Entity<Solicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.Estado).WithMany().HasForeignKey(asigmp => asigmp.Estado_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado
             modelBuilder.Entity<Solicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.Usua).WithMany().HasForeignKey(asgmpr => asgmpr.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario
             modelBuilder.Entity<Solicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.Proceso).WithMany().HasForeignKey(asigmp => asigmp.Proceso_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
 
             //DetSolicitudes_MatPrimaExtrusion
+            modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().ToTable(tb => tb.HasTrigger("Auditoria_DetSolicitud_MatPrimaExtrusion"));
             modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.MatPrima).WithMany().HasForeignKey(asigmp => asigmp.MatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado
             modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.Tinta).WithMany().HasForeignKey(asgmpr => asgmpr.Tinta_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario
             modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.UndMed).WithMany().HasForeignKey(asigmp => asigmp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
@@ -804,6 +808,18 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Nomina_Plasticaribe>().ToTable(x => x.HasTrigger("Costos_Nomina_Plasticaribe"));
             modelBuilder.Entity<Nomina_Plasticaribe>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Nomina_Plasticaribe>().HasOne(x => x.Tipos_Nomina).WithMany().HasForeignKey(y => y.TpNomina_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            // Crtificados de Calidad
+            modelBuilder.Entity<Certificados_Calidad>().ToTable(x => x.HasTrigger("Auditoria_Certificados_Calidad"));
+            modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Und).WithMany().HasForeignKey(y => y.Presentacion_Producto).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Und_Calibre).WithMany().HasForeignKey(y => y.Unidad_Calibre).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Und_AnchoFrente).WithMany().HasForeignKey(y => y.Unidad_AnchoFrente).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Und_AnchoFuelle).WithMany().HasForeignKey(y => y.Unidad_AnchoFuelle).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Und_LargoRepeticion).WithMany().HasForeignKey(y => y.Unidad_LargoRepeticion).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Und_Cof).WithMany().HasForeignKey(y => y.Unidad_Cof).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
