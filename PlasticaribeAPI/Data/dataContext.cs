@@ -811,6 +811,7 @@ namespace PlasticaribeAPI.Data
 
             // Crtificados de Calidad
             modelBuilder.Entity<Certificados_Calidad>().ToTable(x => x.HasTrigger("Auditoria_Certificados_Calidad"));
+            modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Item).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Und).WithMany().HasForeignKey(y => y.Presentacion_Producto).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Und_Calibre).WithMany().HasForeignKey(y => y.Unidad_Calibre).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Und_AnchoFrente).WithMany().HasForeignKey(y => y.Unidad_AnchoFrente).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
