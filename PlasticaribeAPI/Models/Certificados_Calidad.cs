@@ -12,6 +12,8 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = ("varchar(max)"))]
         public string Cliente { get; set; }
+        public int Item { get; set; }
+        public Producto? Producto { get; set; }
 
         [Column(TypeName = ("varchar(max)"))]
         public string Referencia { get; set; }

@@ -17,7 +17,7 @@ namespace PlasticaribeAPI.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.9")
+                .HasAnnotation("ProductVersion", "7.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -611,6 +611,9 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(max)");
 
+                    b.Property<int>("Item")
+                        .HasColumnType("int");
+
                     b.Property<string>("Material")
                         .IsRequired()
                         .HasColumnType("varchar(max)");
@@ -750,6 +753,8 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Consecutivo");
+
+                    b.HasIndex("Item");
 
                     b.HasIndex("Presentacion_Producto");
 
@@ -6476,6 +6481,12 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Certificados_Calidad", b =>
                 {
+                    b.HasOne("PlasticaribeAPI.Models.Producto", "Producto")
+                        .WithMany()
+                        .HasForeignKey("Item")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "Und")
                         .WithMany()
                         .HasForeignKey("Presentacion_Producto")
@@ -6517,6 +6528,8 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("Usua_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Producto");
 
                     b.Navigation("Und");
 

@@ -19,6 +19,7 @@ namespace PlasticaribeAPI.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Orden_Trabajo = table.Column<long>(type: "bigint", nullable: false),
                     Cliente = table.Column<string>(type: "varchar(max)", nullable: false),
+                    Item = table.Column<int>(type: "int", nullable: false),
                     Referencia = table.Column<string>(type: "varchar(max)", nullable: false),
                     Cantidad_Producir = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Presentacion_Producto = table.Column<string>(type: "varchar(10)", nullable: false),
@@ -63,6 +64,12 @@ namespace PlasticaribeAPI.Migrations
                 {
                     table.PrimaryKey("PK_Certificados_Calidad", x => x.Consecutivo);
                     table.ForeignKey(
+                        name: "FK_Certificados_Calidad_Productos_Item",
+                        column: x => x.Item,
+                        principalTable: "Productos",
+                        principalColumn: "Prod_Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Certificados_Calidad_Unidades_Medidas_Presentacion_Producto",
                         column: x => x.Presentacion_Producto,
                         principalTable: "Unidades_Medidas",
@@ -105,6 +112,11 @@ namespace PlasticaribeAPI.Migrations
                         principalColumn: "Usua_Id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Certificados_Calidad_Item",
+                table: "Certificados_Calidad",
+                column: "Item");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Certificados_Calidad_Presentacion_Producto",

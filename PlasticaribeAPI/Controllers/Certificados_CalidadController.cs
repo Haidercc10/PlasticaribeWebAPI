@@ -51,6 +51,21 @@ namespace PlasticaribeAPI.Controllers
             return certificados_Calidad;
         }
 
+
+        //Consulta que devolverá los diferentes materiales utilizados en los certificados
+        [HttpGet("getMateriales")]
+        public ActionResult GetMateriales()
+        {
+            return Ok((from cc in _context.Set<Certificados_Calidad>() select cc.Material).Distinct());
+        }
+
+        // Funcion que retornará la información del ultimo certificado realizado a un Item
+        [HttpGet("getUltCertificadoItem/{item}")]
+        public ActionResult GetUltCertificadoItem(long item)
+        {
+            return Ok((from cc in _context.Set<Certificados_Calidad>() where cc.Item == item select cc).FirstOrDefault());
+        } 
+
         // PUT: api/Certificados_Calidad/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
