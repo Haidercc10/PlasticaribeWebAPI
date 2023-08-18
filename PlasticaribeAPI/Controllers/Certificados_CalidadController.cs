@@ -64,7 +64,23 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetUltCertificadoItem(long item)
         {
             return Ok((from cc in _context.Set<Certificados_Calidad>() where cc.Item == item select cc).FirstOrDefault());
-        } 
+        }
+
+        [HttpGet("GetCertificados/{fecha1}/{fecha2}")]
+        public ActionResult GetCertificados(DateTime fecha1, DateTime fecha2, string? consec = "", string? ot = "", string? cliente = "", string? referencia = "")
+        {
+            var certificados_Calidad = from c in _context.Set<Certificados_Calidad>()
+                                       where c.Fecha_Registro >= fecha1 &&
+                                       c.Fecha_Registro <= fecha2 &&
+                                       Convert.ToString(c.Consecutivo).Contains(consec) &&
+                                       Convert.ToString(c.Orden_Trabajo).Contains(ot) &&
+                                       Convert.ToString(c.Cliente).Contains(cliente) &&
+                                       Convert.ToString(c.Referencia).Contains(referencia)
+                                       select c;
+
+            if (certificados_Calidad == null) return BadRequest("No se encontraron certificados con los datos consultados!");
+            return Ok(certificados_Calidad);
+        }
 
         // PUT: api/Certificados_Calidad/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -95,22 +111,6 @@ namespace PlasticaribeAPI.Controllers
             }
 
             return NoContent();
-        }
-
-        [HttpGet("GetCertificados/{fecha1}/{fecha2}")]
-        public ActionResult GetCertificados(DateTime fecha1, DateTime fecha2, string? consec = "", string? ot = "", string? cliente = "", string? referencia = "")
-        {
-            var certificados_Calidad = from c in _context.Set<Certificados_Calidad>()
-                                       where c.Fecha_Registro >= fecha1 &&
-                                       c.Fecha_Registro <= fecha2 &&
-                                       Convert.ToString(c.Consecutivo).Contains(consec) &&
-                                       Convert.ToString(c.Orden_Trabajo).Contains(ot) &&
-                                       Convert.ToString(c.Cliente).Contains(cliente) &&
-                                       Convert.ToString(c.Referencia).Contains(referencia)
-                                       select c;
-
-            if (certificados_Calidad == null) return BadRequest("No se encontraron certificados con los datos consultados!");
-            return Ok(certificados_Calidad);
         }
 
         // POST: api/Certificados_Calidad
