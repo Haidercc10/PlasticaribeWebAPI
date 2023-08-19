@@ -37,18 +37,8 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Certificados_Calidad>> GetCertificados_Calidad(long id)
         {
-          if (_context.Certificados_Calidad == null)
-          {
-              return NotFound();
-          }
-            var certificados_Calidad = await _context.Certificados_Calidad.FindAsync(id);
-
-            if (certificados_Calidad == null)
-            {
-                return NotFound();
-            }
-
-            return certificados_Calidad;
+            var certificados_Calidad = (from cc in _context.Set<Certificados_Calidad>() where cc.Consecutivo == id select cc).FirstOrDefault();
+            return Ok(certificados_Calidad);
         }
 
 
@@ -63,12 +53,13 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getUltCertificadoItem/{item}")]
         public ActionResult GetUltCertificadoItem(long item)
         {
-            return Ok((from cc in _context.Set<Certificados_Calidad>() where cc.Item == item select cc).FirstOrDefault());
+            return Ok((from cc in _context.Set<Certificados_Calidad>() where cc.Item == item orderby cc.Consecutivo descending select cc).FirstOrDefault());
         }
 
         [HttpGet("GetCertificados/{fecha1}/{fecha2}")]
         public ActionResult GetCertificados(DateTime fecha1, DateTime fecha2, string? consec = "", string? ot = "", string? cliente = "", string? referencia = "")
         {
+#pragma warning disable CS8604 // Possible null reference argument.
             var certificados_Calidad = from c in _context.Set<Certificados_Calidad>()
                                        where c.Fecha_Registro >= fecha1 &&
                                        c.Fecha_Registro <= fecha2 &&
@@ -77,6 +68,7 @@ namespace PlasticaribeAPI.Controllers
                                        Convert.ToString(c.Cliente).Contains(cliente) &&
                                        Convert.ToString(c.Referencia).Contains(referencia)
                                        select c;
+#pragma warning restore CS8604 // Possible null reference argument.
 
             if (certificados_Calidad == null) return BadRequest("No se encontraron certificados con los datos consultados!");
             return Ok(certificados_Calidad);
