@@ -56,6 +56,7 @@ namespace PlasticaribeAPI.Controllers
             return Ok((from cc in _context.Set<Certificados_Calidad>() where cc.Item == item orderby cc.Consecutivo descending select cc).FirstOrDefault());
         }
 
+        // Get Certificados
         [HttpGet("GetCertificados/{fecha1}/{fecha2}")]
         public ActionResult GetCertificados(DateTime fecha1, DateTime fecha2, string? consec = "", string? ot = "", string? cliente = "", string? referencia = "")
         {
@@ -72,6 +73,31 @@ namespace PlasticaribeAPI.Controllers
 
             if (certificados_Calidad == null) return BadRequest("No se encontraron certificados con los datos consultados!");
             return Ok(certificados_Calidad);
+        }
+
+        // Get Clientes
+        [HttpGet("getClientes/{cliente}")]
+        public ActionResult GetClientes(string cliente)
+        {
+            var clientes = (from c in _context.Set<Certificados_Calidad>()
+                           where c.Cliente.Contains(cliente)
+                           select c.Cliente).Distinct();
+
+            if (clientes == null) return BadRequest("El cliente solicitado no tiene certificados creados!");
+            return Ok(clientes);
+
+        }
+
+        // Get Items
+        [HttpGet("getItems/{item}")]
+        public ActionResult GetItems(string item)
+        {
+            var items = from c in _context.Set<Certificados_Calidad>()
+                        where c.Referencia.Contains(item)
+                        select new { c.Item, c.Referencia };
+
+            if (items == null) return BadRequest("El item solicitado no tiene certificados creados!");
+            return Ok(items);
         }
 
         // PUT: api/Certificados_Calidad/5
