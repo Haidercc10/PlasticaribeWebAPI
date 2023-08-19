@@ -86,40 +86,39 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
-        //Funcion que traerá la informacion de la ultima orden de compra creada
-        [HttpGet("GetOrdenCompra_fechas/{fecha1}/{fecha2}")]
-        public ActionResult GetOrdenCompra_fechas(DateTime fecha1, DateTime fecha2)
+        //Funcion que va a devolver los datos de las ordenes de compra realizadas
+        [HttpGet("getOrdenesCompras/{fechaInicial}/{fechaFinal}")]
+        public ActionResult GetOrdenesCompras(DateTime fechaInicial, DateTime fechaFinal, string? orden = "", string? estado = "")
         {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = from dt in _context.Set<Detalle_OrdenCompra>()
-                      from Oc in _context.Set<Orden_Compra>()
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var con = from oc in _context.Set<Detalle_OrdenCompra>()
                       from Emp in _context.Set<Empresa>()
-                      orderby dt.Oc_Id descending
-                      where Oc.Oc_Fecha >= fecha1
-                            && Oc.Oc_Fecha <= fecha2
-                            && dt.Oc_Id == Oc.Oc_Id
-                            && Emp.Empresa_Id == 800188732
+                      where oc.Orden_Compra.Oc_Fecha >= fechaInicial &&
+                            oc.Orden_Compra.Oc_Fecha <= fechaFinal &&
+                            Emp.Empresa_Id == 800188732 &&
+                            Convert.ToString(oc.Oc_Id).Contains(orden) &&
+                            Convert.ToString(oc.Orden_Compra.Estado_Id).Contains(estado)
                       select new
                       {
-                          Consecutivo = dt.Oc_Id,
-                          Fecha = Oc.Oc_Fecha,
-                          Hora = Oc.Oc_Hora,
-                          Estado_Id = Oc.Estado_Id,
-                          Estado = Oc.Estado.Estado_Nombre,
+                          Consecutivo = oc.Oc_Id,
+                          Fecha = oc.Orden_Compra.Oc_Fecha,
+                          Hora = oc.Orden_Compra.Oc_Hora,
+                          Estado_Id = oc.Orden_Compra.Estado_Id,
+                          Estado = oc.Orden_Compra.Estado.Estado_Nombre,
 
-                          Proveedor_Id = Oc.Prov_Id,
-                          Tipo_Id = Oc.Proveedor.TipoIdentificacion_Id,
-                          Proveedor = Oc.Proveedor.Prov_Nombre,
-                          Tipo_Proveedor = Oc.Proveedor.TpProv.TpProv_Nombre,
-                          Telefono_Proveedor = Oc.Proveedor.Prov_Telefono,
-                          Ciudad_Proveedor = Oc.Proveedor.Prov_Ciudad,
-                          Correo_Proveedor = Oc.Proveedor.Prov_Email,
+                          Proveedor_Id = oc.Orden_Compra.Prov_Id,
+                          Tipo_Id = oc.Orden_Compra.Proveedor.TipoIdentificacion_Id,
+                          Proveedor = oc.Orden_Compra.Proveedor.Prov_Nombre,
+                          Tipo_Proveedor = oc.Orden_Compra.Proveedor.TpProv.TpProv_Nombre,
+                          Telefono_Proveedor = oc.Orden_Compra.Proveedor.Prov_Telefono,
+                          Ciudad_Proveedor = oc.Orden_Compra.Proveedor.Prov_Ciudad,
+                          Correo_Proveedor = oc.Orden_Compra.Proveedor.Prov_Email,
 
-                          Observacion = Oc.Oc_Observacion,
-                          Usuario_Id = Oc.Usua_Id,
-                          Usuario = Oc.Usua.Usua_Nombre,
-                          Valor_Total = Oc.Oc_ValorTotal,
-                          Peso_Total = Oc.Oc_PesoTotal,
+                          Observacion = oc.Orden_Compra.Oc_Observacion,
+                          Usuario_Id = oc.Orden_Compra.Usua_Id,
+                          Usuario = oc.Orden_Compra.Usua.Usua_Nombre,
+                          Valor_Total = oc.Orden_Compra.Oc_ValorTotal,
+                          Peso_Total = oc.Orden_Compra.Oc_PesoTotal,
 
                           Empresa_Id = Emp.Empresa_Id,
                           Empresa_Ciudad = Emp.Empresa_Ciudad,
@@ -129,132 +128,18 @@ namespace PlasticaribeAPI.Controllers
                           Empresa_Telefono = Emp.Empresa_Telefono,
                           Empresa = Emp.Empresa_Nombre,
 
-                          MP_Id = dt.MatPri_Id,
-                          MP = dt.MatPrima.MatPri_Nombre,
-                          Tinta_Id = dt.Tinta_Id,
-                          Tinta = dt.Tinta.Tinta_Nombre,
-                          Bopp_Id = dt.BOPP_Id,
-                          Bopp = dt.BOPP.BoppGen_Nombre,
-                          Cantidad = dt.Doc_CantidadPedida,
-                          Unidad_Medida = dt.UndMed_Id,
-                          Precio_Unitario = dt.Doc_PrecioUnitario,
+                          MP_Id = oc.MatPri_Id,
+                          MP = oc.MatPrima.MatPri_Nombre,
+                          Tinta_Id = oc.Tinta_Id,
+                          Tinta = oc.Tinta.Tinta_Nombre,
+                          Bopp_Id = oc.BOPP_Id,
+                          Bopp = oc.BOPP.BoppGen_Nombre,
+                          Cantidad = oc.Doc_CantidadPedida,
+                          Unidad_Medida = oc.UndMed_Id,
+                          Precio_Unitario = oc.Doc_PrecioUnitario,
                       };
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
-        //Funcion que traerá la informacion de la ultima orden de compra creada
-        [HttpGet("GetOrdenCompra_Estado/{estado}")]
-        public ActionResult GetOrdenCompra_Estado(int estado)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = from dt in _context.Set<Detalle_OrdenCompra>()
-                      from Oc in _context.Set<Orden_Compra>()
-                      from Emp in _context.Set<Empresa>()
-                      orderby dt.Oc_Id descending
-                      where Oc.Estado_Id == estado
-                            && dt.Oc_Id == Oc.Oc_Id
-                            && Emp.Empresa_Id == 800188732
-                      select new
-                      {
-                          Consecutivo = dt.Oc_Id,
-                          Fecha = Oc.Oc_Fecha,
-                          Hora = Oc.Oc_Hora,
-                          Estado_Id = Oc.Estado_Id,
-                          Estado = Oc.Estado.Estado_Nombre,
-
-                          Proveedor_Id = Oc.Prov_Id,
-                          Tipo_Id = Oc.Proveedor.TipoIdentificacion_Id,
-                          Proveedor = Oc.Proveedor.Prov_Nombre,
-                          Tipo_Proveedor = Oc.Proveedor.TpProv.TpProv_Nombre,
-                          Telefono_Proveedor = Oc.Proveedor.Prov_Telefono,
-                          Ciudad_Proveedor = Oc.Proveedor.Prov_Ciudad,
-                          Correo_Proveedor = Oc.Proveedor.Prov_Email,
-
-                          Observacion = Oc.Oc_Observacion,
-                          Usuario_Id = Oc.Usua_Id,
-                          Usuario = Oc.Usua.Usua_Nombre,
-                          Valor_Total = Oc.Oc_ValorTotal,
-                          Peso_Total = Oc.Oc_PesoTotal,
-
-                          Empresa_Id = Emp.Empresa_Id,
-                          Empresa_Ciudad = Emp.Empresa_Ciudad,
-                          Empresa_Codigo = Emp.Empresa_COdigoPostal,
-                          Empresa_Correo = Emp.Empresa_Correo,
-                          Empresa_Direccion = Emp.Empresa_Direccion,
-                          Empresa_Telefono = Emp.Empresa_Telefono,
-                          Empresa = Emp.Empresa_Nombre,
-
-                          MP_Id = dt.MatPri_Id,
-                          MP = dt.MatPrima.MatPri_Nombre,
-                          Tinta_Id = dt.Tinta_Id,
-                          Tinta = dt.Tinta.Tinta_Nombre,
-                          Bopp_Id = dt.BOPP_Id,
-                          Bopp = dt.BOPP.BoppGen_Nombre,
-                          Cantidad = dt.Doc_CantidadPedida,
-                          Unidad_Medida = dt.UndMed_Id,
-                          Precio_Unitario = dt.Doc_PrecioUnitario,
-                      };
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
-        //Funcion que traerá la informacion de la ultima orden de compra creada
-        [HttpGet("GetOrdenCompra_EstadoFechas/{estado}/{fecha1}/{fecha2}")]
-        public ActionResult GetOrdenCompra_EstadoFechas(int estado, DateTime fecha1, DateTime fecha2)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = from dt in _context.Set<Detalle_OrdenCompra>()
-                      from Oc in _context.Set<Orden_Compra>()
-                      from Emp in _context.Set<Empresa>()
-                      orderby dt.Oc_Id descending
-                      where Oc.Estado_Id == estado
-                            && Oc.Oc_Fecha >= fecha1
-                            && Oc.Oc_Fecha <= fecha2
-                            && dt.Oc_Id == Oc.Oc_Id
-                            && Emp.Empresa_Id == 800188732
-                      select new
-                      {
-                          Consecutivo = dt.Oc_Id,
-                          Fecha = Oc.Oc_Fecha,
-                          Hora = Oc.Oc_Hora,
-                          Estado_Id = Oc.Estado_Id,
-                          Estado = Oc.Estado.Estado_Nombre,
-
-                          Proveedor_Id = Oc.Prov_Id,
-                          Tipo_Id = Oc.Proveedor.TipoIdentificacion_Id,
-                          Proveedor = Oc.Proveedor.Prov_Nombre,
-                          Tipo_Proveedor = Oc.Proveedor.TpProv.TpProv_Nombre,
-                          Telefono_Proveedor = Oc.Proveedor.Prov_Telefono,
-                          Ciudad_Proveedor = Oc.Proveedor.Prov_Ciudad,
-                          Correo_Proveedor = Oc.Proveedor.Prov_Email,
-
-                          Observacion = Oc.Oc_Observacion,
-                          Usuario_Id = Oc.Usua_Id,
-                          Usuario = Oc.Usua.Usua_Nombre,
-                          Valor_Total = Oc.Oc_ValorTotal,
-                          Peso_Total = Oc.Oc_PesoTotal,
-
-                          Empresa_Id = Emp.Empresa_Id,
-                          Empresa_Ciudad = Emp.Empresa_Ciudad,
-                          Empresa_Codigo = Emp.Empresa_COdigoPostal,
-                          Empresa_Correo = Emp.Empresa_Correo,
-                          Empresa_Direccion = Emp.Empresa_Direccion,
-                          Empresa_Telefono = Emp.Empresa_Telefono,
-                          Empresa = Emp.Empresa_Nombre,
-
-                          MP_Id = dt.MatPri_Id,
-                          MP = dt.MatPrima.MatPri_Nombre,
-                          Tinta_Id = dt.Tinta_Id,
-                          Tinta = dt.Tinta.Tinta_Nombre,
-                          Bopp_Id = dt.BOPP_Id,
-                          Bopp = dt.BOPP.BoppGen_Nombre,
-                          Cantidad = dt.Doc_CantidadPedida,
-                          Unidad_Medida = dt.UndMed_Id,
-                          Precio_Unitario = dt.Doc_PrecioUnitario,
-                      };
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            return con.Any() ? Ok(con) : NotFound("¡No se encontró información!");
         }
 
         // GET: api/Detalle_OrdenCompra/5
