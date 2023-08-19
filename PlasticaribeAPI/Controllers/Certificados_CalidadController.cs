@@ -67,7 +67,7 @@ namespace PlasticaribeAPI.Controllers
                                        Convert.ToString(c.Consecutivo).Contains(consec) &&
                                        Convert.ToString(c.Orden_Trabajo).Contains(ot) &&
                                        Convert.ToString(c.Cliente).Contains(cliente) &&
-                                       Convert.ToString(c.Referencia).Contains(referencia)
+                                       Convert.ToString(c.Item).Contains(referencia)
                                        select c;
 #pragma warning restore CS8604 // Possible null reference argument.
 
