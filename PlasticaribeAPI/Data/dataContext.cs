@@ -152,6 +152,9 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.Certificados_Calidad> Certificados_Calidad { get; set; }
         public DbSet<PlasticaribeAPI.Models.ControlCalidad_CorteDoblado> ControlCalidad_CorteDoblado { get; set; }
         public DbSet<PlasticaribeAPI.Models.ControlCalidad_Impresion> ControlCalidad_Impresion { get; set; }
+        public DbSet<PlasticaribeAPI.Models.ControlCalidad_Extrusion> ControlCalidad_Extrusion { get; set; }
+        public DbSet<PlasticaribeAPI.Models.ControlCalidad_Sellado> ControlCalidad_Sellado { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -822,6 +825,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Und_Cof).WithMany().HasForeignKey(y => y.Unidad_Cof).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+
             // Control de Calidad de Doblado y Corte
             modelBuilder.Entity<ControlCalidad_CorteDoblado>().ToTable(x => x.HasTrigger("Auditoria_ControlCalidad_CorteDoblado"));
             modelBuilder.Entity<ControlCalidad_CorteDoblado>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior : DeleteBehavior.Restrict);
@@ -835,6 +839,21 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<ControlCalidad_Impresion>().HasOne(x => x.Turno).WithMany().HasForeignKey(y => y.Turno_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<ControlCalidad_Impresion>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            //ControlCalidad_Extrusion
+            modelBuilder.Entity<ControlCalidad_Impresion>().ToTable(x => x.HasTrigger("Auditoria_ControlCalidad_Extrusion"));
+            modelBuilder.Entity<ControlCalidad_Extrusion>().HasOne(x => x.Turnos).WithMany().HasForeignKey(y => y.Turno_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_Extrusion>().HasOne(x => x.Usu).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_Extrusion>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_Extrusion>().HasOne(x => x.Pigmento).WithMany().HasForeignKey(y => y.Pigmento_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_Extrusion>().HasOne(x => x.UndMedida).WithMany().HasForeignKey(y => y.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //ControlCalidad_Sellado
+            modelBuilder.Entity<ControlCalidad_Impresion>().ToTable(x => x.HasTrigger("Auditoria_ControlCalidad_Sellado"));
+            modelBuilder.Entity<ControlCalidad_Sellado>().HasOne(x => x.Turnos).WithMany().HasForeignKey(y => y.Turno_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_Sellado>().HasOne(x => x.Usu).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_Sellado>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_Sellado>().HasOne(x => x.UndMedida1).WithMany().HasForeignKey(y => y.UndMed_AL).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_Sellado>().HasOne(x => x.UndMedida2).WithMany().HasForeignKey(y => y.UndMed_AF).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));

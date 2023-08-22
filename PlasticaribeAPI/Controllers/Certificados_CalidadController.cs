@@ -100,6 +100,69 @@ namespace PlasticaribeAPI.Controllers
             return Ok(items);
         }
 
+        // Get Parametros cualitativos
+        [HttpGet("getParametrosCualitativos/{consecutivo}")]
+        public ActionResult GetParametrosCualitativos(long consecutivo)
+        {
+            var cualitativos = _context.Certificados_Calidad.Where(c => c.Consecutivo == consecutivo).Select(c => new
+            {
+                Calibre = new { 
+                   Parametro = "Calibre",
+                   Unidad = c.Unidad_Calibre,
+                   Nominal = c.Nominal_Calibre, 
+                   Tolerancia = c.Tolerancia_Calibre, 
+                   Minimo = c.Minimo_Calibre, 
+                   Maximo = c.Maximo_Calibre,
+                },
+                AnchoFrente = new
+                {
+                    Parametro = "Ancho Frente",
+                    Unidad = c.Unidad_AnchoFrente,
+                    Nominal = c.Nominal_AnchoFrente,
+                    Tolerancia = c.Tolerancia_AnchoFrente,
+                    Minimo = c.Minimo_AnchoFrente,
+                    Maximo = c.Maximo_AnchoFrente,
+                },
+                AnchoFuelle = new
+                {
+                    Parametro = "Ancho Fuelle",
+                    Unidad = c.Unidad_AnchoFuelle,
+                    Nominal = c.Nominal_AnchoFuelle,
+                    Tolerancia = c.Tolerancia_AnchoFuelle,
+                    Minimo = c.Minimo_AnchoFuelle,
+                    Maximo = c.Maximo_AnchoFuelle,
+                }, 
+                LargoRepeticion = new
+                {
+                    Parametro = "Largo Repetición",
+                    Unidad = c.Unidad_LargoRepeticion,
+                    Nominal = c.Nominal_LargoRepeticion,
+                    Tolerancia = c.Tolerancia_LargoRepeticion,
+                    Minimo = c.Minimo_LargoRepeticion,
+                    Maximo = c.Maximo_LargoRepeticion,
+                },
+                Cof = new
+                {
+                    Parametro = "COF",
+                    Unidad = c.Unidad_Cof,
+                    Nominal = c.Nominal_Cof,
+                    Tolerancia = c.Tolerancia_Cof,
+                    Minimo = c.Minimo_Cof,
+                    Maximo = c.Maximo_Cof,
+                }
+            });
+
+            var result = cualitativos.Select(pc => pc.Calibre)
+                .Concat(cualitativos.Select(pc => pc.AnchoFrente)
+                .Concat(cualitativos.Select(pc => pc.AnchoFuelle)
+                .Concat(cualitativos.Select(pc => pc.LargoRepeticion)
+                .Concat(cualitativos.Select(pc => pc.Cof)))));
+
+            if (result == null) return BadRequest("No se encontraron registros del consecutivo ingresado!");
+            else return Ok(result);        
+
+        }
+
         // PUT: api/Certificados_Calidad/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
