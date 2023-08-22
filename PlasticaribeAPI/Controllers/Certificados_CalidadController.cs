@@ -92,9 +92,9 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getItems/{item}")]
         public ActionResult GetItems(string item)
         {
-            var items = from c in _context.Set<Certificados_Calidad>()
+            var items = (from c in _context.Set<Certificados_Calidad>()
                         where c.Referencia.Contains(item)
-                        select new { c.Item, c.Referencia };
+                        select new { c.Item, c.Referencia }).Distinct();
 
             if (items == null) return BadRequest("El item solicitado no tiene certificados creados!");
             return Ok(items);
