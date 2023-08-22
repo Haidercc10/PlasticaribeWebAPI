@@ -35,7 +35,7 @@ namespace PlasticaribeAPI.Controllers
 
         // GET: api/Certificados_Calidad/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Certificados_Calidad>> GetCertificados_Calidad(long id)
+        public ActionResult GetCertificados_Calidad(long id)
         {
             var certificados_Calidad = (from cc in _context.Set<Certificados_Calidad>() where cc.Consecutivo == id select cc).FirstOrDefault();
             return Ok(certificados_Calidad);
@@ -63,11 +63,11 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8604 // Possible null reference argument.
             var certificados_Calidad = from c in _context.Set<Certificados_Calidad>()
                                        where c.Fecha_Registro >= fecha1 &&
-                                       c.Fecha_Registro <= fecha2 &&
-                                       Convert.ToString(c.Consecutivo).Contains(consec) &&
-                                       Convert.ToString(c.Orden_Trabajo).Contains(ot) &&
-                                       Convert.ToString(c.Cliente).Contains(cliente) &&
-                                       Convert.ToString(c.Item).Contains(referencia)
+                                             c.Fecha_Registro <= fecha2 &&
+                                             Convert.ToString(c.Consecutivo).Contains(consec) &&
+                                             Convert.ToString(c.Orden_Trabajo).Contains(ot) &&
+                                             Convert.ToString(c.Cliente).Contains(cliente) &&
+                                             Convert.ToString(c.Referencia).Contains(referencia)
                                        select c;
 #pragma warning restore CS8604 // Possible null reference argument.
 

@@ -820,8 +820,6 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Und_Cof).WithMany().HasForeignKey(y => y.Unidad_Cof).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
-
-
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
             modelBuilder.Entity<Tipo_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Usuarios"));
