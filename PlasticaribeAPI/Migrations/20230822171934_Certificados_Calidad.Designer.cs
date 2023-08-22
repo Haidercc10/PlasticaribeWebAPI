@@ -12,7 +12,7 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    [Migration("20230818212606_Certificados_Calidad")]
+    [Migration("20230822171934_Certificados_Calidad")]
     partial class Certificados_Calidad
     {
         /// <inheritdoc />

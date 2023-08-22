@@ -150,6 +150,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.Nomina_Plasticaribe> Nomina_Plasticaribe { get; set; }
         public DbSet<PlasticaribeAPI.Models.Tipos_Nomina> Tipos_Nomina { get; set; }
         public DbSet<PlasticaribeAPI.Models.Certificados_Calidad> Certificados_Calidad { get; set; }
+        public DbSet<PlasticaribeAPI.Models.ControlCalidad_CorteDoblado> ControlCalidad_CorteDoblado { get; set; }
+        public DbSet<PlasticaribeAPI.Models.ControlCalidad_Impresion> ControlCalidad_Impresion { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -809,7 +811,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Nomina_Plasticaribe>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Nomina_Plasticaribe>().HasOne(x => x.Tipos_Nomina).WithMany().HasForeignKey(y => y.TpNomina_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
-            // Crtificados de Calidad
+            // Certificados de Calidad
             modelBuilder.Entity<Certificados_Calidad>().ToTable(x => x.HasTrigger("Auditoria_Certificados_Calidad"));
             modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Item).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Und).WithMany().HasForeignKey(y => y.Presentacion_Producto).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
@@ -819,6 +821,20 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Und_LargoRepeticion).WithMany().HasForeignKey(y => y.Unidad_LargoRepeticion).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Und_Cof).WithMany().HasForeignKey(y => y.Unidad_Cof).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Certificados_Calidad>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            // Control de Calidad de Doblado y Corte
+            modelBuilder.Entity<ControlCalidad_CorteDoblado>().ToTable(x => x.HasTrigger("Auditoria_ControlCalidad_CorteDoblado"));
+            modelBuilder.Entity<ControlCalidad_CorteDoblado>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior : DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_CorteDoblado>().HasOne(x => x.Turno).WithMany().HasForeignKey(y => y.Turno_Id).OnDelete(deleteBehavior : DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_CorteDoblado>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior : DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_CorteDoblado>().HasOne(x => x.Und).WithMany().HasForeignKey(y => y.UndMed_Id).OnDelete(deleteBehavior : DeleteBehavior.Restrict);
+
+            // Control de Calidad de Impresión
+            modelBuilder.Entity<ControlCalidad_Impresion>().ToTable(x => x.HasTrigger("Auditoria_ControlCalidad_Impresion"));
+            modelBuilder.Entity<ControlCalidad_Impresion>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_Impresion>().HasOne(x => x.Turno).WithMany().HasForeignKey(y => y.Turno_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_Impresion>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
