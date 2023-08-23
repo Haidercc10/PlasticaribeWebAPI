@@ -50,6 +50,16 @@ namespace PlasticaribeAPI.Controllers
             return controlCalidad_CorteDoblado;
         }
 
+        // Consulta que devolverá los registros que se han realizado del día actual
+        [HttpGet("getRegistrosHoy")]
+        public ActionResult GetRegistrosHoy()
+        {
+            var con = from dbl in _context.Set<ControlCalidad_CorteDoblado>()
+                      where dbl.Fecha_Registro == DateTime.Today
+                      select dbl;
+            return con.Any() ? Ok(con) : BadRequest();
+        }
+
         // PUT: api/ControlCalidad_CorteDoblado/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
