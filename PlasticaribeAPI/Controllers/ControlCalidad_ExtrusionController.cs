@@ -50,12 +50,25 @@ namespace PlasticaribeAPI.Controllers
             return controlCalidad_Extrusion;
         }
 
-        // GET Nuevo
+        // GET Por Fechas
         [HttpGet("getControlCalidad_ExtrusionHoy")]
         public ActionResult GetControlCalidad_ExtrusionHoy()
         {
             var controlExtrusion = from cce in _context.Set<ControlCalidad_Extrusion>()
                                    where cce.CcExt_Fecha == DateTime.Today
+                                   select cce;
+
+            if (controlExtrusion == null) return NotFound();
+            else return Ok(controlExtrusion);
+        }
+
+        // GET Por OT
+        [HttpGet("getOtControlCalidad_Extrusion/{ot}")]
+        public ActionResult GetOtControlCalidad_Extrusion(long ot)
+        {
+            var controlExtrusion = from cce in _context.Set<ControlCalidad_Extrusion>()
+                                   where cce.CcExt_OT == ot &&
+                                   cce.CcExt_Fecha == DateTime.Today
                                    select cce;
 
             if (controlExtrusion == null) return NotFound();
