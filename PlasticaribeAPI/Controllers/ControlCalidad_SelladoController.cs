@@ -50,6 +50,31 @@ namespace PlasticaribeAPI.Controllers
             return controlCalidad_Sellado;
         }
 
+        // GET Por fecha actual
+        [HttpGet("getControlCalidad_SelladoHoy")]
+        public ActionResult GetControlCalidad_SelladoHoy()
+        {
+            var sellado = from cce in _context.Set<ControlCalidad_Sellado>()
+                                   where cce.CcSel_Fecha == DateTime.Today
+                                   select cce;
+
+            if (sellado == null) return NotFound();
+            else return Ok(sellado);
+        }
+
+        // GET ronda por OT
+        [HttpGet("getRonda/{ot}")]
+        public ActionResult GetRonda(long ot)
+        {
+            var rondaMayor = (from cce in _context.Set<ControlCalidad_Sellado>()
+                              where cce.CcSel_OT == ot &&
+                              cce.CcSel_Fecha == DateTime.Today
+                              orderby cce.CcSel_Id descending
+                              select cce.CcSel_Ronda == null ? 0 : cce.CcSel_Ronda).FirstOrDefault();
+
+            return Ok(rondaMayor);
+        }
+
         // PUT: api/ControlCalidad_Sellado/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

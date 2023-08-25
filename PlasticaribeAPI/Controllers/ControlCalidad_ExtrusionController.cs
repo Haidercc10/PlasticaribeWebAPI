@@ -62,17 +62,17 @@ namespace PlasticaribeAPI.Controllers
             else return Ok(controlExtrusion);
         }
 
-        // GET Por OT
-        [HttpGet("getOtControlCalidad_Extrusion/{ot}")]
-        public ActionResult GetOtControlCalidad_Extrusion(long ot)
+        // GET ronda por OT
+        [HttpGet("getRonda/{ot}")]
+        public ActionResult GetRonda(long ot)
         {
-            var controlExtrusion = from cce in _context.Set<ControlCalidad_Extrusion>()
+            var controlExtrusion = (from cce in _context.Set<ControlCalidad_Extrusion>()
                                    where cce.CcExt_OT == ot &&
                                    cce.CcExt_Fecha == DateTime.Today
-                                   select cce;
+                                   orderby cce.CcExt_Id descending
+                                   select cce.CcExt_Ronda == null ? 0 : cce.CcExt_Ronda).FirstOrDefault();
 
-            if (controlExtrusion == null) return NotFound();
-            else return Ok(controlExtrusion);
+            return Ok(controlExtrusion);
         }
 
         // PUT: api/ControlCalidad_Extrusion/5
