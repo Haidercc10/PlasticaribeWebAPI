@@ -54,10 +54,21 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getRegistrosHoy")]
         public ActionResult GetRegistrosHoy()
         {
-            var con = from dbl in _context.Set<ControlCalidad_CorteDoblado>()
-                      where dbl.Fecha_Registro == DateTime.Today
-                      select dbl;
-            return con.Any() ? Ok(con) : BadRequest();
+            var con = from cc in _context.Set<ControlCalidad_CorteDoblado>()
+                      where cc.Fecha_Registro == DateTime.Today
+                      select cc;
+            return con.Any() ? Ok(con) : Problem("No se encontraron registros del día de hoy");
+        }
+
+        // Consulta que devolverá el ultimo registro que se realizó a un producto
+        [HttpGet("getUltRegistroItem/{item}")]
+        public ActionResult GetUltRegistroItem(long item)
+        {
+            var con = (from cc in _context.Set<ControlCalidad_CorteDoblado>()
+                       where cc.Prod_Id == item
+                       orderby cc.Id descending
+                       select cc).FirstOrDefault();
+            return con != null ? Ok(con) : Problem("No hay información del item consultado");
         }
 
         // PUT: api/ControlCalidad_CorteDoblado/5

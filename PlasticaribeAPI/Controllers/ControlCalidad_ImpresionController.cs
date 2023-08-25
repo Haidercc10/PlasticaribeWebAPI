@@ -50,6 +50,27 @@ namespace PlasticaribeAPI.Controllers
             return controlCalidad_Impresion;
         }
 
+        // Consulta que devolverá los registros que se han realizado del día actual
+        [HttpGet("getRegistrosHoy")]
+        public ActionResult GetRegistrosHoy()
+        {
+            var con = from cc in _context.Set<ControlCalidad_Impresion>()
+                      where cc.Fecha_Registro == DateTime.Today
+                      select cc;
+            return con.Any() ? Ok(con) : Problem("No se encontraron registros del día de hoy");
+        }
+
+        // Consulta que devolverá el ultimo registro que se realizó a un producto
+        [HttpGet("getUltRegistroItem/{item}")]
+        public ActionResult GetUltRegistroItem(long item)
+        {
+            var con = (from cc in _context.Set<ControlCalidad_Impresion>()
+                       where cc.Prod_Id == item
+                       orderby cc.Id descending
+                       select cc).FirstOrDefault();
+            return con != null ? Ok(con) : Problem("No hay información del item consultado");
+        }
+
         // PUT: api/ControlCalidad_Impresion/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

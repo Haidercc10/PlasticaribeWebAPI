@@ -91,6 +91,7 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetOrdenesCompras(DateTime fechaInicial, DateTime fechaFinal, string? orden = "", string? estado = "")
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8604 // Possible null reference argument.
             var con = from oc in _context.Set<Detalle_OrdenCompra>()
                       from Emp in _context.Set<Empresa>()
                       where oc.Orden_Compra.Oc_Fecha >= fechaInicial &&
@@ -138,6 +139,7 @@ namespace PlasticaribeAPI.Controllers
                           Unidad_Medida = oc.UndMed_Id,
                           Precio_Unitario = oc.Doc_PrecioUnitario,
                       };
+#pragma warning restore CS8604 // Possible null reference argument.
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             return con.Any() ? Ok(con) : NotFound("¡No se encontró información!");
         }
