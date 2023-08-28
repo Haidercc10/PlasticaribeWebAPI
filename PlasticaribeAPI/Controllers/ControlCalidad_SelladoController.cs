@@ -42,11 +42,12 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // GET Por fecha actual
-        [HttpGet("getControlCalidad_SelladoHoy")]
-        public ActionResult GetControlCalidad_SelladoHoy()
+        [HttpGet("getControlCalidad_SelladoHoy/{fecha1}/{fecha2}")]
+        public ActionResult GetControlCalidad_SelladoHoy(DateTime fecha1, DateTime fecha2)
         {
             var sellado = from cce in _context.Set<ControlCalidad_Sellado>()
-                                   where cce.CcSel_Fecha == DateTime.Today
+                                   where cce.CcSel_Fecha >= fecha1 &&
+                                   cce.CcSel_Fecha <= fecha2
                                    select cce;
 
             if (sellado == null) return NotFound();

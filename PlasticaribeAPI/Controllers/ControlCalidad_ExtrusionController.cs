@@ -51,11 +51,12 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // GET Por Fechas
-        [HttpGet("getControlCalidad_ExtrusionHoy")]
-        public ActionResult GetControlCalidad_ExtrusionHoy()
+        [HttpGet("getControlCalidad_ExtrusionHoy/{fecha1}/{fecha2}")]
+        public ActionResult GetControlCalidad_ExtrusionHoy(DateTime fecha1, DateTime fecha2)
         {
             var controlExtrusion = from cce in _context.Set<ControlCalidad_Extrusion>()
-                                   where cce.CcExt_Fecha == DateTime.Today
+                                   where cce.CcExt_Fecha >= fecha1 &&
+                                   cce.CcExt_Fecha <= fecha2
                                    select cce;
 
             if (controlExtrusion == null) return NotFound();
