@@ -66,13 +66,15 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getRonda/{ot}")]
         public ActionResult GetRonda(long ot)
         {
+#pragma warning disable CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
             var controlExtrusion = (from cce in _context.Set<ControlCalidad_Extrusion>()
                                    where cce.CcExt_OT == ot &&
                                    cce.CcExt_Fecha == DateTime.Today
                                    orderby cce.CcExt_Id descending
-                                   select cce.CcExt_Ronda == null ? 0 : cce.CcExt_Ronda).FirstOrDefault();
+                                   select cce.CcExt_Ronda).FirstOrDefault();
 
-            return Ok(controlExtrusion);
+            return controlExtrusion == null ? Ok(0) : Ok(controlExtrusion);
+#pragma warning restore CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
         }
 
         // PUT: api/ControlCalidad_Extrusion/5

@@ -25,10 +25,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ControlCalidad_Sellado>>> GetControlCalidad_Sellado()
         {
-          if (_context.ControlCalidad_Sellado == null)
-          {
-              return NotFound();
-          }
+            if (_context.ControlCalidad_Sellado == null) return NotFound();
             return await _context.ControlCalidad_Sellado.ToListAsync();
         }
 
@@ -36,16 +33,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ControlCalidad_Sellado>> GetControlCalidad_Sellado(long id)
         {
-          if (_context.ControlCalidad_Sellado == null)
-          {
-              return NotFound();
-          }
+            if (_context.ControlCalidad_Sellado == null) return NotFound();
             var controlCalidad_Sellado = await _context.ControlCalidad_Sellado.FindAsync(id);
 
-            if (controlCalidad_Sellado == null)
-            {
-                return NotFound();
-            }
+            if (controlCalidad_Sellado == null) return NotFound();
 
             return controlCalidad_Sellado;
         }
@@ -66,13 +57,15 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getRonda/{ot}")]
         public ActionResult GetRonda(long ot)
         {
+#pragma warning disable CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
             var rondaMayor = (from cce in _context.Set<ControlCalidad_Sellado>()
                               where cce.CcSel_OT == ot &&
                               cce.CcSel_Fecha == DateTime.Today
                               orderby cce.CcSel_Id descending
-                              select cce.CcSel_Ronda == null ? 0 : cce.CcSel_Ronda).FirstOrDefault();
+                              select cce.CcSel_Ronda).FirstOrDefault();
 
-            return Ok(rondaMayor);
+            return rondaMayor == null ? Ok(0) :  Ok(rondaMayor);
+#pragma warning restore CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
         }
 
         // PUT: api/ControlCalidad_Sellado/5
