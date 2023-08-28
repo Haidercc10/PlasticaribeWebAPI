@@ -52,11 +52,12 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // Consulta que devolverá los registros que se han realizado del día actual
-        [HttpGet("getRegistrosHoy")]
-        public ActionResult GetRegistrosHoy()
+        [HttpGet("getRegistros/{inicio}/{fin}")]
+        public ActionResult GetRegistros(DateTime inicio, DateTime fin)
         {
             var con = from cc in _context.Set<ControlCalidad_CorteDoblado>()
-                      where cc.Fecha_Registro == DateTime.Today
+                      where cc.Fecha_Registro >= inicio &&
+                            cc.Fecha_Registro <= fin
                       select cc;
             return con.Any() ? Ok(con) : Problem("No se encontraron registros del día de hoy");
         }
