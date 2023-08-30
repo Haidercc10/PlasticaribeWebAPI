@@ -329,6 +329,26 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        [HttpPut("putInventarioBiorientado/{id}/{cantidad}")]
+        public async Task<IActionResult> PutInventarioBiorientado(long id, decimal cantidad)
+        {
+            var bopp = (from b in _context.Set<BOPP>() where b.BOPP_Id == id select b).FirstOrDefault();
+            if (bopp == null) return BadRequest();
+
+            bopp.BOPP_Stock = cantidad;
+            _context.Entry(bopp).State = EntityState.Modified;
+
+            try {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException) {
+                if (!BOPPExists(id)) return NotFound();
+                else throw;
+            }
+
+            return Ok(bopp);
+        }
+
         // POST: api/BOPP
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
