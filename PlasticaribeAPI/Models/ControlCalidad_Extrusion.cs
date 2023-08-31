@@ -85,6 +85,10 @@ namespace PlasticaribeAPI.Models
         public string CcExt_TipoBobina { get; set; }
 
 
+        [Precision(18, 2)]
+        public decimal? CcExt_CalibreTB { get; set; } //Calibre Tipo Bobina
+
+
         [Column(TypeName = "date")]
         public DateTime CcExt_Fecha { get; set; }
 
@@ -94,7 +98,7 @@ namespace PlasticaribeAPI.Models
 
 
         [Column(TypeName = "varchar(max)")]
-        public string CcExt_Observacion { get; set; }
+        public string? CcExt_Observacion { get; set; }
 
     }
 }
