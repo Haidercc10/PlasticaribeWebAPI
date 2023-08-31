@@ -102,12 +102,13 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // Get Parametros cualitativos
-        [HttpGet("getParametrosCualitativos/{consecutivo}")]
-        public ActionResult GetParametrosCualitativos(long consecutivo)
+        [HttpGet("getParametrosCuantitativos/{consecutivo}")]
+        public ActionResult GetParametrosCuantitativos(long consecutivo)
         {
             var cualitativos = _context.Certificados_Calidad.Where(c => c.Consecutivo == consecutivo).Select(c => new
             {
                 Calibre = new { 
+                   Consecutivo = c.Consecutivo,
                    Parametro = "Calibre",
                    Unidad = c.Unidad_Calibre,
                    Nominal = c.Nominal_Calibre, 
@@ -117,6 +118,7 @@ namespace PlasticaribeAPI.Controllers
                 },
                 AnchoFrente = new
                 {
+                    Consecutivo = c.Consecutivo,
                     Parametro = "Ancho Frente",
                     Unidad = c.Unidad_AnchoFrente,
                     Nominal = c.Nominal_AnchoFrente,
@@ -126,6 +128,7 @@ namespace PlasticaribeAPI.Controllers
                 },
                 AnchoFuelle = new
                 {
+                    Consecutivo = c.Consecutivo,
                     Parametro = "Ancho Fuelle",
                     Unidad = c.Unidad_AnchoFuelle,
                     Nominal = c.Nominal_AnchoFuelle,
@@ -135,6 +138,7 @@ namespace PlasticaribeAPI.Controllers
                 }, 
                 LargoRepeticion = new
                 {
+                    Consecutivo = c.Consecutivo,
                     Parametro = "Largo Repetición",
                     Unidad = c.Unidad_LargoRepeticion,
                     Nominal = c.Nominal_LargoRepeticion,
@@ -144,13 +148,14 @@ namespace PlasticaribeAPI.Controllers
                 },
                 Cof = new
                 {
+                    Consecutivo = c.Consecutivo, 
                     Parametro = "COF",
                     Unidad = c.Unidad_Cof,
                     Nominal = c.Nominal_Cof,
                     Tolerancia = c.Tolerancia_Cof,
                     Minimo = c.Minimo_Cof,
                     Maximo = c.Maximo_Cof,
-                }
+                },
             });
 
             var result = cualitativos.Select(pc => pc.Calibre)
