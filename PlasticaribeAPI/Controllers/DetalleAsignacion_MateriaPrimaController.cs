@@ -150,6 +150,98 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        //Consulta que devolverá las materias primas asignadas y devueltas a una orden de trabajo
+        [HttpGet("getAsginacionDevolucionOrden/{ot}")]
+        public ActionResult GetAsginacionDevolucionOrden(long ot)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var conMp = (from Asgmp in _context.Set<DetalleAsignacion_MateriaPrima>()
+                         where Asgmp.AsigMp.AsigMP_OrdenTrabajo == ot
+                         group Asgmp by new
+                         {
+                             Asgmp.MatPri_Id,
+                             Asgmp.MatPri.MatPri_Nombre,
+                             Asgmp.UndMed_Id,
+                             Asgmp.MatPri.MatPri_Precio,
+                             Asgmp.Proceso_Id,
+                             Asgmp.Proceso.Proceso_Nombre
+                         } into y
+                         select new
+                         {
+                             //Materia Prima
+                             MatPri_Id = Convert.ToInt16(y.Key.MatPri_Id),
+                             Tinta_Id = Convert.ToInt16(2001),
+                             Bopp_Id = Convert.ToInt16(449),
+                             MateriaPrima = Convert.ToInt16(y.Key.MatPri_Id),
+                             NombreMP = Convert.ToString(y.Key.MatPri_Nombre),
+                             CantMP = y.Sum(Asgmp => Asgmp.DtAsigMp_Cantidad),
+                             UndMedida = y.Key.UndMed_Id,
+                             Precio = Convert.ToDecimal(y.Key.MatPri_Precio),
+                             SubTotal = Convert.ToDecimal(y.Sum(Asgmp => Asgmp.DtAsigMp_Cantidad) * y.Key.MatPri_Precio),
+                             Proceso = y.Key.Proceso_Id,
+                             NombreProceso = y.Key.Proceso_Nombre
+                         });
+
+            var conTinta = (from AsgTinta in _context.Set<DetalleAsignacion_Tinta>()
+                            where AsgTinta.AsigMp.AsigMP_OrdenTrabajo == ot
+                            group AsgTinta by new
+                            {
+                                AsgTinta.Tinta_Id,
+                                AsgTinta.Tinta.Tinta_Nombre,
+                                AsgTinta.UndMed_Id,
+                                AsgTinta.Tinta.Tinta_Precio,
+                                AsgTinta.Proceso_Id,
+                                AsgTinta.Proceso.Proceso_Nombre
+                            } into y
+                            select new
+                            {
+                                //Tintas
+                                MatPri_Id = Convert.ToInt16(84),
+                                Tinta_Id = Convert.ToInt16(y.Key.Tinta_Id),
+                                Bopp_Id = Convert.ToInt16(449),
+                                MateriaPrima = Convert.ToInt16(y.Key.Tinta_Id),
+                                NombreMP = Convert.ToString(y.Key.Tinta_Nombre),
+                                CantMP = y.Sum(AsgTinta => AsgTinta.DtAsigTinta_Cantidad),
+                                UndMedida = y.Key.UndMed_Id,
+                                Precio = Convert.ToDecimal(y.Key.Tinta_Precio),
+                                SubTotal = Convert.ToDecimal(y.Sum(AsgTinta => AsgTinta.DtAsigTinta_Cantidad) * y.Key.Tinta_Precio),
+                                Proceso = y.Key.Proceso_Id,
+                                NombreProceso = y.Key.Proceso_Nombre
+                            });
+
+            var conBopp = (from AsgBopp in _context.Set<DetalleAsignacion_BOPP>()
+                           where AsgBopp.DtAsigBOPP_OrdenTrabajo == ot
+                           group AsgBopp by new
+                           {
+                               AsgBopp.BOPP_Id,
+                               AsgBopp.BOPP.BOPP_Nombre,
+                               AsgBopp.UndMed_Id,
+                               AsgBopp.BOPP.BOPP_Precio,
+                               AsgBopp.Proceso_Id,
+                               AsgBopp.Proceso.Proceso_Nombre
+                           } into y
+                           select new
+                           {
+                               //BOPP
+                               MatPri_Id = Convert.ToInt16(84),
+                               Tinta_Id = Convert.ToInt16(2001),
+                               Bopp_Id = Convert.ToInt16(y.Key.BOPP_Id),
+                               MateriaPrima = Convert.ToInt16(y.Key.BOPP_Id),
+                               NombreMP = Convert.ToString(y.Key.BOPP_Nombre),
+                               CantMP = y.Sum(AsgBopp => AsgBopp.DtAsigBOPP_Cantidad),
+                               UndMedida = y.Key.UndMed_Id,
+                               Precio = Convert.ToDecimal(y.Key.BOPP_Precio),
+                               SubTotal = Convert.ToDecimal(y.Sum(AsgBopp => AsgBopp.DtAsigBOPP_Cantidad) * y.Key.BOPP_Precio),
+                               Proceso = y.Key.Proceso_Id,
+                               NombreProceso = y.Key.Proceso_Nombre
+                           });
+
+            var con = conMp.Concat(conTinta).Concat(conBopp);
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            return Ok(con);
+        }
+
         //Consulta que traerá la cantidad de materia prima asignada, teniendo en cuenta la materia prima devuelta
         [HttpGet("getMateriaPrimaAsignada/{ot}")]
         public ActionResult GetMateriaPrimaAsignada(int ot)

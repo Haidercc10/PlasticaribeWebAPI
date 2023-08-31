@@ -64,7 +64,6 @@ namespace PlasticaribeAPI.Controllers
             return Ok(detalleDevolucion_MateriaPrima);
         }
 
-
         [HttpGet("consultaMovimientos2/{ot}")]
         public ActionResult GetOT(long ot)
         {
