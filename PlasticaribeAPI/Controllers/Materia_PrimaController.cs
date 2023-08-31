@@ -580,13 +580,13 @@ namespace PlasticaribeAPI.Controllers
                                && asg.AsigMp.AsigMp_FechaEntrega <= fecha2
                                && Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo).Contains(codigo)
                                && "ASIGMP".Contains(tipoMov)
-                               && Convert.ToString(asg.MatPri_Id).Contains(materiaPrima)
+                               && (materiaPrima != "" ? Convert.ToString(asg.MatPri_Id) == materiaPrima : Convert.ToString(asg.MatPri_Id).Contains(materiaPrima))
                          select new
                          {
                              Id = asg.AsigMp_Id,
                              Codigo = Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo),
                              Movimiento = Convert.ToString("ASIGMP"),
-                             Tipo_Movimiento = Convert.ToString("Asigmación de Materia Prima"),
+                             Tipo_Movimiento = Convert.ToString("Asignación de Materia Prima"),
                              Fecha = asg.AsigMp.AsigMp_FechaEntrega,
                              Usuario = asg.AsigMp.Usua.Usua_Nombre,
                              Materia_Prima_Id = Convert.ToInt16(asg.MatPri_Id),
@@ -605,8 +605,8 @@ namespace PlasticaribeAPI.Controllers
                                                && cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= fecha2
                                                && Convert.ToString(cr.AsigMPxTinta.Tinta_Id).Contains(codigo)
                                                && "CRTINTAS".Contains(tipoMov)
-                                               && (Convert.ToString(cr.Tinta_Id).Contains(materiaPrima)
-                                                  || Convert.ToString(cr.MatPri_Id).Contains(materiaPrima))
+                                               && (materiaPrima != "" ? (Convert.ToString(cr.Tinta_Id) == materiaPrima || Convert.ToString(cr.MatPri_Id) == materiaPrima) : 
+                                                                        (Convert.ToString(cr.Tinta_Id).Contains(materiaPrima) || Convert.ToString(cr.MatPri_Id).Contains(materiaPrima)))
                                          select new 
                                          {
                                              Id = cr.AsigMPxTinta_Id,
@@ -631,9 +631,8 @@ namespace PlasticaribeAPI.Controllers
                                         && dev.DevMatPri.DevMatPri_Fecha <= fecha2
                                         && Convert.ToString(dev.DevMatPri.DevMatPri_OrdenTrabajo).Contains(codigo)
                                         && "DEVMP".Contains(tipoMov)
-                                        && (Convert.ToString(dev.MatPri_Id).Contains(materiaPrima)
-                                           || Convert.ToString(dev.Tinta.Tinta_Id).Contains(materiaPrima)
-                                           || Convert.ToString(dev.Bopp.BOPP_Serial).Contains(materiaPrima))
+                                        && (materiaPrima != "" ? (Convert.ToString(dev.MatPri_Id) == materiaPrima || Convert.ToString(dev.Tinta.Tinta_Id) == materiaPrima || Convert.ToString(dev.Bopp.BOPP_Serial) == materiaPrima) :
+                                                                 (Convert.ToString(dev.MatPri_Id).Contains(materiaPrima) || Convert.ToString(dev.Tinta.Tinta_Id).Contains(materiaPrima) || Convert.ToString(dev.Bopp.BOPP_Serial).Contains(materiaPrima)))
                                   select new
                                   {
                                       Id = dev.DevMatPri_Id,
@@ -658,9 +657,8 @@ namespace PlasticaribeAPI.Controllers
                                     && fac.Facco.Facco_FechaFactura <= fecha2
                                     && Convert.ToString(fac.Facco.Facco_Codigo).Contains(codigo)
                                     && fac.Facco.TpDoc_Id.Contains(tipoMov)
-                                    && (Convert.ToString(fac.MatPri_Id).Contains(materiaPrima)
-                                       || Convert.ToString(fac.Tinta.Tinta_Id).Contains(materiaPrima)
-                                       || Convert.ToString(fac.Bopp_Generico.BoppGen_Id).Contains(materiaPrima))
+                                    && (materiaPrima != "" ? (Convert.ToString(fac.MatPri_Id) == materiaPrima || Convert.ToString(fac.Tinta.Tinta_Id) == materiaPrima || Convert.ToString(fac.Bopp_Generico.BoppGen_Id) == materiaPrima) : 
+                                                             (Convert.ToString(fac.MatPri_Id).Contains(materiaPrima) || Convert.ToString(fac.Tinta.Tinta_Id).Contains(materiaPrima) || Convert.ToString(fac.Bopp_Generico.BoppGen_Id).Contains(materiaPrima)))
                               select new
                               {
                                   Id = fac.Facco_Id,
@@ -685,9 +683,8 @@ namespace PlasticaribeAPI.Controllers
                                       && rem.Rem.Rem_Fecha <= fecha2
                                       && Convert.ToString(rem.Rem.Rem_Codigo).Contains(codigo)
                                       && rem.Rem.TpDoc_Id.Contains(tipoMov)
-                                      && (Convert.ToString(rem.MatPri_Id).Contains(materiaPrima)
-                                          || Convert.ToString(rem.Tinta.Tinta_Id).Contains(materiaPrima)
-                                          || Convert.ToString(rem.Bopp.BoppGen_Id).Contains(materiaPrima))
+                                      && (materiaPrima != "" ? (Convert.ToString(rem.MatPri_Id) == materiaPrima || Convert.ToString(rem.Tinta.Tinta_Id) == materiaPrima || Convert.ToString(rem.Bopp.BoppGen_Id) == materiaPrima) :
+                                                               (Convert.ToString(rem.MatPri_Id).Contains(materiaPrima) || Convert.ToString(rem.Tinta.Tinta_Id).Contains(materiaPrima) || Convert.ToString(rem.Bopp.BoppGen_Id).Contains(materiaPrima)))
                                 select new
                                 {
                                     Id = Convert.ToInt64(rem.Rem_Id),
@@ -712,7 +709,7 @@ namespace PlasticaribeAPI.Controllers
                                    && asg.AsigBOPP.AsigBOPP_FechaEntrega <= fecha2
                                    && Convert.ToString(asg.DtAsigBOPP_OrdenTrabajo).Contains(codigo)
                                    && Convert.ToString(asg.TpDoc_Id).Contains(tipoMov)
-                                   && Convert.ToString(asg.BOPP_Id).Contains(materiaPrima)
+                                   && (materiaPrima != "" ? Convert.ToString(asg.BOPP_Id) == materiaPrima : Convert.ToString(asg.BOPP_Id).Contains(materiaPrima))
                              select new
                              {
                                  Id = Convert.ToInt64(asg.AsigBOPP_Id),
@@ -737,7 +734,7 @@ namespace PlasticaribeAPI.Controllers
                                        && ent.BOPP_FechaIngreso <= fecha2
                                        && Convert.ToString(ent.BOPP_Id).Contains(codigo)
                                        && Convert.ToString("ENTBIO").Contains(tipoMov)
-                                       && Convert.ToString(ent.BOPP_Serial).Contains(materiaPrima)
+                                       && (materiaPrima != "" ? Convert.ToString(ent.BOPP_Serial) == materiaPrima : Convert.ToString(ent.BOPP_Serial).Contains(materiaPrima))
                                  select new
                                  {
                                      Id = Convert.ToInt64(ent.BOPP_Id),
@@ -762,7 +759,7 @@ namespace PlasticaribeAPI.Controllers
                                     && asg.AsigMp.AsigMp_FechaEntrega <= fecha2
                                     && Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo).Contains(codigo)
                                     && Convert.ToString("ASIGTINTAS").Contains(tipoMov)
-                                    && Convert.ToString(asg.Tinta_Id).Contains(materiaPrima)
+                                    && (materiaPrima != "" ? Convert.ToString(asg.Tinta_Id) == materiaPrima : Convert.ToString(asg.Tinta_Id).Contains(materiaPrima))
                               select new
                               {
                                   Id = Convert.ToInt64(asg.AsigMp_Id),
@@ -792,7 +789,7 @@ namespace PlasticaribeAPI.Controllers
             //Asignaciones de Materia Prima
             var conAsg = from asg in _context.Set<DetalleAsignacion_MateriaPrima>()
                          from emp in _context.Set<Empresa>()
-                         where Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo).Contains(codigo)
+                         where Convert.ToString(asg.AsigMp.AsigMp_Id).Contains(codigo)
                                && "ASIGMP".Contains(tipoMov)
                                && emp.Empresa_Id == 800188732
                          select new
