@@ -154,7 +154,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.ControlCalidad_Impresion> ControlCalidad_Impresion { get; set; }
         public DbSet<PlasticaribeAPI.Models.ControlCalidad_Extrusion> ControlCalidad_Extrusion { get; set; }
         public DbSet<PlasticaribeAPI.Models.ControlCalidad_Sellado> ControlCalidad_Sellado { get; set; }
-
+        public DbSet<PlasticaribeAPI.Models.Movimientros_Entradas_MP> Movimientros_Entradas_MP { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Entradas_Salidas_MP> Entradas_Salidas_MP { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -854,6 +855,20 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<ControlCalidad_Sellado>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<ControlCalidad_Sellado>().HasOne(x => x.UndMedida1).WithMany().HasForeignKey(y => y.UndMed_AL).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<ControlCalidad_Sellado>().HasOne(x => x.UndMedida2).WithMany().HasForeignKey(y => y.UndMed_AF).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Movimientros_Entradas_MP
+            modelBuilder.Entity<Movimientros_Entradas_MP>().ToTable(x => x.HasTrigger("Auditoria_Movimientros_Entradas_MP"));
+            modelBuilder.Entity<Movimientros_Entradas_MP>().HasOne(x => x.Materia_Prima).WithMany().HasForeignKey(y => y.MatPri_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Movimientros_Entradas_MP>().HasOne(x => x.Tinta).WithMany().HasForeignKey(y => y.Tinta_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Movimientros_Entradas_MP>().HasOne(x => x.Bopp).WithMany().HasForeignKey(y => y.Bopp_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Movimientros_Entradas_MP>().HasOne(x => x.Unidad_Medida).WithMany().HasForeignKey(y => y.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Movimientros_Entradas_MP>().HasOne(x => x.Tipo_Documento).WithMany().HasForeignKey(y => y.Tipo_Entrada).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Movimientros_Entradas_MP>().HasOne(x => x.Estado).WithMany().HasForeignKey(y => y.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Entradas_Salidas_MP
+            modelBuilder.Entity<Entradas_Salidas_MP>().ToTable(x => x.HasTrigger("Auditoria_Entradas_Salidas_MP"));
+            modelBuilder.Entity<Entradas_Salidas_MP>().HasOne(x => x.Movimientros).WithMany().HasForeignKey(y => y.Id_Entrada).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Entradas_Salidas_MP>().HasOne(x => x.Documento).WithMany().HasForeignKey(y => y.Tipo_Salida).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
