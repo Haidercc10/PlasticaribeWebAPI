@@ -62,6 +62,17 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        //Consulta que va a devolcer la cantidad de stock del biorientado
+        [HttpGet("getCosto/{costo}/{anio}")]
+        public ActionResult GetCosto(string costo, int anio)
+        {
+            var con = (from ce in _context.Set<Costos_Empresas_Anios>()
+                       where ce.CostosEmp_Descripcion == costo &&
+                             ce.Anio == anio
+                       select ce).FirstOrDefault();
+            return con != null ? Ok(con) : NotFound();
+        }
+
         // PUT: api/Costos_Empresas_Anios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

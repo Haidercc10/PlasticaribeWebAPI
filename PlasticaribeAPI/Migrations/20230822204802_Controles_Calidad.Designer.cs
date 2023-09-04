@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20230822204802_Controles_Calidad")]
+    partial class Controles_Calidad
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -995,10 +998,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal?>("CcExt_CalibreTB")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("CcExt_Cliente")
                         .IsRequired()
                         .HasColumnType("varchar(max)");
@@ -1017,6 +1016,7 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("CcExt_Observacion")
+                        .IsRequired()
                         .HasColumnType("varchar(max)");
 
                     b.Property<decimal>("CcExt_PesoMetro")
