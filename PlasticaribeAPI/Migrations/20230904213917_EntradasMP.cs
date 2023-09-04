@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -21,11 +22,15 @@ namespace PlasticaribeAPI.Migrations
                     Bopp_Id = table.Column<long>(type: "bigint", nullable: false),
                     Cantidad_Entrada = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     UndMed_Id = table.Column<string>(type: "varchar(10)", nullable: false),
+                    Precio_Unitario = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Tipo_Entrada = table.Column<string>(type: "varchar(10)", nullable: false),
                     Codigo_Entrada = table.Column<int>(type: "int", nullable: false),
                     Estado_Id = table.Column<int>(type: "int", nullable: false),
                     Cantidad_Asignada = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    Cantidad_Disponible = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false)
+                    Cantidad_Disponible = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Observacion = table.Column<string>(type: "varchar(max)", nullable: false),
+                    Fecha_Entrada = table.Column<DateTime>(type: "date", nullable: false),
+                    Hora_Entrada = table.Column<string>(type: "varchar(10)", nullable: false, defaultValue: "")
                 },
                 constraints: table =>
                 {

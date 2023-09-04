@@ -12,7 +12,7 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    [Migration("20230904155837_EntradasMP")]
+    [Migration("20230904213917_EntradasMP")]
     partial class EntradasMP
     {
         /// <inheritdoc />
@@ -4206,8 +4206,23 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Estado_Id")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("Fecha_Entrada")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Hora_Entrada")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)");
+
                     b.Property<long>("MatPri_Id")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("Observacion")
+                        .IsRequired()
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<decimal>("Precio_Unitario")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<long>("Tinta_Id")
                         .HasColumnType("bigint");

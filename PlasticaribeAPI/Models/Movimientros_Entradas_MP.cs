@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
@@ -18,6 +19,9 @@ namespace PlasticaribeAPI.Models
         public decimal Cantidad_Entrada { get; set; }
         public string UndMed_Id { get; set; }
         public Unidad_Medida? Unidad_Medida { get; set; }
+
+        [Precision(18, 2)]
+        public decimal Precio_Unitario { get; set; }
         public string Tipo_Entrada { get; set; }
         public Tipo_Documento? Tipo_Documento { get; set; }
         public int Codigo_Entrada { get; set; }
@@ -29,5 +33,14 @@ namespace PlasticaribeAPI.Models
 
         [Precision(18, 2)]
         public decimal Cantidad_Disponible { get; set; }
+
+        [Column(TypeName = "varchar(max)")]
+        public string Observacion { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime Fecha_Entrada { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string Hora_Entrada { get; set; }
     }
 }
