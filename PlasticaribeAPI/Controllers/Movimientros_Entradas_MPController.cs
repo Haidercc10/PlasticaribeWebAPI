@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ using PlasticaribeAPI.Models;
 namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class Movimientros_Entradas_MPController : ControllerBase
     {
         private readonly dataContext _context;
@@ -50,6 +51,57 @@ namespace PlasticaribeAPI.Controllers
             return movimientros_Entradas_MP;
         }
 
+        // Consulta que devolverá la información de las compras realizadas de una materia prima en un lapso de tiempo
+        [HttpGet("getComprasRealizadas/{fechaInicio}/{fechaFin}/{material}")]
+        public ActionResult GetComprasRealizadas(DateTime fechaInicio, DateTime fechaFin, long material)
+        {
+            var compras = from c in _context.Set<Movimientros_Entradas_MP>()
+                          where c.Fecha_Entrada >= fechaInicio &&
+                                c.Fecha_Entrada <= fechaFin &&
+                                (c.MatPri_Id == material || c.Tinta_Id == material || c.Bopp_Id == material)
+                          select new
+                          {
+                              FechaCompra = c.Fecha_Entrada,
+                              HoraCompra = c.Hora_Entrada,
+                              CantidadCompra = c.Cantidad_Entrada,
+                              PrecioReal = c.Precio_RealUnitario,
+                              PrecioEstandar = c.Precio_EstandarUnitario,
+                              DiferenciaPrecio = (c.Precio_RealUnitario - c.Precio_EstandarUnitario),
+                              CostoReal = (c.Cantidad_Entrada * c.Precio_RealUnitario),
+                              CostoEstandar = (c.Cantidad_Entrada * c.Precio_EstandarUnitario),
+                              VariacionPrecio = (c.Cantidad_Entrada * c.Precio_RealUnitario) - (c.Cantidad_Entrada * c.Precio_EstandarUnitario)
+                          };
+            return compras.Any() ? Ok(compras) : NotFound();
+        }
+
+        // Materias primas, Tintas, Biorientados
+        [HttpGet("getInventarioMateriales")]
+        public ActionResult GetInventarioMateriales()
+        {
+            var materiasPrimas = from mp in _context.Set<Materia_Prima>()
+                                 select new
+                                 {
+                                     Id_Materia_Prima = mp.MatPri_Id,
+                                     Nombre_Materia_Prima = mp.MatPri_Nombre,
+                                 };
+
+            var bopp = from bp in _context.Set<Bopp_Generico>()
+                       select new
+                       {
+                           Id_Materia_Prima = bp.BoppGen_Id,
+                           Nombre_Materia_Prima = bp.BoppGen_Nombre,
+                       };
+
+            var tintas = from t in _context.Set<Tinta>()
+                         select new
+                         {
+                             Id_Materia_Prima = t.Tinta_Id,
+                             Nombre_Materia_Prima = t.Tinta_Nombre,
+                         };
+
+            return Ok(materiasPrimas.Concat(bopp).Concat(tintas));
+
+        }
         // PUT: api/Movimientros_Entradas_MP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

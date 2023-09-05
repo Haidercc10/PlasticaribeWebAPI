@@ -39,28 +39,8 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string? MatPri_Hora { get; set; }
 
-
-        //Lista requerida para relación proveedor-materiaprima
-        //public IList<Provedor_MateriaPrima>? ProvMatPri { get; set; }
-
-        //Lista requerida para relación facturas compras - materias primas
-        
-        //public IList<FacturaCompra_MateriaPrima>? FaccoMatPri { get; set; }
-
-        //Lista requerida para relación detalles asignacion - materias primas
-        //public IList<DetalleAsignacion_MateriaPrima>? DtAsigMatPri { get; set; }
-
-        //public IList<Remision_MateriaPrima>? RemiMatPri { get; set; }
-
-        //public IList<DetalleRecuperado_MateriaPrima>? DetRecMatPri { get; set; }
-
-        //public IList<DetalleDevolucion_MateriaPrima>? DetDevMatPri { get; set; }
-
-        //Lista requerida para relación tintas - materias primas
-        //public IList<Tinta_MateriaPrima>? TintaMatPri { get; set; }
-
-        //Lista requerida para relación Asignacion_MatPrimaXTinta - materias primas
-        //public IList<DetalleAsignacion_MatPrimaXTinta>? DetAsigMPxTinta { get; set; }
+        [Precision(18, 2)]
+        public decimal MatPri_PrecioEstandar { get; set; }
 
     }
 }

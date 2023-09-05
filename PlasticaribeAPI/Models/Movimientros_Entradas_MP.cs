@@ -21,7 +21,10 @@ namespace PlasticaribeAPI.Models
         public Unidad_Medida? Unidad_Medida { get; set; }
 
         [Precision(18, 2)]
-        public decimal Precio_Unitario { get; set; }
+        public decimal Precio_RealUnitario { get; set; }
+
+        [Precision(18, 2)]
+        public decimal Precio_EstandarUnitario { get; set; }
         public string Tipo_Entrada { get; set; }
         public Tipo_Documento? Tipo_Documento { get; set; }
         public int Codigo_Entrada { get; set; }
