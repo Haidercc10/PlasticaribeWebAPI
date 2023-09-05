@@ -51,6 +51,25 @@ namespace PlasticaribeAPI.Controllers
             return entradas_Salidas_MP;
         }
 
+        // Consulta que devolverá la información de las salidas de material
+        [HttpGet("getSalidasMaterial/{fecha}/{material}")]
+        public ActionResult GetSalidasMaterial(DateTime fecha, long material)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var salidas = from s in _context.Set<Entradas_Salidas_MP>()
+                          where s.Fecha_Registro <= fecha &&
+                                (s.MatPri_Id == material || s.Tinta_Id == material || s.Bopp_Id == material)
+                          select new
+                          {
+                              CantidadSalida = s.Cantidad_Salida,
+                              PrecioReal = s.Movimientros.Precio_RealUnitario,
+                              CostoReal = (s.Cantidad_Salida * s.Movimientros.Precio_RealUnitario)
+                          };
+
+            return salidas.Any() ? Ok(salidas) : NotFound();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
         // PUT: api/Entradas_Salidas_MP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

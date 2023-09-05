@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
@@ -15,6 +16,15 @@ namespace PlasticaribeAPI.Models
         public string Tipo_Salida { get; set; }
         public Tipo_Documento? Documento { get; set; }
         public int Codigo_Salida { get; set; }
+        public long MatPri_Id { get; set; }
+        public Materia_Prima? Materia_Prima { get; set; }
+        public long Tinta_Id { get; set; }
+        public Tinta? Tinta { get; set; }
+        public long Bopp_Id { get; set; }
+        public Bopp_Generico? Bopp { get; set; }
+
+        [Precision(18, 2)]
+        public decimal Cantidad_Salida { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime Fecha_Registro { get; set; }

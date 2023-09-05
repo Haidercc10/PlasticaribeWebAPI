@@ -74,6 +74,23 @@ namespace PlasticaribeAPI.Controllers
             return compras.Any() ? Ok(compras) : NotFound();
         }
 
+        // Consulta que devolverá la información de las cantidades disponibles que hay de compras realizados antes de un lapso de tiempo
+        [HttpGet("getComprasAntiguas/{fecha}/{material}")]
+        public ActionResult GetComprasAntiguas(DateTime fecha, long material)
+        {
+            var compras = from c in _context.Set<Movimientros_Entradas_MP>()
+                          where c.Fecha_Entrada <= fecha &&
+                                (c.MatPri_Id == material || c.Tinta_Id == material || c.Bopp_Id == material) &&
+                                c.Cantidad_Disponible > 0
+                          select new
+                          {
+                              CantidadCompra = c.Cantidad_Disponible,
+                              PrecioReal = c.Precio_RealUnitario,
+                              CostoReal = (c.Cantidad_Disponible * c.Precio_RealUnitario)
+                          };
+            return compras.Any() ? Ok(compras) : NotFound();
+        }
+
         // Materias primas, Tintas, Biorientados
         [HttpGet("getInventarioMateriales")]
         public ActionResult GetInventarioMateriales()
@@ -102,6 +119,7 @@ namespace PlasticaribeAPI.Controllers
             return Ok(materiasPrimas.Concat(bopp).Concat(tintas));
 
         }
+
         // PUT: api/Movimientros_Entradas_MP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
