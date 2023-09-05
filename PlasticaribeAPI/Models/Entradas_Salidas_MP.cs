@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
@@ -7,9 +8,19 @@ namespace PlasticaribeAPI.Models
         [Key]
         public int Id { get; set; }
         public int Id_Entrada { get; set; }
+        public string Tipo_Entrada { get; set; }
+        public Tipo_Documento? Tipo_Documento { get; set; }
+        public int Codigo_Entrada { get; set; }
         public Movimientros_Entradas_MP? Movimientros { get; set; }
         public string Tipo_Salida { get; set; }
         public Tipo_Documento? Documento { get; set; }
         public int Codigo_Salida { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime Fecha_Registro { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string Hora_Registro { get; set; }
+
     }
 }
