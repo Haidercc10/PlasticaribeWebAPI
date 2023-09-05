@@ -70,6 +70,42 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
+        // GET: Obtener registros de salidas
+        [HttpGet("getConsumos/{fecha1}/{fecha2}")]
+        public ActionResult GetConsumos(DateTime fecha1, DateTime fecha2)
+        {
+
+            var consumos = from s in _context.Set<Entradas_Salidas_MP>()
+                           from me in _context.Set<Movimientros_Entradas_MP>()
+                           from a in _context.Set<Asignacion_MatPrima>()
+                           from d in _context.Set<DetalleAsignacion_MateriaPrima>()
+                           where s.Fecha_Registro >= fecha1 &&
+                           s.Fecha_Registro <= fecha2 &&
+                           s.Codigo_Entrada == me.Codigo_Entrada &&
+                           s.Id_Entrada == me.Id &&
+                           s.Tipo_Entrada == me.Tipo_Entrada &&
+                           a.AsigMp_Id == d.AsigMp_Id &&
+                           a.AsigMp_Id == s.Codigo_Salida &&
+                           me.MatPri_Id == d.MatPri_Id
+                           select new
+                           {
+                               /*Codigo_Salida = s.Codigo_Salida,
+                               Fecha = s.Fecha_Registro,
+                               OT = a.AsigMP_OrdenTrabajo,
+                               Cantidad_Requerida = d.DtAsigMp_Cantidad,
+                               Cantidad_Estandar = 0,
+                               Diferencial_Cantidad = (d.DtAsigMp_Cantidad - 0),
+                               Precio_Real = me.Precio_Unitario,
+                               ValoracionDCxPR = (me.Precio_Unitario * (d.DtAsigMp_Cantidad - 0)),
+                               Costo_Real = (me.Precio_Unitario * d.DtAsigMp_Cantidad),
+                               Costo_Estandar = (me.Precio_Unitario * 0),
+                               Valoracion_Cantidad = ((me.Precio_Unitario * d.DtAsigMp_Cantidad) - (me.Precio_Unitario * 0)),*/
+                           };
+
+            if (consumos == null) return NotFound();
+            return Ok(consumos);
+        }
+
         // PUT: api/Entradas_Salidas_MP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
