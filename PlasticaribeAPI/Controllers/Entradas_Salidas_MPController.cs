@@ -89,17 +89,17 @@ namespace PlasticaribeAPI.Controllers
                            me.MatPri_Id == d.MatPri_Id
                            select new
                            {
-                               /*Codigo_Salida = s.Codigo_Salida,
+                               Codigo_Salida = s.Codigo_Salida,
                                Fecha = s.Fecha_Registro,
                                OT = a.AsigMP_OrdenTrabajo,
                                Cantidad_Requerida = d.DtAsigMp_Cantidad,
                                Cantidad_Estandar = 0,
                                Diferencial_Cantidad = (d.DtAsigMp_Cantidad - 0),
-                               Precio_Real = me.Precio_Unitario,
-                               ValoracionDCxPR = (me.Precio_Unitario * (d.DtAsigMp_Cantidad - 0)),
-                               Costo_Real = (me.Precio_Unitario * d.DtAsigMp_Cantidad),
-                               Costo_Estandar = (me.Precio_Unitario * 0),
-                               Valoracion_Cantidad = ((me.Precio_Unitario * d.DtAsigMp_Cantidad) - (me.Precio_Unitario * 0)),*/
+                               Precio_Real = me.Precio_RealUnitario,
+                               ValoracionDCxPR = (me.Precio_RealUnitario * (d.DtAsigMp_Cantidad - 0)),
+                               Costo_Real = (me.Precio_RealUnitario * d.DtAsigMp_Cantidad),
+                               Costo_Estandar = (me.Precio_RealUnitario * 0),
+                               Valoracion_Cantidad = ((me.Precio_RealUnitario * d.DtAsigMp_Cantidad) - (me.Precio_RealUnitario * 0)),
                            };
 
             if (consumos == null) return NotFound();
