@@ -77,6 +77,28 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
         }
 
+        //Consulta que devolverá los movimientos de las nominas ingresadas en un rango de fechas
+        [HttpGet("getNominaIngresada/{fechaInicio}/{fechaFin}")]
+        public ActionResult GetNominaIngresada(DateTime fechaInicio, DateTime fechaFin)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var nomina = from nom in _context.Set<Nomina_Plasticaribe>()
+                         where nom.Nomina_FechaIncial >= fechaInicio &&
+                               nom.Nomina_FechaFinal <= fechaFin
+                         select new
+                         {
+                             FechaRegistro = nom.Nomina_FechaRegistro,
+                             registradoPor = nom.Usuario.Usua_Nombre,
+                             FechaInicio = nom.Nomina_FechaIncial,
+                             FechaFin = nom.Nomina_FechaFinal,
+                             ValorNomina = nom.Nomina_Costo,
+                             TipoNomina = nom.Tipos_Nomina.TpNomina_Nombre,
+                             Observacion = nom.Nomina_Observacion
+                         };
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            return nomina.Any() ? Ok(nomina) : NoContent();
+        }
+
         // PUT: api/Nomina_Plasticaribe/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

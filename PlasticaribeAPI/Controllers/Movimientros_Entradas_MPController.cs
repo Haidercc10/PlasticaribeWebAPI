@@ -66,10 +66,10 @@ namespace PlasticaribeAPI.Controllers
                               CantidadCompra = c.Cantidad_Entrada,
                               PrecioReal = c.Precio_RealUnitario,
                               PrecioEstandar = c.Precio_EstandarUnitario,
-                              DiferenciaPrecio = (c.Precio_RealUnitario - c.Precio_EstandarUnitario),
+                              DiferenciaPrecio = (c.Precio_EstandarUnitario - c.Precio_RealUnitario),
                               CostoReal = (c.Cantidad_Entrada * c.Precio_RealUnitario),
                               CostoEstandar = (c.Cantidad_Entrada * c.Precio_EstandarUnitario),
-                              VariacionPrecio = (c.Cantidad_Entrada * c.Precio_RealUnitario) - (c.Cantidad_Entrada * c.Precio_EstandarUnitario)
+                              VariacionPrecio = (c.Cantidad_Entrada * c.Precio_EstandarUnitario) - (c.Cantidad_Entrada * c.Precio_RealUnitario)
                           };
             return compras.Any() ? Ok(compras) : NotFound();
         }
@@ -79,11 +79,12 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetComprasAntiguas(DateTime fecha, long material)
         {
             var compras = from c in _context.Set<Movimientros_Entradas_MP>()
-                          where c.Fecha_Entrada <= fecha &&
+                          where c.Fecha_Entrada < fecha &&
                                 (c.MatPri_Id == material || c.Tinta_Id == material || c.Bopp_Id == material) &&
                                 c.Cantidad_Disponible > 0
                           select new
                           {
+                              FechaCompra = c.Fecha_Entrada,
                               CantidadCompra = c.Cantidad_Disponible,
                               PrecioReal = c.Precio_RealUnitario,
                               CostoReal = (c.Cantidad_Disponible * c.Precio_RealUnitario)
