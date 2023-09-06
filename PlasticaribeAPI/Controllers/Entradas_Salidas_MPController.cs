@@ -75,32 +75,40 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetConsumos(DateTime fecha1, DateTime fecha2)
         {
 
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var consumos = from s in _context.Set<Entradas_Salidas_MP>()
                            from me in _context.Set<Movimientros_Entradas_MP>()
-                           from a in _context.Set<Asignacion_MatPrima>()
-                           from d in _context.Set<DetalleAsignacion_MateriaPrima>()
                            where s.Fecha_Registro >= fecha1 &&
                            s.Fecha_Registro <= fecha2 &&
                            s.Codigo_Entrada == me.Codigo_Entrada &&
                            s.Id_Entrada == me.Id &&
                            s.Tipo_Entrada == me.Tipo_Entrada &&
-                           a.AsigMp_Id == d.AsigMp_Id &&
-                           a.AsigMp_Id == s.Codigo_Salida &&
-                           me.MatPri_Id == d.MatPri_Id
+                           me.MatPri_Id == s.MatPri_Id
                            select new
                            {
-                               Codigo_Salida = s.Codigo_Salida,
+                               
                                Fecha = s.Fecha_Registro,
-                               OT = a.AsigMP_OrdenTrabajo,
-                               Cantidad_Requerida = d.DtAsigMp_Cantidad,
+                               Hora = s.Hora_Registro,
+                               OT = s.Orden_Trabajo,
+                               MatPrimaId = s.MatPri_Id,
+                               TintaId = s.Tinta_Id,
+                               BoppId = s.Bopp_Id,
+                               MaterialRealId = (s.MatPri_Id != 84 && s.Tinta_Id == 2001 && s.Bopp_Id == 1 ? s.MatPri_Id :
+                                                 s.MatPri_Id == 84 && s.Tinta_Id != 2001 && s.Bopp_Id == 1 ? s.Tinta_Id :
+                                                 s.MatPri_Id == 84 && s.Tinta_Id == 2001 && s.Bopp_Id != 1 ? s.Bopp_Id : 1),
+                               NombreMaterial = (s.MatPri_Id != 84 && s.Tinta_Id == 2001 && s.Bopp_Id == 1 ? s.Materia_Prima.MatPri_Nombre :
+                                                 s.MatPri_Id == 84 && s.Tinta_Id != 2001 && s.Bopp_Id == 1 ? s.Tinta.Tinta_Nombre :
+                                                 s.MatPri_Id == 84 && s.Tinta_Id == 2001 && s.Bopp_Id != 1 ? s.Bopp.BoppGen_Nombre : ""),
+                               Cantidad_Requerida = s.Cantidad_Salida,
                                Cantidad_Estandar = 0,
-                               Diferencial_Cantidad = (d.DtAsigMp_Cantidad - 0),
+                               Diferencial_Cantidad = (s.Cantidad_Salida - 0),
                                Precio_Real = me.Precio_RealUnitario,
-                               ValoracionDCxPR = (me.Precio_RealUnitario * (d.DtAsigMp_Cantidad - 0)),
-                               Costo_Real = (me.Precio_RealUnitario * d.DtAsigMp_Cantidad),
-                               Costo_Estandar = (me.Precio_RealUnitario * 0),
-                               Valoracion_Cantidad = ((me.Precio_RealUnitario * d.DtAsigMp_Cantidad) - (me.Precio_RealUnitario * 0)),
+                               ValoracionDCxPR = (me.Precio_RealUnitario * (s.Cantidad_Salida - 0)),
+                               Costo_Real = (me.Precio_RealUnitario * s.Cantidad_Salida),
+                               Costo_Estandar = (me.Precio_EstandarUnitario),
+                               Valoracion_Cantidad = ((me.Precio_RealUnitario * s.Cantidad_Salida) - (me.Precio_RealUnitario * 0)),
                            };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             if (consumos == null) return NotFound();
             return Ok(consumos);

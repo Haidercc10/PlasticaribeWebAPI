@@ -32,5 +32,6 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string Hora_Registro { get; set; }
 
+        public long Orden_Trabajo { get; set; }
     }
 }
