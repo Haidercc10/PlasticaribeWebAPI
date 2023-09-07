@@ -111,7 +111,7 @@ namespace PlasticaribeAPI.Controllers
                            };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
-            if (consumos == null) return NotFound();
+            if (consumos == null) return BadRequest("No se encontraron movimientos del material en las fechas consultadas!");
             return Ok(consumos);
         }
 

@@ -27,5 +27,8 @@ namespace PlasticaribeAPI.Models
         public string CajaMenor_Observacion { get; set; }
         public int TpSal_Id { get; set; }
         public TipoSalidas_CajaMenor? TpSalida { get; set; }
+
+        public long Area_Id { get; set; }
+        public Area? Areas { get; set; }
     }
 }

@@ -884,6 +884,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<CajaMenor_Plasticaribe>().ToTable(x => x.HasTrigger("Auditoria_CajaMenor_Plasticaribe"));
             modelBuilder.Entity<CajaMenor_Plasticaribe>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<CajaMenor_Plasticaribe>().HasOne(x => x.TpSalida).WithMany().HasForeignKey(y => y.TpSal_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<CajaMenor_Plasticaribe>().HasOne(x => x.Areas).WithMany().HasForeignKey(y => y.Area_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
