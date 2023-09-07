@@ -71,8 +71,8 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // GET: Obtener registros de salidas
-        [HttpGet("getConsumos/{fecha1}/{fecha2}")]
-        public ActionResult GetConsumos(DateTime fecha1, DateTime fecha2)
+        [HttpGet("getConsumos/{fecha1}/{fecha2}/{material}")]
+        public ActionResult GetConsumos(DateTime fecha1, DateTime fecha2, long material)
         {
 
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -80,6 +80,7 @@ namespace PlasticaribeAPI.Controllers
                            from me in _context.Set<Movimientros_Entradas_MP>()
                            where s.Fecha_Registro >= fecha1 &&
                            s.Fecha_Registro <= fecha2 &&
+                           (s.MatPri_Id == material || s.Tinta_Id == material || s.Bopp_Id == material) &&
                            s.Codigo_Entrada == me.Codigo_Entrada &&
                            s.Id_Entrada == me.Id &&
                            s.Tipo_Entrada == me.Tipo_Entrada &&
