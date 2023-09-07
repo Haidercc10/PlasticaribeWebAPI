@@ -87,6 +87,7 @@ namespace PlasticaribeAPI.Controllers
                                nom.Nomina_FechaFinal <= fechaFin
                          select new
                          {
+                             Id = nom.Nomina_Id,
                              FechaRegistro = nom.Nomina_FechaRegistro,
                              registradoPor = nom.Usuario.Usua_Nombre,
                              FechaInicio = nom.Nomina_FechaIncial,
