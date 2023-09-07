@@ -156,6 +156,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.ControlCalidad_Sellado> ControlCalidad_Sellado { get; set; }
         public DbSet<PlasticaribeAPI.Models.Movimientros_Entradas_MP> Movimientros_Entradas_MP { get; set; }
         public DbSet<PlasticaribeAPI.Models.Entradas_Salidas_MP> Entradas_Salidas_MP { get; set; }
+        public DbSet<PlasticaribeAPI.Models.TipoSalidas_CajaMenor> TipoSalidas_CajaMenor { get; set; }
+        public DbSet<PlasticaribeAPI.Models.CajaMenor_Plasticaribe> CajaMenor_Plasticaribe { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -874,6 +876,15 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Entradas_Salidas_MP>().HasOne(x => x.Movimientros).WithMany().HasForeignKey(y => y.Id_Entrada).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Entradas_Salidas_MP>().HasOne(x => x.Documento).WithMany().HasForeignKey(y => y.Tipo_Salida).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Entradas_Salidas_MP>().HasOne(x => x.Tipo_Documento).WithMany().HasForeignKey(y => y.Tipo_Entrada).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //TipoSalidas_CajaMenor
+            modelBuilder.Entity<TipoSalidas_CajaMenor>().ToTable(x => x.HasTrigger("Auditoria_TipoSalidas_CajaMenor"));
+
+            //CajaMenor_Plasticaribe
+            modelBuilder.Entity<CajaMenor_Plasticaribe>().ToTable(x => x.HasTrigger("Auditoria_CajaMenor_Plasticaribe"));
+            modelBuilder.Entity<CajaMenor_Plasticaribe>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<CajaMenor_Plasticaribe>().HasOne(x => x.TpSalida).WithMany().HasForeignKey(y => y.TpSal_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
