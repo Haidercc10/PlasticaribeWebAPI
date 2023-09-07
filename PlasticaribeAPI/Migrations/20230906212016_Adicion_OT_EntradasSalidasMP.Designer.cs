@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20230906212016_Adicion_OT_EntradasSalidasMP")]
+    partial class Adicion_OT_EntradasSalidasMP
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -520,50 +523,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("BoppGen_Id");
 
                     b.ToTable("Bopp_Generico");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.CajaMenor_Plasticaribe", b =>
-                {
-                    b.Property<int>("CajaMenor_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CajaMenor_Id"));
-
-                    b.Property<DateTime>("CajaMenor_FechaRegistro")
-                        .HasColumnType("date");
-
-                    b.Property<DateTime>("CajaMenor_FechaSalida")
-                        .HasColumnType("date");
-
-                    b.Property<string>("CajaMenor_HoraRegistro")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("CajaMenor_Observacion")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<decimal>("CajaMenor_ValorSalida")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("TpSal_Id")
-                        .HasColumnType("int");
-
-                    b.Property<long>("Usua_Id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("CajaMenor_Id");
-
-                    b.HasIndex("TpSal_Id");
-
-                    b.HasIndex("Usua_Id");
-
-                    b.ToTable("CajaMenor_Plasticaribe", t =>
-                        {
-                            t.HasTrigger("Auditoria_CajaMenor_Plasticaribe");
-                        });
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Categoria_Insumo", b =>
@@ -6236,30 +6195,6 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("TipoIdentificaciones");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.TipoSalidas_CajaMenor", b =>
-                {
-                    b.Property<int>("TpSal_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TpSal_Id"));
-
-                    b.Property<string>("TpSal_Descripcion")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<string>("TpSal_Nombre")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.HasKey("TpSal_Id");
-
-                    b.ToTable("TipoSalidas_CajaMenor", t =>
-                        {
-                            t.HasTrigger("Auditoria_TipoSalidas_CajaMenor");
-                        });
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipo_Activo", b =>
                 {
                     b.Property<int>("TpActv_Id")
@@ -7180,25 +7115,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Usua");
 
                     b.Navigation("boppGenerico");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.CajaMenor_Plasticaribe", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.TipoSalidas_CajaMenor", "TpSalida")
-                        .WithMany()
-                        .HasForeignKey("TpSal_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("Usua_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("TpSalida");
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Certificados_Calidad", b =>
