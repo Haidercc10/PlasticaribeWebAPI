@@ -121,6 +121,39 @@ namespace PlasticaribeAPI.Controllers
 
         }
 
+        // Cargar inventario de la materia prima asignar de manera detallada
+        [HttpGet("getInventarioxMaterial/{material}")]
+        public ActionResult GetInventarioxMaterial(long material)
+        {
+            var materiasPrimas = from mp in _context.Set<Movimientros_Entradas_MP>()
+                                 where (mp.MatPri_Id == material || mp.Tinta_Id == material || mp.Bopp_Id == material)
+                                 && mp.Cantidad_Disponible > 0 
+                                 && mp.Estado_Id == 19
+                                 orderby mp.Fecha_Entrada ascending
+                                 select new
+                                 {
+                                     Id = mp.Id,
+                                     MatPri_Id = mp.MatPri_Id,
+                                     Tinta_Id = mp.Tinta_Id, 
+                                     Bopp_Id = mp.Bopp_Id, 
+                                     Cantidad_Entrada = mp.Cantidad_Entrada,
+                                     UndMed_Id = mp.UndMed_Id, 
+                                     Precio_RealUnitario = mp.Precio_RealUnitario, 
+                                     Tipo_Entrada = mp.Tipo_Entrada, 
+                                     Codigo_Entrada = mp.Codigo_Entrada, 
+                                     Estado_Id = mp.Estado_Id, 
+                                     Cantidad_Asignada = mp.Cantidad_Asignada,
+                                     Cantidad_Disponible = mp.Cantidad_Disponible,
+                                     Observacion = mp.Observacion, 
+                                     Fecha_Entrada = Convert.ToString(mp.Fecha_Entrada).Substring(0, 10),
+                                     Hora_Entrada = mp.Hora_Entrada, 
+                                     Precio_EstandarUnitario = mp.Precio_EstandarUnitario
+                                 };
+           
+            if (materiasPrimas == null) return BadRequest("No se encontró el material seleccionado!");
+            return Ok(materiasPrimas);
+        }
+
         // PUT: api/Movimientros_Entradas_MP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
