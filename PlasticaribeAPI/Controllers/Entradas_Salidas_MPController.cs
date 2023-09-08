@@ -51,6 +51,33 @@ namespace PlasticaribeAPI.Controllers
             return entradas_Salidas_MP;
         }
 
+        // Consulta que devolverá la información de las salidas realizadas de una materia prima en un lapso de tiempo
+        [HttpGet("getSalidasRealizadas/{fechaInicio}/{fechaFin}/{material}")]
+        public ActionResult GetSalidasRealizadas(DateTime fechaInicio, DateTime fechaFin, long material)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var compras = from c in _context.Set<Entradas_Salidas_MP>()
+                          where c.Fecha_Registro >= fechaInicio &&
+                                c.Fecha_Registro <= fechaFin &&
+                                (c.MatPri_Id == material || c.Tinta_Id == material || c.Bopp_Id == material)
+                          select new
+                          {
+                              Fecha = c.Fecha_Registro,
+                              Hora = c.Hora_Registro,
+                              CantidadEstandar = 1,
+                              CantidadTotalEstandar = 1,
+                              CantidadSalida = c.Cantidad_Salida,
+                              PrecioReal = c.Movimientros.Precio_RealUnitario,
+                              PrecioEstandar = c.Movimientros.Precio_EstandarUnitario,
+                              DiferenciaPrecio = (c.Movimientros.Precio_EstandarUnitario - c.Movimientros.Precio_RealUnitario),
+                              CostoReal = (c.Cantidad_Salida * c.Movimientros.Precio_RealUnitario),
+                              CostoEstandar = (1 * c.Movimientros.Precio_EstandarUnitario),
+                              VariacionPrecio = (c.Cantidad_Salida * c.Movimientros.Precio_EstandarUnitario) - (c.Cantidad_Salida * c.Movimientros.Precio_RealUnitario)
+                          };
+            return compras.Any() ? Ok(compras) : NotFound();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
         // Consulta que devolverá la información de las salidas de material
         [HttpGet("getSalidasMaterial/{fecha}/{material}")]
         public ActionResult GetSalidasMaterial(DateTime fecha, long material)
