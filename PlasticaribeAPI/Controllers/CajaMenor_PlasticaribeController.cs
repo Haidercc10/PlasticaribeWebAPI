@@ -50,6 +50,34 @@ namespace PlasticaribeAPI.Controllers
             return cajaMenor_Plasticaribe;
         }
 
+        //Consulta que devolverá la información de los registros de caja menor segun la busqueda con los parametros que le sean pasados
+        [HttpGet("getRegistrosCajaMenor/{fechaInicial}/{fechaFinal}")]
+        public ActionResult GetRegistrosCajaMenor(DateTime fechaInicial, DateTime fechaFinal, string? area = "", string? tipo = "")
+        {
+#pragma warning disable CS8604 // Possible null reference argument.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var caja = from c in _context.Set<CajaMenor_Plasticaribe>()
+                       where c.CajaMenor_FechaSalida >= fechaInicial &&
+                             c.CajaMenor_FechaSalida <= fechaFinal &&
+                             (area != "" ? Convert.ToString(c.Area_Id) == area : Convert.ToString(c.Area_Id).Contains(area)) &&
+                             (tipo != "" ? Convert.ToString(c.TpSal_Id) == tipo : Convert.ToString(c.TpSal_Id).Contains(tipo))
+                       select new
+                       {
+                           FechaRegistro = c.CajaMenor_FechaRegistro,
+                           HoraRegistro = c.CajaMenor_HoraRegistro,
+                           RegistradoPor = c.Usuario.Usua_Nombre,
+                           FechaSalida = c.CajaMenor_FechaSalida,
+                           TipoSalida = c.TpSalida.TpSal_Nombre,
+                           Area = c.Areas.Area_Nombre,
+                           Valor = c.CajaMenor_ValorSalida,
+                           Descripcion = c.CajaMenor_Observacion,
+                       };
+
+            return caja.Any() ? Ok(caja) : NotFound();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8604 // Possible null reference argument.
+        }
+
         // PUT: api/CajaMenor_Plasticaribe/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
