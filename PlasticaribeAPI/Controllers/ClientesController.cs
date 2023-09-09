@@ -143,7 +143,7 @@ namespace PlasticaribeAPI.Controllers
         {
             try
             {
-                var con = _context.Clientes.Where(x => x.Cli_Id == id).First<Clientes>();
+                var con = _context.Clientes.Where(x => x.Cli_Id == id).First();
                 con.Estado_Id = estado;
                 _context.SaveChanges();
             }
