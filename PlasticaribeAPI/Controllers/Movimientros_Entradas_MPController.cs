@@ -129,7 +129,7 @@ namespace PlasticaribeAPI.Controllers
                                  where (mp.MatPri_Id == material || mp.Tinta_Id == material || mp.Bopp_Id == material)
                                  && mp.Cantidad_Disponible > 0 
                                  && mp.Estado_Id == 19
-                                 orderby mp.Fecha_Entrada ascending
+                                 orderby mp.Id ascending
                                  select new
                                  {
                                      Id = mp.Id,
