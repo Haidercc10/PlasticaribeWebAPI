@@ -33,5 +33,9 @@ namespace PlasticaribeAPI.Models
         public string Hora_Registro { get; set; }
 
         public long Orden_Trabajo { get; set; }
+
+        public int Prod_Id { get; set; }
+        public Producto? Producto { get; set; }
+
     }
 }

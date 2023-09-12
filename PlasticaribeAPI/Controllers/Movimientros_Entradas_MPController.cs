@@ -126,7 +126,7 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetInventarioxMaterial(long material)
         {
             var materiasPrimas = from mp in _context.Set<Movimientros_Entradas_MP>()
-                                 where (mp.MatPri_Id == material || mp.Tinta_Id == material || mp.Bopp_Id == material)
+                                 where (mp.MatPri_Id == material || mp.Tinta_Id == material || (mp.Codigo_Entrada == material && mp.Bopp_Id != 1))
                                  && mp.Cantidad_Disponible > 0 
                                  && mp.Estado_Id == 19
                                  orderby mp.Id ascending
