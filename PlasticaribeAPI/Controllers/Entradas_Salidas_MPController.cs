@@ -64,6 +64,7 @@ namespace PlasticaribeAPI.Controllers
                           {
                               Fecha = c.Fecha_Registro,
                               Hora = c.Hora_Registro,
+                              Orden = c.Orden_Trabajo,
                               CantidadEstandar = 1,
                               CantidadTotalEstandar = 1,
                               CantidadSalida = c.Cantidad_Salida,
