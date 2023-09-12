@@ -118,6 +118,8 @@ namespace PlasticaribeAPI.Controllers
                                Fecha = s.Fecha_Registro,
                                Hora = s.Hora_Registro,
                                OT = s.Orden_Trabajo,
+                               Item = s.Prod_Id, 
+                               Referencia = s.Producto.Prod_Nombre,
                                MatPrimaId = s.MatPri_Id,
                                TintaId = s.Tinta_Id,
                                BoppId = s.Bopp_Id,
