@@ -97,7 +97,7 @@ namespace PlasticaribeAPI.Controllers
                              Observacion = nom.Nomina_Observacion
                          };
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
-            return nomina.Any() ? Ok(nomina) : NoContent();
+            return Ok(nomina);
         }
 
         // PUT: api/Nomina_Plasticaribe/5
