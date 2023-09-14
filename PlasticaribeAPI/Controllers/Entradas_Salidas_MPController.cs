@@ -121,6 +121,8 @@ namespace PlasticaribeAPI.Controllers
                                OT = s.Orden_Trabajo,
                                Item = s.Prod_Id, 
                                Referencia = s.Producto.Prod_Nombre,
+                               Cantidad_PedidaOT = s.Cant_PedidaOT, 
+                               Medida = s.UndMed_Id,
                                MatPrimaId = s.MatPri_Id,
                                TintaId = s.Tinta_Id,
                                BoppId = s.Bopp_Id,
