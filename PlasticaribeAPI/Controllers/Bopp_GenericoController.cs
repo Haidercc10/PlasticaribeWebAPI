@@ -74,6 +74,27 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        [HttpPut("putPrecioEstandar/{id}/{precioEstandar}")]
+        public async Task<IActionResult> PutPrecioEstandar(long id, decimal precioEstandar)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var bopp = (from bp in _context.Set<Bopp_Generico>() where bp.BoppGen_Id == id select bp).FirstOrDefault();
+            bopp.BoppGen_PrecioEstandar = precioEstandar;
+
+            _context.Entry(bopp).State = EntityState.Modified;
+
+            try {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException) {
+                if (!Bopp_GenericoExists(id)) return NotFound();
+                else throw;
+            }
+
+            return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
         // POST: api/Bopp_Generico
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
