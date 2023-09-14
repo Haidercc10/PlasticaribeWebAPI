@@ -171,7 +171,6 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-
         [HttpGet("InventarioProductos")]
         public ActionResult<Existencia_Productos> GetInventarioProductos()
         {
@@ -216,6 +215,23 @@ namespace PlasticaribeAPI.Controllers
             {
                 return Ok(producto);
             }
+        }
+
+        // Consulta que devolverá la información de un producto
+        [HttpGet("getInfoProducto/{producto}")]
+        public ActionResult GetInfoProducto(string producto)
+        {
+            var con = from e in _context.Set<Existencia_Productos>()
+                      where e.Prod_Id.ToString().Contains(producto) ||
+                            e.Prod.Prod_Nombre.Contains(producto)
+                      select new
+                      {
+                          Id = e.Prod_Id,
+                          Nombre = e.Prod.Prod_Nombre,
+                          Presentacion = e.UndMed_Id,
+                          Id_Existencia = e.ExProd_Id,
+                      };
+            return Ok(con);
         }
 
         // PUT: api/Existencia_Productos/5

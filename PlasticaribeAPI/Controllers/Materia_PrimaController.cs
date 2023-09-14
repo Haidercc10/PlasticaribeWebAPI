@@ -501,7 +501,8 @@ namespace PlasticaribeAPI.Controllers
                            mp.UndMed_Id,
                            mp.MatPri_Precio,
                            mp.CatMP.CatMP_Nombre,
-                           mp.CatMP_Id
+                           mp.CatMP_Id,
+                           mp.MatPri_PrecioEstandar
                        } into x
                        select new
                        {
@@ -516,6 +517,7 @@ namespace PlasticaribeAPI.Controllers
                            Diferencia = x.Key.MatPri_Stock - x.Key.InvInicial_Stock,
                            Presentacion = x.Key.UndMed_Id,
                            Precio = x.Key.MatPri_Precio,
+                           PrecioEstandar = x.Key.MatPri_PrecioEstandar,
                            SubTotal = x.Key.MatPri_Stock * x.Key.MatPri_Precio,
                            Categoria = x.Key.CatMP_Nombre,
                            Categoria_Id = x.Key.CatMP_Id
@@ -523,6 +525,7 @@ namespace PlasticaribeAPI.Controllers
 
             //Entrada de BOPP
             var conBopp = (from bopp in _context.Set<BOPP>()
+                           join bpGen in _context.Set<Bopp_Generico>() on bopp.BoppGen_Id equals bpGen.BoppGen_Id
                            where bopp.BOPP_Serial == id
                                  && (conAsgBopp > 0 || bopp.BOPP_Stock > 0)
                            select new
@@ -538,6 +541,7 @@ namespace PlasticaribeAPI.Controllers
                                Diferencia = bopp.BOPP_Stock - bopp.BOPP_CantidadInicialKg,
                                Presentacion = bopp.UndMed_Id,
                                Precio = bopp.BOPP_Precio,
+                               PrecioEstandar = bpGen.BoppGen_PrecioEstandar,
                                SubTotal = bopp.BOPP_Stock * bopp.BOPP_Precio,
                                Categoria = bopp.CatMP.CatMP_Nombre,
                                Categoria_Id = bopp.CatMP_Id
@@ -559,6 +563,7 @@ namespace PlasticaribeAPI.Controllers
                                 Diferencia = tinta.Tinta_Stock - tinta.Tinta_InvInicial,
                                 Presentacion = tinta.UndMed_Id,
                                 Precio = tinta.Tinta_Precio,
+                                PrecioEstandar = tinta.Tinta_PrecioEstandar,
                                 SubTotal = tinta.Tinta_Stock * tinta.Tinta_Precio,
                                 Categoria = tinta.CatMP.CatMP_Nombre,
                                 Categoria_Id = tinta.CatMP_Id
