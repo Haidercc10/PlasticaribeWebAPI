@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20230914152511_CantidadPedidaOT_EntradasSalidasMP")]
+    partial class CantidadPedidaOT_EntradasSalidasMP
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5358,69 +5361,6 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Productos");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Productos_MateriasPrimas", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<long>("Bopp_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<decimal>("Cantidad_Minima")
-                        .HasPrecision(18, 6)
-                        .HasColumnType("decimal(18,6)");
-
-                    b.Property<long>("ExProd_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("Fecha_Registro")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Hora_Registro")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<long>("MatPri_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Prod_Id")
-                        .HasColumnType("int");
-
-                    b.Property<long>("Tinta_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("UndMed_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<long>("Usua_Id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Bopp_Id");
-
-                    b.HasIndex("ExProd_Id");
-
-                    b.HasIndex("MatPri_Id");
-
-                    b.HasIndex("Prod_Id");
-
-                    b.HasIndex("Tinta_Id");
-
-                    b.HasIndex("UndMed_Id");
-
-                    b.HasIndex("Usua_Id");
-
-                    b.ToTable("Productos_MateriasPrimas", t =>
-                        {
-                            t.HasTrigger("Auditoria_Productos_MateriasPrimas");
-                        });
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Provedor_MateriaPrima", b =>
                 {
                     b.Property<long>("Codigo")
@@ -9757,65 +9697,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("UndMed1");
 
                     b.Navigation("UndMed2");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Productos_MateriasPrimas", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Bopp_Generico", "Bopp_Generico")
-                        .WithMany()
-                        .HasForeignKey("Bopp_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Existencia_Productos", "Existencia_Productos")
-                        .WithMany()
-                        .HasForeignKey("ExProd_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Materia_Prima", "Materia_Prima")
-                        .WithMany()
-                        .HasForeignKey("MatPri_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Producto", "Producto")
-                        .WithMany()
-                        .HasForeignKey("Prod_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Tinta", "Tinta")
-                        .WithMany()
-                        .HasForeignKey("Tinta_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "Unidad_Medida")
-                        .WithMany()
-                        .HasForeignKey("UndMed_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("Usua_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Bopp_Generico");
-
-                    b.Navigation("Existencia_Productos");
-
-                    b.Navigation("Materia_Prima");
-
-                    b.Navigation("Producto");
-
-                    b.Navigation("Tinta");
-
-                    b.Navigation("Unidad_Medida");
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Provedor_MateriaPrima", b =>

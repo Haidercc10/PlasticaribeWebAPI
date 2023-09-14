@@ -884,6 +884,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Entradas_Salidas_MP>().HasOne(x => x.Documento).WithMany().HasForeignKey(y => y.Tipo_Salida).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Entradas_Salidas_MP>().HasOne(x => x.Tipo_Documento).WithMany().HasForeignKey(y => y.Tipo_Entrada).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Entradas_Salidas_MP>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Entradas_Salidas_MP>().HasOne(x => x.UndMedida).WithMany().HasForeignKey(y => y.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //TipoSalidas_CajaMenor
             modelBuilder.Entity<TipoSalidas_CajaMenor>().ToTable(x => x.HasTrigger("Auditoria_TipoSalidas_CajaMenor"));

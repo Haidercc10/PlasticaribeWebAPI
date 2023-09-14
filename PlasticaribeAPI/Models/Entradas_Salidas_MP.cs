@@ -37,5 +37,14 @@ namespace PlasticaribeAPI.Models
         public int Prod_Id { get; set; }
         public Producto? Producto { get; set; }
 
+
+        [Precision(18, 2)]
+        public decimal Cant_PedidaOT { get; set; }
+
+
+        [Column(TypeName = "varchar(10)")]
+        public string UndMed_Id { get; set; }
+        public Unidad_Medida? UndMedida { get; set; }
+
     }
 }
