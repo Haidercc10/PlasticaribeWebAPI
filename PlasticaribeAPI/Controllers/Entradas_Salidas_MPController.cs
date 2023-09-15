@@ -57,22 +57,27 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var compras = from c in _context.Set<Entradas_Salidas_MP>()
+                          join r in _context.Set<Productos_MateriasPrimas>() on c.Prod_Id equals r.Prod_Id
                           where c.Fecha_Registro >= fechaInicio &&
                                 c.Fecha_Registro <= fechaFin &&
-                                (c.MatPri_Id == material || c.Tinta_Id == material || c.Bopp_Id == material)
+                                (c.MatPri_Id == material || c.Tinta_Id == material || c.Bopp_Id == material) &&
+                                r.MatPri_Id == c.MatPri_Id &&
+                                r.Tinta_Id == c.Tinta_Id &&
+                                r.Bopp_Id == c.Bopp_Id &&
+                                r.UndMed_Id == c.UndMed_Id
                           select new
                           {
                               Fecha = c.Fecha_Registro,
                               Hora = c.Hora_Registro,
                               Orden = c.Orden_Trabajo,
-                              CantidadEstandar = 1,
-                              CantidadTotalEstandar = 1,
+                              CantidadEstandar = r.Cantidad_Minima,
+                              CantidadTotalEstandar = r.Cantidad_Minima * c.Cant_PedidaOT,
                               CantidadSalida = c.Cantidad_Salida,
                               PrecioReal = c.Movimientros.Precio_RealUnitario,
                               PrecioEstandar = c.Movimientros.Precio_EstandarUnitario,
                               DiferenciaPrecio = (c.Movimientros.Precio_EstandarUnitario - c.Movimientros.Precio_RealUnitario),
                               CostoReal = (c.Cantidad_Salida * c.Movimientros.Precio_RealUnitario),
-                              CostoEstandar = (1 * c.Movimientros.Precio_EstandarUnitario),
+                              CostoEstandar = ((r.Cantidad_Minima * c.Cant_PedidaOT) * c.Movimientros.Precio_EstandarUnitario),
                               VariacionPrecio = (c.Cantidad_Salida * c.Movimientros.Precio_EstandarUnitario) - (c.Cantidad_Salida * c.Movimientros.Precio_RealUnitario)
                           };
             return compras.Any() ? Ok(compras) : NotFound();
