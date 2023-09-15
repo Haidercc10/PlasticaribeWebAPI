@@ -52,8 +52,8 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // Consulta que devolverá la información de las salidas realizadas de una materia prima en un lapso de tiempo
-        [HttpGet("getSalidasRealizadas/{fechaInicio}/{fechaFin}/{material}")]
-        public ActionResult GetSalidasRealizadas(DateTime fechaInicio, DateTime fechaFin, long material)
+        [HttpGet("getSalidasRealizadas/{fechaInicio}/{fechaFin}/{material}/{producto}")]
+        public ActionResult GetSalidasRealizadas(DateTime fechaInicio, DateTime fechaFin, long material, long producto)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var compras = from c in _context.Set<Entradas_Salidas_MP>()
@@ -64,6 +64,7 @@ namespace PlasticaribeAPI.Controllers
                                 r.MatPri_Id == c.MatPri_Id &&
                                 r.Tinta_Id == c.Tinta_Id &&
                                 r.Bopp_Id == c.Bopp_Id &&
+                                r.Prod_Id == producto &&
                                 r.UndMed_Id == c.UndMed_Id
                           select new
                           {
