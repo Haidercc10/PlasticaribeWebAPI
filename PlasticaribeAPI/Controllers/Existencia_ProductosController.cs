@@ -221,7 +221,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getInfoProducto/{producto}")]
         public ActionResult GetInfoProducto(string producto)
         {
-            var con = from e in _context.Set<Existencia_Productos>()
+            var con = (from e in _context.Set<Existencia_Productos>()
                       where e.Prod_Id.ToString().Contains(producto) ||
                             e.Prod.Prod_Nombre.Contains(producto)
                       select new
@@ -230,7 +230,7 @@ namespace PlasticaribeAPI.Controllers
                           Nombre = e.Prod.Prod_Nombre,
                           Presentacion = e.UndMed_Id,
                           Id_Existencia = e.ExProd_Id,
-                      };
+                      });
             return Ok(con);
         }
 

@@ -1067,6 +1067,40 @@ namespace PlasticaribeAPI.Controllers
             return Ok(conFacturas.Concat(conRemisiones));
         }
 
+        //Consulta que traerá la materia prima, tintas, bopp generico
+        [HttpGet("getMateriales_Receta")]
+        public ActionResult GetMateriales_Receta()
+        {
+            var materiaPrima = from mp in _context.Set<Materia_Prima>()
+                               where mp.MatPri_Id != 84
+                               select new
+                               {
+                                   Id = mp.MatPri_Id,
+                                   Nombre = mp.MatPri_Nombre,
+                                   Categoria = mp.CatMP_Id,
+                               };
+
+            var tinta = from tt in _context.Set<Tinta>()
+                        where tt.Tinta_Id != 2001
+                        select new
+                        {
+                            Id = tt.Tinta_Id,
+                            Nombre = tt.Tinta_Nombre,
+                            Categoria = tt.CatMP_Id,
+                        };
+
+            var bopp = from bp in _context.Set<Bopp_Generico>()
+                       where bp.BoppGen_Id != 1
+                       select new
+                       {
+                           Id = bp.BoppGen_Id,
+                           Nombre = bp.BoppGen_Nombre,
+                           Categoria = 6,
+                       };
+
+            return Ok(materiaPrima.Concat(tinta).Concat(bopp));
+        }
+
         // PUT: api/Materia_Prima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
