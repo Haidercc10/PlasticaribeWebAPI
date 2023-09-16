@@ -251,6 +251,7 @@ namespace PlasticaribeAPI.Data
 
             //Relaciones Materias_Primas
             modelBuilder.Entity<Materia_Prima>().ToTable(tb => tb.HasTrigger("Auditoria_Materias_Primas"));
+            modelBuilder.Entity<Materia_Prima>().ToTable(tb => tb.HasTrigger("Insert_Prod_MateriasPrimas"));
             modelBuilder.Entity<Materia_Prima>().ToTable(tb => tb.HasTrigger("TR_InventarioDiarioMateriasPrimas"));
             modelBuilder.Entity<Materia_Prima>().HasOne(mtp => mtp.CatMP).WithMany().HasForeignKey(mtp => mtp.CatMP_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Materia_Prima>().HasOne(mtp => mtp.UndMed).WithMany().HasForeignKey(mtp => mtp.UndMed_Id).OnDelete(DeleteBehavior.Restrict);
@@ -308,7 +309,7 @@ namespace PlasticaribeAPI.Data
 
             //Relaciones Remisiones - Materias Primas
             //modelBuilder.Entity<Remision_MateriaPrima>().ToTable(tb => tb.HasTrigger("Auditoria_Remisiones_MateriasPrimas"));
-            modelBuilder.Entity<Remision_MateriaPrima>().ToTable(tb => tb.HasTrigger("Movimientos_Entradas_MP"));
+            modelBuilder.Entity<Remision_MateriaPrima>().ToTable(tb => tb.HasTrigger("Movimientos_Entradas_MP_Remision"));
             modelBuilder.Entity<Remision_MateriaPrima>().HasOne(fcco => fcco.MatPri).WithMany().HasForeignKey(facco => facco.MatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<Remision_MateriaPrima>().HasOne(fcco => fcco.Rem).WithMany().HasForeignKey(facco => facco.Rem_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<Remision_MateriaPrima>().HasOne(fcco => fcco.Tinta).WithMany().HasForeignKey(facco => facco.Tinta_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
@@ -329,7 +330,7 @@ namespace PlasticaribeAPI.Data
 
             //Relaciones DetallesRecuperados_MateriasPrimas
             //modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().ToTable(tb => tb.HasTrigger("Auditoria_DetallesRecuperados_MateriasPrimas"));
-            modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().ToTable(tb => tb.HasTrigger("Movimientos_Entradas_MP"));
+            modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().ToTable(tb => tb.HasTrigger("Movimientos_Entradas_MP_Recuperado"));
             modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasOne(dremp => dremp.RecMp).WithMany().HasForeignKey(dremp => dremp.RecMp_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasOne(dremp => dremp.MatPri).WithMany().HasForeignKey(dremp => dremp.MatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<DetalleRecuperado_MateriaPrima>().HasOne(dremp => dremp.UndMed).WithMany().HasForeignKey(dremp => dremp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
@@ -346,7 +347,7 @@ namespace PlasticaribeAPI.Data
             //Relaciones Devoluciones_MatPrima
             //modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().ToTable(tb => tb.HasTrigger("Auditoria_DetallesDevoluciones_MateriasPrimas"));
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().ToTable(tb => tb.HasTrigger("RestarCantMatPrimaAsignada_EPOTxDevolucion"));
-            modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().ToTable(tb => tb.HasTrigger("Movimientos_Entradas_MP"));
+            modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().ToTable(tb => tb.HasTrigger("Movimientos_Entradas_MP_Devolucion"));
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(ddmp => ddmp.DevMatPri).WithMany().HasForeignKey(damp => damp.DevMatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(ddmp => ddmp.MatPri).WithMany().HasForeignKey(damp => damp.MatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(ddmp => ddmp.Tinta).WithMany().HasForeignKey(damp => damp.Tinta_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
@@ -356,6 +357,7 @@ namespace PlasticaribeAPI.Data
 
             //Relaciones TINTAS
             modelBuilder.Entity<Tinta>().ToTable(tb => tb.HasTrigger("Auditoria_Tintas"));
+            modelBuilder.Entity<Tinta>().ToTable(tb => tb.HasTrigger("Insert_Prod_Tintas"));
             modelBuilder.Entity<Tinta>().ToTable(tb => tb.HasTrigger("CrearTintas_DesdePBDD"));
             modelBuilder.Entity<Tinta>().HasOne(tin => tin.UndMed).WithMany().HasForeignKey(tint => tint.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<Tinta>().HasOne(tin => tin.CatMP).WithMany().HasForeignKey(tint => tint.CatMP_Id).OnDelete(DeleteBehavior.Restrict); //foranea categorias matprima
@@ -399,6 +401,10 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<BOPP>().HasOne(datB => datB.UndMed2).WithMany().HasForeignKey(dat => dat.UndMed_Kg).OnDelete(DeleteBehavior.Restrict); //Foranea Unidad Medida
             modelBuilder.Entity<BOPP>().HasOne(datB => datB.Usua).WithMany().HasForeignKey(dat => dat.Usua_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<BOPP>().HasOne(datB => datB.boppGenerico).WithMany().HasForeignKey(dat => dat.BoppGen_Id).OnDelete(DeleteBehavior.Restrict);
+
+            //Bopp_Generico
+            modelBuilder.Entity<Bopp_Generico>().ToTable(tb => tb.HasTrigger("Auditoria_Bopp_Generico"));
+            modelBuilder.Entity<Bopp_Generico>().ToTable(tb => tb.HasTrigger("Insert_Prod_BoppGenerico"));
 
             //Relaciones Asignacion_BOPP
             //modelBuilder.Entity<Asignacion_BOPP>().ToTable(tb => tb.HasTrigger("Auditoria_Asignaciones_BOPP"));
@@ -940,7 +946,6 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Categoria_Insumo>().ToTable(tb => tb.HasTrigger("Auditoria_Categorias_Insumos"));
             modelBuilder.Entity<Categoria_MatPrima>().ToTable(tb => tb.HasTrigger("Auditoria_Categorias_MatPrima"));
             modelBuilder.Entity<Categorias_Archivos>().ToTable(tb => tb.HasTrigger("Auditoria_Categorias_Archivos"));
-            modelBuilder.Entity<Bopp_Generico>().ToTable(tb => tb.HasTrigger("Auditoria_Bopp_Generico"));
             modelBuilder.Entity<Cliente_Producto>().ToTable(tb => tb.HasTrigger("Auditoria_Clientes_Productos"));
             modelBuilder.Entity<Unidad_Medida>().ToTable(tb => tb.HasTrigger("Auditoria_Unidades_Medidas"));
             modelBuilder.Entity<Tratado>().ToTable(tb => tb.HasTrigger("Auditoria_Tratado"));
