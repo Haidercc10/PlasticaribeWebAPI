@@ -166,10 +166,10 @@ namespace PlasticaribeAPI.Controllers
                           orderby e.Id_Entrada descending
                           select e.Id_Entrada).ToList();
 
-
             var entradas = from me in _context.Set<Movimientros_Entradas_MP>()
                            orderby me.Id descending
-                           where salidas.Contains(me.Id)
+                           where salidas.Contains(me.Id) &&
+                           me.Cantidad_Asignada > 0
                            select me;
 
             if (entradas == null) return BadRequest("No se encontraron entradas de material");
