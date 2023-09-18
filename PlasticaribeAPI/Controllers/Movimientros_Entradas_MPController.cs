@@ -163,10 +163,12 @@ namespace PlasticaribeAPI.Controllers
                           e.MatPri_Id == mp &&
                           e.Tinta_Id == tinta &&
                           e.Bopp_Id == bopp
+                          orderby e.Id_Entrada descending
                           select e.Id_Entrada).ToList();
 
 
             var entradas = from me in _context.Set<Movimientros_Entradas_MP>()
+                           orderby me.Id descending
                            where salidas.Contains(me.Id)
                            select me;
 
