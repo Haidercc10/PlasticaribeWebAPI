@@ -85,6 +85,33 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
+        //Consulta para evaluar las cantidaes de material que se asignacron a una orden, y se obtendrán las entradas de las que salió el material
+        [HttpGet("getAsignaciones_Material/{orden}/{mp}/{tinta}/{bopp}")]
+        public ActionResult GetAsignaciones_Material(long orden, long mp, long tinta, long bopp)
+        {
+            var entradas = from e in _context.Set<Entradas_Salidas_MP>()
+                           where e.Orden_Trabajo == orden &&
+                                 e.MatPri_Id == mp &&
+                                 e.Tinta_Id == tinta &&
+                                 e.Bopp_Id == bopp
+                           orderby e.Id_Entrada descending
+                           select new
+                           {
+                               e.Orden_Trabajo,
+                               e.Cantidad_Salida,
+                               e.MatPri_Id,
+                               e.Tinta_Id,
+                               e.Bopp_Id,
+                               e.Id_Entrada,
+                               e.Tipo_Entrada,
+                               e.Codigo_Entrada,
+                               e.Tipo_Salida,
+                               e.Codigo_Salida,
+                           };
+
+            return Ok(entradas);
+        }
+
         // Consulta que devolverá la información de las salidas de material
         [HttpGet("getSalidasMaterial/{fecha}/{material}")]
         public ActionResult GetSalidasMaterial(DateTime fecha, long material)
