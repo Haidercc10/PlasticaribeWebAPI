@@ -346,7 +346,7 @@ namespace PlasticaribeAPI.Data
             //Relaciones Devoluciones_MatPrima
             //modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().ToTable(tb => tb.HasTrigger("Auditoria_DetallesDevoluciones_MateriasPrimas"));
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().ToTable(tb => tb.HasTrigger("RestarCantMatPrimaAsignada_EPOTxDevolucion"));
-            modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().ToTable(tb => tb.HasTrigger("Movimientos_Entradas_MP"));
+            modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().ToTable(tb => tb.HasTrigger("Movimientos_Entradas_MP_Devolucion"));
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(ddmp => ddmp.DevMatPri).WithMany().HasForeignKey(damp => damp.DevMatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(ddmp => ddmp.MatPri).WithMany().HasForeignKey(damp => damp.MatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(ddmp => ddmp.Tinta).WithMany().HasForeignKey(damp => damp.Tinta_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
@@ -390,7 +390,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetalleAsignacion_Tinta>().HasOne(dat => dat.Proceso).WithMany().HasForeignKey(dat => dat.Proceso_Id).OnDelete(DeleteBehavior.Restrict); //Foranea Proceso
 
             //Relaciones BOPP
-            modelBuilder.Entity<BOPP>().ToTable(tb => tb.HasTrigger("Movimientos_EntradaBOPP "));
+            modelBuilder.Entity<BOPP>().ToTable(tb => tb.HasTrigger("Movimientos_EntradaBOPP"));
             modelBuilder.Entity<BOPP>().ToTable(tb => tb.HasTrigger("Auditoria_BOPP"));
             modelBuilder.Entity<BOPP>().ToTable(tb => tb.HasTrigger("Movimientos_EntradaBOPP"));
             modelBuilder.Entity<BOPP>().HasOne(datB => datB.UndMed).WithMany().HasForeignKey(dat => dat.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //Foranea Unidad Medida

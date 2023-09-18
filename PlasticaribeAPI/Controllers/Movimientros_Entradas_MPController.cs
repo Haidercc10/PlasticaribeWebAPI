@@ -154,6 +154,27 @@ namespace PlasticaribeAPI.Controllers
             return Ok(materiasPrimas);
         }
 
+        //
+        [HttpGet("getEntradasMP/{ot}/{mp}/{tinta}/{bopp}")]
+        public ActionResult getEntradasMP(long ot, long mp, long tinta, long bopp)
+        {
+            var salidas = (from e in _context.Set<Entradas_Salidas_MP>()
+                          where e.Orden_Trabajo == ot &&
+                          e.MatPri_Id == mp &&
+                          e.Tinta_Id == tinta &&
+                          e.Bopp_Id == bopp
+                          select e.Id_Entrada).ToList();
+
+
+            var entradas = from me in _context.Set<Movimientros_Entradas_MP>()
+                           where salidas.Contains(me.Id)
+                           select me;
+
+            if (entradas == null) return BadRequest("No se encontraron entradas de material");
+            else return Ok(entradas);
+
+        }
+
         // PUT: api/Movimientros_Entradas_MP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
