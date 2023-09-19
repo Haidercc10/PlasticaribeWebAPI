@@ -8,8 +8,8 @@ namespace PlasticaribeAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-           /* migrationBuilder.DropTable(
-                name: "Usuarios");*/
+            /* migrationBuilder.DropTable(
+                 name: "Usuarios");*/
 
             /*migrationBuilder.DropTable(
                 name: "Roles");*/

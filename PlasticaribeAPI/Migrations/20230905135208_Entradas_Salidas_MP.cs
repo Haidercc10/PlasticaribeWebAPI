@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -18,12 +17,12 @@ namespace PlasticaribeAPI.Migrations
                 nullable: false,
                 defaultValue: "");
 
-             migrationBuilder.AddColumn<int>(
-                name: "Codigo_Entrada",
-                table: "Entradas_Salidas_MP",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+            migrationBuilder.AddColumn<int>(
+               name: "Codigo_Entrada",
+               table: "Entradas_Salidas_MP",
+               type: "int",
+               nullable: false,
+               defaultValue: 0);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "Fecha_Registro",
@@ -39,10 +38,10 @@ namespace PlasticaribeAPI.Migrations
                 nullable: false,
                 defaultValue: "");
 
-           migrationBuilder.CreateIndex(
-                name: "IX_Entradas_Salidas_MP_Tipo_Entrada",
-                table: "Entradas_Salidas_MP",
-                column: "Tipo_Entrada");
+            migrationBuilder.CreateIndex(
+                 name: "IX_Entradas_Salidas_MP_Tipo_Entrada",
+                 table: "Entradas_Salidas_MP",
+                 column: "Tipo_Entrada");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Entradas_Salidas_MP_Tipos_Documentos_Tipo_Entrada",

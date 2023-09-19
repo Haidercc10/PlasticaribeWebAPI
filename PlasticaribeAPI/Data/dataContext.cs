@@ -7,158 +7,159 @@ namespace PlasticaribeAPI.Data
     public class dataContext : DbContext
     {
         protected readonly IConfiguration Configuration;
-        public dataContext(DbContextOptions<dataContext> options, IConfiguration configuration) : base(options) { Configuration = configuration;  }
+        public dataContext(DbContextOptions<dataContext> options, IConfiguration configuration) : base(options) { Configuration = configuration; }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
         }
-        public DbSet<PlasticaribeAPI.Models.TipoIdentificacion> TipoIdentificaciones { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Empresa> Empresas { get; set; }
-        public DbSet<Models.EPS> EPS { get; set; }
-        public DbSet<Models.cajaCompensacion> Cajas_Compensaciones { get; set; }
-        public DbSet<Models.fondoPension> FondosPensiones { get; set; }
-        public DbSet<Models.Area> Areas { get; set; }
-        public DbSet<Models.Estado> Estados { get; set; }
-        public DbSet<Models.Tipo_Usuario> Tipos_Usuarios { get; set; }
-        public DbSet<Models.Usuario> Usuarios { get; set; }
-        public DbSet<Models.Rol_Usuario> Roles_Usuarios { get; set; }
-        public DbSet<Models.Tipo_Producto> Tipos_Productos { get; set; }
-        public DbSet<Models.TiposClientes> Tipos_Clientes { get; set; }
-        public DbSet<Models.Tipo_Bodega> Tipos_Bodegas { get; set; }
-        public DbSet<Models.Clientes> Clientes { get; set; }
-        public DbSet<Models.Unidad_Medida> Unidades_Medidas { get; set; }
-        public DbSet<Models.SedesClientes> Sedes_Clientes { get; set; }
-        public DbSet<Models.Tipo_Moneda> Tipos_Monedas { get; set; }
-        public DbSet<Models.Producto> Productos { get; set; }
-        public DbSet<Models.PedidoExterno> Pedidos_Externos { get; set; }
-        public DbSet<Models.Existencia_Productos> Existencias_Productos { get; set; }
-        public DbSet<Models.Tipo_Estado> Tipos_Estados { get; set; }
-        public DbSet<Models.Categoria_Insumo> Categorias_Insumos { get; set; }
-        public DbSet<Models.Insumo> Insumos { get; set; }
-        public DbSet<Models.PedidoProducto> PedidosExternos_Productos { get; set; }
-        public DbSet<Models.Cliente_Producto> Clientes_Productos { get; set; }
-        public DbSet<Models.Pigmento> Pigmentos { get; set; }
-        public DbSet<Models.Material_MatPrima> Materiales_MatPrima { get; set; }
-        public DbSet<Models.Materia_Prima> Materias_Primas { get; set; }
-        public DbSet<Models.Categoria_MatPrima> Categorias_MatPrima { get; set; }
-        public DbSet<Models.Tipo_Proveedor> Tipos_Proveedores { get; set; }
-        public DbSet<Models.Proveedor> Proveedores { get; set; }
-        public DbSet<Models.Provedor_MateriaPrima> Proveedores_MateriasPrimas { get; set; }
-        public DbSet<Models.Factura_Compra> Facturas_Compras { get; set; }
-        public DbSet<Models.FacturaCompra_MateriaPrima> FacturasCompras_MateriaPrimas { get; set; }                    
-        public DbSet<Models.Proceso> Procesos { get; set; }
-        public DbSet<Models.Asignacion_MatPrima> Asignaciones_MatPrima { get; set; }
-        public DbSet<Models.DetalleAsignacion_MateriaPrima> DetallesAsignaciones_MateriasPrimas { get; set; }
-        public DbSet<Models.Tipo_Documento> Tipos_Documentos{ get; set; }
-        public DbSet<Models.Remision> Remisiones { get; set; }
-        public DbSet<Models.Remision_MateriaPrima> Remisiones_MateriasPrimas { get; set; }
-        public DbSet<Models.Remision_FacturaCompra> Remisiones_FacturasCompras { get; set; }
-        public DbSet<Models.Tipo_Recuperado> Tipos_Recuperados { get; set; }
-        public DbSet<Models.Recuperado_MatPrima> Recuperados_MatPrima { get; set; }
-        public DbSet<Models.DetalleRecuperado_MateriaPrima> DetallesRecuperados_MateriasPrimas { get; set; }
-        public DbSet<Models.InventarioInicialXDia_MatPrima> InventarioInicialXDias_MatPrima { get; set; }
-        public DbSet<Models.Devolucion_MatPrima> Devoluciones_MatPrima { get; set; }
-        public DbSet<Models.DetalleDevolucion_MateriaPrima> DetallesDevoluciones_MateriasPrimas { get; set; }
-        public DbSet<Models.Tinta> Tintas { get; set; }
-        public DbSet<Models.Tinta_MateriaPrima> Tintas_MateriasPrimas { get; set; } 
-        public DbSet<Models.Asignacion_MatPrimaXTinta> Asignaciones_MatPrimasXTintas { get; set; }
-        public DbSet<Models.DetalleAsignacion_MatPrimaXTinta> DetallesAsignaciones_MatPrimasXTintas { get; set; }
-        public DbSet<Models.DetalleAsignacion_Tinta> DetalleAsignaciones_Tintas { get; set; }
-        public DbSet<Models.BOPP> BOPP { get; set; }
-        public DbSet<Models.Asignacion_BOPP> Asignaciones_BOPP { get; set; }
-        public DbSet<Models.DetalleAsignacion_BOPP> DetallesAsignaciones_BOPP { get; set; }
-        public DbSet<Models.Archivos> Archivos { get; set; }
-        public DbSet<Models.Categorias_Archivos> Categorias_Archivos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Orden_Trabajo>? Orden_Trabajo { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Tratado>? Tratado { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Formato>? Formato { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Tipos_Impresion>? Tipos_Impresion { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Pistas>? Pistas { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Rodillos>? Rodillos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Laminado_Capa>? Laminado_Capa { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Mezcla_Material>? Mezclas_Materiales { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Mezcla_Pigmento>? Mezclas_Pigmentos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Mezcla> Mezclas { get; set; }
-        public DbSet<PlasticaribeAPI.Models.OT_Extrusion>? OT_Extrusion { get; set; }
-        public DbSet<PlasticaribeAPI.Models.OT_Impresion> OT_Impresion { get; set; }
-        public DbSet<PlasticaribeAPI.Models.OT_Laminado> OT_Laminado { get; set; }      
-        public DbSet<PlasticaribeAPI.Models.Estados_ProcesosOT> Estados_ProcesosOT { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Falla_Tecnica> Fallas_Tecnicas { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Tipo_FallaTecnica> Tipos_FallasTecnicas { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Entrada_Tintas> Entradas_Tintas { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Detalles_EntradaTintas> Detalles_EntradaTintas { get; set; }
-        public DbSet<PlasticaribeAPI.Models.EntradaRollo_Producto> EntradasRollos_Productos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.DetalleEntradaRollo_Producto> DetallesEntradasRollos_Productos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.AsignacionProducto_FacturaVenta> AsignacionesProductos_FacturasVentas { get; set; }
-        public DbSet<PlasticaribeAPI.Models.DetallesAsignacionProducto_FacturaVenta> DetallesAsignacionesProductos_FacturasVentas { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Devolucion_ProductoFacturado> Devoluciones_ProductosFacturados { get; set; }
-        public DbSet<PlasticaribeAPI.Models.DetalleDevolucion_ProductoFacturado> DetallesDevoluciones_ProductosFacturados { get; set; }
-        public DbSet<PlasticaribeAPI.Models.TipoDevolucion_ProductoFacturado> TiposDevoluciones_ProductosFacturados { get; set; }
-        public DbSet<PlasticaribeAPI.Models.PreEntrega_RolloDespacho> PreEntrega_RollosDespacho { get; set; }
-        public DbSet<PlasticaribeAPI.Models.DetallePreEntrega_RolloDespacho> DetallesPreEntrega_RollosDespacho { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Turno> Turnos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.IngresoRollos_Extrusion> IngresoRollos_Extrusion { get; set; }
-        public DbSet<PlasticaribeAPI.Models.DetallesIngRollos_Extrusion> DetallesIngRollos_Extrusion { get; set; }
-        public DbSet<PlasticaribeAPI.Models.AsignacionRollos_Extrusion> AsignacionRollos_Extrusion { get; set; }
-        public DbSet<PlasticaribeAPI.Models.DetallesAsgRollos_Extrusion> DetallesAsgRollos_Extrusion { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Cono> Conos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Rollo_Desecho> Rollos_Desechos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Orden_Compra> Ordenes_Compras { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Detalle_OrdenCompra> Detalles_OrdenesCompras { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Bopp_Generico> Bopp_Generico { get; set; }
-        public DbSet<PlasticaribeAPI.Models.OrdenesCompras_FacturasCompras> OrdenesCompras_FacturasCompras { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Remision_OrdenCompra> Remision_OrdenCompra { get; set; }
-        public DbSet<PlasticaribeAPI.Models.VistasFavoritas> VistasFavoritas { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Tipo_Activo> Tipos_Activos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Tipo_Mantenimiento> Tipos_Mantenimientos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Activo> Activos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Mantenimiento> Mantenimientos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Detalle_Mantenimiento> Detalles_Mantenimientos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Pedido_Mantenimiento> Pedidos_Mantenimientos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.DetallePedido_Mantenimiento> DetallesPedidos_Mantenimientos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.MovimientosAplicacion> MovimientosAplicacion { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Desperdicio> Desperdicios { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Tipos_Sellados> Tipos_Sellados { get; set; }
-        public DbSet<PlasticaribeAPI.Models.OT_Sellado_Corte> OT_Sellado_Corte { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Log_Transacciones> Log_Transacciones { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Log_Errores> Log_Errores { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Web_ContactoCorreo> Web_ContactoCorreo { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Inventario_Mensual_Productos> Inventario_Mensual_Productos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Terceros> Terceros { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Orden_Maquila> Orden_Maquila { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Detalle_OrdenMaquila> Detalle_OrdenMaquila { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Facturacion_OrdenMaquila> Facturacion_OrdenMaquila { get; set; }
-        public DbSet<PlasticaribeAPI.Models.DetalleFacturacion_OrdenMaquila> DetalleFacturacion_OrdenMaquila { get; set; }
-        public DbSet<PlasticaribeAPI.Models.OrdenMaquila_Facturacion> OrdenMaquila_Facturacion { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Tickets> Tickets { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Tickets_Revisados> Tickets_Revisados { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Detalles_SolicitudMateriaPrima> Detalles_SolicitudMateriaPrima { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Solicitud_MateriaPrima> Solicitud_MateriaPrima { get; set; }
-        public DbSet<PlasticaribeAPI.Models.SolicitudesMP_OrdenesCompra> SolicitudesMP_OrdenesCompra { get; set; }
-        public DbSet<PlasticaribeAPI.Models.EventosCalendario> EventosCalendario { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Solicitud_MatPrimaExtrusion> Solicitud_MatPrimaExtrusion { get; set; }
-        public DbSet<PlasticaribeAPI.Models.DetSolicitud_MatPrimaExtrusion> DetSolicitud_MatPrimaExtrusion { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Tipo_Solicitud_Rollos_Areas> Tipo_Solicitud_Rollos_Areas { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Solicitud_Rollos_Areas> Solicitud_Rollos_Areas { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Detalles_SolicitudRollos> Detalles_SolicitudRollos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Bodegas_Rollos> Bodegas_Rollos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Detalles_BodegasRollos> Detalles_BodegasRollos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Vistas_Permisos> Vistas_Permisos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Formato_Documentos> Formato_Documentos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Facturas_Invergoal_Inversuez> Facturas_Invergoal_Inversuez { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Costos_Empresas_Anios> Costos_Empresas_Anios { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Nomina_Plasticaribe> Nomina_Plasticaribe { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Tipos_Nomina> Tipos_Nomina { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Certificados_Calidad> Certificados_Calidad { get; set; }
-        public DbSet<PlasticaribeAPI.Models.ControlCalidad_CorteDoblado> ControlCalidad_CorteDoblado { get; set; }
-        public DbSet<PlasticaribeAPI.Models.ControlCalidad_Impresion> ControlCalidad_Impresion { get; set; }
-        public DbSet<PlasticaribeAPI.Models.ControlCalidad_Extrusion> ControlCalidad_Extrusion { get; set; }
-        public DbSet<PlasticaribeAPI.Models.ControlCalidad_Sellado> ControlCalidad_Sellado { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Movimientros_Entradas_MP> Movimientros_Entradas_MP { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Entradas_Salidas_MP> Entradas_Salidas_MP { get; set; }
-        public DbSet<PlasticaribeAPI.Models.TipoSalidas_CajaMenor> TipoSalidas_CajaMenor { get; set; }
-        public DbSet<PlasticaribeAPI.Models.CajaMenor_Plasticaribe> CajaMenor_Plasticaribe { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Productos_MateriasPrimas> Productos_MateriasPrimas { get; set; }
+        public DbSet<TipoIdentificacion> TipoIdentificaciones { get; set; }
+        public DbSet<Empresa> Empresas { get; set; }
+        public DbSet<EPS> EPS { get; set; }
+        public DbSet<cajaCompensacion> Cajas_Compensaciones { get; set; }
+        public DbSet<fondoPension> FondosPensiones { get; set; }
+        public DbSet<Area> Areas { get; set; }
+        public DbSet<Estado> Estados { get; set; }
+        public DbSet<Tipo_Usuario> Tipos_Usuarios { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<Rol_Usuario> Roles_Usuarios { get; set; }
+
+        public DbSet<Tipo_Producto> Tipos_Productos { get; set; }
+        public DbSet<TiposClientes> Tipos_Clientes { get; set; }
+        public DbSet<Tipo_Bodega> Tipos_Bodegas { get; set; }
+        public DbSet<Clientes> Clientes { get; set; }
+        public DbSet<Unidad_Medida> Unidades_Medidas { get; set; }
+        public DbSet<SedesClientes> Sedes_Clientes { get; set; }
+        public DbSet<Tipo_Moneda> Tipos_Monedas { get; set; }
+        public DbSet<Producto> Productos { get; set; }
+        public DbSet<PedidoExterno> Pedidos_Externos { get; set; }
+        public DbSet<Existencia_Productos> Existencias_Productos { get; set; }
+        public DbSet<Tipo_Estado> Tipos_Estados { get; set; }
+        public DbSet<Categoria_Insumo> Categorias_Insumos { get; set; }
+        public DbSet<Insumo> Insumos { get; set; }
+        public DbSet<PedidoProducto> PedidosExternos_Productos { get; set; }
+        public DbSet<Cliente_Producto> Clientes_Productos { get; set; }
+        public DbSet<Pigmento> Pigmentos { get; set; }
+        public DbSet<Material_MatPrima> Materiales_MatPrima { get; set; }
+        public DbSet<Materia_Prima> Materias_Primas { get; set; }
+        public DbSet<Categoria_MatPrima> Categorias_MatPrima { get; set; }
+        public DbSet<Tipo_Proveedor> Tipos_Proveedores { get; set; }
+        public DbSet<Proveedor> Proveedores { get; set; }
+        public DbSet<Provedor_MateriaPrima> Proveedores_MateriasPrimas { get; set; }
+        public DbSet<Factura_Compra> Facturas_Compras { get; set; }
+        public DbSet<FacturaCompra_MateriaPrima> FacturasCompras_MateriaPrimas { get; set; }
+        public DbSet<Proceso> Procesos { get; set; }
+        public DbSet<Asignacion_MatPrima> Asignaciones_MatPrima { get; set; }
+        public DbSet<DetalleAsignacion_MateriaPrima> DetallesAsignaciones_MateriasPrimas { get; set; }
+        public DbSet<Tipo_Documento> Tipos_Documentos { get; set; }
+        public DbSet<Remision> Remisiones { get; set; }
+        public DbSet<Remision_MateriaPrima> Remisiones_MateriasPrimas { get; set; }
+        public DbSet<Remision_FacturaCompra> Remisiones_FacturasCompras { get; set; }
+        public DbSet<Tipo_Recuperado> Tipos_Recuperados { get; set; }
+        public DbSet<Recuperado_MatPrima> Recuperados_MatPrima { get; set; }
+        public DbSet<DetalleRecuperado_MateriaPrima> DetallesRecuperados_MateriasPrimas { get; set; }
+        public DbSet<InventarioInicialXDia_MatPrima> InventarioInicialXDias_MatPrima { get; set; }
+        public DbSet<Devolucion_MatPrima> Devoluciones_MatPrima { get; set; }
+        public DbSet<DetalleDevolucion_MateriaPrima> DetallesDevoluciones_MateriasPrimas { get; set; }
+        public DbSet<Tinta> Tintas { get; set; }
+        public DbSet<Tinta_MateriaPrima> Tintas_MateriasPrimas { get; set; }
+        public DbSet<Asignacion_MatPrimaXTinta> Asignaciones_MatPrimasXTintas { get; set; }
+        public DbSet<DetalleAsignacion_MatPrimaXTinta> DetallesAsignaciones_MatPrimasXTintas { get; set; }
+        public DbSet<DetalleAsignacion_Tinta> DetalleAsignaciones_Tintas { get; set; }
+        public DbSet<BOPP> BOPP { get; set; }
+        public DbSet<Asignacion_BOPP> Asignaciones_BOPP { get; set; }
+        public DbSet<DetalleAsignacion_BOPP> DetallesAsignaciones_BOPP { get; set; }
+        public DbSet<Archivos> Archivos { get; set; }
+        public DbSet<Categorias_Archivos> Categorias_Archivos { get; set; }
+        public DbSet<Orden_Trabajo>? Orden_Trabajo { get; set; }
+        public DbSet<Tratado>? Tratado { get; set; }
+        public DbSet<Formato>? Formato { get; set; }
+        public DbSet<Tipos_Impresion>? Tipos_Impresion { get; set; }
+        public DbSet<Pistas>? Pistas { get; set; }
+        public DbSet<Rodillos>? Rodillos { get; set; }
+        public DbSet<Laminado_Capa>? Laminado_Capa { get; set; }
+        public DbSet<Mezcla_Material>? Mezclas_Materiales { get; set; }
+        public DbSet<Mezcla_Pigmento>? Mezclas_Pigmentos { get; set; }
+        public DbSet<Mezcla> Mezclas { get; set; }
+        public DbSet<OT_Extrusion>? OT_Extrusion { get; set; }
+        public DbSet<OT_Impresion> OT_Impresion { get; set; }
+        public DbSet<OT_Laminado> OT_Laminado { get; set; }
+        public DbSet<Estados_ProcesosOT> Estados_ProcesosOT { get; set; }
+        public DbSet<Falla_Tecnica> Fallas_Tecnicas { get; set; }
+        public DbSet<Tipo_FallaTecnica> Tipos_FallasTecnicas { get; set; }
+        public DbSet<Entrada_Tintas> Entradas_Tintas { get; set; }
+        public DbSet<Detalles_EntradaTintas> Detalles_EntradaTintas { get; set; }
+        public DbSet<EntradaRollo_Producto> EntradasRollos_Productos { get; set; }
+        public DbSet<DetalleEntradaRollo_Producto> DetallesEntradasRollos_Productos { get; set; }
+        public DbSet<AsignacionProducto_FacturaVenta> AsignacionesProductos_FacturasVentas { get; set; }
+        public DbSet<DetallesAsignacionProducto_FacturaVenta> DetallesAsignacionesProductos_FacturasVentas { get; set; }
+        public DbSet<Devolucion_ProductoFacturado> Devoluciones_ProductosFacturados { get; set; }
+        public DbSet<DetalleDevolucion_ProductoFacturado> DetallesDevoluciones_ProductosFacturados { get; set; }
+        public DbSet<TipoDevolucion_ProductoFacturado> TiposDevoluciones_ProductosFacturados { get; set; }
+        public DbSet<PreEntrega_RolloDespacho> PreEntrega_RollosDespacho { get; set; }
+        public DbSet<DetallePreEntrega_RolloDespacho> DetallesPreEntrega_RollosDespacho { get; set; }
+        public DbSet<Turno> Turnos { get; set; }
+        public DbSet<IngresoRollos_Extrusion> IngresoRollos_Extrusion { get; set; }
+        public DbSet<DetallesIngRollos_Extrusion> DetallesIngRollos_Extrusion { get; set; }
+        public DbSet<AsignacionRollos_Extrusion> AsignacionRollos_Extrusion { get; set; }
+        public DbSet<DetallesAsgRollos_Extrusion> DetallesAsgRollos_Extrusion { get; set; }
+        public DbSet<Cono> Conos { get; set; }
+        public DbSet<Rollo_Desecho> Rollos_Desechos { get; set; }
+        public DbSet<Orden_Compra> Ordenes_Compras { get; set; }
+        public DbSet<Detalle_OrdenCompra> Detalles_OrdenesCompras { get; set; }
+        public DbSet<Bopp_Generico> Bopp_Generico { get; set; }
+        public DbSet<OrdenesCompras_FacturasCompras> OrdenesCompras_FacturasCompras { get; set; }
+        public DbSet<Remision_OrdenCompra> Remision_OrdenCompra { get; set; }
+        public DbSet<VistasFavoritas> VistasFavoritas { get; set; }
+        public DbSet<Tipo_Activo> Tipos_Activos { get; set; }
+        public DbSet<Tipo_Mantenimiento> Tipos_Mantenimientos { get; set; }
+        public DbSet<Activo> Activos { get; set; }
+        public DbSet<Mantenimiento> Mantenimientos { get; set; }
+        public DbSet<Detalle_Mantenimiento> Detalles_Mantenimientos { get; set; }
+        public DbSet<Pedido_Mantenimiento> Pedidos_Mantenimientos { get; set; }
+        public DbSet<DetallePedido_Mantenimiento> DetallesPedidos_Mantenimientos { get; set; }
+        public DbSet<MovimientosAplicacion> MovimientosAplicacion { get; set; }
+        public DbSet<Desperdicio> Desperdicios { get; set; }
+        public DbSet<Tipos_Sellados> Tipos_Sellados { get; set; }
+        public DbSet<OT_Sellado_Corte> OT_Sellado_Corte { get; set; }
+        public DbSet<Log_Transacciones> Log_Transacciones { get; set; }
+        public DbSet<Log_Errores> Log_Errores { get; set; }
+        public DbSet<Web_ContactoCorreo> Web_ContactoCorreo { get; set; }
+        public DbSet<Inventario_Mensual_Productos> Inventario_Mensual_Productos { get; set; }
+        public DbSet<Terceros> Terceros { get; set; }
+        public DbSet<Orden_Maquila> Orden_Maquila { get; set; }
+        public DbSet<Detalle_OrdenMaquila> Detalle_OrdenMaquila { get; set; }
+        public DbSet<Facturacion_OrdenMaquila> Facturacion_OrdenMaquila { get; set; }
+        public DbSet<DetalleFacturacion_OrdenMaquila> DetalleFacturacion_OrdenMaquila { get; set; }
+        public DbSet<OrdenMaquila_Facturacion> OrdenMaquila_Facturacion { get; set; }
+        public DbSet<Tickets> Tickets { get; set; }
+        public DbSet<Tickets_Revisados> Tickets_Revisados { get; set; }
+        public DbSet<Detalles_SolicitudMateriaPrima> Detalles_SolicitudMateriaPrima { get; set; }
+        public DbSet<Solicitud_MateriaPrima> Solicitud_MateriaPrima { get; set; }
+        public DbSet<SolicitudesMP_OrdenesCompra> SolicitudesMP_OrdenesCompra { get; set; }
+        public DbSet<EventosCalendario> EventosCalendario { get; set; }
+        public DbSet<Solicitud_MatPrimaExtrusion> Solicitud_MatPrimaExtrusion { get; set; }
+        public DbSet<DetSolicitud_MatPrimaExtrusion> DetSolicitud_MatPrimaExtrusion { get; set; }
+        public DbSet<Tipo_Solicitud_Rollos_Areas> Tipo_Solicitud_Rollos_Areas { get; set; }
+        public DbSet<Solicitud_Rollos_Areas> Solicitud_Rollos_Areas { get; set; }
+        public DbSet<Detalles_SolicitudRollos> Detalles_SolicitudRollos { get; set; }
+        public DbSet<Bodegas_Rollos> Bodegas_Rollos { get; set; }
+        public DbSet<Detalles_BodegasRollos> Detalles_BodegasRollos { get; set; }
+        public DbSet<Vistas_Permisos> Vistas_Permisos { get; set; }
+        public DbSet<Formato_Documentos> Formato_Documentos { get; set; }
+        public DbSet<Facturas_Invergoal_Inversuez> Facturas_Invergoal_Inversuez { get; set; }
+        public DbSet<Costos_Empresas_Anios> Costos_Empresas_Anios { get; set; }
+        public DbSet<Nomina_Plasticaribe> Nomina_Plasticaribe { get; set; }
+        public DbSet<Tipos_Nomina> Tipos_Nomina { get; set; }
+        public DbSet<Certificados_Calidad> Certificados_Calidad { get; set; }
+        public DbSet<ControlCalidad_CorteDoblado> ControlCalidad_CorteDoblado { get; set; }
+        public DbSet<ControlCalidad_Impresion> ControlCalidad_Impresion { get; set; }
+        public DbSet<ControlCalidad_Extrusion> ControlCalidad_Extrusion { get; set; }
+        public DbSet<ControlCalidad_Sellado> ControlCalidad_Sellado { get; set; }
+        public DbSet<Movimientros_Entradas_MP> Movimientros_Entradas_MP { get; set; }
+        public DbSet<Entradas_Salidas_MP> Entradas_Salidas_MP { get; set; }
+        public DbSet<TipoSalidas_CajaMenor> TipoSalidas_CajaMenor { get; set; }
+        public DbSet<CajaMenor_Plasticaribe> CajaMenor_Plasticaribe { get; set; }
+        public DbSet<Productos_MateriasPrimas> Productos_MateriasPrimas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -671,7 +672,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Pedido_Mantenimiento>().HasOne(erp => erp.Estado).WithMany().HasForeignKey(erp => erp.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //DetallePedido_Mtto
-             modelBuilder.Entity<DetallePedido_Mantenimiento>().ToTable(tb => tb.HasTrigger("Auditoria_DetallesPedidos_Mantenimientos"));
+            modelBuilder.Entity<DetallePedido_Mantenimiento>().ToTable(tb => tb.HasTrigger("Auditoria_DetallesPedidos_Mantenimientos"));
             modelBuilder.Entity<DetallePedido_Mantenimiento>().HasOne(erp => erp.PedidoMtto).WithMany().HasForeignKey(erp => erp.PedMtto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<DetallePedido_Mantenimiento>().HasOne(erp => erp.Tipo_Mtto).WithMany().HasForeignKey(erp => erp.TpMtto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<DetallePedido_Mantenimiento>().HasOne(erp => erp.Act).WithMany().HasForeignKey(erp => erp.Actv_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
@@ -845,10 +846,10 @@ namespace PlasticaribeAPI.Data
 
             // Control de Calidad de Doblado y Corte
             modelBuilder.Entity<ControlCalidad_CorteDoblado>().ToTable(x => x.HasTrigger("Auditoria_ControlCalidad_CorteDoblado"));
-            modelBuilder.Entity<ControlCalidad_CorteDoblado>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior : DeleteBehavior.Restrict);
-            modelBuilder.Entity<ControlCalidad_CorteDoblado>().HasOne(x => x.Turno).WithMany().HasForeignKey(y => y.Turno_Id).OnDelete(deleteBehavior : DeleteBehavior.Restrict);
-            modelBuilder.Entity<ControlCalidad_CorteDoblado>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior : DeleteBehavior.Restrict);
-            modelBuilder.Entity<ControlCalidad_CorteDoblado>().HasOne(x => x.Und).WithMany().HasForeignKey(y => y.UndMed_Id).OnDelete(deleteBehavior : DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_CorteDoblado>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_CorteDoblado>().HasOne(x => x.Turno).WithMany().HasForeignKey(y => y.Turno_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_CorteDoblado>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_CorteDoblado>().HasOne(x => x.Und).WithMany().HasForeignKey(y => y.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             // Control de Calidad de Impresión
             modelBuilder.Entity<ControlCalidad_Impresion>().ToTable(x => x.HasTrigger("Auditoria_ControlCalidad_Impresion"));

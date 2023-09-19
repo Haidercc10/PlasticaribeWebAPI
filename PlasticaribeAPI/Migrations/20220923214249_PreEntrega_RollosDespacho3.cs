@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -94,7 +93,7 @@ namespace PlasticaribeAPI.Migrations
                 nullable: false,
                 defaultValue: "")
                 .Annotation("Relational:ColumnOrder", 4);
-            
+
             migrationBuilder.CreateIndex(
                 name: "IX_DetallesPreEntrega_RollosDespacho_Cli_Id",
                 table: "DetallesPreEntrega_RollosDespacho",

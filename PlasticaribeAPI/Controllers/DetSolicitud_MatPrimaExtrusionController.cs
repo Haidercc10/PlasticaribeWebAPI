@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DetSolicitud_MatPrimaExtrusion>>> GetDetSolicitud_MatPrimaExtrusion()
         {
-          if (_context.DetSolicitud_MatPrimaExtrusion == null)
-          {
-              return NotFound();
-          }
+            if (_context.DetSolicitud_MatPrimaExtrusion == null)
+            {
+                return NotFound();
+            }
             return await _context.DetSolicitud_MatPrimaExtrusion.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DetSolicitud_MatPrimaExtrusion>> GetDetSolicitud_MatPrimaExtrusion(long id)
         {
-          if (_context.DetSolicitud_MatPrimaExtrusion == null)
-          {
-              return NotFound();
-          }
+            if (_context.DetSolicitud_MatPrimaExtrusion == null)
+            {
+                return NotFound();
+            }
             var detSolicitud_MatPrimaExtrusion = await _context.DetSolicitud_MatPrimaExtrusion.FindAsync(id);
 
             if (detSolicitud_MatPrimaExtrusion == null)
@@ -76,7 +71,7 @@ namespace PlasticaribeAPI.Controllers
                                                      Nombre_Estado = smpe.Estado.Estado_Nombre,
                                                      Usuario = smpe.Usua_Id,
                                                      Nombre_Usuario = smpe.Usua.Usua_Nombre,
-                                                     Fecha = smpe.SolMpExt_Fecha, 
+                                                     Fecha = smpe.SolMpExt_Fecha,
                                                      Hora = smpe.SolMpExt_Hora,
                                                      //Detalle
                                                      MatPrima_Id = dsmpe.MatPri_Id,
@@ -91,7 +86,7 @@ namespace PlasticaribeAPI.Controllers
                                                      emp.Empresa_Id,
                                                      emp.Empresa_Nombre,
                                                      emp.Empresa_Direccion,
-                                                     emp.Empresa_Telefono, 
+                                                     emp.Empresa_Telefono,
                                                      emp.Empresa_Ciudad,
                                                      emp.Empresa_Correo
                                                  };
@@ -203,10 +198,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<DetSolicitud_MatPrimaExtrusion>> PostDetSolicitud_MatPrimaExtrusion(DetSolicitud_MatPrimaExtrusion detSolicitud_MatPrimaExtrusion)
         {
-          if (_context.DetSolicitud_MatPrimaExtrusion == null)
-          {
-              return Problem("Entity set 'dataContext.DetSolicitud_MatPrimaExtrusion'  is null.");
-          }
+            if (_context.DetSolicitud_MatPrimaExtrusion == null)
+            {
+                return Problem("Entity set 'dataContext.DetSolicitud_MatPrimaExtrusion'  is null.");
+            }
             _context.DetSolicitud_MatPrimaExtrusion.Add(detSolicitud_MatPrimaExtrusion);
             await _context.SaveChangesAsync();
 

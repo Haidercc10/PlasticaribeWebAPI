@@ -24,7 +24,7 @@ namespace PlasticaribeAPI.Models
 
         // Llave foranea unidad medida agregada.
         [Column(Order = 3)]
-        public String UndMed_Id { get; set; } 
+        public String UndMed_Id { get; set; }
         public Unidad_Medida? UndMed { get; set; }
 
         // Llave foranea Tipo Bodega agregada.
@@ -36,22 +36,22 @@ namespace PlasticaribeAPI.Models
         public decimal ExProd_Precio { get; set; } /** VALOR */
 
         [Precision(18, 2)]
-        public decimal ExProd_PrecioExistencia { get; set; } /** VALOR 2  */ 
+        public decimal ExProd_PrecioExistencia { get; set; } /** VALOR 2  */
 
         [Precision(18, 2)]
         public decimal? ExProd_PrecioSinInflacion { get; set; } /** VALORSININFLACION */
 
-       /* [Precision(18, 2)]
-        public decimal? ExProd_PrecioTotalFinal { get; set; } */ /** VALOR 2 */
+        /* [Precision(18, 2)]
+         public decimal? ExProd_PrecioTotalFinal { get; set; } */ /** VALOR 2 */
 
         // Llave foranea Tipo Moneda agregada.
-        public String TpMoneda_Id { get; set; } 
+        public String TpMoneda_Id { get; set; }
         public Tipo_Moneda? TpMoneda { get; set; }
-       
-        [Precision(18,2)]
+
+        [Precision(18, 2)]
         public decimal? ExProd_PrecioVenta { get; set; } /** PrecioVenta Tabla Articulo */
 
-        [Precision(18,2)]
+        [Precision(18, 2)]
         public decimal ExProd_CantMinima { get; set; }
 
         [Column(TypeName = "Date")]

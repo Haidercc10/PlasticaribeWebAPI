@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -15,7 +14,7 @@ namespace PlasticaribeAPI.Migrations
                 name: "Log_Errores",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false) .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<int>(type: "int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
                     Base_Datos = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Fecha = table.Column<DateTime>(type: "date", nullable: false),
                     Hora = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -35,7 +34,7 @@ namespace PlasticaribeAPI.Migrations
                 name: "Log_Transacciones",
                 columns: table => new
                 {
-                    Transac_Codigo = table.Column<int>(type: "int", nullable: false) .Annotation("SqlServer:Identity", "1, 1"),
+                    Transac_Codigo = table.Column<int>(type: "int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
                     Transac_Id = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Transac_Tipo = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Transac_Nombre = table.Column<string>(type: "nvarchar(max)", nullable: true),

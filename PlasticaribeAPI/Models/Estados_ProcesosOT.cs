@@ -13,7 +13,7 @@ namespace PlasticaribeAPI.Models
         public long EstProcOT_OrdenTrabajo { get; set; }
 
 
-        [Precision(18,2)]
+        [Precision(18, 2)]
         public decimal EstProcOT_ExtrusionKg { get; set; }
 
 
@@ -70,7 +70,7 @@ namespace PlasticaribeAPI.Models
 
 
         /** LLave foranea y prop. navegación Falla_Tecnica */
-        public int Falla_Id { get; set; }        
+        public int Falla_Id { get; set; }
         public Falla_Tecnica? FallaTecnica { get; set; }
 
 
@@ -84,7 +84,7 @@ namespace PlasticaribeAPI.Models
 
         /** Fecha en que se inició y finalizó la OT */
         [Column(TypeName = "date")]
-        public DateTime? EstProcOT_FechaInicio { get; set; } 
+        public DateTime? EstProcOT_FechaInicio { get; set; }
 
 
         [Column(TypeName = "date")]

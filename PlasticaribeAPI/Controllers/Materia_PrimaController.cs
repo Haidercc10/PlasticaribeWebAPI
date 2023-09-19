@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Materia_Prima>>> GetMaterias_Primas()
         {
-          if (_context.Materias_Primas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Materias_Primas == null)
+            {
+                return NotFound();
+            }
             return await _context.Materias_Primas.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Materia_Prima>> GetMateria_Prima(long id)
         {
-          if (_context.Materias_Primas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Materias_Primas == null)
+            {
+                return NotFound();
+            }
             var materia_Prima = await _context.Materias_Primas.FindAsync(id);
 
             if (materia_Prima == null)
@@ -231,53 +226,53 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var AsignacionMp = from dtAsg in _context.Set<DetalleAsignacion_MateriaPrima>()
-                      where dtAsg.AsigMp.AsigMp_FechaEntrega == fecha1
-                      group dtAsg by new
-                      {
-                          Id = dtAsg.MatPri_Id,
-                          Nombre = dtAsg.MatPri.MatPri_Nombre,
-                      } into mp
-                      select new
-                      {
-                          mp.Key.Id,
-                          mp.Key.Nombre,
-                          Cantidad = mp.Sum(x => x.DtAsigMp_Cantidad) - (from dev in _context.Set<DetalleDevolucion_MateriaPrima>()
-                                                                         where dev.MatPri_Id == mp.Key.Id
-                                                                               && dev.DevMatPri.DevMatPri_Fecha == fecha1
-                                                                         group dev by new { dev.MatPri_Id } into dev
-                                                                         select dev.Sum(x => x.DtDevMatPri_CantidadDevuelta)).FirstOrDefault(),
-                          Asignaciones = mp.Count(),
-                      };
+                               where dtAsg.AsigMp.AsigMp_FechaEntrega == fecha1
+                               group dtAsg by new
+                               {
+                                   Id = dtAsg.MatPri_Id,
+                                   Nombre = dtAsg.MatPri.MatPri_Nombre,
+                               } into mp
+                               select new
+                               {
+                                   mp.Key.Id,
+                                   mp.Key.Nombre,
+                                   Cantidad = mp.Sum(x => x.DtAsigMp_Cantidad) - (from dev in _context.Set<DetalleDevolucion_MateriaPrima>()
+                                                                                  where dev.MatPri_Id == mp.Key.Id
+                                                                                        && dev.DevMatPri.DevMatPri_Fecha == fecha1
+                                                                                  group dev by new { dev.MatPri_Id } into dev
+                                                                                  select dev.Sum(x => x.DtDevMatPri_CantidadDevuelta)).FirstOrDefault(),
+                                   Asignaciones = mp.Count(),
+                               };
 
             var CreacionTinta = from dtAsigCT in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
-                                  where dtAsigCT.AsigMPxTinta.AsigMPxTinta_FechaEntrega == fecha1
-                                  group dtAsigCT by new
+                                where dtAsigCT.AsigMPxTinta.AsigMPxTinta_FechaEntrega == fecha1
+                                group dtAsigCT by new
+                                {
+                                    Id = dtAsigCT.AsigMPxTinta.Tinta_Id,
+                                    Nombre = dtAsigCT.AsigMPxTinta.Tinta.Tinta_Nombre,
+                                } into mp
+                                select new
+                                {
+                                    mp.Key.Id,
+                                    mp.Key.Nombre,
+                                    Cantidad = mp.Sum(x => x.DetAsigMPxTinta_Cantidad),
+                                    Asignaciones = mp.Count(),
+                                };
+
+            var AsignacionTinta = from dtAsgT in _context.Set<DetalleAsignacion_Tinta>()
+                                  where dtAsgT.AsigMp.AsigMp_FechaEntrega == fecha1
+                                  group dtAsgT by new
                                   {
-                                      Id = dtAsigCT.AsigMPxTinta.Tinta_Id,
-                                      Nombre = dtAsigCT.AsigMPxTinta.Tinta.Tinta_Nombre,
+                                      Nombre = dtAsgT.Tinta.Tinta_Nombre,
+                                      Id = dtAsgT.Tinta_Id,
                                   } into mp
                                   select new
                                   {
                                       mp.Key.Id,
                                       mp.Key.Nombre,
-                                      Cantidad = mp.Sum(x => x.DetAsigMPxTinta_Cantidad),
+                                      Cantidad = mp.Sum(x => x.DtAsigTinta_Cantidad),
                                       Asignaciones = mp.Count(),
                                   };
-
-            var AsignacionTinta = from dtAsgT in _context.Set<DetalleAsignacion_Tinta>()
-                      where dtAsgT.AsigMp.AsigMp_FechaEntrega == fecha1
-                      group dtAsgT by new
-                      {
-                          Nombre = dtAsgT.Tinta.Tinta_Nombre,
-                          Id = dtAsgT.Tinta_Id,
-                      } into mp
-                      select new
-                      {
-                          mp.Key.Id,
-                          mp.Key.Nombre,
-                          Cantidad = mp.Sum(x => x.DtAsigTinta_Cantidad),
-                          Asignaciones = mp.Count(),
-                      };
 
             var AsignacionBopp = from bp in _context.Set<DetalleAsignacion_BOPP>()
                                  where bp.AsigBOPP.AsigBOPP_FechaEntrega == fecha1
@@ -610,9 +605,9 @@ namespace PlasticaribeAPI.Controllers
                                                && cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= fecha2
                                                && Convert.ToString(cr.AsigMPxTinta.Tinta_Id).Contains(codigo)
                                                && "CRTINTAS".Contains(tipoMov)
-                                               && (materiaPrima != "" ? (Convert.ToString(cr.Tinta_Id) == materiaPrima || Convert.ToString(cr.MatPri_Id) == materiaPrima) : 
+                                               && (materiaPrima != "" ? (Convert.ToString(cr.Tinta_Id) == materiaPrima || Convert.ToString(cr.MatPri_Id) == materiaPrima) :
                                                                         (Convert.ToString(cr.Tinta_Id).Contains(materiaPrima) || Convert.ToString(cr.MatPri_Id).Contains(materiaPrima)))
-                                         select new 
+                                         select new
                                          {
                                              Id = cr.AsigMPxTinta_Id,
                                              Codigo = Convert.ToString((Convert.ToString(cr.AsigMPxTinta.Tinta_Id)) + " " + (cr.AsigMPxTinta.Tinta.Tinta_Nombre)),
@@ -662,7 +657,7 @@ namespace PlasticaribeAPI.Controllers
                                     && fac.Facco.Facco_FechaFactura <= fecha2
                                     && Convert.ToString(fac.Facco.Facco_Codigo).Contains(codigo)
                                     && fac.Facco.TpDoc_Id.Contains(tipoMov)
-                                    && (materiaPrima != "" ? (Convert.ToString(fac.MatPri_Id) == materiaPrima || Convert.ToString(fac.Tinta.Tinta_Id) == materiaPrima || Convert.ToString(fac.Bopp_Generico.BoppGen_Id) == materiaPrima) : 
+                                    && (materiaPrima != "" ? (Convert.ToString(fac.MatPri_Id) == materiaPrima || Convert.ToString(fac.Tinta.Tinta_Id) == materiaPrima || Convert.ToString(fac.Bopp_Generico.BoppGen_Id) == materiaPrima) :
                                                              (Convert.ToString(fac.MatPri_Id).Contains(materiaPrima) || Convert.ToString(fac.Tinta.Tinta_Id).Contains(materiaPrima) || Convert.ToString(fac.Bopp_Generico.BoppGen_Id).Contains(materiaPrima)))
                               select new
                               {
@@ -759,7 +754,7 @@ namespace PlasticaribeAPI.Controllers
                                  };
 
             //Asignacion de Tinta
-           var conAsgTinta = from asg in _context.Set<DetalleAsignacion_Tinta>()
+            var conAsgTinta = from asg in _context.Set<DetalleAsignacion_Tinta>()
                               where asg.AsigMp.AsigMp_FechaEntrega >= fecha1
                                     && asg.AsigMp.AsigMp_FechaEntrega <= fecha2
                                     && Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo).Contains(codigo)
@@ -1137,10 +1132,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Materia_Prima>> PostMateria_Prima(Materia_Prima materia_Prima)
         {
-          if (_context.Materias_Primas == null)
-          {
-              return Problem("Entity set 'dataContext.Materias_Primas'  is null.");
-          }
+            if (_context.Materias_Primas == null)
+            {
+                return Problem("Entity set 'dataContext.Materias_Primas'  is null.");
+            }
             _context.Materias_Primas.Add(materia_Prima);
             await _context.SaveChangesAsync();
 

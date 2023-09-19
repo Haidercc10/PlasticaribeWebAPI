@@ -9,7 +9,7 @@ namespace PlasticaribeAPI.Models
         [Key]
         public long AsigMPxTinta_Id { get; set; }
 
-        
+
         public long Tinta_Id { get; set; }         //Llave foranea de tinta  
         public Tinta? Tinta { get; set; }   //Propiedad de navegación de tinta
 
@@ -35,7 +35,7 @@ namespace PlasticaribeAPI.Models
         public long Usua_Id { get; set; } //Llave foranea de usuario que asigna materia prima
         public Usuario? Usua { get; set; } //Propiedad de navegación usuario que asigna materia prima 
 
-    
+
         public int Estado_Id { get; set; } //Llave foranea de estado
         public Estado? Estado { get; set; } //Propiedad de navegación estado
 

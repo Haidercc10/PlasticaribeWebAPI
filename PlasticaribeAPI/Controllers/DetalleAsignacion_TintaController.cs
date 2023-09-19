@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DetalleAsignacion_Tinta>>> GetDetalleAsignaciones_Tintas()
         {
-          if (_context.DetalleAsignaciones_Tintas == null)
-          {
-              return NotFound();
-          }
+            if (_context.DetalleAsignaciones_Tintas == null)
+            {
+                return NotFound();
+            }
             return await _context.DetalleAsignaciones_Tintas.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DetalleAsignacion_Tinta>> GetDetalleAsignacion_Tinta(long id)
         {
-          if (_context.DetalleAsignaciones_Tintas == null)
-          {
-              return NotFound();
-          }
+            if (_context.DetalleAsignaciones_Tintas == null)
+            {
+                return NotFound();
+            }
             var detalleAsignacion_Tinta = await _context.DetalleAsignaciones_Tintas.FindAsync(id);
 
             if (detalleAsignacion_Tinta == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<DetalleAsignacion_Tinta>> PostDetalleAsignacion_Tinta(DetalleAsignacion_Tinta detalleAsignacion_Tinta)
         {
-          if (_context.DetalleAsignaciones_Tintas == null)
-          {
-              return Problem("Entity set 'dataContext.DetalleAsignaciones_Tintas'  is null.");
-          }
+            if (_context.DetalleAsignaciones_Tintas == null)
+            {
+                return Problem("Entity set 'dataContext.DetalleAsignaciones_Tintas'  is null.");
+            }
             _context.DetalleAsignaciones_Tintas.Add(detalleAsignacion_Tinta);
             try
             {

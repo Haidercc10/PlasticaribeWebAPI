@@ -5,8 +5,8 @@ namespace PlasticaribeAPI.Models
 {
     public class TipoDevolucion_ProductoFacturado
     {
-        
-        
+
+
         [Key]
         public int TipoDevProdFact_Id { get; set; }
 

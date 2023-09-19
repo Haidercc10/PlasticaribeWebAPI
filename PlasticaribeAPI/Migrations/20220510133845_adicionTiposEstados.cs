@@ -134,16 +134,16 @@ namespace PlasticaribeAPI.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-           /* migrationBuilder.DropForeignKey(
-                name: "FK_Clientes_Usuarios_Usua_Id",
-                table: "Clientes");
+            /* migrationBuilder.DropForeignKey(
+                 name: "FK_Clientes_Usuarios_Usua_Id",
+                 table: "Clientes");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_Usuarios_TipoIdentificaciones_TipoIdentificacion_Id",
-                table: "Usuarios");
+             migrationBuilder.DropForeignKey(
+                 name: "FK_Usuarios_TipoIdentificaciones_TipoIdentificacion_Id",
+                 table: "Usuarios");
 
-            migrationBuilder.DropTable(
-                name: "Existencia_Producto");*/
+             migrationBuilder.DropTable(
+                 name: "Existencia_Producto");*/
 
             migrationBuilder.DropTable(
                 name: "Tipos_Estados");

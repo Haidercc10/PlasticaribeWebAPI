@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DetalleRecuperado_MateriaPrima>>> GetDetallesRecuperados_MateriasPrimas()
         {
-          if (_context.DetallesRecuperados_MateriasPrimas == null)
-          {
-              return NotFound();
-          }
+            if (_context.DetallesRecuperados_MateriasPrimas == null)
+            {
+                return NotFound();
+            }
             return await _context.DetallesRecuperados_MateriasPrimas.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DetalleRecuperado_MateriaPrima>> GetDetalleRecuperado_MateriaPrima(long id)
         {
-          if (_context.DetallesRecuperados_MateriasPrimas == null)
-          {
-              return NotFound();
-          }
+            if (_context.DetallesRecuperados_MateriasPrimas == null)
+            {
+                return NotFound();
+            }
             var detalleRecuperado_MateriaPrima = await _context.DetallesRecuperados_MateriasPrimas.FindAsync(id);
 
             if (detalleRecuperado_MateriaPrima == null)
@@ -50,7 +45,7 @@ namespace PlasticaribeAPI.Controllers
 
             return detalleRecuperado_MateriaPrima;
         }
-       
+
         /** Mostrar Consultas para reporte de Recuperado MP*/
         /** Fecha Inicial */
         [HttpGet("MostrarMPRecuperada/{FechaEntregaInicial}/{FechaEntregaFinal}/{Operario}/{Turno}/{IDPeletizado}")]
@@ -64,14 +59,15 @@ namespace PlasticaribeAPI.Controllers
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                     rec => rec.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial &&
-                    rec.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal && 
-                    rec.RecMp.Usua_Operador == Operario && 
+                    rec.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal &&
+                    rec.RecMp.Usua_Operador == Operario &&
                     rec.MatPri_Id == IDPeletizado &&
                     rec.RecMp.Turno_Id == Turno
                     )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -88,7 +84,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -98,7 +95,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -107,7 +105,7 @@ namespace PlasticaribeAPI.Controllers
 
                 return Ok(con);
 
-            } 
+            }
             else if (FechaEntregaInicial != null && FechaEntregaFinal != null && Turno != "NE" && IDPeletizado != 0)
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
@@ -118,7 +116,8 @@ namespace PlasticaribeAPI.Controllers
                     )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -134,7 +133,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial
                                                   && x.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -143,7 +143,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial
                                                   && x.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -163,7 +164,8 @@ namespace PlasticaribeAPI.Controllers
                     )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -180,7 +182,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -190,7 +193,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -199,7 +203,7 @@ namespace PlasticaribeAPI.Controllers
 
                 return Ok(con);
 
-            } 
+            }
             else if (FechaEntregaInicial != null && FechaEntregaFinal != null && Operario != 0)
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
@@ -209,7 +213,8 @@ namespace PlasticaribeAPI.Controllers
                     )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -226,7 +231,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -236,7 +242,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -255,7 +262,8 @@ namespace PlasticaribeAPI.Controllers
                     )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -266,21 +274,23 @@ namespace PlasticaribeAPI.Controllers
                         rec.Key.MatPri_Nombre,
                         SumaCantidad = rec.Sum(da => da.RecMatPri_Cantidad),
                         sumaDia = _context.DetallesRecuperados_MateriasPrimas
-                                           .Where(x => x.RecMp.Turno_Id == "DIA" 
+                                           .Where(x => x.RecMp.Turno_Id == "DIA"
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial
                                                   && x.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
-                                                    Suma = x.Sum(y => y.RecMatPri_Cantidad)
-                                            }).ToList(),
+                                           .Select(x => new
+                                           {
+                                               Suma = x.Sum(y => y.RecMatPri_Cantidad)
+                                           }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
                                            .Where(x => x.RecMp.Turno_Id == "NOCHE"
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial
                                                   && x.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -299,7 +309,8 @@ namespace PlasticaribeAPI.Controllers
                     )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -315,7 +326,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial
                                                   && x.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -324,7 +336,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial
                                                   && x.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -342,7 +355,8 @@ namespace PlasticaribeAPI.Controllers
                     )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -358,7 +372,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial
                                                   && x.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -367,7 +382,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega >= FechaEntregaInicial
                                                   && x.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -383,7 +399,8 @@ namespace PlasticaribeAPI.Controllers
                     )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -398,7 +415,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.RecMp_FechaEntrega == FechaEntregaInicial)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -406,7 +424,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.RecMp_FechaEntrega == FechaEntregaInicial)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -426,7 +445,8 @@ namespace PlasticaribeAPI.Controllers
                     )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -442,7 +462,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega == FechaEntregaInicial
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -451,7 +472,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega == FechaEntregaInicial
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -461,7 +483,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(con);
 
             }
-            else if (FechaEntregaInicial != null && Operario != 0 && Turno != "NE") 
+            else if (FechaEntregaInicial != null && Operario != 0 && Turno != "NE")
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
                    rec => rec.RecMp.RecMp_FechaEntrega == FechaEntregaInicial &&
@@ -470,7 +492,8 @@ namespace PlasticaribeAPI.Controllers
                    )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -486,7 +509,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega == FechaEntregaInicial
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -495,7 +519,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega == FechaEntregaInicial
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -512,7 +537,8 @@ namespace PlasticaribeAPI.Controllers
                    )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -528,7 +554,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega == FechaEntregaInicial
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -537,7 +564,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega == FechaEntregaInicial
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -546,7 +574,7 @@ namespace PlasticaribeAPI.Controllers
 
                 return Ok(con);
             }
-            
+
             else if (FechaEntregaInicial != null && Turno != "NE" && IDPeletizado != 0)
             {
                 var con = _context.DetallesRecuperados_MateriasPrimas.Where(
@@ -556,7 +584,8 @@ namespace PlasticaribeAPI.Controllers
                     )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -571,7 +600,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.RecMp_FechaEntrega == FechaEntregaInicial)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -580,7 +610,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.RecMp.RecMp_FechaEntrega == FechaEntregaInicial
                                                   && x.RecMp.RecMp_FechaEntrega <= FechaEntregaFinal)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -598,7 +629,8 @@ namespace PlasticaribeAPI.Controllers
                    )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -613,7 +645,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.RecMp_FechaEntrega == FechaEntregaInicial)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -621,7 +654,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.RecMp_FechaEntrega == FechaEntregaInicial)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -638,7 +672,8 @@ namespace PlasticaribeAPI.Controllers
                    )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -653,7 +688,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.RecMp_FechaEntrega == FechaEntregaInicial)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -661,7 +697,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.RecMp_FechaEntrega == FechaEntregaInicial)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -680,7 +717,8 @@ namespace PlasticaribeAPI.Controllers
                     )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -695,7 +733,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -703,7 +742,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -721,7 +761,8 @@ namespace PlasticaribeAPI.Controllers
                     )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -736,7 +777,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -744,7 +786,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -762,7 +805,8 @@ namespace PlasticaribeAPI.Controllers
                     )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -777,7 +821,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -785,7 +830,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -802,7 +848,8 @@ namespace PlasticaribeAPI.Controllers
                     )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -817,7 +864,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -825,7 +873,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.Usua_Operador == Operario)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -844,7 +893,8 @@ namespace PlasticaribeAPI.Controllers
                     )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -858,14 +908,16 @@ namespace PlasticaribeAPI.Controllers
                                            .Where(x => x.RecMp.Turno_Id == "DIA"
                                                   && x.MatPri_Id == rec.Key.MatPri_Id)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
                                            .Where(x => x.RecMp.Turno_Id == "NOCHE"
                                                   && x.MatPri_Id == rec.Key.MatPri_Id)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -882,7 +934,8 @@ namespace PlasticaribeAPI.Controllers
                     )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -896,14 +949,16 @@ namespace PlasticaribeAPI.Controllers
                                            .Where(x => x.RecMp.Turno_Id == "DIA"
                                                   && x.MatPri_Id == rec.Key.MatPri_Id)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
                                            .Where(x => x.RecMp.Turno_Id == "NOCHE"
                                                   && x.MatPri_Id == rec.Key.MatPri_Id)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -921,7 +976,8 @@ namespace PlasticaribeAPI.Controllers
                     )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -935,14 +991,16 @@ namespace PlasticaribeAPI.Controllers
                                            .Where(x => x.RecMp.Turno_Id == "DIA"
                                                   && x.MatPri_Id == rec.Key.MatPri_Id)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
                                            .Where(x => x.RecMp.Turno_Id == "NOCHE"
                                                   && x.MatPri_Id == rec.Key.MatPri_Id)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -960,7 +1018,8 @@ namespace PlasticaribeAPI.Controllers
                   )
                     .Include(rec => rec.RecMp)
                     .Include(recu => recu.RecMp.UsuaOperador)
-                    .GroupBy(agr => new {
+                    .GroupBy(agr => new
+                    {
                         agr.MatPri_Id,
                         agr.MatPri.MatPri_Nombre,
                         agr.UndMed_Id
@@ -975,7 +1034,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.RecMp_FechaEntrega == Hoy)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         sumaNoche = _context.DetallesRecuperados_MateriasPrimas
@@ -983,7 +1043,8 @@ namespace PlasticaribeAPI.Controllers
                                                   && x.MatPri_Id == rec.Key.MatPri_Id
                                                   && x.RecMp.RecMp_FechaEntrega == Hoy)
                                            .GroupBy(x => x.MatPri_Id)
-                                           .Select(x => new {
+                                           .Select(x => new
+                                           {
                                                Suma = x.Sum(y => y.RecMatPri_Cantidad)
                                            }).ToList(),
                         rec.Key.UndMed_Id
@@ -1068,10 +1129,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<DetalleRecuperado_MateriaPrima>> PostDetalleRecuperado_MateriaPrima(DetalleRecuperado_MateriaPrima detalleRecuperado_MateriaPrima)
         {
-          if (_context.DetallesRecuperados_MateriasPrimas == null)
-          {
-              return Problem("Entity set 'dataContext.DetallesRecuperados_MateriasPrimas'  is null.");
-          }
+            if (_context.DetallesRecuperados_MateriasPrimas == null)
+            {
+                return Problem("Entity set 'dataContext.DetallesRecuperados_MateriasPrimas'  is null.");
+            }
             _context.DetallesRecuperados_MateriasPrimas.Add(detalleRecuperado_MateriaPrima);
             try
             {

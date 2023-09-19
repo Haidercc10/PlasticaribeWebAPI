@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using StackExchange.Redis;
-using ConnectionHelper = PlasticaribeAPI.Service.ConnectionHelper;
 
 namespace PlasticaribeAPI.Service
 {

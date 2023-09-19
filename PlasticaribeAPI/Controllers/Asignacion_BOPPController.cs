@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Asignacion_BOPP>>> GetAsignaciones_BOPP()
         {
-          if (_context.Asignaciones_BOPP == null)
-          {
-              return NotFound();
-          }
+            if (_context.Asignaciones_BOPP == null)
+            {
+                return NotFound();
+            }
             return await _context.Asignaciones_BOPP.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Asignacion_BOPP>> GetAsignacion_BOPP(long id)
         {
-          if (_context.Asignaciones_BOPP == null)
-          {
-              return NotFound();
-          }
+            if (_context.Asignaciones_BOPP == null)
+            {
+                return NotFound();
+            }
             var asignacion_BOPP = await _context.Asignaciones_BOPP.FindAsync(id);
 
             if (asignacion_BOPP == null)
@@ -107,10 +102,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Asignacion_BOPP>> PostAsignacion_BOPP(Asignacion_BOPP asignacion_BOPP)
         {
-          if (_context.Asignaciones_BOPP == null)
-          {
-              return Problem("Entity set 'dataContext.Asignaciones_BOPP'  is null.");
-          }
+            if (_context.Asignaciones_BOPP == null)
+            {
+                return Problem("Entity set 'dataContext.Asignaciones_BOPP'  is null.");
+            }
             _context.Asignaciones_BOPP.Add(asignacion_BOPP);
             await _context.SaveChangesAsync();
 

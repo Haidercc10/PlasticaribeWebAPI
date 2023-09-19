@@ -16,7 +16,7 @@ namespace PlasticaribeAPI.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long Usua_Id { get; set; } /** IDENTIFICACION */
-        
+
         //Llave tipo ID agregada
         public string TipoIdentificacion_Id { get; set; }
         public TipoIdentificacion? TipoIdentificacion { get; set; }
@@ -29,7 +29,7 @@ namespace PlasticaribeAPI.Models
         public Area? Area { get; set; }
 
         //Llave tipo usuario agregada
-        public int tpUsu_Id { get; set; } 
+        public int tpUsu_Id { get; set; }
         public Tipo_Usuario? tpUsu { get; set; }
 
         //Llave rol usuario agregada
@@ -51,7 +51,7 @@ namespace PlasticaribeAPI.Models
         public String Usua_Telefono { get; set; } /** TELEFONO */
 
         [Column(TypeName = "varchar(100)")]
-        public String Usua_Contrasena { get; set; } 
+        public String Usua_Contrasena { get; set; }
 
         //Llave caja compensacion agregada
         public long cajComp_Id { get; set; }

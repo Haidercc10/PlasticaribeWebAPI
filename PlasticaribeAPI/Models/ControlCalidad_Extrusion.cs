@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PlasticaribeAPI.Migrations;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -26,7 +25,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(max)")]
         public string CcExt_Cliente { get; set; }
 
-        public int? Prod_Id { get; set; } 
+        public int? Prod_Id { get; set; }
         public Producto? Producto { get; set; }
 
 
@@ -40,7 +39,7 @@ namespace PlasticaribeAPI.Models
         public Pigmento? Pigmento { get; set; }
 
 
-        [Precision(18,2)]
+        [Precision(18, 2)]
         public decimal CcExt_AnchoTubular { get; set; }
 
 

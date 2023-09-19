@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Tickets_Revisados>>> GetTickets_Revisados()
         {
-          if (_context.Tickets_Revisados == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tickets_Revisados == null)
+            {
+                return NotFound();
+            }
             return await _context.Tickets_Revisados.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Tickets_Revisados>> GetTickets_Revisados(long id)
         {
-          if (_context.Tickets_Revisados == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tickets_Revisados == null)
+            {
+                return NotFound();
+            }
             var tickets_Revisados = await _context.Tickets_Revisados.FindAsync(id);
 
             if (tickets_Revisados == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Tickets_Revisados>> PostTickets_Revisados(Tickets_Revisados tickets_Revisados)
         {
-          if (_context.Tickets_Revisados == null)
-          {
-              return Problem("Entity set 'dataContext.Tickets_Revisados'  is null.");
-          }
+            if (_context.Tickets_Revisados == null)
+            {
+                return Problem("Entity set 'dataContext.Tickets_Revisados'  is null.");
+            }
             _context.Tickets_Revisados.Add(tickets_Revisados);
             await _context.SaveChangesAsync();
 

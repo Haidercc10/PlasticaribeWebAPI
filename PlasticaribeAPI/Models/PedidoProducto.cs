@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace PlasticaribeAPI.Models
 {
@@ -8,9 +8,9 @@ namespace PlasticaribeAPI.Models
     {
 
         [Key]
-        public long Codigo{ get; set; }
+        public long Codigo { get; set; }
 
-        public int Prod_Id { get; set; }       
+        public int Prod_Id { get; set; }
         public Producto? Product { get; set; }
 
         //Llave foranea pedidos
@@ -21,7 +21,7 @@ namespace PlasticaribeAPI.Models
         //Cantidad
         [Precision(14, 2)]
         public decimal PedExtProd_Cantidad { get; set; }
-        
+
         //Llave foranea unidad medida
         public string UndMed_Id { get; set; }
         public Unidad_Medida? UndMed { get; set; }

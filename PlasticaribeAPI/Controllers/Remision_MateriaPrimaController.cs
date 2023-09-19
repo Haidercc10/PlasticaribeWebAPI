@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Remision_MateriaPrima>>> GetRemisiones_MateriasPrimas()
         {
-          if (_context.Remisiones_MateriasPrimas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Remisiones_MateriasPrimas == null)
+            {
+                return NotFound();
+            }
             return await _context.Remisiones_MateriasPrimas.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Remision_MateriaPrima>> GetRemision_MateriaPrima(int id)
         {
-          if (_context.Remisiones_MateriasPrimas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Remisiones_MateriasPrimas == null)
+            {
+                return NotFound();
+            }
             var remision_MateriaPrima = await _context.Remisiones_MateriasPrimas.FindAsync(id);
 
             if (remision_MateriaPrima == null)
@@ -89,20 +84,20 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.Remisiones_FacturasCompras.Where(x => x.Remi.Rem_Codigo == codigo).Select(x => x.Rem_Id).ToList();
             var remision = from rem in _context.Set<Remision>()
-                            where !con.Contains(rem.Rem_Id) && rem.Rem_Codigo == codigo
-                            select new
-                            {
-                                rem.Rem_Id,
-                                rem.Rem_Codigo,
-                                rem.Rem_Fecha,
-                                rem.Prov_Id,
-                                rem.Prov.Prov_Nombre,
-                                rem.Usua_Id,
-                                rem.Usua.Usua_Nombre,
-                                rem.TpDoc_Id,
-                                rem.TpDoc.TpDoc_Nombre,
-                                rem.Rem_PrecioEstimado,
-                            };
+                           where !con.Contains(rem.Rem_Id) && rem.Rem_Codigo == codigo
+                           select new
+                           {
+                               rem.Rem_Id,
+                               rem.Rem_Codigo,
+                               rem.Rem_Fecha,
+                               rem.Prov_Id,
+                               rem.Prov.Prov_Nombre,
+                               rem.Usua_Id,
+                               rem.Usua.Usua_Nombre,
+                               rem.TpDoc_Id,
+                               rem.TpDoc.TpDoc_Nombre,
+                               rem.Rem_PrecioEstimado,
+                           };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(remision);
         }
@@ -143,10 +138,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Remision_MateriaPrima>> PostRemision_MateriaPrima(Remision_MateriaPrima remision_MateriaPrima)
         {
-          if (_context.Remisiones_MateriasPrimas == null)
-          {
-              return Problem("Entity set 'dataContext.Remisiones_MateriasPrimas'  is null.");
-          }
+            if (_context.Remisiones_MateriasPrimas == null)
+            {
+                return Problem("Entity set 'dataContext.Remisiones_MateriasPrimas'  is null.");
+            }
             _context.Remisiones_MateriasPrimas.Add(remision_MateriaPrima);
             try
             {

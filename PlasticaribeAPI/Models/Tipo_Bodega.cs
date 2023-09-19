@@ -16,10 +16,10 @@ namespace PlasticaribeAPI.Models
         public String TpBod_Nombre { get; set; } /** NOMBRE */
 
         [Column(TypeName = "varchar(max)")]
-        public String TpBod_Descripcion { get; set; } 
+        public String TpBod_Descripcion { get; set; }
 
         //Llave foranea areas agregada.
-        public long Area_Id { get; set; } 
-        public Area? Area { get; set; } 
-}
+        public long Area_Id { get; set; }
+        public Area? Area { get; set; }
+    }
 }

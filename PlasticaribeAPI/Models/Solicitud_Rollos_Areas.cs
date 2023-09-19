@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
@@ -25,7 +24,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string? SolRollo_HoraRespuesta { get; set; }
         public int Estado_Id { get; set; }
-        public Estado? Estado { get; set; }        
+        public Estado? Estado { get; set; }
         public int TpSol_Id { get; set; }
         public Tipo_Solicitud_Rollos_Areas? Tipo_solicitud { get; set; }
         public string SolRollo_Observacion { get; set; }

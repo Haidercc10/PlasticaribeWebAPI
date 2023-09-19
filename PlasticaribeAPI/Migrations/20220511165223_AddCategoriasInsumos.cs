@@ -13,12 +13,12 @@ namespace PlasticaribeAPI.Migrations
                 table: "Estados",
                 newName: "TpEstado_Id1");
 
-           /* migrationBuilder.AddColumn<int>(
-                name: "TpEstado_Id1",
-                table: "Estados",
-                type: "int",
-                nullable: false,
-                defaultValue: 0); */
+            /* migrationBuilder.AddColumn<int>(
+                 name: "TpEstado_Id1",
+                 table: "Estados",
+                 type: "int",
+                 nullable: false,
+                 defaultValue: 0); */
 
             /*migrationBuilder.CreateTable(
                 name: "Tipos_Estados",
@@ -34,18 +34,18 @@ namespace PlasticaribeAPI.Migrations
                     table.PrimaryKey("PK_Tipos_Estados", x => x.TpEstado_Id);
                 });*/
 
-           /* migrationBuilder.CreateIndex(
-                name: "IX_Estados_TpEstado_Id1",
-                table: "Estados",
-                column: "TpEstado_Id1"); */
+            /* migrationBuilder.CreateIndex(
+                 name: "IX_Estados_TpEstado_Id1",
+                 table: "Estados",
+                 column: "TpEstado_Id1"); */
 
-           /* migrationBuilder.AddForeignKey(
-                name: "FK_Estados_Tipos_Estados_TpEstado_Id1",
-                table: "Estados",
-                column: "TpEstado_Id1",
-                principalTable: "Tipos_Estados",
-                principalColumn: "TpEstado_Id",
-                onDelete: ReferentialAction.Cascade); */
+            /* migrationBuilder.AddForeignKey(
+                 name: "FK_Estados_Tipos_Estados_TpEstado_Id1",
+                 table: "Estados",
+                 column: "TpEstado_Id1",
+                 principalTable: "Tipos_Estados",
+                 principalColumn: "TpEstado_Id",
+                 onDelete: ReferentialAction.Cascade); */
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -1,10 +1,5 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -12,7 +7,7 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController, Authorize]
     public class AreasController : ControllerBase
@@ -34,7 +29,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getNombreArea/{Nombre}")]
         public ActionResult GetAreaNombre(string Nombre)
         {
-            var area =  _context.Areas.Where(a => a.Area_Nombre == Nombre).Select(ar => new { ar.Area_Nombre });
+            var area = _context.Areas.Where(a => a.Area_Nombre == Nombre).Select(ar => new { ar.Area_Nombre });
 
             /*if (area == null)
             {
@@ -49,7 +44,7 @@ namespace PlasticaribeAPI.Controllers
         {
             var area = from ar in _context.Set<Area>()
                        where ar.Area_Nombre.Contains(Nombre)
-                       select new { ar.Area_Nombre }; 
+                       select new { ar.Area_Nombre };
 
             /*if (area == null)
             {

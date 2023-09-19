@@ -17,6 +17,6 @@ namespace PlasticaribeAPI.Models
         public String TpProd_Nombre { get; set; } /** NOMBRE */
 
         [Column(TypeName = "varchar(max)")]
-        public String TpProd_Descripcion { get; set; } 
+        public String TpProd_Descripcion { get; set; }
     }
 }

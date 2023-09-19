@@ -45,7 +45,7 @@ namespace PlasticaribeAPI.Models
 
         [Precision(14, 2)]
         public decimal Ot_CantidadPedida { get; set; }
-        
+
         [Precision(14, 2)]
         public decimal Ot_ValorUnidad { get; set; }
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Tipos_Impresion>>> GetTipos_Impresion()
         {
-          if (_context.Tipos_Impresion == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tipos_Impresion == null)
+            {
+                return NotFound();
+            }
             return await _context.Tipos_Impresion.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Tipos_Impresion>> GetTipos_Impresion(int id)
         {
-          if (_context.Tipos_Impresion == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tipos_Impresion == null)
+            {
+                return NotFound();
+            }
             var tipos_Impresion = await _context.Tipos_Impresion.FindAsync(id);
 
             if (tipos_Impresion == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Tipos_Impresion>> PostTipos_Impresion(Tipos_Impresion tipos_Impresion)
         {
-          if (_context.Tipos_Impresion == null)
-          {
-              return Problem("Entity set 'dataContext.Tipos_Impresion'  is null.");
-          }
+            if (_context.Tipos_Impresion == null)
+            {
+                return Problem("Entity set 'dataContext.Tipos_Impresion'  is null.");
+            }
             _context.Tipos_Impresion.Add(tipos_Impresion);
             await _context.SaveChangesAsync();
 

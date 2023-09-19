@@ -8,7 +8,7 @@ namespace PlasticaribeAPI.Models
     {
         [Key]
         public long Codigo { get; set; } /* Primaria */
-        
+
         public long AsigMPxTinta_Id { get; set; } //Llave foranea de Asignacion_MatPrimaXTinta
         public Asignacion_MatPrimaXTinta? AsigMPxTinta { get; set; } //Propiedad de navegación de Asignacion_MatPrimaXTinta
 
@@ -30,7 +30,7 @@ namespace PlasticaribeAPI.Models
         public Unidad_Medida? UndMed { get; set; }      //Llave foranea de unidad medida
 
 
-        [Column(TypeName = "varchar(10)")]  
+        [Column(TypeName = "varchar(10)")]
         public string Proceso_Id { get; set; }  //Llave foranea de proceso
         public Proceso? Proceso { get; set; }   //Llave foranea de proceso
 

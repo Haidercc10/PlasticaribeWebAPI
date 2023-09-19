@@ -7,7 +7,7 @@ namespace PlasticaribeAPI.Models
     {
         [Key]
         public int Pigmt_Id { get; set; }
-        
+
         [Column(TypeName = "varchar(100)")]
         public string Pigmt_Nombre { get; set; }
 

@@ -21,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DetalleAsignacion_MateriaPrima>>> GetDetallesAsignaciones_MateriasPrimas()
         {
-          if (_context.DetallesAsignaciones_MateriasPrimas == null)
-          {
-              return NotFound();
-          }
+            if (_context.DetallesAsignaciones_MateriasPrimas == null)
+            {
+                return NotFound();
+            }
             return await _context.DetallesAsignaciones_MateriasPrimas.ToListAsync();
         }
 
@@ -32,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DetalleAsignacion_MateriaPrima>> GetDetalleAsignacion_MateriaPrima(long id)
         {
-          if (_context.DetallesAsignaciones_MateriasPrimas == null)
-          {
-              return NotFound();
-          }
+            if (_context.DetallesAsignaciones_MateriasPrimas == null)
+            {
+                return NotFound();
+            }
             var detalleAsignacion_MateriaPrima = await _context.DetallesAsignaciones_MateriasPrimas.FindAsync(id);
 
             if (detalleAsignacion_MateriaPrima == null)
@@ -66,30 +66,31 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var conMp = (from Asgmp in _context.Set<DetalleAsignacion_MateriaPrima>()
-                        where Asgmp.AsigMp.AsigMP_OrdenTrabajo == ot
-                        group Asgmp by new { 
-                            Asgmp.MatPri_Id,
-                            Asgmp.MatPri.MatPri_Nombre,
-                            Asgmp.UndMed_Id,
-                            Asgmp.MatPri.MatPri_Precio,
-                            Asgmp.Proceso_Id,
-                            Asgmp.Proceso.Proceso_Nombre
-                        } into y
-                        select new
-                        {
-                            //Materia Prima
-                            MatPri_Id = Convert.ToInt16(y.Key.MatPri_Id),
-                            Tinta_Id = Convert.ToInt16(2001),
-                            Bopp_Id = Convert.ToInt16(449),
-                            MateriaPrima = y.Key.MatPri_Id,
-                            NombreMP = y.Key.MatPri_Nombre,
-                            CantMP = y.Sum(Asgmp => Asgmp.DtAsigMp_Cantidad),
-                            UndMedida = y.Key.UndMed_Id,
-                            Precio = y.Key.MatPri_Precio,
-                            SubTotal = y.Sum(Asgmp => Asgmp.DtAsigMp_Cantidad) * y.Key.MatPri_Precio,
-                            Proceso = y.Key.Proceso_Id,
-                            NombreProceso = y.Key.Proceso_Nombre
-                        });
+                         where Asgmp.AsigMp.AsigMP_OrdenTrabajo == ot
+                         group Asgmp by new
+                         {
+                             Asgmp.MatPri_Id,
+                             Asgmp.MatPri.MatPri_Nombre,
+                             Asgmp.UndMed_Id,
+                             Asgmp.MatPri.MatPri_Precio,
+                             Asgmp.Proceso_Id,
+                             Asgmp.Proceso.Proceso_Nombre
+                         } into y
+                         select new
+                         {
+                             //Materia Prima
+                             MatPri_Id = Convert.ToInt16(y.Key.MatPri_Id),
+                             Tinta_Id = Convert.ToInt16(2001),
+                             Bopp_Id = Convert.ToInt16(449),
+                             MateriaPrima = y.Key.MatPri_Id,
+                             NombreMP = y.Key.MatPri_Nombre,
+                             CantMP = y.Sum(Asgmp => Asgmp.DtAsigMp_Cantidad),
+                             UndMedida = y.Key.UndMed_Id,
+                             Precio = y.Key.MatPri_Precio,
+                             SubTotal = y.Sum(Asgmp => Asgmp.DtAsigMp_Cantidad) * y.Key.MatPri_Precio,
+                             Proceso = y.Key.Proceso_Id,
+                             NombreProceso = y.Key.Proceso_Nombre
+                         });
 
             var conTinta = (from AsgTinta in _context.Set<DetalleAsignacion_Tinta>()
                             where AsgTinta.AsigMp.AsigMP_OrdenTrabajo == ot
@@ -248,16 +249,16 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var asig = (from asg in _context.Set<DetalleAsignacion_MateriaPrima>()
-                       where asg.AsigMp.AsigMP_OrdenTrabajo == ot
-                       select asg.DtAsigMp_Cantidad).Sum();
+                        where asg.AsigMp.AsigMP_OrdenTrabajo == ot
+                        select asg.DtAsigMp_Cantidad).Sum();
 
             var asgBopp = (from asgbopp in _context.Set<DetalleAsignacion_BOPP>()
-                          where asgbopp.DtAsigBOPP_OrdenTrabajo == ot
-                          select asgbopp.DtAsigBOPP_Cantidad).Sum();
+                           where asgbopp.DtAsigBOPP_OrdenTrabajo == ot
+                           select asgbopp.DtAsigBOPP_Cantidad).Sum();
 
             var devol = (from dev in _context.Set<DetalleDevolucion_MateriaPrima>()
-                        where dev.DevMatPri.DevMatPri_OrdenTrabajo == ot
-                        select dev.DtDevMatPri_CantidadDevuelta).Sum();
+                         where dev.DevMatPri.DevMatPri_OrdenTrabajo == ot
+                         select dev.DtDevMatPri_CantidadDevuelta).Sum();
 
             var asigs = (asig + asgBopp) - devol;
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -350,10 +351,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<DetalleAsignacion_MateriaPrima>> PostDetalleAsignacion_MateriaPrima(DetalleAsignacion_MateriaPrima detalleAsignacion_MateriaPrima)
         {
-          if (_context.DetallesAsignaciones_MateriasPrimas == null)
-          {
-              return Problem("Entity set 'dataContext.DetallesAsignaciones_MateriasPrimas'  is null.");
-          }
+            if (_context.DetallesAsignaciones_MateriasPrimas == null)
+            {
+                return Problem("Entity set 'dataContext.DetallesAsignaciones_MateriasPrimas'  is null.");
+            }
             _context.DetallesAsignaciones_MateriasPrimas.Add(detalleAsignacion_MateriaPrima);
             try
             {

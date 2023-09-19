@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OT_Laminado>>> GetOT_Laminado()
         {
-          if (_context.OT_Laminado == null)
-          {
-              return NotFound();
-          }
+            if (_context.OT_Laminado == null)
+            {
+                return NotFound();
+            }
             return await _context.OT_Laminado.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<OT_Laminado>> GetOT_Laminado(int id)
         {
-          if (_context.OT_Laminado == null)
-          {
-              return NotFound();
-          }
+            if (_context.OT_Laminado == null)
+            {
+                return NotFound();
+            }
             var oT_Laminado = await _context.OT_Laminado.FindAsync(id);
 
             if (oT_Laminado == null)
@@ -97,10 +92,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<OT_Laminado>> PostOT_Laminado(OT_Laminado oT_Laminado)
         {
-          if (_context.OT_Laminado == null)
-          {
-              return Problem("Entity set 'dataContext.OT_Laminado'  is null.");
-          }
+            if (_context.OT_Laminado == null)
+            {
+                return Problem("Entity set 'dataContext.OT_Laminado'  is null.");
+            }
             _context.OT_Laminado.Add(oT_Laminado);
             await _context.SaveChangesAsync();
 

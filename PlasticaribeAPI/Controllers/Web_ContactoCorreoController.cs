@@ -22,10 +22,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Web_ContactoCorreo>>> GetWeb_ContactoCorreo()
         {
-          if (_context.Web_ContactoCorreo == null)
-          {
-              return NotFound();
-          }
+            if (_context.Web_ContactoCorreo == null)
+            {
+                return NotFound();
+            }
             return await _context.Web_ContactoCorreo.ToListAsync();
         }
 
@@ -33,10 +33,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Web_ContactoCorreo>> GetWeb_ContactoCorreo(int id)
         {
-          if (_context.Web_ContactoCorreo == null)
-          {
-              return NotFound();
-          }
+            if (_context.Web_ContactoCorreo == null)
+            {
+                return NotFound();
+            }
             var web_ContactoCorreo = await _context.Web_ContactoCorreo.FindAsync(id);
 
             if (web_ContactoCorreo == null)
@@ -83,10 +83,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Web_ContactoCorreo>> PostWeb_ContactoCorreo(Web_ContactoCorreo web_ContactoCorreo)
         {
-          if (_context.Web_ContactoCorreo == null)
-          {
-              return Problem("Entity set 'dataContext.Web_ContactoCorreo'  is null.");
-          }
+            if (_context.Web_ContactoCorreo == null)
+            {
+                return Problem("Entity set 'dataContext.Web_ContactoCorreo'  is null.");
+            }
             _context.Web_ContactoCorreo.Add(web_ContactoCorreo);
             await _context.SaveChangesAsync();
             Envio_Correo(web_ContactoCorreo);
@@ -125,10 +125,11 @@ namespace PlasticaribeAPI.Controllers
 
             //Configuracion de envio de correo
             string destinos = web_ContactoCorreo.Correo + ";prueba20230227@gmail.com";
-            string[] destinatarios = destinos.Split(';') ;
+            string[] destinatarios = destinos.Split(';');
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(web_ContactoCorreo.Nombre, web_ContactoCorreo.Correo));
-            foreach(var destinatario in destinatarios ) {
+            foreach (var destinatario in destinatarios)
+            {
                 message.To.Add(new MailboxAddress("", destinatario));
             }
             message.Subject = web_ContactoCorreo.Asunto;
@@ -176,19 +177,19 @@ namespace PlasticaribeAPI.Controllers
             builder.HtmlBody += string.Format(@"<span> ");
             builder.HtmlBody += string.Format(@"<a style=""color : #000; text-decoration: none;"" onmouseover=""this.style.color='#d83542"" onmouseout=""this.style.color='#000'"" href=""https://goo.gl/maps/DgChbm9h4mYKgUc99"" target=""_blank""> ");
             builder.HtmlBody += string.Format(@"<img src=""cid:mapa"" style=""width: 15px; margin: 0 5px;"">");
-            builder.HtmlBody += string.Format(@""+ direccion +"");
+            builder.HtmlBody += string.Format(@"" + direccion + "");
             builder.HtmlBody += string.Format(@"</a>");
             builder.HtmlBody += string.Format(@"</span>");
             builder.HtmlBody += string.Format(@"<br>");
             builder.HtmlBody += string.Format(@"<span>");
             builder.HtmlBody += string.Format(@"<img src=""cid:telefono"" style=""width: 15px; margin: 0 5px;"">");
-            builder.HtmlBody += string.Format(@"Números de Contacto<a style=""color : #000; text-decoration: none;"" onmouseover=""this.style.color='#d83542"" onmouseout=""this.style.color='#000'"" href=""tel:""""> "+ telefonos +" </a>");
+            builder.HtmlBody += string.Format(@"Números de Contacto<a style=""color : #000; text-decoration: none;"" onmouseover=""this.style.color='#d83542"" onmouseout=""this.style.color='#000'"" href=""tel:""""> " + telefonos + " </a>");
             builder.HtmlBody += string.Format(@"</span>");
             builder.HtmlBody += string.Format(@"<br>");
             builder.HtmlBody += string.Format(@"<span>");
             builder.HtmlBody += string.Format(@"<a style=""color : #000; text-decoration: none;"" onmouseover=""this.style.color='#d83542"" onmouseout=""this.style.color='#000'"" href=""mailto:"">");
             builder.HtmlBody += string.Format(@"<img src=""cid:correo"" style=""width: 15px; margin: 0 5px;"">");
-            builder.HtmlBody += string.Format(@""+ correoEmpresa +"");
+            builder.HtmlBody += string.Format(@"" + correoEmpresa + "");
             builder.HtmlBody += string.Format(@"</a>");
             builder.HtmlBody += string.Format(@"</span>");
             builder.HtmlBody += string.Format(@"</div>");

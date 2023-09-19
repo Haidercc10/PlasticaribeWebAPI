@@ -42,7 +42,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(max)")]
         public string PedExt_Observacion { get; set; }
 
-        [Precision(18,2)]
+        [Precision(18, 2)]
         public decimal PedExt_PrecioTotal { get; set; }
 
         [Precision(18, 2)]
@@ -55,7 +55,7 @@ namespace PlasticaribeAPI.Models
         public decimal PedExt_PrecioTotalFinal { get; set; }
         public long? Creador_Id { get; set; }
         public Usuario? Creador { get; set; }
-       // public IList<PedidoProducto>? PedExtProd { get; set; }
+        // public IList<PedidoProducto>? PedExtProd { get; set; }
 
     }
 }

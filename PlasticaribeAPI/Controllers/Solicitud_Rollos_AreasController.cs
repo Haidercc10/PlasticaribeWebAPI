@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Solicitud_Rollos_Areas>>> GetSolicitud_Rollos_Areas()
         {
-          if (_context.Solicitud_Rollos_Areas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Solicitud_Rollos_Areas == null)
+            {
+                return NotFound();
+            }
             return await _context.Solicitud_Rollos_Areas.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Solicitud_Rollos_Areas>> GetSolicitud_Rollos_Areas(long id)
         {
-          if (_context.Solicitud_Rollos_Areas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Solicitud_Rollos_Areas == null)
+            {
+                return NotFound();
+            }
             var solicitud_Rollos_Areas = await _context.Solicitud_Rollos_Areas.FindAsync(id);
 
             if (solicitud_Rollos_Areas == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Solicitud_Rollos_Areas>> PostSolicitud_Rollos_Areas(Solicitud_Rollos_Areas solicitud_Rollos_Areas)
         {
-          if (_context.Solicitud_Rollos_Areas == null)
-          {
-              return Problem("Entity set 'dataContext.Solicitud_Rollos_Areas'  is null.");
-          }
+            if (_context.Solicitud_Rollos_Areas == null)
+            {
+                return Problem("Entity set 'dataContext.Solicitud_Rollos_Areas'  is null.");
+            }
             _context.Solicitud_Rollos_Areas.Add(solicitud_Rollos_Areas);
             await _context.SaveChangesAsync();
 

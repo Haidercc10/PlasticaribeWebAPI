@@ -22,7 +22,7 @@ namespace PlasticaribeAPI.Models
 
 
         public long Actv_Id { get; set; }
-        public Activo? Activo { get; set; } 
+        public Activo? Activo { get; set; }
 
 
         public long Usua_Operario { get; set; }
@@ -42,7 +42,7 @@ namespace PlasticaribeAPI.Models
         public Falla_Tecnica? Falla { get; set; }
 
 
-        [Precision(18,2)]
+        [Precision(18, 2)]
         public decimal Desp_PesoKg { get; set; }
 
 

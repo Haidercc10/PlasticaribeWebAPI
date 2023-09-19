@@ -6,19 +6,19 @@ namespace PlasticaribeAPI.Models
 {
     public class Materia_Prima
     {
-       [Key]
-       public long MatPri_Id { get; set; }
-    
-       [Column(TypeName = "varchar(MAX)")] 
-       public string MatPri_Nombre { get; set; }
+        [Key]
+        public long MatPri_Id { get; set; }
+
+        [Column(TypeName = "varchar(MAX)")]
+        public string MatPri_Nombre { get; set; }
 
         [Column(TypeName = "varchar(MAX)")]
         public string MatPri_Descripcion { get; set; }
 
-       [Precision(18, 2)]
-       public decimal MatPri_Stock { get; set; }
-       
-        [Column(TypeName = "varchar(10)")]        
+        [Precision(18, 2)]
+        public decimal MatPri_Stock { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
         public string UndMed_Id { get; set; } //Llave foranea Unidad_Medida           
         public Unidad_Medida? UndMed { get; set; } //Propiedad de Navegación Unidad_Medida
 
@@ -44,4 +44,3 @@ namespace PlasticaribeAPI.Models
 
     }
 }
- 

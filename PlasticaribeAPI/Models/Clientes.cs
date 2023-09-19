@@ -21,7 +21,7 @@ namespace PlasticaribeAPI.Models
         public TipoIdentificacion? TipoIdentificacion { get; set; }
 
 
-        [Column(TypeName = "varchar(MAX)")] 
+        [Column(TypeName = "varchar(MAX)")]
         public String Cli_Nombre { get; set; } /** OK RAZONCIAL */
 
         /*[Column(TypeName = "varchar(60)")]
@@ -34,19 +34,19 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(MAX)")]
         public String Cli_Email { get; set; } /** OK EMAIL*/
 
-        
+
         [Column(TypeName = "int")]
         public int TPCli_Id { get; set; } /** OK TIPOCLIENTE TABLA TIPOCLIENTES*/
 
-        public TiposClientes? TPCli { get; set; } 
+        public TiposClientes? TPCli { get; set; }
         public long usua_Id { get; set; } /** OK IDVENDE TABLA 'MAEVENDE' */
 
-        public Usuario? Usua { get; set;}
+        public Usuario? Usua { get; set; }
 
         //Llave foranea de estado en Clientes
         public int? Estado_Id { get; set; } /** POSIBLE: DESHABILITADO */
         public Estado? Estado { get; set; }
-        
+
         //Lista requerida para relación clientes-productos
         //public IList<Cliente_Producto>? CliProd { get; set; } /**POSIBLE: CLIENTEOT_ITEMS */
 

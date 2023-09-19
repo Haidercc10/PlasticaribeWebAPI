@@ -17,7 +17,7 @@ namespace PlasticaribeAPI.Models
         public string Cono_Nombre { get; set; }
 
 
-        [Precision(18,4)]
+        [Precision(18, 4)]
         public decimal Cono_KgXCmsAncho { get; set; }
 
 

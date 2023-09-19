@@ -21,7 +21,7 @@ namespace PlasticaribeAPI.Models
 
         //llave Foranea de la tabla tipos_bodegas
         public int TpBod_Id { get; set; } /** BODEGA */
-        public Tipo_Bodega? TpBod { get; set; } 
+        public Tipo_Bodega? TpBod { get; set; }
 
         [Precision(18, 2)]
         public decimal Ex_PrecioUnitario { get; set; } /** VALOR */

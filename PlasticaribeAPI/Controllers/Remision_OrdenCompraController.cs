@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -75,12 +70,14 @@ namespace PlasticaribeAPI.Controllers
                                                                           Ordenes.Contains(f.MatPri_Id) &&
                                                                           Ordenes2.Contains(f.Tinta_Id) &&
                                                                           Ordenes3.Contains(f.Bopp_Id)
-                                                                          ).GroupBy(agr => new {
+                                                                          ).GroupBy(agr => new
+                                                                          {
                                                                               agr.MatPri_Id,
                                                                               agr.Tinta_Id,
                                                                               agr.UndMed_Id,
                                                                               agr.Bopp_Id
-                                                                          }).Select(fco => new {
+                                                                          }).Select(fco => new
+                                                                          {
                                                                               fco.Key.MatPri_Id,
                                                                               fco.Key.Tinta_Id,
                                                                               fco.Key.Bopp_Id,

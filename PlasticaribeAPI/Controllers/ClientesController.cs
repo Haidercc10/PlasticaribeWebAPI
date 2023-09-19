@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Clientes>>> GetClientes()
         {
-          if (_context.Clientes == null)
-          {
-              return NotFound();
-          }
+            if (_context.Clientes == null)
+            {
+                return NotFound();
+            }
             return await _context.Clientes.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Clientes>> GetClientes(long id)
         {
-          if (_context.Clientes == null)
-          {
-              return NotFound();
-          }
+            if (_context.Clientes == null)
+            {
+                return NotFound();
+            }
             var clientes = await _context.Clientes.FindAsync(id);
 
             if (clientes == null)
@@ -161,10 +156,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Clientes>> PostClientes(Clientes clientes)
         {
-          if (_context.Clientes == null)
-          {
-              return Problem("Entity set 'dataContext.Clientes'  is null.");
-          }
+            if (_context.Clientes == null)
+            {
+                return Problem("Entity set 'dataContext.Clientes'  is null.");
+            }
             _context.Clientes.Add(clientes);
             try
             {

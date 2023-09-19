@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Entradas_Salidas_MP>>> GetEntradas_Salidas_MP()
         {
-          if (_context.Entradas_Salidas_MP == null)
-          {
-              return NotFound();
-          }
+            if (_context.Entradas_Salidas_MP == null)
+            {
+                return NotFound();
+            }
             return await _context.Entradas_Salidas_MP.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Entradas_Salidas_MP>> GetEntradas_Salidas_MP(int id)
         {
-          if (_context.Entradas_Salidas_MP == null)
-          {
-              return NotFound();
-          }
+            if (_context.Entradas_Salidas_MP == null)
+            {
+                return NotFound();
+            }
             var entradas_Salidas_MP = await _context.Entradas_Salidas_MP.FindAsync(id);
 
             if (entradas_Salidas_MP == null)
@@ -152,9 +147,9 @@ namespace PlasticaribeAPI.Controllers
                                Fecha = s.Fecha_Registro,
                                Hora = s.Hora_Registro,
                                OT = s.Orden_Trabajo,
-                               Item = s.Prod_Id, 
+                               Item = s.Prod_Id,
                                Referencia = s.Producto.Prod_Nombre,
-                               Cantidad_PedidaOT = s.Cant_PedidaOT, 
+                               Cantidad_PedidaOT = s.Cant_PedidaOT,
                                Medida = s.UndMed_Id,
                                MatPrimaId = s.MatPri_Id,
                                TintaId = s.Tinta_Id,
@@ -216,10 +211,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Entradas_Salidas_MP>> PostEntradas_Salidas_MP(Entradas_Salidas_MP entradas_Salidas_MP)
         {
-          if (_context.Entradas_Salidas_MP == null)
-          {
-              return Problem("Entity set 'dataContext.Entradas_Salidas_MP'  is null.");
-          }
+            if (_context.Entradas_Salidas_MP == null)
+            {
+                return Problem("Entity set 'dataContext.Entradas_Salidas_MP'  is null.");
+            }
             _context.Entradas_Salidas_MP.Add(entradas_Salidas_MP);
             await _context.SaveChangesAsync();
 

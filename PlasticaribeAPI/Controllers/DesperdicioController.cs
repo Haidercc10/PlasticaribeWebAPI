@@ -1,10 +1,5 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -12,7 +7,7 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController, Authorize]
     public class DesperdiciosController : ControllerBase
@@ -29,7 +24,7 @@ namespace PlasticaribeAPI.Controllers
         public async Task<ActionResult<IEnumerable<Desperdicio>>> GetDesperdicios()
         {
             return await _context.Desperdicios.ToListAsync();
-        }      
+        }
 
         // GET: api/Desperdicios/5
         [HttpGet("{id}")]
@@ -51,16 +46,16 @@ namespace PlasticaribeAPI.Controllers
             DateTime hora = Convert.ToDateTime("00:00:00");
 
             var desperdicioFecha = (from des in _context.Set<Desperdicio>()
-                              orderby des.Desp_Id descending
-                              select des.Desp_FechaRegistro).FirstOrDefault();
+                                    orderby des.Desp_Id descending
+                                    select des.Desp_FechaRegistro).FirstOrDefault();
 
             var desperdicioHora = (from des in _context.Set<Desperdicio>()
                                    orderby des.Desp_Id descending
                                    select des.Desp_HoraRegistro).FirstOrDefault();
 
             var desperdicioUsuario = (from des in _context.Set<Desperdicio>()
-                                  orderby des.Desp_Id descending
-                                  select des.Usua_Id).FirstOrDefault();
+                                      orderby des.Desp_Id descending
+                                      select des.Usua_Id).FirstOrDefault();
 
             var con = from des in _context.Set<Desperdicio>()
                       from emp in _context.Set<Empresa>()
@@ -127,8 +122,8 @@ namespace PlasticaribeAPI.Controllers
                                    Operario = d.Usua_Operario,
                                    d.Usuario1.Usua_Nombre,
                                    d.Usua_Id,
-                                   Usuario = d.Usuario2.Usua_Nombre, 
-                                   d.Desp_Fecha, 
+                                   Usuario = d.Usuario2.Usua_Nombre,
+                                   d.Desp_Fecha,
                                    d.Desp_Observacion,
                                    d.Desp_FechaRegistro,
                                    d.Desp_HoraRegistro,
@@ -137,7 +132,7 @@ namespace PlasticaribeAPI.Controllers
                                    e.Empresa_Ciudad,
                                    e.Empresa_Direccion
                                }).ToList();
-            
+
             //if (Desperdicio == null) return NotFound();           
             return Ok(Desperdicio);
         }
@@ -193,17 +188,17 @@ namespace PlasticaribeAPI.Controllers
                                Convert.ToString(d.Desp_OT).Contains(OT) &&
                                Convert.ToString(d.Material_Id).Contains(material) &&
                                Convert.ToString(d.Prod_Id).Contains(item)
-                               group d by  new { d.Desp_OT, d.Desp_Impresion, d.Prod_Id, d.Producto.Prod_Nombre, d.Material_Id, d.Material.Material_Nombre } into grupo
+                               group d by new { d.Desp_OT, d.Desp_Impresion, d.Prod_Id, d.Producto.Prod_Nombre, d.Material_Id, d.Material.Material_Nombre } into grupo
                                select new
-                               { 
-                                  OT = grupo.Key.Desp_OT,
-                                  Item = grupo.Key.Prod_Id,
-                                  NombreItem = grupo.Key.Prod_Nombre,
-                                  Material = grupo.Key.Material_Nombre,
-                                  Impreso = grupo.Key.Desp_Impresion,
-                                  PesoTotal = grupo.Sum(dd => dd.Desp_PesoKg)
+                               {
+                                   OT = grupo.Key.Desp_OT,
+                                   Item = grupo.Key.Prod_Id,
+                                   NombreItem = grupo.Key.Prod_Nombre,
+                                   Material = grupo.Key.Material_Nombre,
+                                   Impreso = grupo.Key.Desp_Impresion,
+                                   PesoTotal = grupo.Sum(dd => dd.Desp_PesoKg)
                                }).ToList();
-            
+
             //if (Desperdicio == null) return NotFound();           
             return Ok(Desperdicio);
         }

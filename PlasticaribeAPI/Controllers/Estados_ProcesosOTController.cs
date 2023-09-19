@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -129,7 +124,8 @@ namespace PlasticaribeAPI.Controllers
                 .Include(estOT => estOT.FallaTecnica)
                 .Include(estOT => estOT.Estado_OT)
                 .Include(estOt => estOt.UnidadMedida)
-                .Select(estOt => new {
+                .Select(estOt => new
+                {
                     estOt.EstProcOT_Id,
                     estOt.EstProcOT_OrdenTrabajo,
                     estOt.EstProcOT_ExtrusionKg,
@@ -181,7 +177,8 @@ namespace PlasticaribeAPI.Controllers
                             && ot.EstProcOT_FechaCreacion <= fecha2
                       group ot by new { ot.EstProcOT_Cliente }
                       into ot
-                      select new { 
+                      select new
+                      {
                           ot.Key.EstProcOT_Cliente,
                           cantidad = ot.Count(),
                       };
@@ -195,7 +192,8 @@ namespace PlasticaribeAPI.Controllers
             var con = from ot in _context.Set<Estados_ProcesosOT>()
                       where ot.EstProcOT_FechaCreacion >= fecha1
                             && ot.EstProcOT_FechaCreacion <= fecha2
-                      group ot by new { 
+                      group ot by new
+                      {
                           ot.Prod_Id,
                           ot.Producto.Prod_Nombre
                       }
@@ -286,7 +284,8 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var ot = _context.Estados_ProcesosOT
                 .Where(epOT => epOT.EstProcOT_Pedido == pedido)
-                .Select(estOt => new {
+                .Select(estOt => new
+                {
                     estOt.EstProcOT_Id,
                     estOt.EstProcOT_OrdenTrabajo,
                     estOt.EstProcOT_ExtrusionKg,

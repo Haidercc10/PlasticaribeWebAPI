@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ControlCalidad_CorteDoblado>>> GetControlCalidad_CorteDoblado()
         {
-          if (_context.ControlCalidad_CorteDoblado == null)
-          {
-              return NotFound();
-          }
+            if (_context.ControlCalidad_CorteDoblado == null)
+            {
+                return NotFound();
+            }
             return await _context.ControlCalidad_CorteDoblado.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ControlCalidad_CorteDoblado>> GetControlCalidad_CorteDoblado(int id)
         {
-          if (_context.ControlCalidad_CorteDoblado == null)
-          {
-              return NotFound();
-          }
+            if (_context.ControlCalidad_CorteDoblado == null)
+            {
+                return NotFound();
+            }
             var controlCalidad_CorteDoblado = await _context.ControlCalidad_CorteDoblado.FindAsync(id);
 
             if (controlCalidad_CorteDoblado == null)
@@ -109,10 +104,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ControlCalidad_CorteDoblado>> PostControlCalidad_CorteDoblado(ControlCalidad_CorteDoblado controlCalidad_CorteDoblado)
         {
-          if (_context.ControlCalidad_CorteDoblado == null)
-          {
-              return Problem("Entity set 'dataContext.ControlCalidad_CorteDoblado'  is null.");
-          }
+            if (_context.ControlCalidad_CorteDoblado == null)
+            {
+                return Problem("Entity set 'dataContext.ControlCalidad_CorteDoblado'  is null.");
+            }
             _context.ControlCalidad_CorteDoblado.Add(controlCalidad_CorteDoblado);
             await _context.SaveChangesAsync();
 

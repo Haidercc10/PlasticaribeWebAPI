@@ -116,7 +116,7 @@ namespace PlasticaribeAPI.Controllers
 
         /** Consulta para condicionales */
         [HttpGet("getPedido_Mantenimiento/{fecha1}/{fecha2}")]
-        public ActionResult getMovimientos(DateTime fecha1, DateTime fecha2, string? consecutivo = "", string? consecutivo2="",  string? tipoMov = "")
+        public ActionResult getMovimientos(DateTime fecha1, DateTime fecha2, string? consecutivo = "", string? consecutivo2 = "", string? tipoMov = "")
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
@@ -134,9 +134,9 @@ namespace PlasticaribeAPI.Controllers
                              Tipo_Movimiento = "Pedido de Mantenimiento",
                              Fecha = ped.PedMtto_Fecha,
                              Hora = ped.PedMtto_Hora,
-                             IdUsuario = ped.Usua_Id,   
+                             IdUsuario = ped.Usua_Id,
                              Usuario = ped.Usuario.Usua_Nombre,
-                             IdEstado = ped.Estado_Id, 
+                             IdEstado = ped.Estado_Id,
                              Estado = ped.Estado.Estado_Nombre,
                              Observacion = ped.PedMtto_Observacion
                          };

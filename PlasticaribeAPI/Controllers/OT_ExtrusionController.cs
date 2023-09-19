@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OT_Extrusion>>> GetOT_Extrusion()
         {
-          if (_context.OT_Extrusion == null)
-          {
-              return NotFound();
-          }
+            if (_context.OT_Extrusion == null)
+            {
+                return NotFound();
+            }
             return await _context.OT_Extrusion.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<OT_Extrusion>> GetOT_Extrusion(int id)
         {
-          if (_context.OT_Extrusion == null)
-          {
-              return NotFound();
-          }
+            if (_context.OT_Extrusion == null)
+            {
+                return NotFound();
+            }
             var oT_Extrusion = await _context.OT_Extrusion.FindAsync(id);
 
             if (oT_Extrusion == null)
@@ -53,7 +48,7 @@ namespace PlasticaribeAPI.Controllers
 
         // Funcion que consultará los datos en el proceso de extrusion de una orden de trabajo
         [HttpGet("getOT_Extrusion/{ot}")]
-        public ActionResult getOt_Extrusion (long ot)
+        public ActionResult getOt_Extrusion(long ot)
         {
             var con = from ext in _context.Set<OT_Extrusion>()
                       where ext.Ot_Id == ot
@@ -97,10 +92,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<OT_Extrusion>> PostOT_Extrusion(OT_Extrusion oT_Extrusion)
         {
-          if (_context.OT_Extrusion == null)
-          {
-              return Problem("Entity set 'dataContext.OT_Extrusion'  is null.");
-          }
+            if (_context.OT_Extrusion == null)
+            {
+                return Problem("Entity set 'dataContext.OT_Extrusion'  is null.");
+            }
             _context.OT_Extrusion.Add(oT_Extrusion);
             await _context.SaveChangesAsync();
 

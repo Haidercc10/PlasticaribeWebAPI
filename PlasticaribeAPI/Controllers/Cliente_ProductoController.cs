@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Cliente_Producto>>> GetClientes_Productos()
         {
-          if (_context.Clientes_Productos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Clientes_Productos == null)
+            {
+                return NotFound();
+            }
             return await _context.Clientes_Productos.ToListAsync();
         }
 
@@ -53,10 +48,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Cliente_Producto>> GetCliente_Producto(long id)
         {
-          if (_context.Clientes_Productos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Clientes_Productos == null)
+            {
+                return NotFound();
+            }
             var cliente_Producto = await _context.Clientes_Productos.FindAsync(id);
 
             if (cliente_Producto == null)
@@ -103,10 +98,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Cliente_Producto>> PostCliente_Producto(Cliente_Producto cliente_Producto)
         {
-          if (_context.Clientes_Productos == null)
-          {
-              return Problem("Entity set 'dataContext.Clientes_Productos'  is null.");
-          }
+            if (_context.Clientes_Productos == null)
+            {
+                return Problem("Entity set 'dataContext.Clientes_Productos'  is null.");
+            }
             _context.Clientes_Productos.Add(cliente_Producto);
             try
             {

@@ -8,9 +8,9 @@ namespace PlasticaribeAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-           /* migrationBuilder.DropColumn(
-                name: "cajComp_Codigo",
-                table: "Cajas_Compensaciones"); */
+            /* migrationBuilder.DropColumn(
+                 name: "cajComp_Codigo",
+                 table: "Cajas_Compensaciones"); */
 
             migrationBuilder.AddColumn<decimal>(
                 name: "ExProd_PrecioVenta",
@@ -27,13 +27,13 @@ namespace PlasticaribeAPI.Migrations
                 name: "ExProd_PrecioVenta",
                 table: "Existencias_Productos");
 
-           /* migrationBuilder.AddColumn<int>(
-                name: "cajComp_Codigo",
-                table: "Cajas_Compensaciones",
-                type: "int",
-                nullable: false,
-                defaultValue: 0)
-                .Annotation("SqlServer:Identity", "1, 1"); */
+            /* migrationBuilder.AddColumn<int>(
+                 name: "cajComp_Codigo",
+                 table: "Cajas_Compensaciones",
+                 type: "int",
+                 nullable: false,
+                 defaultValue: 0)
+                 .Annotation("SqlServer:Identity", "1, 1"); */
         }
     }
 }

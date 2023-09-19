@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -23,7 +22,7 @@ namespace PlasticaribeAPI.Migrations
                 type: "varchar(10)",
                 nullable: true);
 
-            
+
         }
 
         /// <inheritdoc />
@@ -37,7 +36,7 @@ namespace PlasticaribeAPI.Migrations
                 name: "Rollo_HoraEliminacion",
                 table: "Rollos_Desechos");
 
-           
+
         }
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Proveedor>>> GetProveedores()
         {
-          if (_context.Proveedores == null)
-          {
-              return NotFound();
-          }
+            if (_context.Proveedores == null)
+            {
+                return NotFound();
+            }
             return await _context.Proveedores.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Proveedor>> GetProveedor(long id)
         {
-          if (_context.Proveedores == null)
-          {
-              return NotFound();
-          }
+            if (_context.Proveedores == null)
+            {
+                return NotFound();
+            }
             var proveedor = await _context.Proveedores.FindAsync(id);
 
             if (proveedor == null)
@@ -101,10 +96,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Proveedor>> PostProveedor(Proveedor proveedor)
         {
-          if (_context.Proveedores == null)
-          {
-              return Problem("Entity set 'dataContext.Proveedores'  is null.");
-          }
+            if (_context.Proveedores == null)
+            {
+                return Problem("Entity set 'dataContext.Proveedores'  is null.");
+            }
             _context.Proveedores.Add(proveedor);
             try
             {

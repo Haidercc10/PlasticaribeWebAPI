@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Pistas>>> GetPistas()
         {
-          if (_context.Pistas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Pistas == null)
+            {
+                return NotFound();
+            }
             return await _context.Pistas.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Pistas>> GetPistas(int id)
         {
-          if (_context.Pistas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Pistas == null)
+            {
+                return NotFound();
+            }
             var pistas = await _context.Pistas.FindAsync(id);
 
             if (pistas == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Pistas>> PostPistas(Pistas pistas)
         {
-          if (_context.Pistas == null)
-          {
-              return Problem("Entity set 'dataContext.Pistas'  is null.");
-          }
+            if (_context.Pistas == null)
+            {
+                return Problem("Entity set 'dataContext.Pistas'  is null.");
+            }
             _context.Pistas.Add(pistas);
             await _context.SaveChangesAsync();
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -27,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Detalles_BodegasRollos>>> GetDetalles_BodegasRollos()
         {
-          if (_context.Detalles_BodegasRollos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Detalles_BodegasRollos == null)
+            {
+                return NotFound();
+            }
             return await _context.Detalles_BodegasRollos.ToListAsync();
         }
 
@@ -38,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Detalles_BodegasRollos>> GetDetalles_BodegasRollos(long id)
         {
-          if (_context.Detalles_BodegasRollos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Detalles_BodegasRollos == null)
+            {
+                return NotFound();
+            }
             var detalles_BodegasRollos = await _context.Detalles_BodegasRollos.FindAsync(id);
 
             if (detalles_BodegasRollos == null)
@@ -237,10 +231,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Detalles_BodegasRollos>> PostDetalles_BodegasRollos(Detalles_BodegasRollos detalles_BodegasRollos)
         {
-          if (_context.Detalles_BodegasRollos == null)
-          {
-              return Problem("Entity set 'dataContext.Detalles_BodegasRollos'  is null.");
-          }
+            if (_context.Detalles_BodegasRollos == null)
+            {
+                return Problem("Entity set 'dataContext.Detalles_BodegasRollos'  is null.");
+            }
             _context.Detalles_BodegasRollos.Add(detalles_BodegasRollos);
             await _context.SaveChangesAsync();
 

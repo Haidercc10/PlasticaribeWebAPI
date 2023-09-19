@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movimientros_Entradas_MP>>> GetMovimientros_Entradas_MP()
         {
-          if (_context.Movimientros_Entradas_MP == null)
-          {
-              return NotFound();
-          }
+            if (_context.Movimientros_Entradas_MP == null)
+            {
+                return NotFound();
+            }
             return await _context.Movimientros_Entradas_MP.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Movimientros_Entradas_MP>> GetMovimientros_Entradas_MP(int id)
         {
-          if (_context.Movimientros_Entradas_MP == null)
-          {
-              return NotFound();
-          }
+            if (_context.Movimientros_Entradas_MP == null)
+            {
+                return NotFound();
+            }
             var movimientros_Entradas_MP = await _context.Movimientros_Entradas_MP.FindAsync(id);
 
             if (movimientros_Entradas_MP == null)
@@ -127,29 +122,29 @@ namespace PlasticaribeAPI.Controllers
         {
             var materiasPrimas = from mp in _context.Set<Movimientros_Entradas_MP>()
                                  where (mp.MatPri_Id == material || mp.Tinta_Id == material || (mp.Codigo_Entrada == material && mp.Bopp_Id != 1))
-                                 && mp.Cantidad_Disponible > 0 
+                                 && mp.Cantidad_Disponible > 0
                                  && mp.Estado_Id == 19
                                  orderby mp.Id ascending
                                  select new
                                  {
                                      Id = mp.Id,
                                      MatPri_Id = mp.MatPri_Id,
-                                     Tinta_Id = mp.Tinta_Id, 
-                                     Bopp_Id = mp.Bopp_Id, 
+                                     Tinta_Id = mp.Tinta_Id,
+                                     Bopp_Id = mp.Bopp_Id,
                                      Cantidad_Entrada = mp.Cantidad_Entrada,
-                                     UndMed_Id = mp.UndMed_Id, 
-                                     Precio_RealUnitario = mp.Precio_RealUnitario, 
-                                     Tipo_Entrada = mp.Tipo_Entrada, 
-                                     Codigo_Entrada = mp.Codigo_Entrada, 
-                                     Estado_Id = mp.Estado_Id, 
+                                     UndMed_Id = mp.UndMed_Id,
+                                     Precio_RealUnitario = mp.Precio_RealUnitario,
+                                     Tipo_Entrada = mp.Tipo_Entrada,
+                                     Codigo_Entrada = mp.Codigo_Entrada,
+                                     Estado_Id = mp.Estado_Id,
                                      Cantidad_Asignada = mp.Cantidad_Asignada,
                                      Cantidad_Disponible = mp.Cantidad_Disponible,
-                                     Observacion = mp.Observacion, 
+                                     Observacion = mp.Observacion,
                                      Fecha_Entrada = Convert.ToString(mp.Fecha_Entrada).Substring(0, 10),
-                                     Hora_Entrada = mp.Hora_Entrada, 
+                                     Hora_Entrada = mp.Hora_Entrada,
                                      Precio_EstandarUnitario = mp.Precio_EstandarUnitario
                                  };
-           
+
             if (materiasPrimas == null) return BadRequest("No se encontró el material seleccionado!");
             return Ok(materiasPrimas);
         }
@@ -159,12 +154,12 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult getEntradasMP(long ot, long mp, long tinta, long bopp)
         {
             var salidas = (from e in _context.Set<Entradas_Salidas_MP>()
-                          where e.Orden_Trabajo == ot &&
-                          e.MatPri_Id == mp &&
-                          e.Tinta_Id == tinta &&
-                          e.Bopp_Id == bopp
-                          orderby e.Id_Entrada descending
-                          select e.Id_Entrada).ToList();
+                           where e.Orden_Trabajo == ot &&
+                           e.MatPri_Id == mp &&
+                           e.Tinta_Id == tinta &&
+                           e.Bopp_Id == bopp
+                           orderby e.Id_Entrada descending
+                           select e.Id_Entrada).ToList();
 
             var entradas = from me in _context.Set<Movimientros_Entradas_MP>()
                            orderby me.Id descending
@@ -213,10 +208,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Movimientros_Entradas_MP>> PostMovimientros_Entradas_MP(Movimientros_Entradas_MP movimientros_Entradas_MP)
         {
-          if (_context.Movimientros_Entradas_MP == null)
-          {
-              return Problem("Entity set 'dataContext.Movimientros_Entradas_MP'  is null.");
-          }
+            if (_context.Movimientros_Entradas_MP == null)
+            {
+                return Problem("Entity set 'dataContext.Movimientros_Entradas_MP'  is null.");
+            }
             _context.Movimientros_Entradas_MP.Add(movimientros_Entradas_MP);
             await _context.SaveChangesAsync();
 

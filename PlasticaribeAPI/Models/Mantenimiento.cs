@@ -10,8 +10,8 @@ namespace PlasticaribeAPI.Models
         public long Mtto_Id { get; set; }
 
 
-        public long PedMtto_Id { get; set; }       
-        public Pedido_Mantenimiento? Pedido_Mtto { get; set;  }
+        public long PedMtto_Id { get; set; }
+        public Pedido_Mantenimiento? Pedido_Mtto { get; set; }
 
 
         public long Prov_Id { get; set; }

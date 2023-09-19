@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
@@ -40,10 +34,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Categorias_Archivos>> GetCategorias_Archivos(int id)
         {
-          if (_context.Categorias_Archivos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Categorias_Archivos == null)
+            {
+                return NotFound();
+            }
             var categorias_Archivos = await _context.Categorias_Archivos.FindAsync(id);
 
             if (categorias_Archivos == null)
@@ -90,10 +84,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Categorias_Archivos>> PostCategorias_Archivos(Categorias_Archivos categorias_Archivos)
         {
-          if (_context.Categorias_Archivos == null)
-          {
-              return Problem("Entity set 'dataContext.Categorias_Archivos'  is null.");
-          }
+            if (_context.Categorias_Archivos == null)
+            {
+                return Problem("Entity set 'dataContext.Categorias_Archivos'  is null.");
+            }
             _context.Categorias_Archivos.Add(categorias_Archivos);
             await _context.SaveChangesAsync();
 

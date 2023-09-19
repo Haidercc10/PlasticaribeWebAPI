@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Factura_Compra>>> GetFacturas_Compras()
         {
-          if (_context.Facturas_Compras == null)
-          {
-              return NotFound();
-          }
+            if (_context.Facturas_Compras == null)
+            {
+                return NotFound();
+            }
             return await _context.Facturas_Compras.ToListAsync();
         }
 
@@ -44,10 +39,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Factura_Compra>> GetFactura_Compra(long id)
         {
-          if (_context.Facturas_Compras == null)
-          {
-              return NotFound();
-          }
+            if (_context.Facturas_Compras == null)
+            {
+                return NotFound();
+            }
             var factura_Compra = await _context.Facturas_Compras.FindAsync(id);
 
             if (factura_Compra == null)
@@ -146,10 +141,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Factura_Compra>> PostFactura_Compra(Factura_Compra factura_Compra)
         {
-          if (_context.Facturas_Compras == null)
-          {
-              return Problem("Entity set 'dataContext.Facturas_Compras'  is null.");
-          }
+            if (_context.Facturas_Compras == null)
+            {
+                return Problem("Entity set 'dataContext.Facturas_Compras'  is null.");
+            }
             _context.Facturas_Compras.Add(factura_Compra);
             await _context.SaveChangesAsync();
 

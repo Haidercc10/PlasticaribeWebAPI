@@ -10,7 +10,7 @@ namespace PlasticaribeAPI.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-           
+
             migrationBuilder.AddColumn<int>(
                 name: "Estado_Id",
                 table: "Detalles_Mantenimientos",
@@ -47,7 +47,7 @@ namespace PlasticaribeAPI.Migrations
                 name: "Estado_Id",
                 table: "Detalles_Mantenimientos");
 
-          
+
         }
     }
 }

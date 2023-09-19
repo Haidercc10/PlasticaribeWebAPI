@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace PlasticaribeAPI.Models
 {
     public class Categoria_MatPrima
-    {   
+    {
         [Key]
         public int CatMP_Id { get; set; }
 

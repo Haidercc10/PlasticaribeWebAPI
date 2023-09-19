@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
@@ -25,10 +20,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Productos_MateriasPrimas>>> GetProductos_MateriasPrimas()
         {
-          if (_context.Productos_MateriasPrimas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Productos_MateriasPrimas == null)
+            {
+                return NotFound();
+            }
             return await _context.Productos_MateriasPrimas.ToListAsync();
         }
 
@@ -36,10 +31,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Productos_MateriasPrimas>> GetProductos_MateriasPrimas(int id)
         {
-          if (_context.Productos_MateriasPrimas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Productos_MateriasPrimas == null)
+            {
+                return NotFound();
+            }
             var productos_MateriasPrimas = await _context.Productos_MateriasPrimas.FindAsync(id);
 
             if (productos_MateriasPrimas == null)
@@ -132,10 +127,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Productos_MateriasPrimas>> PostProductos_MateriasPrimas(Productos_MateriasPrimas productos_MateriasPrimas)
         {
-          if (_context.Productos_MateriasPrimas == null)
-          {
-              return Problem("Entity set 'dataContext.Productos_MateriasPrimas'  is null.");
-          }
+            if (_context.Productos_MateriasPrimas == null)
+            {
+                return Problem("Entity set 'dataContext.Productos_MateriasPrimas'  is null.");
+            }
             _context.Productos_MateriasPrimas.Add(productos_MateriasPrimas);
             await _context.SaveChangesAsync();
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Formato_Documentos>>> GetFormato_Documentos()
         {
-          if (_context.Formato_Documentos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Formato_Documentos == null)
+            {
+                return NotFound();
+            }
             return await _context.Formato_Documentos.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Formato_Documentos>> GetFormato_Documentos(int id)
         {
-          if (_context.Formato_Documentos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Formato_Documentos == null)
+            {
+                return NotFound();
+            }
             var formato_Documentos = await _context.Formato_Documentos.FindAsync(id);
 
             if (formato_Documentos == null)
@@ -53,12 +48,12 @@ namespace PlasticaribeAPI.Controllers
 
         //Consulta que devolverá la informacion del ultimo formato de un documento
         [HttpGet("getUltFormatoDoc/{nombre}")]
-        public ActionResult GetUltFormadoDoc (string nombre)
+        public ActionResult GetUltFormadoDoc(string nombre)
         {
             var con = (from fmt in _context.Set<Formato_Documentos>()
-                      where fmt.Nombre_Reporte == nombre
-                      orderby fmt.Id descending
-                      select fmt).FirstOrDefault();
+                       where fmt.Nombre_Reporte == nombre
+                       orderby fmt.Id descending
+                       select fmt).FirstOrDefault();
             if (con != null) return Ok(con);
             else return NoContent();
         }
@@ -99,10 +94,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Formato_Documentos>> PostFormato_Documentos(Formato_Documentos formato_Documentos)
         {
-          if (_context.Formato_Documentos == null)
-          {
-              return Problem("Entity set 'dataContext.Formato_Documentos'  is null.");
-          }
+            if (_context.Formato_Documentos == null)
+            {
+                return Problem("Entity set 'dataContext.Formato_Documentos'  is null.");
+            }
             _context.Formato_Documentos.Add(formato_Documentos);
             await _context.SaveChangesAsync();
 

@@ -19,7 +19,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(MAX)")]
         public string Prov_Nombre { get; set; }
 
-         
+
         public int TpProv_Id { get; set; } //Llave foranea de Tipo proveedor
         public Tipo_Proveedor? TpProv { get; set; }//Propiedad de navegación de Tipo proveedor
 
@@ -27,7 +27,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(100)")]
         public string? Prov_Ciudad { get; set; }
 
-        
+
         [Column(TypeName = "varchar(100)")]
         public string? Prov_Telefono { get; set; }
 

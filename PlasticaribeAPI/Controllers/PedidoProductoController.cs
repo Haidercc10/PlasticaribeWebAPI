@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PedidoProducto>>> GetPedidosExternos_Productos()
         {
-          if (_context.PedidosExternos_Productos == null)
-          {
-              return NotFound();
-          }
+            if (_context.PedidosExternos_Productos == null)
+            {
+                return NotFound();
+            }
             return await _context.PedidosExternos_Productos.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PedidoProducto>> GetPedidoProducto(long id)
         {
-          if (_context.PedidosExternos_Productos == null)
-          {
-              return NotFound();
-          }
+            if (_context.PedidosExternos_Productos == null)
+            {
+                return NotFound();
+            }
             var pedidoProducto = await _context.PedidosExternos_Productos.FindAsync(id);
 
             if (pedidoProducto == null)
@@ -69,7 +64,8 @@ namespace PlasticaribeAPI.Controllers
                 {
                     return Ok(producto);
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return NotFound(ex);
             }
@@ -174,7 +170,7 @@ namespace PlasticaribeAPI.Controllers
 
             return Ok(con);
         }
-        
+
         // PUT: api/PedidoProducto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -211,10 +207,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<PedidoProducto>> PostPedidoProducto(PedidoProducto pedidoProducto)
         {
-          if (_context.PedidosExternos_Productos == null)
-          {
-              return Problem("Entity set 'dataContext.PedidosExternos_Productos'  is null.");
-          }
+            if (_context.PedidosExternos_Productos == null)
+            {
+                return Problem("Entity set 'dataContext.PedidosExternos_Productos'  is null.");
+            }
             _context.PedidosExternos_Productos.Add(pedidoProducto);
             try
             {

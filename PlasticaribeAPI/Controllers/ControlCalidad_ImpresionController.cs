@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ControlCalidad_Impresion>>> GetControlCalidad_Impresion()
         {
-          if (_context.ControlCalidad_Impresion == null)
-          {
-              return NotFound();
-          }
+            if (_context.ControlCalidad_Impresion == null)
+            {
+                return NotFound();
+            }
             return await _context.ControlCalidad_Impresion.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ControlCalidad_Impresion>> GetControlCalidad_Impresion(int id)
         {
-          if (_context.ControlCalidad_Impresion == null)
-          {
-              return NotFound();
-          }
+            if (_context.ControlCalidad_Impresion == null)
+            {
+                return NotFound();
+            }
             var controlCalidad_Impresion = await _context.ControlCalidad_Impresion.FindAsync(id);
 
             if (controlCalidad_Impresion == null)
@@ -109,10 +104,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ControlCalidad_Impresion>> PostControlCalidad_Impresion(ControlCalidad_Impresion controlCalidad_Impresion)
         {
-          if (_context.ControlCalidad_Impresion == null)
-          {
-              return Problem("Entity set 'dataContext.ControlCalidad_Impresion'  is null.");
-          }
+            if (_context.ControlCalidad_Impresion == null)
+            {
+                return Problem("Entity set 'dataContext.ControlCalidad_Impresion'  is null.");
+            }
             _context.ControlCalidad_Impresion.Add(controlCalidad_Impresion);
             await _context.SaveChangesAsync();
 

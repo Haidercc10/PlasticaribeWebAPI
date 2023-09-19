@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -44,7 +39,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("getVistasFavUsuario/{usuario}")]
-        public ActionResult getVistasFavUsuario (long usuario)
+        public ActionResult getVistasFavUsuario(long usuario)
         {
             var con = from vf in _context.Set<VistasFavoritas>()
                       where vf.Usua_Id == usuario

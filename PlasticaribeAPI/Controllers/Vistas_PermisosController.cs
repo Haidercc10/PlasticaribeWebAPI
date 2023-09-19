@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -136,10 +131,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Vistas_Permisos>> PostVistas_Permisos(Vistas_Permisos vistas_Permisos)
         {
-          if (_context.Vistas_Permisos == null)
-          {
-              return Problem("Entity set 'dataContext.Vistas_Permisos'  is null.");
-          }
+            if (_context.Vistas_Permisos == null)
+            {
+                return Problem("Entity set 'dataContext.Vistas_Permisos'  is null.");
+            }
             _context.Vistas_Permisos.Add(vistas_Permisos);
             await _context.SaveChangesAsync();
 
