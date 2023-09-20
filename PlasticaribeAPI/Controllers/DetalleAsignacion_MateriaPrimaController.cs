@@ -257,10 +257,31 @@ namespace PlasticaribeAPI.Controllers
                            select asgbopp.DtAsigBOPP_Cantidad).Sum();
 
             var devol = (from dev in _context.Set<DetalleDevolucion_MateriaPrima>()
-                         where dev.DevMatPri.DevMatPri_OrdenTrabajo == ot
+                         where dev.DevMatPri.DevMatPri_OrdenTrabajo == ot &&
+                               dev.Tinta_Id == 2001
                          select dev.DtDevMatPri_CantidadDevuelta).Sum();
 
             var asigs = (asig + asgBopp) - devol;
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(asigs);
+        }
+
+        //Consulta que traerá la cantidad de materia prima asignada, teniendo en cuenta la materia prima devuelta
+        [HttpGet("getPolietilenoAsignada/{ot}")]
+        public ActionResult GetPolietilenoAsignada(int ot)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var asig = (from asg in _context.Set<DetalleAsignacion_MateriaPrima>()
+                        where asg.AsigMp.AsigMP_OrdenTrabajo == ot
+                        select asg.DtAsigMp_Cantidad).Sum();
+
+            var devol = (from dev in _context.Set<DetalleDevolucion_MateriaPrima>()
+                         where dev.DevMatPri.DevMatPri_OrdenTrabajo == ot &&
+                               dev.Tinta_Id == 2001 &&
+                               dev.BOPP_Id == 449
+                         select dev.DtDevMatPri_CantidadDevuelta).Sum();
+
+            var asigs = asig - devol;
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(asigs);
         }
