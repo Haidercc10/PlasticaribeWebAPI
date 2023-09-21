@@ -8,7 +8,7 @@ namespace PlasticaribeAPI.Models
     {
 
         [Key]
-        public long Mezcla_Id { get; set; } 
+        public long Mezcla_Id { get; set; }
 
 
         [Column(TypeName = "varchar(MAX)")]
@@ -31,7 +31,7 @@ namespace PlasticaribeAPI.Models
         public int MezMaterial_Id1xCapa1 { get; set; } /** Llave foranea de Mezcla_Material */
         public Mezcla_Material? MezMaterial_MP1C1 { get; set; } /** Propiedad de navegación de Mezcla_Material */
 
-        [Precision(18,2)]
+        [Precision(18, 2)]
         public decimal Mezcla_PorcentajeMaterial1_Capa1 { get; set; }
 
 
@@ -109,7 +109,7 @@ namespace PlasticaribeAPI.Models
         public Mezcla_Material? MezMaterial_MP4C2 { get; set; } /** Propiedad de navegación de Mezcla_Material */
 
         [Precision(18, 2)]
-        public decimal Mezcla_PorcentajeMaterial4_Capa2{ get; set; }
+        public decimal Mezcla_PorcentajeMaterial4_Capa2 { get; set; }
 
 
 
@@ -129,7 +129,7 @@ namespace PlasticaribeAPI.Models
         /** Mezcla Porcentaje 3 */
 
         public int Mezcla_PorcentajeCapa3 { get; set; }
-      
+
 
         public int MezMaterial_Id1xCapa3 { get; set; } /** Llave foranea de Mezcla_Material */
         public Mezcla_Material? MezMaterial_MP1C3 { get; set; } /** Propiedad de navegación de Mezcla_Material */

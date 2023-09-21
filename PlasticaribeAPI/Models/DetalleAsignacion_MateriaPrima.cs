@@ -13,11 +13,11 @@ namespace PlasticaribeAPI.Models
         public long AsigMp_Id { get; set; }
         public Asignacion_MatPrima? AsigMp { get; set; }
 
-        public long MatPri_Id { get; set; } 
+        public long MatPri_Id { get; set; }
         public Materia_Prima? MatPri { get; set; }
 
 
-        [Precision(14,2)]
+        [Precision(14, 2)]
         public decimal DtAsigMp_Cantidad { get; set; }
 
 

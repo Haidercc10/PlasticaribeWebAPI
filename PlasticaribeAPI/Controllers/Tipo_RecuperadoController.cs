@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Tipo_Recuperado>>> GetTipos_Recuperados()
         {
-          if (_context.Tipos_Recuperados == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tipos_Recuperados == null)
+            {
+                return NotFound();
+            }
             return await _context.Tipos_Recuperados.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Tipo_Recuperado>> GetTipo_Recuperado(string id)
         {
-          if (_context.Tipos_Recuperados == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tipos_Recuperados == null)
+            {
+                return NotFound();
+            }
             var tipo_Recuperado = await _context.Tipos_Recuperados.FindAsync(id);
 
             if (tipo_Recuperado == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Tipo_Recuperado>> PostTipo_Recuperado(Tipo_Recuperado tipo_Recuperado)
         {
-          if (_context.Tipos_Recuperados == null)
-          {
-              return Problem("Entity set 'dataContext.Tipos_Recuperados'  is null.");
-          }
+            if (_context.Tipos_Recuperados == null)
+            {
+                return Problem("Entity set 'dataContext.Tipos_Recuperados'  is null.");
+            }
             _context.Tipos_Recuperados.Add(tipo_Recuperado);
             try
             {

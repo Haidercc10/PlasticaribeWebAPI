@@ -23,6 +23,6 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "date")]
         public DateTime DtPedMtto_FechaFalla { get; set; }
-        
+
     }
 }

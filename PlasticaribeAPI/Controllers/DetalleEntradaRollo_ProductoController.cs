@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -234,16 +229,16 @@ namespace PlasticaribeAPI.Controllers
             var x = (from y in _context.Set<DetalleEntradaRollo_Producto>()
                      where y.Rollo_Id == rollo
                      select y).FirstOrDefault();
-            
+
             if (x == null)
             {
                 return NoContent();
             }
-                _context.DetallesEntradasRollos_Productos.Remove(x);
-                _context.SaveChanges();
+            _context.DetallesEntradasRollos_Productos.Remove(x);
+            _context.SaveChanges();
 
-                return NoContent();
-            
+            return NoContent();
+
         }
 
         private bool DetalleEntradaRollo_ProductoExists(long id)

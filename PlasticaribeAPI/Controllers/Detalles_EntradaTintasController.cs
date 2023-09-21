@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Detalles_EntradaTintas>>> GetDetalles_EntradaTintas()
         {
-          if (_context.Detalles_EntradaTintas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Detalles_EntradaTintas == null)
+            {
+                return NotFound();
+            }
             return await _context.Detalles_EntradaTintas.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Detalles_EntradaTintas>> GetDetalles_EntradaTintas(long id)
         {
-          if (_context.Detalles_EntradaTintas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Detalles_EntradaTintas == null)
+            {
+                return NotFound();
+            }
             var detalles_EntradaTintas = await _context.Detalles_EntradaTintas.FindAsync(id);
 
             if (detalles_EntradaTintas == null)
@@ -52,7 +47,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("consultarPorFecha/{entTinta_FechaEntrada}")]
-        public ActionResult Get (DateTime entTinta_FechaEntrada)
+        public ActionResult Get(DateTime entTinta_FechaEntrada)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var tinta = _context.Detalles_EntradaTintas.Where(dtET => dtET.Entrada_Tinta.entTinta_FechaEntrada == entTinta_FechaEntrada).ToList();
@@ -105,10 +100,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Detalles_EntradaTintas>> PostDetalles_EntradaTintas(Detalles_EntradaTintas detalles_EntradaTintas)
         {
-          if (_context.Detalles_EntradaTintas == null)
-          {
-              return Problem("Entity set 'dataContext.Detalles_EntradaTintas'  is null.");
-          }
+            if (_context.Detalles_EntradaTintas == null)
+            {
+                return Problem("Entity set 'dataContext.Detalles_EntradaTintas'  is null.");
+            }
             _context.Detalles_EntradaTintas.Add(detalles_EntradaTintas);
             try
             {

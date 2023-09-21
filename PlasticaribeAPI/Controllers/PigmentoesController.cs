@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Pigmento>>> GetPigmentos()
         {
-          if (_context.Pigmentos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Pigmentos == null)
+            {
+                return NotFound();
+            }
             return await _context.Pigmentos.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Pigmento>> GetPigmento(int id)
         {
-          if (_context.Pigmentos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Pigmentos == null)
+            {
+                return NotFound();
+            }
             var pigmento = await _context.Pigmentos.FindAsync(id);
 
             if (pigmento == null)
@@ -110,10 +105,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Pigmento>> PostPigmento(Pigmento pigmento)
         {
-          if (_context.Pigmentos == null)
-          {
-              return Problem("Entity set 'dataContext.Pigmentos'  is null.");
-          }
+            if (_context.Pigmentos == null)
+            {
+                return Problem("Entity set 'dataContext.Pigmentos'  is null.");
+            }
             _context.Pigmentos.Add(pigmento);
             await _context.SaveChangesAsync();
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Detalles_SolicitudMateriaPrima>>> GetDetalles_SolicitudMateriaPrima()
         {
-          if (_context.Detalles_SolicitudMateriaPrima == null)
-          {
-              return NotFound();
-          }
+            if (_context.Detalles_SolicitudMateriaPrima == null)
+            {
+                return NotFound();
+            }
             return await _context.Detalles_SolicitudMateriaPrima.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Detalles_SolicitudMateriaPrima>> GetDetalles_SolicitudMateriaPrima(long id)
         {
-          if (_context.Detalles_SolicitudMateriaPrima == null)
-          {
-              return NotFound();
-          }
+            if (_context.Detalles_SolicitudMateriaPrima == null)
+            {
+                return NotFound();
+            }
             var detalles_SolicitudMateriaPrima = await _context.Detalles_SolicitudMateriaPrima.FindAsync(id);
 
             if (detalles_SolicitudMateriaPrima == null)
@@ -53,7 +48,7 @@ namespace PlasticaribeAPI.Controllers
 
         //Consulta que devolverá toda la información de una solicitud
         [HttpGet("getInfoSolicitud/{solicitud_Id}")]
-        public ActionResult GetInfoSolicitud (long solicitud_Id)
+        public ActionResult GetInfoSolicitud(long solicitud_Id)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from dtSol in _context.Set<Detalles_SolicitudMateriaPrima>()
@@ -99,7 +94,7 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
             if (con.Count() > 0) return Ok(con);
-            else return BadRequest("No se encontró información sobre una solicitud con el número '" + solicitud_Id +"'");
+            else return BadRequest("No se encontró información sobre una solicitud con el número '" + solicitud_Id + "'");
         }
 
         // Consulta que devolverá la infomación de una de las materias primas que tiene la solicitud
@@ -138,26 +133,27 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
                 var ordenCompra = from Oc in _context.Set<Detalle_OrdenCompra>()
                                   where relacion.Contains(Oc.Oc_Id)
-                                  group Oc by new {
-                                    Oc.MatPri_Id,
-                                    Oc.MatPrima.MatPri_Nombre,
-                                    Oc.Tinta_Id,
-                                    Oc.Tinta.Tinta_Nombre,
-                                    Oc.BOPP_Id,
-                                    Oc.BOPP.BoppGen_Nombre,
-                                    Oc.UndMed_Id,
-                                  } 
+                                  group Oc by new
+                                  {
+                                      Oc.MatPri_Id,
+                                      Oc.MatPrima.MatPri_Nombre,
+                                      Oc.Tinta_Id,
+                                      Oc.Tinta.Tinta_Nombre,
+                                      Oc.BOPP_Id,
+                                      Oc.BOPP.BoppGen_Nombre,
+                                      Oc.UndMed_Id,
+                                  }
                                   into Oc
                                   select new
                                   {
-                                    IdMatPrima = Oc.Key.MatPri_Id,
-                                    MatPrima = Oc.Key.MatPri_Nombre,
-                                    IdTinta = Oc.Key.Tinta_Id,
-                                    Tinta = Oc.Key.Tinta_Nombre,
-                                    IdBopp = Oc.Key.BOPP_Id,
-                                    Bopp = Oc.Key.BoppGen_Nombre,
-                                    Cantidad = Oc.Sum(oc => oc.Doc_CantidadPedida),
-                                    Unidad = Oc.Key.UndMed_Id,
+                                      IdMatPrima = Oc.Key.MatPri_Id,
+                                      MatPrima = Oc.Key.MatPri_Nombre,
+                                      IdTinta = Oc.Key.Tinta_Id,
+                                      Tinta = Oc.Key.Tinta_Nombre,
+                                      IdBopp = Oc.Key.BOPP_Id,
+                                      Bopp = Oc.Key.BoppGen_Nombre,
+                                      Cantidad = Oc.Sum(oc => oc.Doc_CantidadPedida),
+                                      Unidad = Oc.Key.UndMed_Id,
                                   };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
                 return Ok(ordenCompra);
@@ -165,7 +161,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // PUT: api/Detalles_SolicitudMateriaPrima/5
-            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDetalles_SolicitudMateriaPrima(long id, Detalles_SolicitudMateriaPrima detalles_SolicitudMateriaPrima)
         {
@@ -200,10 +196,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Detalles_SolicitudMateriaPrima>> PostDetalles_SolicitudMateriaPrima(Detalles_SolicitudMateriaPrima detalles_SolicitudMateriaPrima)
         {
-          if (_context.Detalles_SolicitudMateriaPrima == null)
-          {
-              return Problem("Entity set 'dataContext.Detalles_SolicitudMateriaPrima'  is null.");
-          }
+            if (_context.Detalles_SolicitudMateriaPrima == null)
+            {
+                return Problem("Entity set 'dataContext.Detalles_SolicitudMateriaPrima'  is null.");
+            }
             _context.Detalles_SolicitudMateriaPrima.Add(detalles_SolicitudMateriaPrima);
             await _context.SaveChangesAsync();
 

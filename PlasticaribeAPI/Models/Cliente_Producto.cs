@@ -11,6 +11,6 @@ namespace PlasticaribeAPI.Models
         public Clientes? Cli { get; set; }
 
         public int Prod_Id { get; set; }
-        public Producto? Prod { get; set; } 
+        public Producto? Prod { get; set; }
     }
 }

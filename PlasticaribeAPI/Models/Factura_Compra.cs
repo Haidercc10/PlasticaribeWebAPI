@@ -5,8 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace PlasticaribeAPI.Models
 {
     public class Factura_Compra
-    {              
-        [Key]        
+    {
+        [Key]
         public long Facco_Id { get; set; } //Id interno (Consecutivo dado por la empresa) de la factura
 
         [Column(TypeName = "varchar(100)")]
@@ -26,7 +26,7 @@ namespace PlasticaribeAPI.Models
 
         [Precision(18, 2)]
         public decimal Facco_ValorTotal { get; set; }
-       
+
         [Column(TypeName = "varchar(max)")]
         public string? Facco_Observacion { get; set; }
 
@@ -36,7 +36,7 @@ namespace PlasticaribeAPI.Models
         public long Usua_Id { get; set; } //Llave foranea de usuario que registra la factura de compra
         public Usuario? Usua { get; set; } //Propiedad de navegación usuario que registra la factura de compra 
 
-        
+
         [Column(TypeName = "varchar(10)")]
         public string? TpDoc_Id { get; set; } //Llave foranea de Tipo_Documento
         public Tipo_Documento? TpDoc { get; set; } //Propiedad de navegación de Tipo_Documento

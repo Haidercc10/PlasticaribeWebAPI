@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 
@@ -40,17 +34,24 @@ namespace PlasticaribeAPI.Controllers
         // POST: api/Archivos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public ActionResult PostArchivo([FromForm] List<IFormFile> archivo, DateTime Fecha, int categoria_Id, long usua_Id, string? filePath) {
+        public ActionResult PostArchivo([FromForm] List<IFormFile> archivo, DateTime Fecha, int categoria_Id, long usua_Id, string? filePath)
+        {
             List<Archivos> archivos = new();
-            if (filePath != null) {
-                try {
+            if (filePath != null)
+            {
+                try
+                {
                     if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);
-                    if (archivo != null) {
-                        if (archivo.Count > 0) {
-                            foreach (var item in archivo) {
+                    if (archivo != null)
+                    {
+                        if (archivo.Count > 0)
+                        {
+                            foreach (var item in archivo)
+                            {
                                 using var stream = System.IO.File.Create(filePath + "\\" + item.FileName, 100000, FileOptions.Asynchronous);
                                 archivo[0].CopyToAsync(stream);
-                                Archivos archivo2 = new() {
+                                Archivos archivo2 = new()
+                                {
                                     Nombre = item.FileName,
                                     Ubicacion = filePath + "\\" + item.FileName,
                                     Fecha = Fecha,
@@ -61,33 +62,45 @@ namespace PlasticaribeAPI.Controllers
                             }
                             _context.Archivos.AddRange(archivos);
                             _context.SaveChanges();
-                        } else return BadRequest();
-                    } else return Ok(filePath);
-                } catch (Exception ex) {
+                        }
+                        else return BadRequest();
+                    }
+                    else return Ok(filePath);
+                }
+                catch (Exception ex)
+                {
                     return BadRequest(ex.Message);
                 }
                 return Ok(archivo);
-            } else return BadRequest();
+            }
+            else return BadRequest();
         }
 
         [HttpGet("CrearCarpetas")]
-        public ActionResult CrearCarpetas(string? filePath) {
-            if (filePath != null) {
-                if (!Directory.Exists(filePath)) {
+        public ActionResult CrearCarpetas(string? filePath)
+        {
+            if (filePath != null)
+            {
+                if (!Directory.Exists(filePath))
+                {
                     Directory.CreateDirectory(filePath);
                     return Ok();
-                } else return Ok();
-            } else return BadRequest();
+                }
+                else return Ok();
+            }
+            else return BadRequest();
         }
 
         [HttpGet("download")]
-        public async Task<IActionResult> Download(string file, string filePath) {
+        public async Task<IActionResult> Download(string file, string filePath)
+        {
             filePath = Path.Combine(filePath, file);
             if (!System.IO.File.Exists(filePath)) return NotFound();
 
             var memory = new MemoryStream();
 
-            using (var stream = new FileStream(filePath, FileMode.Open)) {
+            using (var stream = new FileStream(filePath, FileMode.Open))
+            {
                 await stream.CopyToAsync(memory);
             }
             memory.Position = 0;
@@ -96,23 +109,31 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("Carpetas")]
-        public IActionResult Carpetas(string? filePath) {
+        public IActionResult Carpetas(string? filePath)
+        {
             if (filePath == null) return BadRequest();
-            try {
+            try
+            {
                 string[] folders = Directory.GetDirectories(filePath);
                 return Ok(folders);
-            } catch (System.IO.IOException e) {
+            }
+            catch (System.IO.IOException e)
+            {
                 return BadRequest(e);
             }
         }
 
         [HttpGet("Archivos")]
-        public IActionResult Archivos(string? filePath) {
+        public IActionResult Archivos(string? filePath)
+        {
             if (filePath == null) return BadRequest();
-            try {
+            try
+            {
                 string[] files = Directory.GetFiles(filePath);
                 return Ok(files);
-            } catch (System.IO.IOException e) {
+            }
+            catch (System.IO.IOException e)
+            {
                 return NotFound(e);
             }
         }
@@ -120,34 +141,44 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("EliminarArchivos")]
         public IActionResult EliminarArchivos(string? filePath)
         {
-            if (System.IO.File.Exists(filePath)) {
-                try {
+            if (System.IO.File.Exists(filePath))
+            {
+                try
+                {
                     System.IO.File.Delete(filePath);
                     return Ok();
-                } catch (System.IO.IOException e) {
+                }
+                catch (System.IO.IOException e)
+                {
                     return (IActionResult)e;
                 }
-            } else return BadRequest();
+            }
+            else return BadRequest();
         }
 
         [HttpGet("EliminarCarpeta")]
         public IActionResult EliminarCarpeta(string? filePath)
         {
-            if (System.IO.Directory.Exists(filePath)) {
-                try {
+            if (System.IO.Directory.Exists(filePath))
+            {
+                try
+                {
                     System.IO.Directory.Delete(filePath, true);
                     return Ok();
-                } catch (System.IO.IOException e) {
+                }
+                catch (System.IO.IOException e)
+                {
                     return BadRequest(e);
                 }
-            } else return BadRequest();
+            }
+            else return BadRequest();
         }
 
         [HttpGet("MoverArchivos")]
         public IActionResult MoverArchivos(string filePathInicial, string filePathFinal)
-        {            
+        {
             System.IO.File.Move(filePathInicial, filePathFinal);
-            return Ok();                
+            return Ok();
         }
 
         [HttpGet("MoverCarpeta")]
@@ -197,7 +228,7 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        private static string GetContentType (string path)
+        private static string GetContentType(string path)
         {
 #pragma warning disable CS8600 // Se va a convertir un literal nulo o un posible valor nulo en un tipo que no acepta valores NULL
             var provider = new FileExtensionContentTypeProvider();

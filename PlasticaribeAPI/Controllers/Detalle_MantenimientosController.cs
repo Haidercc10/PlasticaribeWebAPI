@@ -46,17 +46,17 @@ namespace PlasticaribeAPI.Controllers
             var Mantenimiento = _context.Detalles_Mantenimientos.Where(pm => pm.Mttos.PedMtto_Id == idPedido)
                                                        .Select(u => new
                                                        {
-                                                            u.DtMtto_Codigo,
-                                                            u.Mtto_Id,
-                                                            u.Actv_Id,
-                                                            u.Act.Actv_Serial,
-                                                            u.Act.Actv_Nombre,
-                                                            u.TpMtto_Id,
-                                                            u.Tipo_Mtto.TpMtto_Nombre,
-                                                            u.Estado_Id,
-                                                            u.Estados.Estado_Nombre,
-                                                            u.DtMtto_Descripcion,
-                                                            u.DtMtto_Precio
+                                                           u.DtMtto_Codigo,
+                                                           u.Mtto_Id,
+                                                           u.Actv_Id,
+                                                           u.Act.Actv_Serial,
+                                                           u.Act.Actv_Nombre,
+                                                           u.TpMtto_Id,
+                                                           u.Tipo_Mtto.TpMtto_Nombre,
+                                                           u.Estado_Id,
+                                                           u.Estados.Estado_Nombre,
+                                                           u.DtMtto_Descripcion,
+                                                           u.DtMtto_Precio
                                                        }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 

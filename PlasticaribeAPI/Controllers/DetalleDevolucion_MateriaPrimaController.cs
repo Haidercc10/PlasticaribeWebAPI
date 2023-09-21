@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DetalleDevolucion_MateriaPrima>>> GetDetallesDevoluciones_MateriasPrimas()
         {
-          if (_context.DetallesDevoluciones_MateriasPrimas == null)
-          {
-              return NotFound();
-          }
+            if (_context.DetallesDevoluciones_MateriasPrimas == null)
+            {
+                return NotFound();
+            }
             return await _context.DetallesDevoluciones_MateriasPrimas.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DetalleDevolucion_MateriaPrima>> GetDetalleDevolucion_MateriaPrima(long DevMatPri_Codigo)
         {
-          if (_context.DetallesDevoluciones_MateriasPrimas == null)
-          {
-              return NotFound();
-          }
+            if (_context.DetallesDevoluciones_MateriasPrimas == null)
+            {
+                return NotFound();
+            }
             var detalleDevolucion_MateriaPrima = await _context.DetallesDevoluciones_MateriasPrimas.FindAsync(DevMatPri_Codigo);
 
             if (detalleDevolucion_MateriaPrima == null)
@@ -79,9 +74,9 @@ namespace PlasticaribeAPI.Controllers
                     devMp.DevMatPri.Usua.Usua_Nombre,
                     devMp.MatPri_Id,
                     devMp.MatPri.MatPri_Nombre,
-                    devMp.Tinta_Id, 
-                    devMp.Tinta.Tinta_Nombre, 
-                    devMp.BOPP_Id, 
+                    devMp.Tinta_Id,
+                    devMp.Tinta.Tinta_Nombre,
+                    devMp.BOPP_Id,
                     devMp.Bopp.BOPP_Nombre,
                     devMp.DtDevMatPri_CantidadDevuelta
                 }).ToList();
@@ -125,10 +120,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<DetalleDevolucion_MateriaPrima>> PostDetalleDevolucion_MateriaPrima(DetalleDevolucion_MateriaPrima detalleDevolucion_MateriaPrima)
         {
-          if (_context.DetallesDevoluciones_MateriasPrimas == null)
-          {
-              return Problem("Entity set 'dataContext.DetallesDevoluciones_MateriasPrimas'  is null.");
-          }
+            if (_context.DetallesDevoluciones_MateriasPrimas == null)
+            {
+                return Problem("Entity set 'dataContext.DetallesDevoluciones_MateriasPrimas'  is null.");
+            }
             _context.DetallesDevoluciones_MateriasPrimas.Add(detalleDevolucion_MateriaPrima);
             try
             {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OT_Impresion>>> GetOT_Impresion()
         {
-          if (_context.OT_Impresion == null)
-          {
-              return NotFound();
-          }
+            if (_context.OT_Impresion == null)
+            {
+                return NotFound();
+            }
             return await _context.OT_Impresion.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<OT_Impresion>> GetOT_Impresion(int id)
         {
-          if (_context.OT_Impresion == null)
-          {
-              return NotFound();
-          }
+            if (_context.OT_Impresion == null)
+            {
+                return NotFound();
+            }
             var oT_Impresion = await _context.OT_Impresion.FindAsync(id);
 
             if (oT_Impresion == null)
@@ -97,10 +92,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<OT_Impresion>> PostOT_Impresion(OT_Impresion oT_Impresion)
         {
-          if (_context.OT_Impresion == null)
-          {
-              return Problem("Entity set 'dataContext.OT_Impresion'  is null.");
-          }
+            if (_context.OT_Impresion == null)
+            {
+                return Problem("Entity set 'dataContext.OT_Impresion'  is null.");
+            }
             _context.OT_Impresion.Add(oT_Impresion);
             await _context.SaveChangesAsync();
 

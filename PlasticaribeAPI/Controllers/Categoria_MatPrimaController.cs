@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Categoria_MatPrima>>> GetCategorias_MatPrima()
         {
-          if (_context.Categorias_MatPrima == null)
-          {
-              return NotFound();
-          }
+            if (_context.Categorias_MatPrima == null)
+            {
+                return NotFound();
+            }
             return await _context.Categorias_MatPrima.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Categoria_MatPrima>> GetCategoria_MatPrima(int id)
         {
-          if (_context.Categorias_MatPrima == null)
-          {
-              return NotFound();
-          }
+            if (_context.Categorias_MatPrima == null)
+            {
+                return NotFound();
+            }
             var categoria_MatPrima = await _context.Categorias_MatPrima.FindAsync(id);
 
             if (categoria_MatPrima == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Categoria_MatPrima>> PostCategoria_MatPrima(Categoria_MatPrima categoria_MatPrima)
         {
-          if (_context.Categorias_MatPrima == null)
-          {
-              return Problem("Entity set 'dataContext.Categorias_MatPrima'  is null.");
-          }
+            if (_context.Categorias_MatPrima == null)
+            {
+                return Problem("Entity set 'dataContext.Categorias_MatPrima'  is null.");
+            }
             _context.Categorias_MatPrima.Add(categoria_MatPrima);
             await _context.SaveChangesAsync();
 

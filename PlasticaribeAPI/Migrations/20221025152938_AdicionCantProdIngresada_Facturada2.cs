@@ -24,7 +24,7 @@ namespace PlasticaribeAPI.Migrations
                 precision: 18,
                 scale: 2,
                 nullable: false,
-                defaultValue: 0m);           
+                defaultValue: 0m);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

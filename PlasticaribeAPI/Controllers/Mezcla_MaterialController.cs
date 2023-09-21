@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Mezcla_Material>>> GetMezclas_Materiales()
         {
-          if (_context.Mezclas_Materiales == null)
-          {
-              return NotFound();
-          }
+            if (_context.Mezclas_Materiales == null)
+            {
+                return NotFound();
+            }
             return await _context.Mezclas_Materiales.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Mezcla_Material>> GetMezcla_Material(int id)
         {
-          if (_context.Mezclas_Materiales == null)
-          {
-              return NotFound();
-          }
+            if (_context.Mezclas_Materiales == null)
+            {
+                return NotFound();
+            }
             var mezcla_Material = await _context.Mezclas_Materiales.FindAsync(id);
 
             if (mezcla_Material == null)
@@ -99,10 +94,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Mezcla_Material>> PostMezcla_Material(Mezcla_Material mezcla_Material)
         {
-          if (_context.Mezclas_Materiales == null)
-          {
-              return Problem("Entity set 'dataContext.Mezclas_Materiales'  is null.");
-          }
+            if (_context.Mezclas_Materiales == null)
+            {
+                return Problem("Entity set 'dataContext.Mezclas_Materiales'  is null.");
+            }
             _context.Mezclas_Materiales.Add(mezcla_Material);
             await _context.SaveChangesAsync();
 

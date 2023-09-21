@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FacturaCompra_MateriaPrima>>> GetFacturasCompras_MateriaPrimas()
         {
-          if (_context.FacturasCompras_MateriaPrimas == null)
-          {
-              return NotFound();
-          }
+            if (_context.FacturasCompras_MateriaPrimas == null)
+            {
+                return NotFound();
+            }
             return await _context.FacturasCompras_MateriaPrimas.ToListAsync();
         }
 
@@ -215,7 +210,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("pdfMovimientos/{codigo}")]
-        public ActionResult Get (string codigo)
+        public ActionResult Get(string codigo)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.FacturasCompras_MateriaPrimas
@@ -283,10 +278,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<FacturaCompra_MateriaPrima>> PostFacturaCompra_MateriaPrima(FacturaCompra_MateriaPrima facturaCompra_MateriaPrima)
         {
-          if (_context.FacturasCompras_MateriaPrimas == null)
-          {
-              return Problem("Entity set 'dataContext.FacturasCompras_MateriaPrimas'  is null.");
-          }
+            if (_context.FacturasCompras_MateriaPrimas == null)
+            {
+                return Problem("Entity set 'dataContext.FacturasCompras_MateriaPrimas'  is null.");
+            }
             _context.FacturasCompras_MateriaPrimas.Add(facturaCompra_MateriaPrima);
             try
             {

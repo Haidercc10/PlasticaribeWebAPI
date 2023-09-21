@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Existencia_Productos>>> GetExistencias_Productos()
         {
-          if (_context.Existencias_Productos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Existencias_Productos == null)
+            {
+                return NotFound();
+            }
             return await _context.Existencias_Productos.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Existencia_Productos>> GetExistencia_Productos(long id)
         {
-          if (_context.Existencias_Productos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Existencias_Productos == null)
+            {
+                return NotFound();
+            }
             var existencia_Productos = await _context.Existencias_Productos.FindAsync(id);
 
             if (existencia_Productos == null)
@@ -107,7 +102,7 @@ namespace PlasticaribeAPI.Controllers
                     p.Prod_Id,
                     p.Prod.Prod_Nombre,
                     p.ExProd_Cantidad,
-                    p.UndMed_Id,                  
+                    p.UndMed_Id,
                     p.ExProd_Id,
                     p.ExProd_Precio,
                     p.ExProd_PrecioExistencia,
@@ -115,8 +110,8 @@ namespace PlasticaribeAPI.Controllers
                     p.TpMoneda_Id,
                     p.ExProd_PrecioVenta,
                     p.ExProd_CantMinima,
-                    p.ExProd_Fecha, 
-                    p.ExProd_Hora                   
+                    p.ExProd_Fecha,
+                    p.ExProd_Hora
                 })
                 .ToList();
 
@@ -178,9 +173,9 @@ namespace PlasticaribeAPI.Controllers
             var producto = _context.Existencias_Productos.Where(p => p.Prod_Id == p.Prod.Prod_Id && p.ExProd_Cantidad >= 1)
                 .Include(p => p.Prod)
                 .Select(p => new
-                {                    
+                {
                     p.Prod_Id,
-                    p.Prod.Prod_Nombre, 
+                    p.Prod.Prod_Nombre,
                     p.ExProd_PrecioVenta,
                     p.ExProd_Cantidad,
                     p.UndMed_Id,
@@ -188,12 +183,12 @@ namespace PlasticaribeAPI.Controllers
                 })
                 .ToList();
 
-            
+
             if (producto == null)
             {
                 return NotFound();
             }
-            else 
+            else
             {
                 return Ok(producto);
             }
@@ -222,15 +217,15 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetInfoProducto(string producto)
         {
             var con = (from e in _context.Set<Existencia_Productos>()
-                      where e.Prod_Id.ToString().Contains(producto) ||
-                            e.Prod.Prod_Nombre.Contains(producto)
-                      select new
-                      {
-                          Id = e.Prod_Id,
-                          Nombre = e.Prod.Prod_Nombre,
-                          Presentacion = e.UndMed_Id,
-                          Id_Existencia = e.ExProd_Id,
-                      });
+                       where e.Prod_Id.ToString().Contains(producto) ||
+                             e.Prod.Prod_Nombre.Contains(producto)
+                       select new
+                       {
+                           Id = e.Prod_Id,
+                           Nombre = e.Prod.Prod_Nombre,
+                           Presentacion = e.UndMed_Id,
+                           Id_Existencia = e.ExProd_Id,
+                       });
             return Ok(con);
         }
 
@@ -364,10 +359,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Existencia_Productos>> PostExistencia_Productos(Existencia_Productos existencia_Productos)
         {
-          if (_context.Existencias_Productos == null)
-          {
-              return Problem("Entity set 'dataContext.Existencias_Productos'  is null.");
-          }
+            if (_context.Existencias_Productos == null)
+            {
+                return Problem("Entity set 'dataContext.Existencias_Productos'  is null.");
+            }
             _context.Existencias_Productos.Add(existencia_Productos);
             await _context.SaveChangesAsync();
 

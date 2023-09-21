@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -83,10 +78,12 @@ namespace PlasticaribeAPI.Controllers
 
             _context.Entry(bopp).State = EntityState.Modified;
 
-            try {
+            try
+            {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException) {
+            catch (DbUpdateConcurrencyException)
+            {
                 if (!Bopp_GenericoExists(id)) return NotFound();
                 else throw;
             }

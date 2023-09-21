@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
@@ -25,10 +20,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CajaMenor_Plasticaribe>>> GetCajaMenor_Plasticaribe()
         {
-          if (_context.CajaMenor_Plasticaribe == null)
-          {
-              return NotFound();
-          }
+            if (_context.CajaMenor_Plasticaribe == null)
+            {
+                return NotFound();
+            }
             return await _context.CajaMenor_Plasticaribe.ToListAsync();
         }
 
@@ -36,10 +31,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CajaMenor_Plasticaribe>> GetCajaMenor_Plasticaribe(int id)
         {
-          if (_context.CajaMenor_Plasticaribe == null)
-          {
-              return NotFound();
-          }
+            if (_context.CajaMenor_Plasticaribe == null)
+            {
+                return NotFound();
+            }
             var cajaMenor_Plasticaribe = await _context.CajaMenor_Plasticaribe.FindAsync(id);
 
             if (cajaMenor_Plasticaribe == null)
@@ -114,10 +109,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<CajaMenor_Plasticaribe>> PostCajaMenor_Plasticaribe(CajaMenor_Plasticaribe cajaMenor_Plasticaribe)
         {
-          if (_context.CajaMenor_Plasticaribe == null)
-          {
-              return Problem("Entity set 'dataContext.CajaMenor_Plasticaribe'  is null.");
-          }
+            if (_context.CajaMenor_Plasticaribe == null)
+            {
+                return Problem("Entity set 'dataContext.CajaMenor_Plasticaribe'  is null.");
+            }
             _context.CajaMenor_Plasticaribe.Add(cajaMenor_Plasticaribe);
             await _context.SaveChangesAsync();
 

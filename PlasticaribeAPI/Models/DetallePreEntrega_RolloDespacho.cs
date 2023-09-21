@@ -23,7 +23,7 @@ namespace PlasticaribeAPI.Models
         public int Prod_Id { get; set; }
         public Producto? Prod { get; set; }
 
-        
+
         [Column(TypeName = "varchar(10)", Order = 4)]
         public string UndMed_Producto { get; set; }
         public Unidad_Medida? UndMedidaProducto { get; set; }
@@ -37,7 +37,7 @@ namespace PlasticaribeAPI.Models
         public long Rollo_Id { get; set; }
 
 
-        [Precision(14,2)]
+        [Precision(14, 2)]
         public decimal DtlPreEntRollo_Cantidad { get; set; }
 
 

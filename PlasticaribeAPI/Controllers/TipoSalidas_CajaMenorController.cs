@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
@@ -25,10 +20,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TipoSalidas_CajaMenor>>> GetTipoSalidas_CajaMenor()
         {
-          if (_context.TipoSalidas_CajaMenor == null)
-          {
-              return NotFound();
-          }
+            if (_context.TipoSalidas_CajaMenor == null)
+            {
+                return NotFound();
+            }
             return await _context.TipoSalidas_CajaMenor.ToListAsync();
         }
 
@@ -36,10 +31,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TipoSalidas_CajaMenor>> GetTipoSalidas_CajaMenor(int id)
         {
-          if (_context.TipoSalidas_CajaMenor == null)
-          {
-              return NotFound();
-          }
+            if (_context.TipoSalidas_CajaMenor == null)
+            {
+                return NotFound();
+            }
             var tipoSalidas_CajaMenor = await _context.TipoSalidas_CajaMenor.FindAsync(id);
 
             if (tipoSalidas_CajaMenor == null)
@@ -86,10 +81,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<TipoSalidas_CajaMenor>> PostTipoSalidas_CajaMenor(TipoSalidas_CajaMenor tipoSalidas_CajaMenor)
         {
-          if (_context.TipoSalidas_CajaMenor == null)
-          {
-              return Problem("Entity set 'dataContext.TipoSalidas_CajaMenor'  is null.");
-          }
+            if (_context.TipoSalidas_CajaMenor == null)
+            {
+                return Problem("Entity set 'dataContext.TipoSalidas_CajaMenor'  is null.");
+            }
             _context.TipoSalidas_CajaMenor.Add(tipoSalidas_CajaMenor);
             await _context.SaveChangesAsync();
 

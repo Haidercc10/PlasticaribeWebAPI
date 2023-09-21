@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SedesClientes>>> GetSedes_Clientes()
         {
-          if (_context.Sedes_Clientes == null)
-          {
-              return NotFound();
-          }
+            if (_context.Sedes_Clientes == null)
+            {
+                return NotFound();
+            }
             return await _context.Sedes_Clientes.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SedesClientes>> GetSedesClientes(long id)
         {
-          if (_context.Sedes_Clientes == null)
-          {
-              return NotFound();
-          }
+            if (_context.Sedes_Clientes == null)
+            {
+                return NotFound();
+            }
             var sedesClientes = await _context.Sedes_Clientes.FindAsync(id);
 
             if (sedesClientes == null)
@@ -174,9 +169,9 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetSedes_Clientes(long id)
         {
             var con = (from sc in _context.Set<SedesClientes>()
-                      where sc.Cli_Id == id
-                      orderby sc.SedeCli_Id descending
-                      select sc.SedeCli_Id).FirstOrDefault();
+                       where sc.Cli_Id == id
+                       orderby sc.SedeCli_Id descending
+                       select sc.SedeCli_Id).FirstOrDefault();
             return Ok(con);
         }
 
@@ -216,10 +211,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<SedesClientes>> PostSedesClientes(SedesClientes sedesClientes)
         {
-          if (_context.Sedes_Clientes == null)
-          {
-              return Problem("Entity set 'dataContext.Sedes_Clientes'  is null.");
-          }
+            if (_context.Sedes_Clientes == null)
+            {
+                return Problem("Entity set 'dataContext.Sedes_Clientes'  is null.");
+            }
             _context.Sedes_Clientes.Add(sedesClientes);
             try
             {

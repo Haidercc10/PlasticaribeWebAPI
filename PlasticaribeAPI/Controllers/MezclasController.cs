@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -27,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Mezcla>>> GetMezclas()
         {
-          if (_context.Mezclas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Mezclas == null)
+            {
+                return NotFound();
+            }
             return await _context.Mezclas.ToListAsync();
         }
 
@@ -38,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Mezcla>> GetMezcla(long id)
         {
-          if (_context.Mezclas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Mezclas == null)
+            {
+                return NotFound();
+            }
             var mezcla = await _context.Mezclas.FindAsync(id);
 
             if (mezcla == null)
@@ -56,8 +50,8 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetMezclaNombre(string nombre)
         {
             var con = (from mez in _context.Set<Mezcla>()
-                      where mez.Mezcla_Nombre == nombre
-                      select mez).FirstOrDefault();
+                       where mez.Mezcla_Nombre == nombre
+                       select mez).FirstOrDefault();
             if (con == null)
             {
                 var mezcla = (from mez in _context.Set<Mezcla>()
@@ -65,7 +59,8 @@ namespace PlasticaribeAPI.Controllers
                               select mez).FirstOrDefault();
                 if (mezcla == null) NotFound("No se encontró una mezcla con el Nombre o ID " + nombre);
                 return Ok(mezcla);
-            } else return Ok(con);
+            }
+            else return Ok(con);
         }
 
         [HttpGet("combinacionMezclas/{Mezcla_Nombre}")]
@@ -171,10 +166,11 @@ namespace PlasticaribeAPI.Controllers
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
-            if ( mezcla != null)
+            if (mezcla != null)
             {
                 return Ok(mezcla);
-            }else
+            }
+            else
             {
                 return BadRequest();
             }
@@ -270,7 +266,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Mezcla>> PostMezcla(Mezcla mezcla)
         {
-          if (_context.Mezclas == null) return Problem("Entity set 'dataContext.Mezclas'  is null.");
+            if (_context.Mezclas == null) return Problem("Entity set 'dataContext.Mezclas'  is null.");
 
             var con = from mez in _context.Set<Mezcla>()
                       where mez.Mezcla_NroCapas.Equals(mezcla.Mezcla_NroCapas)
@@ -316,7 +312,8 @@ namespace PlasticaribeAPI.Controllers
                             && mez.Mezcla_PorcentajePigmto2_Capa3.Equals(mezcla.Mezcla_PorcentajePigmto2_Capa3)
                       select mez;
             if (con.Count() > 0) return BadRequest("Ya existe un mezcla con estas mismas caracteristicas");
-            else {
+            else
+            {
                 _context.Mezclas.Add(mezcla);
                 await _context.SaveChangesAsync();
                 return CreatedAtAction("GetMezcla", new { id = mezcla.Mezcla_Id }, mezcla);

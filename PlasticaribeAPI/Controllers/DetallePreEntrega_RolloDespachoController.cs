@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -60,7 +55,8 @@ namespace PlasticaribeAPI.Controllers
                       from emp in _context.Set<Empresa>()
                       where rollo.PreEntRollo_Id == ot
                             && emp.Empresa_Id == 800188732
-                      group rollo by new {
+                      group rollo by new
+                      {
                           rollo.PreEntregaRollo.PreEntRollo_Id,
                           rollo.Prod_Id,
                           rollo.Prod.Prod_Nombre,
@@ -128,7 +124,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("CrearPDFUltimoID/{id}")]
-        public ActionResult Get(long id )
+        public ActionResult Get(long id)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from dt in _context.Set<DetallePreEntrega_RolloDespacho>()
@@ -136,7 +132,8 @@ namespace PlasticaribeAPI.Controllers
                       where dt.PreEntregaRollo.PreEntRollo_Id == id
                             && emp.Empresa_Id == 800188732
                       orderby dt.PreEntregaRollo.PreEntRollo_Id
-                      select new {
+                      select new
+                      {
                           dt.PreEntRollo_Id,
                           dt.PreEntregaRollo.PreEntRollo_Fecha,
                           dt.PreEntregaRollo.PreEntRollo_Observacion,
@@ -267,13 +264,13 @@ namespace PlasticaribeAPI.Controllers
             {
                 return NoContent();
             }
-           
-            
-                _context.DetallesPreEntrega_RollosDespacho.Remove(x);
-                _context.SaveChanges();
 
-                return NoContent();
-            
+
+            _context.DetallesPreEntrega_RollosDespacho.Remove(x);
+            _context.SaveChanges();
+
+            return NoContent();
+
         }
 
         private bool DetallePreEntrega_RolloDespachoExists(long id)

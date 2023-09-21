@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Remision>>> GetRemisiones()
         {
-          if (_context.Remisiones == null)
-          {
-              return NotFound();
-          }
+            if (_context.Remisiones == null)
+            {
+                return NotFound();
+            }
             return await _context.Remisiones.ToListAsync();
         }
 
@@ -44,10 +39,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Remision>> GetRemision(int id)
         {
-          if (_context.Remisiones == null)
-          {
-              return NotFound();
-          }
+            if (_context.Remisiones == null)
+            {
+                return NotFound();
+            }
             var remision = await _context.Remisiones.FindAsync(id);
 
             if (remision == null)
@@ -156,10 +151,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Remision>> PostRemision(Remision remision)
         {
-          if (_context.Remisiones == null)
-          {
-              return Problem("Entity set 'dataContext.Remisiones'  is null.");
-          }
+            if (_context.Remisiones == null)
+            {
+                return Problem("Entity set 'dataContext.Remisiones'  is null.");
+            }
             _context.Remisiones.Add(remision);
             await _context.SaveChangesAsync();
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -45,42 +40,42 @@ namespace PlasticaribeAPI.Controllers
 
         [HttpGet("RollosxOT/{OT}")]
         public ActionResult GetRollo1(long OT)
-            {
+        {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-                var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_OT == OT)
-                                                             .Select(r => new
-                                                             {
-                                                                 Rollo_OT = Convert.ToString(r.Rollo_OT),
-                                                                 Rollo_Id = Convert.ToString(r.Rollo_Id),
-                                                                 Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
-                                                                 Prod_Id = Convert.ToString(r.Prod_Id),
-                                                                 Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
-                                                                 Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
-                                                                 Rollo_Largo = Convert.ToString(r.Rollo_Largo),
-                                                                 Rollo_Fuelle =Convert.ToString(r.Rollo_Fuelle),
-                                                                 UndMed_Id = Convert.ToString(r.UndMed_Id),
-                                                                 Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
-                                                                 Material_Id = Convert.ToString(r.Material_Id),
-                                                                 Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
-                                                                 Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
-                                                                 Rollo_Operario = Convert.ToString(r.Rollo_Operario),
-                                                                 Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
-                                                                 Turno_Id = Convert.ToString(r.Turno_Id),
-                                                                 Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
-                                                                 Proceso_Id = Convert.ToString(r.Proceso_Id),
-                                                                 Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
-                                                             }).ToList();
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_OT == OT)
+                                                         .Select(r => new
+                                                         {
+                                                             Rollo_OT = Convert.ToString(r.Rollo_OT),
+                                                             Rollo_Id = Convert.ToString(r.Rollo_Id),
+                                                             Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
+                                                             Prod_Id = Convert.ToString(r.Prod_Id),
+                                                             Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
+                                                             Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
+                                                             Rollo_Largo = Convert.ToString(r.Rollo_Largo),
+                                                             Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
+                                                             UndMed_Id = Convert.ToString(r.UndMed_Id),
+                                                             Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
+                                                             Material_Id = Convert.ToString(r.Material_Id),
+                                                             Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
+                                                             Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
+                                                             Rollo_Operario = Convert.ToString(r.Rollo_Operario),
+                                                             Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                                             Turno_Id = Convert.ToString(r.Turno_Id),
+                                                             Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                                             Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                                             Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
+                                                         }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
-                if (rollo_Desecho == null)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    return Ok(rollo_Desecho);
-                }
+            if (rollo_Desecho == null)
+            {
+                return NotFound();
             }
+            else
+            {
+                return Ok(rollo_Desecho);
+            }
+        }
 
         //Rollo
         [HttpGet("RollosxRollo/{rollo}")]
@@ -161,7 +156,7 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(rollo_Desecho);
             }
         }
-        
+
         //Proceso
         [HttpGet("RollosxProceso/{proceso}")]
         public ActionResult GetRollo7(string proceso)
@@ -231,8 +226,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-                return Ok(rollo_Desecho);
-            
+            return Ok(rollo_Desecho);
+
         }
 
         //Fechas, OT
@@ -240,7 +235,7 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetRollo9(DateTime fecha1, DateTime fecha2, long OT)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_FechaIngreso >= fecha1 
+            var rollo_Desecho = _context.Rollos_Desechos.Where(r => r.Rollo_FechaIngreso >= fecha1
                                                                && r.Rollo_FechaIngreso <= fecha2
                                                                && r.Rollo_OT == OT)
                                                          .Select(r => new
@@ -265,10 +260,10 @@ namespace PlasticaribeAPI.Controllers
                                                              Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-                return Ok(rollo_Desecho);
-            
+            return Ok(rollo_Desecho);
+
         }
-             
+
         //Fechas, Item
         [HttpGet("RollosxFechasxItem/{fecha1}/{fecha2}/{item}")]
         public ActionResult GetRollo15(DateTime fecha1, DateTime fecha2, int item)
@@ -300,8 +295,8 @@ namespace PlasticaribeAPI.Controllers
                                                              Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre)
                                                          }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.           
-                return Ok(rollo_Desecho);
-            
+            return Ok(rollo_Desecho);
+
         }
 
         //Fechas, rollo, Item
@@ -339,7 +334,7 @@ namespace PlasticaribeAPI.Controllers
             return Ok(rollo_Desecho);
 
         }
-       
+
         //Fechas, rollo, OT
         [HttpGet("RollosxFechasxRolloxOT/{fecha1}/{fecha2}/{rollo}/{OT}")]
         public ActionResult GetRollo22(DateTime fecha1, DateTime fecha2, long rollo, long OT)

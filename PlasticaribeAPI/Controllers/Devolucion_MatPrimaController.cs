@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Devolucion_MatPrima>>> GetDevoluciones_MatPrima()
         {
-          if (_context.Devoluciones_MatPrima == null)
-          {
-              return NotFound();
-          }
+            if (_context.Devoluciones_MatPrima == null)
+            {
+                return NotFound();
+            }
             return await _context.Devoluciones_MatPrima.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Devolucion_MatPrima>> GetDevolucion_MatPrima(long id)
         {
-          if (_context.Devoluciones_MatPrima == null)
-          {
-              return NotFound();
-          }
+            if (_context.Devoluciones_MatPrima == null)
+            {
+                return NotFound();
+            }
             var devolucion_MatPrima = await _context.Devoluciones_MatPrima.FindAsync(id);
 
             if (devolucion_MatPrima == null)
@@ -108,10 +103,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Devolucion_MatPrima>> PostDevolucion_MatPrima(Devolucion_MatPrima devolucion_MatPrima)
         {
-          if (_context.Devoluciones_MatPrima == null)
-          {
-              return Problem("Entity set 'dataContext.Devoluciones_MatPrima'  is null.");
-          }
+            if (_context.Devoluciones_MatPrima == null)
+            {
+                return Problem("Entity set 'dataContext.Devoluciones_MatPrima'  is null.");
+            }
             _context.Devoluciones_MatPrima.Add(devolucion_MatPrima);
             await _context.SaveChangesAsync();
 

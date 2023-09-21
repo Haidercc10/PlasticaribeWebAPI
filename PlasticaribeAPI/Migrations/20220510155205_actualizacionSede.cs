@@ -12,7 +12,7 @@ namespace PlasticaribeAPI.Migrations
                 name: "FK_Sedes_Clientes_Clientes_Cli_Id",
                 table: "Sedes_Clientes");
 
-           
+
 
             migrationBuilder.RenameColumn(
                 name: "Cli_Id",
@@ -49,7 +49,7 @@ namespace PlasticaribeAPI.Migrations
                 table: "Sedes_Clientes",
                 newName: "IX_Sedes_Clientes_Cli_Id");
 
-           
+
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Sedes_Clientes_Clientes_Cli_Id",

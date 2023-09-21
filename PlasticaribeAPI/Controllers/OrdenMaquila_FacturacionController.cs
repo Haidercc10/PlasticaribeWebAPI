@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrdenMaquila_Facturacion>>> GetOrdenMaquila_Facturacion()
         {
-          if (_context.OrdenMaquila_Facturacion == null)
-          {
-              return NotFound();
-          }
+            if (_context.OrdenMaquila_Facturacion == null)
+            {
+                return NotFound();
+            }
             return await _context.OrdenMaquila_Facturacion.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<OrdenMaquila_Facturacion>> GetOrdenMaquila_Facturacion(long id)
         {
-          if (_context.OrdenMaquila_Facturacion == null)
-          {
-              return NotFound();
-          }
+            if (_context.OrdenMaquila_Facturacion == null)
+            {
+                return NotFound();
+            }
             var ordenMaquila_Facturacion = await _context.OrdenMaquila_Facturacion.FindAsync(id);
 
             if (ordenMaquila_Facturacion == null)
@@ -141,7 +136,8 @@ namespace PlasticaribeAPI.Controllers
                            };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
                 return Ok(con2);
-            } else return Ok(con);
+            }
+            else return Ok(con);
         }
 
         // PUT: api/OrdenMaquila_Facturacion/5
@@ -180,10 +176,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<OrdenMaquila_Facturacion>> PostOrdenMaquila_Facturacion(OrdenMaquila_Facturacion ordenMaquila_Facturacion)
         {
-          if (_context.OrdenMaquila_Facturacion == null)
-          {
-              return Problem("Entity set 'dataContext.OrdenMaquila_Facturacion'  is null.");
-          }
+            if (_context.OrdenMaquila_Facturacion == null)
+            {
+                return Problem("Entity set 'dataContext.OrdenMaquila_Facturacion'  is null.");
+            }
             _context.OrdenMaquila_Facturacion.Add(ordenMaquila_Facturacion);
             await _context.SaveChangesAsync();
 

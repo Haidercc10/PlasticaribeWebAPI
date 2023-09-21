@@ -6,7 +6,7 @@ namespace PlasticaribeAPI.Models
     public class Rol_Usuario
     {
 
-        [Key]      
+        [Key]
         public int RolUsu_Id { get; set; }
 
         [Column(TypeName = "varchar(50)")]

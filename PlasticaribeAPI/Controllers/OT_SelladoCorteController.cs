@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -25,10 +20,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OT_Sellado_Corte>>> GetOT_SelladoCorte()
         {
-          if (_context.OT_Sellado_Corte == null)
-          {
-              return NotFound();
-          }
+            if (_context.OT_Sellado_Corte == null)
+            {
+                return NotFound();
+            }
             return await _context.OT_Sellado_Corte.ToListAsync();
         }
 
@@ -52,10 +47,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<OT_Sellado_Corte>> GetOT_Sellado_Corte(int id)
         {
-          if (_context.OT_Sellado_Corte == null)
-          {
-              return NotFound();
-          }
+            if (_context.OT_Sellado_Corte == null)
+            {
+                return NotFound();
+            }
             var OT_Sellado_Corte = await _context.OT_Sellado_Corte.FindAsync(id);
 
             if (OT_Sellado_Corte == null)
@@ -110,10 +105,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<OT_Sellado_Corte>> PostOT_Sellado_Corte(OT_Sellado_Corte OT_Sellado_Corte)
         {
-          if (_context.OT_Sellado_Corte == null)
-          {
-              return Problem("Entity set 'dataContext.OT_Sellado_Corte'  is null.");
-          }
+            if (_context.OT_Sellado_Corte == null)
+            {
+                return Problem("Entity set 'dataContext.OT_Sellado_Corte'  is null.");
+            }
             _context.OT_Sellado_Corte.Add(OT_Sellado_Corte);
             await _context.SaveChangesAsync();
 

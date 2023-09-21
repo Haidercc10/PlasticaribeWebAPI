@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Nomina_Plasticaribe>>> GetNomina_Plasticaribe()
         {
-          if (_context.Nomina_Plasticaribe == null)
-          {
-              return NotFound();
-          }
+            if (_context.Nomina_Plasticaribe == null)
+            {
+                return NotFound();
+            }
             return await _context.Nomina_Plasticaribe.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Nomina_Plasticaribe>> GetNomina_Plasticaribe(int id)
         {
-          if (_context.Nomina_Plasticaribe == null)
-          {
-              return NotFound();
-          }
+            if (_context.Nomina_Plasticaribe == null)
+            {
+                return NotFound();
+            }
             var nomina_Plasticaribe = await _context.Nomina_Plasticaribe.FindAsync(id);
 
             if (nomina_Plasticaribe == null)
@@ -136,10 +131,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Nomina_Plasticaribe>> PostNomina_Plasticaribe(Nomina_Plasticaribe nomina_Plasticaribe)
         {
-          if (_context.Nomina_Plasticaribe == null)
-          {
-              return Problem("Entity set 'dataContext.Nomina_Plasticaribe'  is null.");
-          }
+            if (_context.Nomina_Plasticaribe == null)
+            {
+                return Problem("Entity set 'dataContext.Nomina_Plasticaribe'  is null.");
+            }
             _context.Nomina_Plasticaribe.Add(nomina_Plasticaribe);
             await _context.SaveChangesAsync();
 

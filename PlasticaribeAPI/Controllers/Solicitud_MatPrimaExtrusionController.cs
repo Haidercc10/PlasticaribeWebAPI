@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Solicitud_MatPrimaExtrusion>>> GetSolicitud_MatPrimaExtrusion()
         {
-          if (_context.Solicitud_MatPrimaExtrusion == null)
-          {
-              return NotFound();
-          }
+            if (_context.Solicitud_MatPrimaExtrusion == null)
+            {
+                return NotFound();
+            }
             return await _context.Solicitud_MatPrimaExtrusion.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Solicitud_MatPrimaExtrusion>> GetSolicitud_MatPrimaExtrusion(long id)
         {
-          if (_context.Solicitud_MatPrimaExtrusion == null)
-          {
-              return NotFound();
-          }
+            if (_context.Solicitud_MatPrimaExtrusion == null)
+            {
+                return NotFound();
+            }
             var solicitud_MatPrimaExtrusion = await _context.Solicitud_MatPrimaExtrusion.FindAsync(id);
 
             if (solicitud_MatPrimaExtrusion == null)
@@ -93,7 +88,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!Solicitud_MatPrimaExtrusionExists(id)) 
+                if (!Solicitud_MatPrimaExtrusionExists(id))
                 {
                     return NotFound();
                 }
@@ -111,10 +106,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Solicitud_MatPrimaExtrusion>> PostSolicitud_MatPrimaExtrusion(Solicitud_MatPrimaExtrusion solicitud_MatPrimaExtrusion)
         {
-          if (_context.Solicitud_MatPrimaExtrusion == null)
-          {
-              return Problem("Entity set 'dataContext.Solicitud_MatPrimaExtrusion'  is null.");
-          }
+            if (_context.Solicitud_MatPrimaExtrusion == null)
+            {
+                return Problem("Entity set 'dataContext.Solicitud_MatPrimaExtrusion'  is null.");
+            }
             _context.Solicitud_MatPrimaExtrusion.Add(solicitud_MatPrimaExtrusion);
             await _context.SaveChangesAsync();
 

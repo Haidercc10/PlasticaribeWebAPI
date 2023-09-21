@@ -18,6 +18,6 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(max)")]
         public String UndMed_Descripcion { get; set; }
-    
+
     }
 }

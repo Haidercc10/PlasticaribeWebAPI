@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Terceros>>> GetTerceros()
         {
-          if (_context.Terceros == null)
-          {
-              return NotFound();
-          }
+            if (_context.Terceros == null)
+            {
+                return NotFound();
+            }
             return await _context.Terceros.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Terceros>> GetTerceros(string id)
         {
-          if (_context.Terceros == null)
-          {
-              return NotFound();
-          }
+            if (_context.Terceros == null)
+            {
+                return NotFound();
+            }
             var terceros = await _context.Terceros.FindAsync(id);
 
             if (terceros == null)
@@ -101,10 +96,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Terceros>> PostTerceros(Terceros terceros)
         {
-          if (_context.Terceros == null)
-          {
-              return Problem("Entity set 'dataContext.Terceros'  is null.");
-          }
+            if (_context.Terceros == null)
+            {
+                return Problem("Entity set 'dataContext.Terceros'  is null.");
+            }
             _context.Terceros.Add(terceros);
             try
             {

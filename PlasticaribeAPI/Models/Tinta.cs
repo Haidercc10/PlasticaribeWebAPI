@@ -34,13 +34,13 @@ namespace PlasticaribeAPI.Models
         [Precision(18, 2)]
         public decimal Tinta_Precio { get; set; }
 
-        public int CatMP_Id { get; set; }       
+        public int CatMP_Id { get; set; }
         public Categoria_MatPrima? CatMP { get; set; }
 
         public int TpBod_Id { get; set; }
         public Tipo_Bodega? TpBod { get; set; }
 
-        [Precision(14,2)]
+        [Precision(14, 2)]
         public decimal Tinta_InvInicial { get; set; }
 
 

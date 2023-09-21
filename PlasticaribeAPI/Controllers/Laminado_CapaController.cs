@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Laminado_Capa>>> GetLaminado_Capa()
         {
-          if (_context.Laminado_Capa == null)
-          {
-              return NotFound();
-          }
+            if (_context.Laminado_Capa == null)
+            {
+                return NotFound();
+            }
             return await _context.Laminado_Capa.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Laminado_Capa>> GetLaminado_Capa(int id)
         {
-          if (_context.Laminado_Capa == null)
-          {
-              return NotFound();
-          }
+            if (_context.Laminado_Capa == null)
+            {
+                return NotFound();
+            }
             var laminado_Capa = await _context.Laminado_Capa.FindAsync(id);
 
             if (laminado_Capa == null)
@@ -106,10 +101,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Laminado_Capa>> PostLaminado_Capa(Laminado_Capa laminado_Capa)
         {
-          if (_context.Laminado_Capa == null)
-          {
-              return Problem("Entity set 'dataContext.Laminado_Capa'  is null.");
-          }
+            if (_context.Laminado_Capa == null)
+            {
+                return Problem("Entity set 'dataContext.Laminado_Capa'  is null.");
+            }
             _context.Laminado_Capa.Add(laminado_Capa);
             await _context.SaveChangesAsync();
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Falla_Tecnica>>> GetFallas_Tecnicas()
         {
-          if (_context.Fallas_Tecnicas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Fallas_Tecnicas == null)
+            {
+                return NotFound();
+            }
             return await _context.Fallas_Tecnicas.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Falla_Tecnica>> GetFalla_Tecnica(int id)
         {
-          if (_context.Fallas_Tecnicas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Fallas_Tecnicas == null)
+            {
+                return NotFound();
+            }
             var falla_Tecnica = await _context.Fallas_Tecnicas.FindAsync(id);
 
             if (falla_Tecnica == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Falla_Tecnica>> PostFalla_Tecnica(Falla_Tecnica falla_Tecnica)
         {
-          if (_context.Fallas_Tecnicas == null)
-          {
-              return Problem("Entity set 'dataContext.Fallas_Tecnicas'  is null.");
-          }
+            if (_context.Fallas_Tecnicas == null)
+            {
+                return Problem("Entity set 'dataContext.Fallas_Tecnicas'  is null.");
+            }
             _context.Fallas_Tecnicas.Add(falla_Tecnica);
             await _context.SaveChangesAsync();
 

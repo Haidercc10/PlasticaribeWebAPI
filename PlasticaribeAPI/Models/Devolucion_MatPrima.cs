@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
@@ -14,7 +13,7 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "Date")]
         public DateTime DevMatPri_Fecha { get; set; }
-        
+
         [Column(TypeName = "varchar(10)")]
         public string? DevMatPri_Hora { get; set; }
 

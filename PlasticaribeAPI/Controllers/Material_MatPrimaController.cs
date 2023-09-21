@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Material_MatPrima>>> GetMateriales_MatPrima()
         {
-          if (_context.Materiales_MatPrima == null)
-          {
-              return NotFound();
-          }
+            if (_context.Materiales_MatPrima == null)
+            {
+                return NotFound();
+            }
             return await _context.Materiales_MatPrima.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Material_MatPrima>> GetMaterial_MatPrima(int id)
         {
-          if (_context.Materiales_MatPrima == null)
-          {
-              return NotFound();
-          }
+            if (_context.Materiales_MatPrima == null)
+            {
+                return NotFound();
+            }
             var material_MatPrima = await _context.Materiales_MatPrima.FindAsync(id);
 
             if (material_MatPrima == null)
@@ -110,10 +105,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Material_MatPrima>> PostMaterial_MatPrima(Material_MatPrima material_MatPrima)
         {
-          if (_context.Materiales_MatPrima == null)
-          {
-              return Problem("Entity set 'dataContext.Materiales_MatPrima'  is null.");
-          }
+            if (_context.Materiales_MatPrima == null)
+            {
+                return Problem("Entity set 'dataContext.Materiales_MatPrima'  is null.");
+            }
             _context.Materiales_MatPrima.Add(material_MatPrima);
             await _context.SaveChangesAsync();
 

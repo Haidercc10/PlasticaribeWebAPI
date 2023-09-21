@@ -15,7 +15,7 @@ namespace PlasticaribeAPI.Models
         public long MatPri_Id { get; set; }
         public Materia_Prima? MatPri { get; set; }
 
-        [Precision(18,2)]
+        [Precision(18, 2)]
         public decimal RecMatPri_Cantidad { get; set; }
 
 
@@ -25,7 +25,7 @@ namespace PlasticaribeAPI.Models
 
 
         [Column(TypeName = "varchar(10)")]
-        public string TpRecu_Id { get; set; } 
+        public string TpRecu_Id { get; set; }
         public Tipo_Recuperado? TpRecu { get; set; }
     }
 }

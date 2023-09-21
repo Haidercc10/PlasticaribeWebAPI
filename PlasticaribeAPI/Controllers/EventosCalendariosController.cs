@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EventosCalendario>>> GetEventosCalendario()
         {
-          if (_context.EventosCalendario == null)
-          {
-              return NotFound();
-          }
+            if (_context.EventosCalendario == null)
+            {
+                return NotFound();
+            }
             return await _context.EventosCalendario.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<EventosCalendario>> GetEventosCalendario(long id)
         {
-          if (_context.EventosCalendario == null)
-          {
-              return NotFound();
-          }
+            if (_context.EventosCalendario == null)
+            {
+                return NotFound();
+            }
             var eventosCalendario = await _context.EventosCalendario.FindAsync(id);
 
             if (eventosCalendario == null)
@@ -58,7 +53,7 @@ namespace PlasticaribeAPI.Controllers
             var con = from ev in _context.Set<EventosCalendario>()
                       where ev.EventoCal_FechaInicial.Month >= (fechaInicio.Month - 3)
                             && ev.EventoCal_FechaFinal.Month <= (fechaFin.Month + 3)
-                            && (ev.Usua_Id == id || ev.EventoCal_Visibilidad.Contains("|"+rol+"|"))
+                            && (ev.Usua_Id == id || ev.EventoCal_Visibilidad.Contains("|" + rol + "|"))
                       select ev;
             return con.Count() > 0 ? Ok(con) : NotFound("No se encontraron eventos");
         }
@@ -135,10 +130,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<EventosCalendario>> PostEventosCalendario(EventosCalendario eventosCalendario)
         {
-          if (_context.EventosCalendario == null)
-          {
-              return Problem("Entity set 'dataContext.EventosCalendario'  is null.");
-          }
+            if (_context.EventosCalendario == null)
+            {
+                return Problem("Entity set 'dataContext.EventosCalendario'  is null.");
+            }
             _context.EventosCalendario.Add(eventosCalendario);
             await _context.SaveChangesAsync();
 

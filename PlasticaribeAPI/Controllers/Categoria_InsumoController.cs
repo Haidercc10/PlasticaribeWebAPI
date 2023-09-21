@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Categoria_Insumo>>> GetCategorias_Insumos()
         {
-          if (_context.Categorias_Insumos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Categorias_Insumos == null)
+            {
+                return NotFound();
+            }
             return await _context.Categorias_Insumos.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Categoria_Insumo>> GetCategoria_Insumo(int id)
         {
-          if (_context.Categorias_Insumos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Categorias_Insumos == null)
+            {
+                return NotFound();
+            }
             var categoria_Insumo = await _context.Categorias_Insumos.FindAsync(id);
 
             if (categoria_Insumo == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Categoria_Insumo>> PostCategoria_Insumo(Categoria_Insumo categoria_Insumo)
         {
-          if (_context.Categorias_Insumos == null)
-          {
-              return Problem("Entity set 'dataContext.Categorias_Insumos'  is null.");
-          }
+            if (_context.Categorias_Insumos == null)
+            {
+                return Problem("Entity set 'dataContext.Categorias_Insumos'  is null.");
+            }
             _context.Categorias_Insumos.Add(categoria_Insumo);
             await _context.SaveChangesAsync();
 

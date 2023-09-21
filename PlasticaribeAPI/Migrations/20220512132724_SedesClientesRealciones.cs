@@ -33,9 +33,9 @@ namespace PlasticaribeAPI.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-           /* migrationBuilder.DropForeignKey(
-                name: "FK_Sedes_Clientes_Clientes_Cli_Id",
-                table: "Sedes_Clientes");*/
+            /* migrationBuilder.DropForeignKey(
+                 name: "FK_Sedes_Clientes_Clientes_Cli_Id",
+                 table: "Sedes_Clientes");*/
 
             /*migrationBuilder.RenameColumn(
                 name: "Cli_Id",

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -12,7 +6,7 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController, Authorize]
     public class PedidoExternoController : ControllerBase
@@ -23,15 +17,15 @@ namespace PlasticaribeAPI.Controllers
         {
             _context = context;
         }
-        
+
         // GET: api/PedidoExterno
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PedidoExterno>>> GetPedidos_Externos()
         {
-          if (_context.Pedidos_Externos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Pedidos_Externos == null)
+            {
+                return NotFound();
+            }
             return await _context.Pedidos_Externos.ToListAsync();
         }
 
@@ -39,10 +33,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PedidoExterno>> GetPedidoExterno(long id)
         {
-          if (_context.Pedidos_Externos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Pedidos_Externos == null)
+            {
+                return NotFound();
+            }
             var pedidoExterno = await _context.Pedidos_Externos.FindAsync(id);
 
             if (pedidoExterno == null)
@@ -854,9 +848,9 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
             var pedido_Producto = _context.Pedidos_Externos
-                .Where(pp => pp.PedExt_FechaCreacion == PedExt_FechaCreacion 
-                        && pp.PedExt_FechaEntrega == PedExt_FechaEntrega 
-                        && pp.Estado.Estado_Nombre == Estado_Nombre 
+                .Where(pp => pp.PedExt_FechaCreacion == PedExt_FechaCreacion
+                        && pp.PedExt_FechaEntrega == PedExt_FechaEntrega
+                        && pp.Estado.Estado_Nombre == Estado_Nombre
                         && pp.Usua.Usua_Nombre == Usua_Nombre)
                 .Include(pp => pp.SedeCli.Cli)
                 .Include(pp => pp.Estado)
@@ -1110,7 +1104,7 @@ namespace PlasticaribeAPI.Controllers
                           Fecha_Entrega = pedProd.PedExtProd_FechaEntrega,
                       };
             return Ok(con);
-                      
+
         }
 
         // PUT: api/PedidoExterno/5
@@ -1149,10 +1143,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<PedidoExterno>> PostPedidoExterno(PedidoExterno pedidoExterno)
         {
-          if (_context.Pedidos_Externos == null)
-          {
-              return Problem("Entity set 'dataContext.Pedidos_Externos'  is null.");
-          }
+            if (_context.Pedidos_Externos == null)
+            {
+                return Problem("Entity set 'dataContext.Pedidos_Externos'  is null.");
+            }
             _context.Pedidos_Externos.Add(pedidoExterno);
             await _context.SaveChangesAsync();
 

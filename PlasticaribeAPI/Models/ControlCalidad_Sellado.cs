@@ -26,26 +26,26 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(max)")]
         public string Referencia { get; set; }
 
-        [Precision(18,2)]
+        [Precision(18, 2)]
         public decimal CcSel_Calibre { get; set; }
 
-        [Precision(18,2)]
+        [Precision(18, 2)]
         public decimal CcSel_Ancho { get; set; }
 
-        [Precision(18,2)]
+        [Precision(18, 2)]
         public decimal CcSel_Largo { get; set; }
 
         [Column(TypeName = "varchar(10)")]
         public string UndMed_AL { get; set; }
         public Unidad_Medida? UndMedida1 { get; set; }
 
-        [Precision(18,2)]
+        [Precision(18, 2)]
         public decimal AnchoFuelle_Izq { get; set; }
 
-        [Precision(18,2)]
+        [Precision(18, 2)]
         public decimal AnchoFuelle_Der { get; set; }
 
-        [Precision(18,2)]
+        [Precision(18, 2)]
         public decimal AnchoFuelle_Abajo { get; set; }
 
         [Column(TypeName = "varchar(10)")]

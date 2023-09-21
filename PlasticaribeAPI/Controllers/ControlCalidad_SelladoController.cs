@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
@@ -46,9 +41,9 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetControlCalidad_SelladoHoy(DateTime fecha1, DateTime fecha2)
         {
             var sellado = from cce in _context.Set<ControlCalidad_Sellado>()
-                                   where cce.CcSel_Fecha >= fecha1 &&
-                                   cce.CcSel_Fecha <= fecha2
-                                   select cce;
+                          where cce.CcSel_Fecha >= fecha1 &&
+                          cce.CcSel_Fecha <= fecha2
+                          select cce;
 
             if (sellado == null) return NotFound();
             else return Ok(sellado);
@@ -65,7 +60,7 @@ namespace PlasticaribeAPI.Controllers
                               orderby cce.CcSel_Id descending
                               select cce.CcSel_Ronda).FirstOrDefault();
 
-            return rondaMayor == null ? Ok(0) :  Ok(rondaMayor);
+            return rondaMayor == null ? Ok(0) : Ok(rondaMayor);
 #pragma warning restore CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
         }
 
@@ -105,10 +100,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ControlCalidad_Sellado>> PostControlCalidad_Sellado(ControlCalidad_Sellado controlCalidad_Sellado)
         {
-          if (_context.ControlCalidad_Sellado == null)
-          {
-              return Problem("Entity set 'dataContext.ControlCalidad_Sellado'  is null.");
-          }
+            if (_context.ControlCalidad_Sellado == null)
+            {
+                return Problem("Entity set 'dataContext.ControlCalidad_Sellado'  is null.");
+            }
             _context.ControlCalidad_Sellado.Add(controlCalidad_Sellado);
             await _context.SaveChangesAsync();
 

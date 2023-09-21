@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Tratado>>> GetTratado()
         {
-          if (_context.Tratado == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tratado == null)
+            {
+                return NotFound();
+            }
             return await _context.Tratado.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Tratado>> GetTratado(int id)
         {
-          if (_context.Tratado == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tratado == null)
+            {
+                return NotFound();
+            }
             var tratado = await _context.Tratado.FindAsync(id);
 
             if (tratado == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Tratado>> PostTratado(Tratado tratado)
         {
-          if (_context.Tratado == null)
-          {
-              return Problem("Entity set 'dataContext.Tratado'  is null.");
-          }
+            if (_context.Tratado == null)
+            {
+                return Problem("Entity set 'dataContext.Tratado'  is null.");
+            }
             _context.Tratado.Add(tratado);
             await _context.SaveChangesAsync();
 

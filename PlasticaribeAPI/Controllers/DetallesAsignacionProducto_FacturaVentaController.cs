@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -207,10 +202,10 @@ namespace PlasticaribeAPI.Controllers
                                         && pre.PreEntregaRollo.PreEntRollo_Fecha <= FechaFin
                                   group pre by new
                                   {
-                                     pre.PreEntRollo_Id,
-                                     pre.PreEntregaRollo.PreEntRollo_Fecha,
-                                     pre.PreEntregaRollo.Usuario.Usua_Nombre,
-                                     pre.Proceso.Proceso_Nombre,
+                                      pre.PreEntRollo_Id,
+                                      pre.PreEntregaRollo.PreEntRollo_Fecha,
+                                      pre.PreEntregaRollo.Usuario.Usua_Nombre,
+                                      pre.Proceso.Proceso_Nombre,
                                   } into pre
                                   select new
                                   {

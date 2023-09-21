@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 
@@ -27,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Certificados_Calidad>>> GetCertificados_Calidad()
         {
-          if (_context.Certificados_Calidad == null)
-          {
-              return NotFound();
-          }
+            if (_context.Certificados_Calidad == null)
+            {
+                return NotFound();
+            }
             return await _context.Certificados_Calidad.ToListAsync();
         }
 
@@ -81,8 +75,8 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetClientes(string cliente)
         {
             var clientes = (from c in _context.Set<Certificados_Calidad>()
-                           where c.Cliente.Contains(cliente)
-                           select c.Cliente).Distinct();
+                            where c.Cliente.Contains(cliente)
+                            select c.Cliente).Distinct();
 
             if (clientes == null) return BadRequest("El cliente solicitado no tiene certificados creados!");
             return Ok(clientes);
@@ -94,8 +88,8 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetItems(string item)
         {
             var items = (from c in _context.Set<Certificados_Calidad>()
-                        where c.Referencia.Contains(item)
-                        select new { c.Item, c.Referencia }).Distinct();
+                         where c.Referencia.Contains(item)
+                         select new { c.Item, c.Referencia }).Distinct();
 
             if (items == null) return BadRequest("El item solicitado no tiene certificados creados!");
             return Ok(items);
@@ -107,14 +101,15 @@ namespace PlasticaribeAPI.Controllers
         {
             var cualitativos = _context.Certificados_Calidad.Where(c => c.Consecutivo == consecutivo).Select(c => new
             {
-                Calibre = new { 
-                   Consecutivo = c.Consecutivo,
-                   Parametro = "Calibre",
-                   Unidad = c.Unidad_Calibre,
-                   Nominal = c.Nominal_Calibre, 
-                   Tolerancia = c.Tolerancia_Calibre, 
-                   Minimo = c.Minimo_Calibre, 
-                   Maximo = c.Maximo_Calibre,
+                Calibre = new
+                {
+                    Consecutivo = c.Consecutivo,
+                    Parametro = "Calibre",
+                    Unidad = c.Unidad_Calibre,
+                    Nominal = c.Nominal_Calibre,
+                    Tolerancia = c.Tolerancia_Calibre,
+                    Minimo = c.Minimo_Calibre,
+                    Maximo = c.Maximo_Calibre,
                 },
                 AnchoFrente = new
                 {
@@ -135,7 +130,7 @@ namespace PlasticaribeAPI.Controllers
                     Tolerancia = c.Tolerancia_AnchoFuelle,
                     Minimo = c.Minimo_AnchoFuelle,
                     Maximo = c.Maximo_AnchoFuelle,
-                }, 
+                },
                 LargoRepeticion = new
                 {
                     Consecutivo = c.Consecutivo,
@@ -148,7 +143,7 @@ namespace PlasticaribeAPI.Controllers
                 },
                 Cof = new
                 {
-                    Consecutivo = c.Consecutivo, 
+                    Consecutivo = c.Consecutivo,
                     Parametro = "COF",
                     Unidad = c.Unidad_Cof,
                     Nominal = c.Nominal_Cof,
@@ -165,7 +160,7 @@ namespace PlasticaribeAPI.Controllers
                 .Concat(cualitativos.Select(pc => pc.Cof)))));
 
             if (result == null) return BadRequest("No se encontraron registros del consecutivo ingresado!");
-            else return Ok(result);        
+            else return Ok(result);
 
         }
 
@@ -205,10 +200,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Certificados_Calidad>> PostCertificados_Calidad(Certificados_Calidad certificados_Calidad)
         {
-          if (_context.Certificados_Calidad == null)
-          {
-              return Problem("Entity set 'dataContext.Certificados_Calidad'  is null.");
-          }
+            if (_context.Certificados_Calidad == null)
+            {
+                return Problem("Entity set 'dataContext.Certificados_Calidad'  is null.");
+            }
             _context.Certificados_Calidad.Add(certificados_Calidad);
             await _context.SaveChangesAsync();
 

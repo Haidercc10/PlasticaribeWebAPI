@@ -6,7 +6,7 @@ namespace PlasticaribeAPI.Models
 {
     public class EPS
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]       
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int eps_Codigo { get; set; }
 
         [Key]
@@ -17,7 +17,7 @@ namespace PlasticaribeAPI.Models
 
         //Llave foranea tipo identificacion agregada. 
         public String TipoIdentificacion_Id { get; set; }
-        public TipoIdentificacion? TipoIdentificacion{ get; set; }
+        public TipoIdentificacion? TipoIdentificacion { get; set; }
 
         [Column(TypeName = "varchar(50)")]
         public String eps_Nombre { get; set; }
@@ -27,7 +27,7 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(50)")]
         public String eps_Telefono { get; set; }
-        
+
         public long eps_CuentaBancaria { get; set; }
 
         [Column(TypeName = "varchar(100)")]

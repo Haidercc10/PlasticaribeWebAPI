@@ -31,7 +31,7 @@ namespace PlasticaribeAPI.Models
         [Precision(18, 2)]
         public decimal Nominal_Calibre { get; set; }
 
-        [Precision (18, 2)]
+        [Precision(18, 2)]
         public decimal Tolerancia_Calibre { get; set; }
 
         [Precision(18, 2)]

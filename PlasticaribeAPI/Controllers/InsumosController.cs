@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Insumo>>> GetInsumos()
         {
-          if (_context.Insumos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Insumos == null)
+            {
+                return NotFound();
+            }
             return await _context.Insumos.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Insumo>> GetInsumo(int id)
         {
-          if (_context.Insumos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Insumos == null)
+            {
+                return NotFound();
+            }
             var insumo = await _context.Insumos.FindAsync(id);
 
             if (insumo == null)
@@ -51,7 +46,7 @@ namespace PlasticaribeAPI.Controllers
             return insumo;
         }
 
-        
+
         /*[HttpGet("{Insu_Nombre}")]
         //[Route("{name}")]
         public IActionResult GetNombreInsumo(string Insu_Nombre)
@@ -107,10 +102,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Insumo>> PostInsumo(Insumo insumo)
         {
-          if (_context.Insumos == null)
-          {
-              return Problem("Entity set 'dataContext.Insumos'  is null.");
-          }
+            if (_context.Insumos == null)
+            {
+                return Problem("Entity set 'dataContext.Insumos'  is null.");
+            }
             _context.Insumos.Add(insumo);
             await _context.SaveChangesAsync();
 

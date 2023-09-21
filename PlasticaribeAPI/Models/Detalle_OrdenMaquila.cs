@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
@@ -16,7 +15,7 @@ namespace PlasticaribeAPI.Models
         public Tinta? Tinta { get; set; }
         public long BOPP_Id { get; set; }
         public BOPP? BOPP { get; set; }
-        
+
         [Precision(18, 2)]
         public decimal DtOM_Cantidad { get; set; }
         public string UndMed_Id { get; set; }

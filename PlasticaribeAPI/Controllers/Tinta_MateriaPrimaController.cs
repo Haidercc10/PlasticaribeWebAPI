@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Tinta_MateriaPrima>>> GetTintas_MateriasPrimas()
         {
-          if (_context.Tintas_MateriasPrimas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tintas_MateriasPrimas == null)
+            {
+                return NotFound();
+            }
             return await _context.Tintas_MateriasPrimas.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Tinta_MateriaPrima>> GetTinta_MateriaPrima(long id)
         {
-          if (_context.Tintas_MateriasPrimas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tintas_MateriasPrimas == null)
+            {
+                return NotFound();
+            }
             var tinta_MateriaPrima = await _context.Tintas_MateriasPrimas.FindAsync(id);
 
             if (tinta_MateriaPrima == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Tinta_MateriaPrima>> PostTinta_MateriaPrima(Tinta_MateriaPrima tinta_MateriaPrima)
         {
-          if (_context.Tintas_MateriasPrimas == null)
-          {
-              return Problem("Entity set 'dataContext.Tintas_MateriasPrimas'  is null.");
-          }
+            if (_context.Tintas_MateriasPrimas == null)
+            {
+                return Problem("Entity set 'dataContext.Tintas_MateriasPrimas'  is null.");
+            }
             _context.Tintas_MateriasPrimas.Add(tinta_MateriaPrima);
             try
             {

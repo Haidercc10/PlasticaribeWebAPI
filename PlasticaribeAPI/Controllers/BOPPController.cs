@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -86,7 +81,8 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var bOPP = _context.BOPP.Where(x => x.BOPP_Stock > 0)
                                     .GroupBy(x => new { x.CatMP_Id, x.CatMP.CatMP_Nombre })
-                                    .Select(bopp => new {
+                                    .Select(bopp => new
+                                    {
                                         bopp.Key.CatMP_Id,
                                         bopp.Key.CatMP_Nombre,
                                         sumaPrecio = bopp.Sum(x => x.BOPP_Precio),
@@ -240,8 +236,8 @@ namespace PlasticaribeAPI.Controllers
                       {
                           Id = b.Key.BoppGen_Id,
                           Nombre = b.Key.BoppGen_Nombre,
-                          Micras = b.Key.BoppGen_Micra, 
-                          Ancho = b.Key.BoppGen_Ancho, 
+                          Micras = b.Key.BoppGen_Micra,
+                          Ancho = b.Key.BoppGen_Ancho,
                           IdCategoria = b.Key.CatMP_Id,
                           NombreCategoria = b.Key.CatMP_Nombre,
                           Rollos = b.Count(),
@@ -275,7 +271,7 @@ namespace PlasticaribeAPI.Controllers
                       where b.BoppGen_Id == id
                       && (b.BOPP_Stock > 0 || EntradaBOPP > 0)
                       select new
-                      { 
+                      {
                           Id = b.BOPP_Id,
                           Serial = b.BOPP_Serial,
                           Nombre = b.BOPP_Nombre,
@@ -285,11 +281,11 @@ namespace PlasticaribeAPI.Controllers
                           Entrada = EntradaBOPP,
                           Salida = AsgBopp,
                           Stock = b.BOPP_Stock,
-                          Diferencia = (b.BOPP_Stock - b.BOPP_CantidadInicialKg), 
-                          Medida = b.UndMed_Id, 
-                          Precio = b.BOPP_Precio, 
+                          Diferencia = (b.BOPP_Stock - b.BOPP_CantidadInicialKg),
+                          Medida = b.UndMed_Id,
+                          Precio = b.BOPP_Precio,
                           Subtotal = (b.BOPP_Stock * b.BOPP_Precio),
-                          CategoriaId = b.CatMP_Id, 
+                          CategoriaId = b.CatMP_Id,
                           Categoria = b.CatMP.CatMP_Nombre,
                       };
 
@@ -338,10 +334,12 @@ namespace PlasticaribeAPI.Controllers
             bopp.BOPP_Stock = cantidad;
             _context.Entry(bopp).State = EntityState.Modified;
 
-            try {
+            try
+            {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException) {
+            catch (DbUpdateConcurrencyException)
+            {
                 if (!BOPPExists(id)) return NotFound();
                 else throw;
             }
@@ -354,10 +352,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<BOPP>> PostBOPP(BOPP bOPP)
         {
-          if (_context.BOPP == null)
-          {
-              return Problem("Entity set 'dataContext.BOPP'  is null.");
-          }
+            if (_context.BOPP == null)
+            {
+                return Problem("Entity set 'dataContext.BOPP'  is null.");
+            }
             _context.BOPP.Add(bOPP);
             await _context.SaveChangesAsync();
 

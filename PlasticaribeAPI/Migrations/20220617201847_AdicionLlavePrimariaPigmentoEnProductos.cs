@@ -18,40 +18,40 @@ namespace PlasticaribeAPI.Migrations
                 oldNullable: true)
                 .Annotation("Relational:ColumnOrder", 14);
 
-           /* migrationBuilder.AddColumn<int>(
-                name: "Pigmt_Id",
-                table: "Productos",
-                type: "int",
-                nullable: true)
-                .Annotation("Relational:ColumnOrder", 15); */
+            /* migrationBuilder.AddColumn<int>(
+                 name: "Pigmt_Id",
+                 table: "Productos",
+                 type: "int",
+                 nullable: true)
+                 .Annotation("Relational:ColumnOrder", 15); */
 
-           /* migrationBuilder.CreateIndex(
-                name: "IX_Productos_Pigmt_Id",
-                table: "Productos",
-                column: "Pigmt_Id"); */
+            /* migrationBuilder.CreateIndex(
+                 name: "IX_Productos_Pigmt_Id",
+                 table: "Productos",
+                 column: "Pigmt_Id"); */
 
-           /* migrationBuilder.AddForeignKey(
-                name: "FK_Productos_Materials_Pigmt_Id",
-                table: "Productos",
-                column: "Pigmt_Id",
-                principalTable: "Materials",
-                principalColumn: "Pigmt_Id",
-                onDelete: ReferentialAction.Restrict); */
+            /* migrationBuilder.AddForeignKey(
+                 name: "FK_Productos_Materials_Pigmt_Id",
+                 table: "Productos",
+                 column: "Pigmt_Id",
+                 principalTable: "Materials",
+                 principalColumn: "Pigmt_Id",
+                 onDelete: ReferentialAction.Restrict); */
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-           /* migrationBuilder.DropForeignKey(
-                name: "FK_Productos_Materials_Pigmt_Id",
-                table: "Productos");
+            /* migrationBuilder.DropForeignKey(
+                 name: "FK_Productos_Materials_Pigmt_Id",
+                 table: "Productos");
 
-            migrationBuilder.DropIndex(
-                name: "IX_Productos_Pigmt_Id",
-                table: "Productos");
+             migrationBuilder.DropIndex(
+                 name: "IX_Productos_Pigmt_Id",
+                 table: "Productos");
 
-            migrationBuilder.DropColumn(
-                name: "Pigmt_Id",
-                table: "Productos"); */
+             migrationBuilder.DropColumn(
+                 name: "Pigmt_Id",
+                 table: "Productos"); */
 
             migrationBuilder.AlterColumn<int>(
                 name: "Estado_Id",
