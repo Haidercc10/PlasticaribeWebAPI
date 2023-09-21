@@ -159,6 +159,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<PlasticaribeAPI.Models.TipoSalidas_CajaMenor> TipoSalidas_CajaMenor { get; set; }
         public DbSet<PlasticaribeAPI.Models.CajaMenor_Plasticaribe> CajaMenor_Plasticaribe { get; set; }
         public DbSet<PlasticaribeAPI.Models.Productos_MateriasPrimas> Productos_MateriasPrimas { get; set; }
+        public DbSet<PlasticaribeAPI.Models.Inventario_Areas> Inventarios_Areas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -347,7 +348,7 @@ namespace PlasticaribeAPI.Data
             //Relaciones Devoluciones_MatPrima
             //modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().ToTable(tb => tb.HasTrigger("Auditoria_DetallesDevoluciones_MateriasPrimas"));
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().ToTable(tb => tb.HasTrigger("RestarCantMatPrimaAsignada_EPOTxDevolucion"));
-            modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().ToTable(tb => tb.HasTrigger("Movimientos_Entradas_MP_Devolucion"));
+            //modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().ToTable(tb => tb.HasTrigger("Movimientos_Entradas_MP_Devolucion"));
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(ddmp => ddmp.DevMatPri).WithMany().HasForeignKey(damp => damp.DevMatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(ddmp => ddmp.MatPri).WithMany().HasForeignKey(damp => damp.MatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
             modelBuilder.Entity<DetalleDevolucion_MateriaPrima>().HasOne(ddmp => ddmp.Tinta).WithMany().HasForeignKey(damp => damp.Tinta_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
@@ -910,6 +911,13 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Productos_MateriasPrimas>().HasOne(x => x.Tinta).WithMany().HasForeignKey(y => y.Tinta_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Productos_MateriasPrimas>().HasOne(x => x.Bopp_Generico).WithMany().HasForeignKey(y => y.Bopp_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Productos_MateriasPrimas>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Inventarios_Areas
+            modelBuilder.Entity<Inventario_Areas>().HasOne(x => x.Item).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Inventario_Areas>().HasOne(x => x.UndMedida).WithMany().HasForeignKey(y => y.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Inventario_Areas>().HasOne(x => x.MatPrima).WithMany().HasForeignKey(y => y.MatPri_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Inventario_Areas>().HasOne(x => x.Proceso).WithMany().HasForeignKey(y => y.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Inventario_Areas>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
