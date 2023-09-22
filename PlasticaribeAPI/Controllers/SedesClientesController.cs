@@ -132,14 +132,7 @@ namespace PlasticaribeAPI.Controllers
                     sc.SedeCli_CodBagPro,
                 }).ToList();
 
-            if (clientes == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(clientes);
-            }
+            return clientes == null ? BadRequest($"¡No se encontró información del cliente {Cli_Nombre} con la ciudad {ciudad} y dirección {direccion}!") : Ok(clientes);
         }
 
         //Funcion que consultará la informacion de una sede de cliente basandose en el Codigo de BagPro, Ciudad y Dirección
