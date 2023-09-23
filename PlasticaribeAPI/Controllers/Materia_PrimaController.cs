@@ -1096,6 +1096,23 @@ namespace PlasticaribeAPI.Controllers
             return Ok(materiaPrima.Concat(tinta).Concat(bopp));
         }
 
+        //Consulta que traerá las materias primas através de una sentencia tipo like
+        [HttpGet("getPolietilenos/{nombre}")]
+        public ActionResult getPolietilenos(string nombre)
+        {
+            var materiaPrima = from mp in _context.Set<Materia_Prima>()
+                               where mp.MatPri_Id != 84
+                               && mp.MatPri_Nombre.Contains(nombre)
+                               select new
+                               {
+                                   Item = mp.MatPri_Id,
+                                   Referencia = mp.MatPri_Nombre,
+                                   PrecioKg = mp.MatPri_Precio,
+                               };
+            if (materiaPrima == null) return BadRequest("No se encontró el polietileno consultado!");
+            return Ok(materiaPrima);
+        }
+
         // PUT: api/Materia_Prima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
