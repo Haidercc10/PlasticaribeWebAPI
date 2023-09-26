@@ -8,12 +8,9 @@ namespace PlasticaribeAPI.Models
     {
         [Key]
         public long InvCodigo { get; set; }
-
-        public long OT { get; set; } //0
-
-        public int Prod_Id { get; set; } //1
+        public long OT { get; set; }
+        public int Prod_Id { get; set; }
         public Producto? Item { get; set; }
-
         public long MatPri_Id { get; set; }
         public Materia_Prima? MatPrima { get; set; }
 
@@ -22,26 +19,23 @@ namespace PlasticaribeAPI.Models
         public Unidad_Medida? UndMedida { get; set; }
 
         [Precision(18, 2)]
-        public decimal InvStock { get; set; } //100
+        public decimal InvStock { get; set; }
 
         [Precision(18, 2)]
-        public decimal InvPrecio { get; set; } //5
-
+        public decimal InvPrecio { get; set; }
 
         [Column(TypeName = "varchar(10)")]
-        public string Proceso_Id { get; set; } //EXT
+        public string Proceso_Id { get; set; }
         public Proceso? Proceso { get; set; }
 
-
         [Column(TypeName = "date")]
-        public DateTime InvFecha_Inventario { get; set; } //Dia que ingresó dicho inventario
+        public DateTime InvFecha_Inventario { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime InvFecha_Registro { get; set; }
 
         [Column(TypeName = "varchar(10)")]
         public string InvHora_Registro { get; set; }
-
         public long Usua_Id { get; set; }
         public Usuario? Usuario { get; set; }
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
@@ -25,10 +20,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Inventario_Areas>>> GetInventarios_Areas()
         {
-          if (_context.Inventarios_Areas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Inventarios_Areas == null)
+            {
+                return NotFound();
+            }
             return await _context.Inventarios_Areas.ToListAsync();
         }
 
@@ -36,10 +31,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Inventario_Areas>> GetInventario_Areas(long id)
         {
-          if (_context.Inventarios_Areas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Inventarios_Areas == null)
+            {
+                return NotFound();
+            }
             var inventario_Areas = await _context.Inventarios_Areas.FindAsync(id);
 
             if (inventario_Areas == null)
@@ -54,10 +49,12 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getInvAreas_Fechas/{fecha1}/{fecha2}")]
         public ActionResult GetInvAreas_Fechas(DateTime fecha1, DateTime fecha2)
         {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             var inventario_Areas = from ia in _context.Set<Inventario_Areas>()
                                    where ia.InvFecha_Inventario >= fecha1 &&
                                    ia.InvFecha_Inventario <= fecha2
-                                   select new {
+                                   select new
+                                   {
                                        Fecha_Inventario = ia.InvFecha_Inventario,
                                        OT = Convert.ToString(ia.OT) != "0" ? Convert.ToString(ia.OT) : "",
                                        Item = ia.Prod_Id == 1 && ia.MatPri_Id != 84 ? ia.MatPri_Id : ia.Prod_Id,
@@ -72,6 +69,7 @@ namespace PlasticaribeAPI.Controllers
 
             if (inventario_Areas == null) return BadRequest("No se encontraron registros de inventarios en las fechas consultadas");
             else return Ok(inventario_Areas);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         // PUT: api/Inventario_Areas/5
@@ -110,10 +108,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Inventario_Areas>> PostInventario_Areas(Inventario_Areas inventario_Areas)
         {
-          if (_context.Inventarios_Areas == null)
-          {
-              return Problem("Entity set 'dataContext.Inventarios_Areas'  is null.");
-          }
+            if (_context.Inventarios_Areas == null)
+            {
+                return Problem("Entity set 'dataContext.Inventarios_Areas'  is null.");
+            }
             _context.Inventarios_Areas.Add(inventario_Areas);
             await _context.SaveChangesAsync();
 

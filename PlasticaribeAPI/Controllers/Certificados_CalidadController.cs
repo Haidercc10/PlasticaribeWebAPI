@@ -59,15 +59,13 @@ namespace PlasticaribeAPI.Controllers
             var certificados_Calidad = from c in _context.Set<Certificados_Calidad>()
                                        where c.Fecha_Registro >= fecha1 &&
                                              c.Fecha_Registro <= fecha2 &&
-                                             Convert.ToString(c.Consecutivo).Contains(consec) &&
-                                             Convert.ToString(c.Orden_Trabajo).Contains(ot) &&
-                                             Convert.ToString(c.Cliente).Contains(cliente) &&
-                                             Convert.ToString(c.Referencia).Contains(referencia)
+                                             (consec != "" ? Convert.ToString(c.Consecutivo) == consec : Convert.ToString(c.Consecutivo).Contains(consec)) &&
+                                             (ot != "" ? Convert.ToString(c.Orden_Trabajo) == ot : Convert.ToString(c.Orden_Trabajo).Contains(ot)) &&
+                                             (cliente != "" ? Convert.ToString(c.Cliente) == cliente : Convert.ToString(c.Cliente).Contains(cliente)) &&
+                                             (referencia != "" ? Convert.ToString(c.Referencia) == referencia : Convert.ToString(c.Referencia).Contains(referencia))
                                        select c;
+            return certificados_Calidad.Any() ? Ok(certificados_Calidad) : BadRequest("¡No se encontraron certificados con los datos consultados!");
 #pragma warning restore CS8604 // Possible null reference argument.
-
-            if (certificados_Calidad == null) return BadRequest("No se encontraron certificados con los datos consultados!");
-            return Ok(certificados_Calidad);
         }
 
         // Get Clientes
@@ -161,7 +159,6 @@ namespace PlasticaribeAPI.Controllers
 
             if (result == null) return BadRequest("No se encontraron registros del consecutivo ingresado!");
             else return Ok(result);
-
         }
 
         // PUT: api/Certificados_Calidad/5
