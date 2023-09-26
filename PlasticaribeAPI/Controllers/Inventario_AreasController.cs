@@ -50,6 +50,30 @@ namespace PlasticaribeAPI.Controllers
             return inventario_Areas;
         }
 
+        // GET: Busqueda de inventarios de areas por fechas
+        [HttpGet("getInvAreas_Fechas/{fecha1}/{fecha2}")]
+        public ActionResult GetInvAreas_Fechas(DateTime fecha1, DateTime fecha2)
+        {
+            var inventario_Areas = from ia in _context.Set<Inventario_Areas>()
+                                   where ia.InvFecha_Inventario >= fecha1 &&
+                                   ia.InvFecha_Inventario <= fecha2
+                                   select new {
+                                       Fecha_Inventario = ia.InvFecha_Inventario,
+                                       OT = ia.OT,
+                                       Item = ia.Prod_Id == 1 ? ia.MatPri_Id : ia.Prod_Id,
+                                       Referencia = ia.Prod_Id == 1 ? ia.MatPrima.MatPri_Nombre : ia.Item.Prod_Nombre,
+                                       Stock = ia.InvStock,
+                                       Precio = ia.InvPrecio,
+                                       Subtotal = ia.InvStock * ia.InvPrecio,
+                                       Id_Area = ia.Proceso_Id,
+                                       Nombre_Area = ia.Proceso.Proceso_Nombre,
+                                       EsMaterial = ia.Prod_Id == 1 && ia.MatPri_Id != 84 ? true : false,
+                                   };
+
+            if (inventario_Areas == null) return BadRequest("No se encontraron registros de inventarios en las fechas consultadas");
+            else return Ok(inventario_Areas);
+        }
+
         // PUT: api/Inventario_Areas/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
