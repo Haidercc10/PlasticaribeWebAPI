@@ -284,6 +284,50 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
+        [HttpGet("getMatPrimasInicioMes/{fechaFin}")]
+        public ActionResult GetMatPrimasInicioMes(DateTime fechaFin)
+        {
+            var mp = from i in _context.Set<InventarioInicialXDia_MatPrima>()
+                     join m in _context.Set<Materia_Prima>()
+                     on i.MatPri_Id equals m.MatPri_Id
+                     where i.MatPri_Id != 0
+                     select new {
+                         Fecha_Inventario = new DateTime(fechaFin.Year, fechaFin.Month, 1),
+                         Ot = "",
+                         Item = i.MatPri_Id,
+                         Referencia = m.MatPri_Nombre,
+                         Stock = fechaFin.Month == 1 ? i.Enero :
+                                 fechaFin.Month == 2 ? i.Febrero :
+                                 fechaFin.Month == 3 ? i.Marzo :
+                                 fechaFin.Month == 4 ? i.Abril :
+                                 fechaFin.Month == 5 ? i.Mayo :
+                                 fechaFin.Month == 6 ? i.Junio :
+                                 fechaFin.Month == 7 ? i.Julio :
+                                 fechaFin.Month == 8 ? i.Agosto :
+                                 fechaFin.Month == 9 ? i.Septiembre :
+                                 fechaFin.Month == 10 ? i.Octubre :
+                                 fechaFin.Month == 11 ? i.Noviembre :
+                                 fechaFin.Month == 13 ? i.Diciembre : i.Enero,
+                         Precio = m.MatPri_Precio,
+                         Subtotal = (fechaFin.Month == 1 ? i.Enero :
+                                    fechaFin.Month == 2 ? i.Febrero :
+                                    fechaFin.Month == 3 ? i.Marzo :
+                                    fechaFin.Month == 4 ? i.Abril :
+                                    fechaFin.Month == 5 ? i.Mayo :
+                                    fechaFin.Month == 6 ? i.Junio :
+                                    fechaFin.Month == 7 ? i.Julio :
+                                    fechaFin.Month == 8 ? i.Agosto :
+                                    fechaFin.Month == 9 ? i.Septiembre :
+                                    fechaFin.Month == 10 ? i.Octubre :
+                                    fechaFin.Month == 11 ? i.Noviembre :
+                                    fechaFin.Month == 13 ? i.Diciembre : i.Enero) * m.MatPri_Precio,
+                        IdCategoria = m.CatMP_Id,
+                     };
+
+            if (mp == null) return BadRequest("No se encontraron Materias Primas/Reciclados en las fechas consultadas");
+            else return Ok(mp);
+        }
+
         // PUT: api/InventarioInicialXDia_MatPrima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
