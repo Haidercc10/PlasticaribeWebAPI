@@ -4,13 +4,12 @@ namespace PlasticaribeAPI.Service
 {
     public class ConnectionHelper
     {
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
         static ConnectionHelper()
         {
             ConnectionHelper.lazyConnection = new Lazy<ConnectionMultiplexer>(() =>
             {
-#pragma warning disable CS8604 // Posible argumento de referencia nulo
                 return ConnectionMultiplexer.Connect(ConfigurationManager.AppSetting["RedisURL"]);
-#pragma warning restore CS8604 // Posible argumento de referencia nulo
             });
         }
         private static Lazy<ConnectionMultiplexer> lazyConnection;
@@ -21,5 +20,6 @@ namespace PlasticaribeAPI.Service
                 return lazyConnection.Value;
             }
         }
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
     }
 }
