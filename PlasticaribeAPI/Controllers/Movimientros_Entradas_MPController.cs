@@ -91,7 +91,12 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getInventarioMateriales")]
         public ActionResult GetInventarioMateriales()
         {
+            long[] noMp = { 84, 88 };
+            long[] noBopp = { 1 };
+            long[] noTinta = { 2001, 2072 };
+
             var materiasPrimas = from mp in _context.Set<Materia_Prima>()
+                                 where !noMp.Contains(mp.MatPri_Id)
                                  select new
                                  {
                                      Id_Materia_Prima = mp.MatPri_Id,
@@ -99,6 +104,7 @@ namespace PlasticaribeAPI.Controllers
                                  };
 
             var bopp = from bp in _context.Set<Bopp_Generico>()
+                       where !noBopp.Contains(bp.BoppGen_Id)
                        select new
                        {
                            Id_Materia_Prima = bp.BoppGen_Id,
@@ -106,6 +112,7 @@ namespace PlasticaribeAPI.Controllers
                        };
 
             var tintas = from t in _context.Set<Tinta>()
+                         where !noTinta.Contains(t.Tinta_Id)
                          select new
                          {
                              Id_Materia_Prima = t.Tinta_Id,
@@ -113,7 +120,6 @@ namespace PlasticaribeAPI.Controllers
                          };
 
             return Ok(materiasPrimas.Concat(bopp).Concat(tintas));
-
         }
 
         // Cargar inventario de la materia prima asignar de manera detallada

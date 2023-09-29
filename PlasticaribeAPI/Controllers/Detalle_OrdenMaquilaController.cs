@@ -55,7 +55,7 @@ namespace PlasticaribeAPI.Controllers
                                 || om.MatPri_Id == mp
                                 || om.Tinta_Id == mp)
                       select om.DtOM_Codigo;
-            return Ok(con);
+            return con.Any() ? Ok(con.FirstOrDefault()) : BadRequest();
         }
 
         [HttpGet("getInfoOrdenMaquila_Id/{id}")]
