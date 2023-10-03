@@ -339,6 +339,8 @@ namespace PlasticaribeAPI.Controllers
                           Cantidad_Pedida = ot.Ot_CantidadPedida,
                           Peso_Neto = ot.Ot_PesoNetoKg,
                           Precio_Producto = exis.ExProd_PrecioVenta,
+                          ValorKg = ot.Ot_ValorKg,
+                          ValorUnidad = ot.Ot_ValorUnidad,
 
                           // Información de Extrusión
                           Id_Material = otExt.Material_Id,
