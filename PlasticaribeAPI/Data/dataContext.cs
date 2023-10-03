@@ -439,6 +439,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.Usuario).WithMany().HasForeignKey(ot => ot.Usua_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.PedidoExterno).WithMany().HasForeignKey(ot => ot.PedExt_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.Mezcla).WithMany().HasForeignKey(ot => ot.Mezcla_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.Vendedor).WithMany().HasForeignKey(ot => ot.Id_Vendedor).OnDelete(DeleteBehavior.Restrict);
 
             //OT_Extrusion
             modelBuilder.Entity<OT_Extrusion>().ToTable(tb => tb.HasTrigger("TR_ActualizarCampos_OTExtrusion"));

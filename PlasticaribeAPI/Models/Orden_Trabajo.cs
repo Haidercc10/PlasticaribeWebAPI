@@ -57,6 +57,7 @@ namespace PlasticaribeAPI.Models
 
         [Precision(14, 2)]
         public decimal Ot_ValorOT { get; set; }
-
+        public Usuario? Vendedor { get; set; }
+        public long Id_Vendedor { get; set; }
     }
 }

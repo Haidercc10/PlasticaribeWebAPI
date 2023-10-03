@@ -29,7 +29,7 @@ namespace PlasticaribeAPI.Controllers
 
         // GET: api/SedesClientes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Tipos_Sellados>> GetTipos_Sellados(long id)
+        public async Task<ActionResult<Tipos_Sellados>> GetTipos_Sellados(int id)
         {
             if (_context.Sedes_Clientes == null)
             {
@@ -45,7 +45,7 @@ namespace PlasticaribeAPI.Controllers
             return sedesClientes;
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTipos_Sellados(long id, Tipos_Sellados TiposSellados)
+        public async Task<IActionResult> PutTipos_Sellados(int id, Tipos_Sellados TiposSellados)
         {
             if (id != TiposSellados.TpSellado_Id)
             {
@@ -104,7 +104,7 @@ namespace PlasticaribeAPI.Controllers
 
         // DELETE: api/SedesClientes/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTipos_Sellados(long id)
+        public async Task<IActionResult> DeleteTipos_Sellados(int id)
         {
             if (_context.Tipos_Sellados == null)
             {
@@ -122,7 +122,7 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        private bool Tipos_SelladosExists(long id)
+        private bool Tipos_SelladosExists(int id)
         {
             return (_context.Tipos_Sellados?.Any(e => e.TpSellado_Id == id)).GetValueOrDefault();
         }

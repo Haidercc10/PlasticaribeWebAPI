@@ -129,6 +129,7 @@ namespace PlasticaribeAPI.Controllers
                           Tipo_Sellado = produ.TiposSellados.TpSellados_Nombre,
                           Material = produ.MaterialMP.Material_Nombre,
                           Pigmento = produ.Pigmt.Pigmt_Nombre,
+                          PrecioUnidad = exis.ExProd_PrecioVenta
                       };
 
             return Ok(con);
