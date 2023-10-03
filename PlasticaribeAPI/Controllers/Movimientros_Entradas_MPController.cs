@@ -178,6 +178,50 @@ namespace PlasticaribeAPI.Controllers
 
         }
 
+        /* Obtendrá los movimientos de entrada asociados a la salida de material que se está consultando
+        y luego le adicionará la cantidad de salida a la cantidad disponible y restará la cantidad de salida 
+        a la cantidad asignada.*/
+        [HttpGet("getEntradasxMaquilas/{om}/{mp}/{tinta}/{bopp}")]
+        public ActionResult getEntradasxMaquilas(long om, long mp, long tinta, long bopp)
+        {
+            var entradas_salidas = from s in _context.Set<Entradas_Salidas_MP>()
+                                   from me in _context.Set<Movimientros_Entradas_MP>()
+                                   where s.MatPri_Id == mp &&
+                                         s.Tinta_Id == tinta &&
+                                         s.Bopp_Id == bopp &&
+                                         s.Tipo_Salida == "OM" &&
+                                         s.Codigo_Salida == om &&
+                                         s.Codigo_Entrada == me.Codigo_Entrada &&
+                                         s.Id_Entrada == me.Id &&
+                                         s.Tipo_Entrada == me.Tipo_Entrada &&
+                                         me.MatPri_Id == s.MatPri_Id &&
+                                         me.Tinta_Id == s.Tinta_Id &&
+                                         me.Bopp_Id == s.Bopp_Id
+                                   select new
+                                   {
+                                       Id = me.Id,
+                                       MatPri_Id = me.MatPri_Id,
+                                       Tinta_Id = me.Tinta_Id,
+                                       Bopp_Id = me.Bopp_Id,
+                                       Cantidad_Entrada = me.Cantidad_Entrada,
+                                       UndMed_Id = me.UndMed_Id,
+                                       Precio_RealUnitario = me.Precio_RealUnitario,
+                                       Tipo_Entrada = me.Tipo_Entrada,
+                                       Codigo_Entrada = me.Codigo_Entrada,
+                                       Estado_Id = 19,
+                                       Cantidad_Asignada = me.Cantidad_Asignada - s.Cantidad_Salida,
+                                       Cantidad_Disponible = me.Cantidad_Disponible + s.Cantidad_Salida, 
+                                       Observacion = me.Observacion,
+                                       Fecha_Entrada = me.Fecha_Entrada,
+                                       Hora_Entrada = me.Hora_Entrada,
+                                       Precio_EstandarUnitario = me.Precio_EstandarUnitario
+                                   };
+
+            if (entradas_salidas == null) return BadRequest("No se encontraron entradas de material");
+            else return Ok(entradas_salidas);
+        }
+
+
         // PUT: api/Movimientros_Entradas_MP/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

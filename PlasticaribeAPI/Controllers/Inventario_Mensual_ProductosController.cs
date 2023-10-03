@@ -149,6 +149,62 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        // Consulta que traerá la cantidad de cada producto en cada mes
+        [HttpGet("getInventarioProductoInicioMes/{fechaFin}")]
+        public ActionResult GetInventarioProductoInicioMes(DateTime fechaFin)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from inv in _context.Set<Inventario_Mensual_Productos>()
+                      join exi in _context.Set<Existencia_Productos>()
+                      on inv.Prod_Id equals exi.Prod_Id
+                      where inv.Prod_Id != 1
+                      && fechaFin.Month == 1 ? inv.Enero >= 1 :
+                         fechaFin.Month == 2 ? inv.Febrero >= 1 :
+                         fechaFin.Month == 3 ? inv.Marzo >= 1 :
+                         fechaFin.Month == 4 ? inv.Abril >= 1 :
+                         fechaFin.Month == 5 ? inv.Mayo >= 1 :
+                         fechaFin.Month == 6 ? inv.Junio >= 1 :
+                         fechaFin.Month == 7 ? inv.Julio >= 1 :
+                         fechaFin.Month == 8 ? inv.Agosto >= 1 :
+                         fechaFin.Month == 9 ? inv.Septiembre >= 1 :
+                         fechaFin.Month == 10 ? inv.Octubre >= 1 :
+                         fechaFin.Month == 11 ? inv.Noviembre >= 1 :
+                         fechaFin.Month == 13 ? inv.Diciembre >= 1 : inv.Enero >= 1
+                      select new {
+                          Fecha_Inventario = new DateTime(fechaFin.Year, fechaFin.Month, 1),
+                          Ot = "",
+                          Item = inv.Prod_Id,
+                          Referencia = exi.Prod.Prod_Nombre,
+                          Stock = fechaFin.Month == 1 ? inv.Enero :
+                                  fechaFin.Month == 2 ? inv.Febrero :
+                                  fechaFin.Month == 3 ? inv.Marzo :
+                                  fechaFin.Month == 4 ? inv.Abril :
+                                  fechaFin.Month == 5 ? inv.Mayo :
+                                  fechaFin.Month == 6 ? inv.Junio :
+                                  fechaFin.Month == 7 ? inv.Julio :
+                                  fechaFin.Month == 8 ? inv.Agosto :
+                                  fechaFin.Month == 9 ? inv.Septiembre :
+                                  fechaFin.Month == 10 ? inv.Octubre :
+                                  fechaFin.Month == 11 ? inv.Noviembre :
+                                  fechaFin.Month == 13 ? inv.Diciembre : inv.Enero,
+                          Precio = exi.ExProd_PrecioVenta,
+                          Subtotal = (fechaFin.Month == 1 ? inv.Enero :
+                                      fechaFin.Month == 2 ? inv.Febrero :
+                                      fechaFin.Month == 3 ? inv.Marzo :
+                                      fechaFin.Month == 4 ? inv.Abril :
+                                      fechaFin.Month == 5 ? inv.Mayo :
+                                      fechaFin.Month == 6 ? inv.Junio :
+                                      fechaFin.Month == 7 ? inv.Julio :
+                                      fechaFin.Month == 8 ? inv.Agosto :
+                                      fechaFin.Month == 9 ? inv.Septiembre :
+                                      fechaFin.Month == 10 ? inv.Octubre :
+                                      fechaFin.Month == 11 ? inv.Noviembre :
+                                      fechaFin.Month == 13 ? inv.Diciembre : inv.Enero) * exi.ExProd_PrecioVenta,
+                      };
+            if (con == null) return BadRequest("No se encontraron Productos en la fecha consultada");
+            else return Ok(con);
+        }    
+
         // PUT: api/Inventario_Mensual_Productos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
