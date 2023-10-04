@@ -506,7 +506,7 @@ namespace PlasticaribeAPI.Controllers
                        join otSelCor in _context.Set<OT_Sellado_Corte>() on ot.Ot_Id equals otSelCor.Ot_Id
                        where ot.Prod_Id == producto
                              && ot.UndMed_Id == presentacion
-                       orderby ot.Ot_Id
+                       orderby ot.Ot_Id descending
                        select new
                        {
                            // Información de la OT
@@ -688,7 +688,7 @@ namespace PlasticaribeAPI.Controllers
                            ot.Mezcla.Mezcla_PorcentajePigmto2_Capa3,
                            ot.Mezcla.MezPigmto_Id2xCapa3,
                            P2C3_Nombre = ot.Mezcla.MezPigmento2C3.MezPigmto_Nombre,
-                       }).LastOrDefault();
+                       }).Take(1);
 
             return con != null ? Ok(con) : NotFound();
         }

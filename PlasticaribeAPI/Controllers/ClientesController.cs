@@ -100,7 +100,7 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult<Clientes> LikeGetClientes(string Cli_Nombre)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
-            var clientes = _context.Clientes.Where(pp => pp.Cli_Nombre.Contains(Cli_Nombre)).Select(cl => new { cl.Cli_Id, cl.Cli_Nombre }).ToList();
+            var clientes = _context.Clientes.Where(pp => pp.Cli_Nombre.Contains(Cli_Nombre)).Select(cl => new { cl.Cli_Id, cl.Cli_Nombre, cl.usua_Id }).ToList();
 
             if (clientes == null) return NotFound();
             else return Ok(clientes);
