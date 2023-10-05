@@ -93,27 +93,21 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("getPdfOTInsertada/{Ot_Id}")]
-        public ActionResult GetPdfOTInsertada(long Ot_Id)
+        public ActionResult GetPdfOTInsertada(long orden)
         {
             var con = from ot in _context.Set<Orden_Trabajo>()
-                      from otExt in _context.Set<OT_Extrusion>()
-                      from otImp in _context.Set<OT_Impresion>()
-                      from otLam in _context.Set<OT_Laminado>()
-                      from otSelCor in _context.Set<OT_Sellado_Corte>()
-                      from ped in _context.Set<PedidoProducto>()
-                      where ot.Ot_Id == Ot_Id
-                            && otExt.Ot_Id == Ot_Id
-                            && otImp.Ot_Id == Ot_Id
-                            && otLam.OT_Id == Ot_Id
-                            && otSelCor.Ot_Id == Ot_Id
-                            && ped.Prod_Id == ot.Prod_Id
-                            && ped.UndMed_Id == ot.UndMed_Id
-                            && ped.PedExt_Id == ot.PedExt_Id
+                      join otExt in _context.Set<OT_Extrusion>() on ot.Ot_Id equals otExt.Ot_Id
+                      join otImp in _context.Set<OT_Impresion>() on ot.Ot_Id equals otImp.Ot_Id
+                      join otLam in _context.Set<OT_Laminado>() on ot.Ot_Id equals otLam.OT_Id
+                      join otSelCor in _context.Set<OT_Sellado_Corte>() on ot.Ot_Id equals otSelCor.Ot_Id
+                      join exis in _context.Set<Existencia_Productos>() on ot.Prod_Id equals exis.Prod_Id
+                      where ot.Ot_Id == orden &&
+                            exis.UndMed_Id == ot.UndMed_Id
                       select new
                       {
                           // Información de la OT
                           Numero_Orden = ot.Ot_Id,
-                          Id_SedeCliente = ot.SedeCli_Id,
+                          Id_SedeCliente = ot.SedeCli.SedeCli_CodBagPro,
                           Id_Cliente = ot.SedeCli.Cli_Id,
                           Cliente = ot.SedeCli.Cli.Cli_Nombre,
                           Ciudad = ot.SedeCli.SedeCliente_Ciudad,
@@ -128,8 +122,8 @@ namespace PlasticaribeAPI.Controllers
                           Estado_Orden = ot.Estado_Id,
                           Estado = ot.Estado.Estado_Nombre,
                           Id_Pedido = ot.PedExt_Id,
-                          Id_Vendedor = ot.PedidoExterno.Usua_Id,
-                          Vendedor = ot.PedidoExterno.Usua.Usua_Nombre,
+                          Id_Vendedor = ot.Id_Vendedor,
+                          Vendedor = ot.Vendedor.Usua_Nombre,
                           Observacion = ot.Ot_Observacion,
                           Cyrel = ot.Ot_Cyrel,
                           Extrusion = ot.Extrusion,
@@ -140,7 +134,9 @@ namespace PlasticaribeAPI.Controllers
                           Sellado = ot.Sellado,
                           Cantidad_Pedida = ot.Ot_CantidadPedida,
                           Peso_Neto = ot.Ot_PesoNetoKg,
-                          Precio_Producto = ped.PedExtProd_PrecioUnitario,
+                          Precio_Producto = exis.ExProd_PrecioVenta,
+                          ValorKg = ot.Ot_ValorKg,
+                          ValorUnidad = ot.Ot_ValorUnidad,
 
                           // Información de Extrusión
                           Id_Material = otExt.Material_Id,
@@ -292,8 +288,7 @@ namespace PlasticaribeAPI.Controllers
                           P2C3_Nombre = ot.Mezcla.MezPigmento2C3.MezPigmto_Nombre,
                       };
 
-            if (con == null) return NotFound();
-            return Ok(con);
+            return con.Any() ? Ok(con) : BadRequest($"¡No se encontró una Orden de Trabajo con el consecutivo {orden}!");
         }
 
         [HttpGet("getOrdenTrabajo/{orden}")]
@@ -326,8 +321,8 @@ namespace PlasticaribeAPI.Controllers
                           Estado_Orden = ot.Estado_Id,
                           Estado = ot.Estado.Estado_Nombre,
                           Id_Pedido = ot.PedExt_Id,
-                          Id_Vendedor = ot.PedidoExterno.Usua_Id,
-                          Vendedor = ot.PedidoExterno.Usua.Usua_Nombre,
+                          Id_Vendedor = ot.Id_Vendedor,
+                          Vendedor = ot.Vendedor.Usua_Nombre,
                           Observacion = ot.Ot_Observacion,
                           Cyrel = ot.Ot_Cyrel,
                           Extrusion = ot.Extrusion,
@@ -526,8 +521,8 @@ namespace PlasticaribeAPI.Controllers
                            Estado_Orden = ot.Estado_Id,
                            Estado = ot.Estado.Estado_Nombre,
                            Id_Pedido = ot.PedExt_Id,
-                           Id_Vendedor = ot.PedidoExterno.Usua_Id,
-                           Vendedor = ot.PedidoExterno.Usua.Usua_Nombre,
+                           Id_Vendedor = ot.Id_Vendedor,
+                           Vendedor = ot.Vendedor.Usua_Nombre,
                            Observacion = ot.Ot_Observacion,
                            Cyrel = ot.Ot_Cyrel,
                            Extrusion = ot.Extrusion,
@@ -688,7 +683,7 @@ namespace PlasticaribeAPI.Controllers
                            ot.Mezcla.Mezcla_PorcentajePigmto2_Capa3,
                            ot.Mezcla.MezPigmto_Id2xCapa3,
                            P2C3_Nombre = ot.Mezcla.MezPigmento2C3.MezPigmto_Nombre,
-                       }).Take(1);
+                       }).FirstOrDefault();
 
             return con != null ? Ok(con) : NotFound();
         }
