@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.StaticFiles;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
-
+using System.IO.Compression;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -105,7 +105,30 @@ namespace PlasticaribeAPI.Controllers
             }
             memory.Position = 0;
             return File(memory, GetContentType(filePath), file);
+        }
 
+        [HttpGet("downloadDirectory")]
+        public async Task<ActionResult> DownloadDirectory(string filePath, string directoy)
+        {
+            var dir = new DirectoryInfo(filePath);
+            if (!dir.Exists) throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
+
+            string startPath = @$"{filePath}";
+            string zipPath = @$"{filePath}.zip";
+
+            if (System.IO.File.Exists(zipPath)) EliminarArchivos(zipPath);
+
+            ZipFile.CreateFromDirectory(startPath, zipPath);
+
+            var memory = new MemoryStream();
+
+            using (var stream = new FileStream(zipPath, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+
+            memory.Position = 0;
+            return File(memory, GetContentType(zipPath), directoy);
         }
 
         [HttpGet("Carpetas")]
