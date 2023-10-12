@@ -160,7 +160,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<TipoSalidas_CajaMenor> TipoSalidas_CajaMenor { get; set; }
         public DbSet<CajaMenor_Plasticaribe> CajaMenor_Plasticaribe { get; set; }
         public DbSet<Productos_MateriasPrimas> Productos_MateriasPrimas { get; set; }
-        public DbSet<PlasticaribeAPI.Models.Inventario_Areas> Inventarios_Areas { get; set; }
+        public DbSet<Inventario_Areas> Inventarios_Areas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

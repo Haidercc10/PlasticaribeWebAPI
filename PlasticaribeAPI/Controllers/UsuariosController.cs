@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -279,5 +281,6 @@ namespace PlasticaribeAPI.Controllers
         {
             return _context.Usuarios.Any(e => e.Usua_Id == id);
         }
+
     }
 }

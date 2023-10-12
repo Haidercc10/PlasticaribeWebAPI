@@ -108,7 +108,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("downloadDirectory")]
-        public async Task<ActionResult> DownloadDirectory(string filePath, string directoy)
+        public ActionResult DownloadDirectory(string filePath, string directoy)
         {
             var dir = new DirectoryInfo(filePath);
             if (!dir.Exists) throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
@@ -118,17 +118,9 @@ namespace PlasticaribeAPI.Controllers
 
             if (System.IO.File.Exists(zipPath)) EliminarArchivos(zipPath);
 
-            ZipFile.CreateFromDirectory(startPath, zipPath);
+            ZipFile.CreateFromDirectory(startPath, zipPath, CompressionLevel.Fastest, true);
 
-            var memory = new MemoryStream();
-
-            using (var stream = new FileStream(zipPath, FileMode.Open))
-            {
-                await stream.CopyToAsync(memory);
-            }
-
-            memory.Position = 0;
-            return File(memory, GetContentType(zipPath), directoy);
+            return Ok($"¡La carpeta se ha comprimido, esta tiene el nombre {zipPath}!");
         }
 
         [HttpGet("Carpetas")]
