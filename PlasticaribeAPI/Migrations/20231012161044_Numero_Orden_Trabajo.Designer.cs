@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20231012161044_Numero_Orden_Trabajo")]
+    partial class Numero_Orden_Trabajo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4732,18 +4735,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<decimal>("SelladoCorte_CantBolsasPaquete")
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
-
-                    b.Property<string>("SelladoCorte_Etiqueta_Ancho")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<string>("SelladoCorte_Etiqueta_Fuelle")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<string>("SelladoCorte_Etiqueta_Largo")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)");
 
                     b.Property<decimal?>("SelladoCorte_Fuelle")
                         .HasPrecision(14, 2)

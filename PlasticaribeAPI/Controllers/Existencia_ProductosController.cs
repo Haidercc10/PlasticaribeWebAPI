@@ -354,6 +354,29 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        [HttpPut("putPrecioProducto/{producto}/{presentacion}/{precio}")]
+        public IActionResult PutPrecioProducto(int producto, string presentacion, decimal precio)
+        {
+            try
+            {
+                var existencia = (from exis in _context.Set<Existencia_Productos>() where exis.Prod_Id == producto && exis.UndMed_Id == presentacion select exis).FirstOrDefault();
+                existencia.ExProd_PrecioVenta = precio;
+                _context.SaveChanges();
+                return NoContent();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!Existencia_ProductosExists(producto))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
         // POST: api/Existencia_Productos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

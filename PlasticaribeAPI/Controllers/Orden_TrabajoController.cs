@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 
@@ -46,13 +47,26 @@ namespace PlasticaribeAPI.Controllers
             return orden_Trabajo;
         }
 
+        [HttpGet("getDatosOrden/{ot}")]
+        public ActionResult GetDatosOrden(long ot)
+        {
+            var orden_Trabajo = (from orden in _context.Set<Orden_Trabajo>() where orden.Numero_OT == ot select orden).FirstOrDefault();
+            return orden_Trabajo != null ? Ok(orden_Trabajo) : NotFound();
+        }
+
+        [HttpGet("getUlt_Numero_OT")]
+        public long GetUlt_Numero_OT()
+        {
+            return (from ot in _context.Set<Orden_Trabajo>() orderby ot.Numero_OT descending select ot.Numero_OT).FirstOrDefault();
+        }
+
         [HttpGet("NumeroOt/{Ot_Id}")]
         public ActionResult<Orden_Trabajo> GetNumeroOt(long Ot_Id)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
             var orden_trabajo = _context.Orden_Trabajo
-                .Where(ot => ot.Ot_Id == Ot_Id)
+                .Where(ot => ot.Numero_OT == Ot_Id)
                 .Include(ot => ot.PedidoExterno)
                 .Include(ot => ot.SedeCli)
                 .Include(ot => ot.SedeCli.Cli)
@@ -101,12 +115,13 @@ namespace PlasticaribeAPI.Controllers
                       join otLam in _context.Set<OT_Laminado>() on ot.Ot_Id equals otLam.OT_Id
                       join otSelCor in _context.Set<OT_Sellado_Corte>() on ot.Ot_Id equals otSelCor.Ot_Id
                       join exis in _context.Set<Existencia_Productos>() on ot.Prod_Id equals exis.Prod_Id
-                      where ot.Ot_Id == orden &&
+                      where ot.Numero_OT == orden &&
                             exis.UndMed_Id == ot.UndMed_Id
                       select new
                       {
                           // Información de la OT
-                          Numero_Orden = ot.Ot_Id,
+                          Id_OT = ot.Ot_Id,
+                          Numero_Orden = ot.Numero_OT,
                           Id_SedeCliente = ot.SedeCli.SedeCli_CodBagPro,
                           Id_Cliente = ot.SedeCli.Cli_Id,
                           Cliente = ot.SedeCli.Cli.Cli_Nombre,
@@ -196,6 +211,9 @@ namespace PlasticaribeAPI.Controllers
                           otSelCor.SelladoCorte_Ancho,
                           otSelCor.SelladoCorte_Largo,
                           otSelCor.SelladoCorte_Fuelle,
+                          otSelCor.SelladoCorte_Etiqueta_Ancho,
+                          otSelCor.SelladoCorte_Etiqueta_Largo,
+                          otSelCor.SelladoCorte_Etiqueta_Fuelle,
                           otSelCor.TpSellado_Id,
                           otSelCor.TipoSellado.TpSellados_Nombre,
                           otSelCor.SelladoCorte_PesoMillar,
@@ -299,13 +317,12 @@ namespace PlasticaribeAPI.Controllers
                       join otImp in _context.Set<OT_Impresion>() on ot.Ot_Id equals otImp.Ot_Id
                       join otLam in _context.Set<OT_Laminado>() on ot.Ot_Id equals otLam.OT_Id
                       join otSelCor in _context.Set<OT_Sellado_Corte>() on ot.Ot_Id equals otSelCor.Ot_Id
-                      join exis in _context.Set<Existencia_Productos>() on ot.Prod_Id equals exis.Prod_Id
-                      where ot.Ot_Id == orden &&
-                            exis.UndMed_Id == ot.UndMed_Id
+                      where ot.Numero_OT == orden
                       select new
                       {
                           // Información de la OT
-                          Numero_Orden = ot.Ot_Id,
+                          Id_OT = ot.Ot_Id,
+                          Numero_Orden = ot.Numero_OT,
                           Id_SedeCliente = ot.SedeCli.SedeCli_CodBagPro,
                           Id_Cliente = ot.SedeCli.Cli_Id,
                           Cliente = ot.SedeCli.Cli.Cli_Nombre,
@@ -333,7 +350,6 @@ namespace PlasticaribeAPI.Controllers
                           Sellado = ot.Sellado,
                           Cantidad_Pedida = ot.Ot_CantidadPedida,
                           Peso_Neto = ot.Ot_PesoNetoKg,
-                          Precio_Producto = exis.ExProd_PrecioVenta,
                           ValorKg = ot.Ot_ValorKg,
                           ValorUnidad = ot.Ot_ValorUnidad,
 
@@ -395,6 +411,9 @@ namespace PlasticaribeAPI.Controllers
                           otSelCor.SelladoCorte_Ancho,
                           otSelCor.SelladoCorte_Largo,
                           otSelCor.SelladoCorte_Fuelle,
+                          otSelCor.SelladoCorte_Etiqueta_Ancho,
+                          otSelCor.SelladoCorte_Etiqueta_Largo,
+                          otSelCor.SelladoCorte_Etiqueta_Fuelle,
                           otSelCor.TpSellado_Id,
                           otSelCor.TipoSellado.TpSellados_Nombre,
                           otSelCor.SelladoCorte_PesoMillar,
@@ -505,7 +524,8 @@ namespace PlasticaribeAPI.Controllers
                        select new
                        {
                            // Información de la OT
-                           Numero_Orden = ot.Ot_Id,
+                           Id_OT = ot.Ot_Id,
+                           Numero_Orden = ot.Numero_OT,
                            Id_SedeCliente = ot.SedeCli_Id,
                            Id_Cliente = ot.SedeCli.Cli_Id,
                            Cliente = ot.SedeCli.Cli.Cli_Nombre,
@@ -594,6 +614,9 @@ namespace PlasticaribeAPI.Controllers
                            otSelCor.SelladoCorte_Ancho,
                            otSelCor.SelladoCorte_Largo,
                            otSelCor.SelladoCorte_Fuelle,
+                           otSelCor.SelladoCorte_Etiqueta_Ancho,
+                           otSelCor.SelladoCorte_Etiqueta_Largo,
+                           otSelCor.SelladoCorte_Etiqueta_Fuelle,
                            otSelCor.TpSellado_Id,
                            otSelCor.TipoSellado.TpSellados_Nombre,
                            otSelCor.SelladoCorte_PesoMillar,
