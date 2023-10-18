@@ -56,5 +56,18 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(max)")]
         public string SelladoCorte_Etiqueta_Fuelle { get; set; }
+
+        [Precision(14, 2)]
+        public decimal SelladoCorte_PrecioDia_Wik_Mq50 { get; set; }
+
+        [Precision(14, 2)]
+        public decimal SelladoCorte_PrecioNoche_Wik_Mq50 { get; set; }
+
+        [Precision(14, 2)]
+        public decimal SelladoCorte_PrecioDia_Wik_Mq9 { get; set; }
+
+        [Precision(14, 2)]
+        public decimal SelladoCorte_PrecioNoche_Wik_Mq9 { get; set; }
+
     }
 }

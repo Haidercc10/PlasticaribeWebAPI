@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 
@@ -220,10 +219,14 @@ namespace PlasticaribeAPI.Controllers
                           otSelCor.SelladoCorte_PesoBulto,
                           otSelCor.SelladoCorte_CantBolsasBulto,
                           otSelCor.SelladoCorte_CantBolsasPaquete,
-                          otSelCor.SelladoCorte_PrecioSelladoDia,
-                          otSelCor.SelladoCorte_PrecioSelladoNoche,
                           otSelCor.SelladoCorte_PesoPaquete,
                           otSelCor.SelladoCorte_PesoProducto,
+                          otSelCor.SelladoCorte_PrecioSelladoDia,
+                          otSelCor.SelladoCorte_PrecioSelladoNoche,
+                          otSelCor.SelladoCorte_PrecioDia_Wik_Mq50,
+                          otSelCor.SelladoCorte_PrecioNoche_Wik_Mq50,
+                          otSelCor.SelladoCorte_PrecioDia_Wik_Mq9,
+                          otSelCor.SelladoCorte_PrecioNoche_Wik_Mq9,
 
                           // Información de Mezclas
                           ot.Mezcla_Id,
@@ -420,10 +423,14 @@ namespace PlasticaribeAPI.Controllers
                           otSelCor.SelladoCorte_PesoBulto,
                           otSelCor.SelladoCorte_CantBolsasBulto,
                           otSelCor.SelladoCorte_CantBolsasPaquete,
-                          otSelCor.SelladoCorte_PrecioSelladoDia,
-                          otSelCor.SelladoCorte_PrecioSelladoNoche,
                           otSelCor.SelladoCorte_PesoPaquete,
                           otSelCor.SelladoCorte_PesoProducto,
+                          otSelCor.SelladoCorte_PrecioSelladoDia,
+                          otSelCor.SelladoCorte_PrecioSelladoNoche,
+                          otSelCor.SelladoCorte_PrecioDia_Wik_Mq50,
+                          otSelCor.SelladoCorte_PrecioNoche_Wik_Mq50,
+                          otSelCor.SelladoCorte_PrecioDia_Wik_Mq9,
+                          otSelCor.SelladoCorte_PrecioNoche_Wik_Mq9,
 
                           // Información de Mezclas
                           ot.Mezcla_Id,
@@ -541,16 +548,16 @@ namespace PlasticaribeAPI.Controllers
                            Estado_Orden = ot.Estado_Id,
                            Estado = ot.Estado.Estado_Nombre,
                            Id_Pedido = ot.PedExt_Id,
-                           Id_Vendedor = ot.Id_Vendedor,
+                           ot.Id_Vendedor,
                            Vendedor = ot.Vendedor.Usua_Nombre,
                            Observacion = ot.Ot_Observacion,
                            Cyrel = ot.Ot_Cyrel,
-                           Extrusion = ot.Extrusion,
-                           Impresion = ot.Impresion,
-                           Rotograbado = ot.Rotograbado,
-                           Laminado = ot.Laminado,
+                           ot.Extrusion,
+                           ot.Impresion,
+                           ot.Rotograbado,
+                           ot.Laminado,
                            Corte = ot.Ot_Corte,
-                           Sellado = ot.Sellado,
+                           ot.Sellado,
                            Cantidad_Pedida = ot.Ot_CantidadPedida,
                            PrecioUnidad = ot.Ot_ValorUnidad,
                            PrecioKilo = ot.Ot_ValorKg,
@@ -608,7 +615,7 @@ namespace PlasticaribeAPI.Controllers
                            Calibre_Laminado_Capa3 = otLam.LamCapa_Calibre3,
                            Cantidad_Laminado_Capa3 = otLam.LamCapa_Cantidad3,
 
-                           // Información de Sellado
+                           // Información de Sellado y Corte
                            Id_Formato_Producto = otSelCor.Formato_Id,
                            Formato_Producto = otSelCor.Formato.TpProd_Nombre,
                            otSelCor.SelladoCorte_Ancho,
@@ -619,13 +626,17 @@ namespace PlasticaribeAPI.Controllers
                            otSelCor.SelladoCorte_Etiqueta_Fuelle,
                            otSelCor.TpSellado_Id,
                            otSelCor.TipoSellado.TpSellados_Nombre,
+                           ot.Prod.Prod_Peso_Millar,
                            otSelCor.SelladoCorte_PesoMillar,
                            otSelCor.SelladoCorte_PesoBulto,
                            otSelCor.SelladoCorte_CantBolsasBulto,
                            otSelCor.SelladoCorte_CantBolsasPaquete,
                            otSelCor.SelladoCorte_PrecioSelladoDia,
                            otSelCor.SelladoCorte_PrecioSelladoNoche,
-                           ot.Prod.Prod_Peso_Millar,
+                           otSelCor.SelladoCorte_PrecioDia_Wik_Mq50,
+                           otSelCor.SelladoCorte_PrecioNoche_Wik_Mq50,
+                           otSelCor.SelladoCorte_PrecioDia_Wik_Mq9,
+                           otSelCor.SelladoCorte_PrecioNoche_Wik_Mq9,
 
                            // Información de Mezclas
                            ot.Mezcla_Id,
