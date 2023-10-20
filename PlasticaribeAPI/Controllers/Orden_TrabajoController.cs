@@ -56,7 +56,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getUlt_Numero_OT")]
         public long GetUlt_Numero_OT()
         {
-            return (from ot in _context.Set<Orden_Trabajo>() orderby ot.Numero_OT descending select ot.Numero_OT).FirstOrDefault();
+            return (from ot in _context.Set<Orden_Trabajo>() where ot.Numero_OT == 123456 orderby ot.Numero_OT descending select ot.Numero_OT).FirstOrDefault();
         }
 
         [HttpGet("NumeroOt/{Ot_Id}")]
@@ -132,7 +132,7 @@ namespace PlasticaribeAPI.Controllers
                           Presentacion = ot.Unidad_Medida.UndMed_Nombre,
                           Margen = ot.Ot_MargenAdicional,
                           Fecha_Creacion = ot.Ot_FechaCreacion,
-                          Fecha_Entrega = ot.PedidoExterno.PedExt_FechaEntrega,
+                          Fecha_Entrega = ot.Ot_FechaCreacion,
                           Estado_Orden = ot.Estado_Id,
                           Estado = ot.Estado.Estado_Nombre,
                           Id_Pedido = ot.PedExt_Id,
@@ -337,7 +337,7 @@ namespace PlasticaribeAPI.Controllers
                           Presentacion = ot.Unidad_Medida.UndMed_Nombre,
                           Margen = ot.Ot_MargenAdicional,
                           Fecha_Creacion = ot.Ot_FechaCreacion,
-                          Fecha_Entrega = ot.PedidoExterno.PedExt_FechaEntrega,
+                          Fecha_Entrega = ot.Ot_FechaCreacion,
                           Estado_Orden = ot.Estado_Id,
                           Estado = ot.Estado.Estado_Nombre,
                           Id_Pedido = ot.PedExt_Id,
@@ -544,7 +544,7 @@ namespace PlasticaribeAPI.Controllers
                            Presentacion = ot.Unidad_Medida.UndMed_Nombre,
                            Margen = ot.Ot_MargenAdicional,
                            Fecha_Creacion = ot.Ot_FechaCreacion,
-                           Fecha_Entrega = ot.PedidoExterno.PedExt_FechaEntrega,
+                           Fecha_Entrega = ot.Ot_FechaCreacion,
                            Estado_Orden = ot.Estado_Id,
                            Estado = ot.Estado.Estado_Nombre,
                            Id_Pedido = ot.PedExt_Id,
