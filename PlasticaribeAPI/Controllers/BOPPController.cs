@@ -159,53 +159,24 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetNombresRepetitivos()
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
-            var con = _context.BOPP.GroupBy(a => a.BOPP_Descripcion)
+            var con = _context.BOPP.GroupBy(a => new { a.BOPP_Descripcion, a.BOPP_CantidadMicras })
                                    .Where(b => b.Count() > 10)
-                                   .Select(b => b.Key).Distinct().ToList();
-
+                                   .Select(b => new { 
+                                       Nombre = b.Key.BOPP_Descripcion, 
+                                       Micras = b.Key.BOPP_CantidadMicras, 
+                                   }).Distinct().ToList(); 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL. 
             return Ok(con);
         }
 
-
-        [HttpGet("getMicras")]
-        public ActionResult GetMicrasRepetitivas()
+        [HttpGet("getUltimoPrecioBopp")]
+        public ActionResult GetUltimoPrecioBopp()
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.BOPP.GroupBy(a => a.BOPP_CantidadMicras)
-                                   .Where(b => b.Count() > 10)
-                                   .Select(b => b.Key).Distinct().ToList();
-
+            var con = (from b in _context.Set<BOPP>() orderby b.BOPP_Id descending select b.BOPP_Precio).FirstOrDefault();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
-
-
-        [HttpGet("getPrecios")]
-        public ActionResult GePreciosRepetitivos()
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.BOPP.GroupBy(a => a.BOPP_Precio)
-                                   .Where(b => b.Count() > 10)
-                                   .Select(b => b.Key).Distinct().ToList();
-
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
-
-        [HttpGet("getAnchos")]
-        public ActionResult GetAnchosRepetitivos()
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.BOPP.GroupBy(a => a.BOPP_Ancho)
-                                   .Where(b => b.Count() > 10)
-                                   .Select(b => b.Key).Distinct().ToList();
-
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
 
         [HttpGet("getSeriales")]
         public ActionResult GetSerialesRepetitivos()
@@ -213,12 +184,12 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.BOPP.GroupBy(a => Convert.ToString(a.BOPP_Serial).Substring(0, 5))
                                    .Where(b => b.Count() > 10)
-                                   .Select(b => b.Key.Substring(0, 5)).Distinct().ToList();
-
+                                   .Select(b => new { 
+                                       Serial = b.Key.Substring(0, 5)    
+                                   }).Distinct().ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
-
 
         [HttpGet("getInventarioBoppsGenericos")]
         public ActionResult GetInventarioBoppsGenericos()
