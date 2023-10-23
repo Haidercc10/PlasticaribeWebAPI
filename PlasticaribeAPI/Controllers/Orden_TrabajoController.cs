@@ -56,7 +56,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getUlt_Numero_OT")]
         public long GetUlt_Numero_OT()
         {
-            return (from ot in _context.Set<Orden_Trabajo>() where ot.Numero_OT == 123456 orderby ot.Numero_OT descending select ot.Numero_OT).FirstOrDefault();
+            return (from ot in _context.Set<Orden_Trabajo>() orderby ot.Numero_OT descending select ot.Numero_OT).FirstOrDefault();
         }
 
         [HttpGet("NumeroOt/{Ot_Id}")]
