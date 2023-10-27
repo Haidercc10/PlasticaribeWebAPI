@@ -534,7 +534,7 @@ namespace PlasticaribeAPI.Controllers
                                Salida = conAsgBopp,
                                Stock = bopp.BOPP_Stock,
                                Diferencia = bopp.BOPP_Stock - bopp.BOPP_CantidadInicialKg,
-                               Presentacion = bopp.UndMed_Id,
+                               Presentacion = bopp.UndMed_Kg,
                                Precio = bopp.BOPP_Precio,
                                PrecioEstandar = bpGen.BoppGen_PrecioEstandar,
                                SubTotal = bopp.BOPP_Stock * bopp.BOPP_Precio,
