@@ -800,7 +800,7 @@ namespace PlasticaribeAPI.Controllers
                              Id = asg.AsigMp_Id,
                              Codigo = Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo),
                              Movimiento = Convert.ToString("ASIGMP"),
-                             Tipo_Movimiento = Convert.ToString("Asigmación de Materia Prima"),
+                             Tipo_Movimiento = Convert.ToString("Asignación de Materia Prima"),
                              Fecha = asg.AsigMp.AsigMp_FechaEntrega,
                              Hora = asg.AsigMp.AsigMp_Hora,
                              Usuario = asg.AsigMp.Usua.Usua_Nombre,
