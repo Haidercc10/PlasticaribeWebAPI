@@ -502,6 +502,7 @@ namespace PlasticaribeAPI.Controllers
                        select new
                        {
                            Id = x.Key.MatPri_Id,
+                           Id2 = x.Key.MatPri_Id,
                            Nombre = x.Key.MatPri_Nombre,
                            Ancho = Convert.ToDouble(0.00),
                            Micras = Convert.ToDouble(0.00),
@@ -526,6 +527,7 @@ namespace PlasticaribeAPI.Controllers
                            select new
                            {
                                Id = bopp.BOPP_Serial,
+                               Id2 = bopp.BOPP_Id,
                                Nombre = bopp.BOPP_Nombre,
                                Ancho = Convert.ToDouble(bopp.BOPP_Ancho),
                                Micras = Convert.ToDouble(bopp.BOPP_CantidadMicras),
@@ -548,6 +550,7 @@ namespace PlasticaribeAPI.Controllers
                             select new
                             {
                                 Id = tinta.Tinta_Id,
+                                Id2 = tinta.Tinta_Id,
                                 Nombre = tinta.Tinta_Nombre,
                                 Ancho = Convert.ToDouble(0.00),
                                 Micras = Convert.ToDouble(0.00),
