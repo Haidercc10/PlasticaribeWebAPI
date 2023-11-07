@@ -812,6 +812,7 @@ namespace PlasticaribeAPI.Data
 
             //Vistas Permisos
             modelBuilder.Entity<Vistas_Permisos>().ToTable(x => x.HasTrigger("Auditoria_Vistas_Permisos"));
+            modelBuilder.Entity<Vistas_Permisos>().HasOne(x => x.Estado).WithMany().HasForeignKey(y => y.Vp_Estado).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Formato Documentos
             modelBuilder.Entity<Formato_Documentos>().ToTable(x => x.HasTrigger("Auditoria_Formato_Documentos"));

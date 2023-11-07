@@ -51,7 +51,8 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetCategorias(string rol)
         {
             var con = from vp in _context.Set<Vistas_Permisos>()
-                      where vp.Vp_Id_Roles.Contains($"|{rol}|")
+                      where vp.Vp_Id_Roles.Contains($"|{rol}|") && 
+                            vp.Vp_Estado == 1
                       select vp.Vp_Categoria;
             return Ok(con);
         }
@@ -62,7 +63,8 @@ namespace PlasticaribeAPI.Controllers
         {
             var con = from vp in _context.Set<Vistas_Permisos>()
                       where vp.Vp_Id_Roles.Contains($"|{rol}|") &&
-                            vp.Vp_Categoria.Contains($"|{categoria}|")
+                            vp.Vp_Categoria.Contains($"|{categoria}|") &&
+                            vp.Vp_Estado == 1
                       select vp;
             return Ok(con);
         }
@@ -73,7 +75,8 @@ namespace PlasticaribeAPI.Controllers
         {
             var con = from vp in _context.Set<Vistas_Permisos>()
                       where vp.Vp_Id_Roles.Contains($"|{rol}|") &&
-                            vp.Vp_Nombre == ruta
+                            vp.Vp_Nombre == ruta && 
+                            vp.Vp_Estado == 1
                       select vp.Vp_Nombre;
             return con.Any() ? Ok(con) : NotFound();
         }
@@ -83,7 +86,8 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult Get_By_Rol(string rol)
         {
             var con = from vp in _context.Set<Vistas_Permisos>()
-                      where vp.Vp_Id_Roles.Contains($"|{rol}|")
+                      where vp.Vp_Id_Roles.Contains($"|{rol}|") && 
+                            vp.Vp_Estado == 1
                       select new
                       {
                           Id = vp.Vp_Id,

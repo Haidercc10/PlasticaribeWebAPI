@@ -559,8 +559,8 @@ namespace PlasticaribeAPI.Controllers
                            Corte = ot.Ot_Corte,
                            ot.Sellado,
                            Cantidad_Pedida = ot.Ot_CantidadPedida,
-                           PrecioUnidad = ot.Ot_ValorUnidad,
-                           PrecioKilo = ot.Ot_ValorKg,
+                           ValorUnidad = ot.Ot_ValorUnidad,
+                           ValorKg = ot.Ot_ValorKg,
                            Peso_Neto = ot.Ot_PesoNetoKg,
 
                            // Información de Extrusión
