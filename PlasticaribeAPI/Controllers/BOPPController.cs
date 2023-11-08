@@ -201,7 +201,7 @@ namespace PlasticaribeAPI.Controllers
                       where b.BoppGen_Id == bg.BoppGen_Id &&
                       b.BOPP_Stock > 0 &&
                       b.CatMP_Id == cat.CatMP_Id
-                      group b by new { b.BoppGen_Id, bg.BoppGen_Nombre, bg.BoppGen_Micra, bg.BoppGen_Ancho, cat.CatMP_Id, cat.CatMP_Nombre, b.UndMed_Kg }
+                      group b by new { b.BoppGen_Id, bg.BoppGen_Nombre, bg.BoppGen_Micra, bg.BoppGen_Ancho, cat.CatMP_Id, cat.CatMP_Nombre, b.UndMed_Kg, b.BOPP_Precio }
                       into b
                       select new
                       {
@@ -214,13 +214,13 @@ namespace PlasticaribeAPI.Controllers
                           Rollos = b.Count(),
                           Medida = b.Key.UndMed_Kg,
                           Stock = b.Sum(xx => xx.BOPP_Stock),
+                          Precio = b.Key.BOPP_Precio,
                       };
 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             if (con != null) return Ok(con);
             else return BadRequest("No se encontrar Biorientados asociados a Bopps genéricos");
         }
-
 
         [HttpGet("getInventarioBopps/{fecha1}/{fecha2}/{id}")]
         public ActionResult GetInventarioBopps(DateTime fecha1, DateTime fecha2, long id)

@@ -324,8 +324,46 @@ namespace PlasticaribeAPI.Controllers
                         IdCategoria = m.CatMP_Id,
                      };
 
-            if (mp == null) return BadRequest("No se encontraron Materias Primas/Reciclados en las fechas consultadas");
-            else return Ok(mp);
+            var tinta = from i in _context.Set<InventarioInicialXDia_MatPrima>()
+                     join t in _context.Set<Tinta>()
+                     on i.Tinta_Id equals t.Tinta_Id
+                     where i.Tinta_Id != 0
+                     select new
+                     {
+                         Fecha_Inventario = new DateTime(fechaFin.Year, fechaFin.Month, 1),
+                         Ot = "",
+                         Item = i.Tinta_Id,
+                         Referencia = t.Tinta_Nombre,
+                         Stock = fechaFin.Month == 1 ? i.Enero :
+                                 fechaFin.Month == 2 ? i.Febrero :
+                                 fechaFin.Month == 3 ? i.Marzo :
+                                 fechaFin.Month == 4 ? i.Abril :
+                                 fechaFin.Month == 5 ? i.Mayo :
+                                 fechaFin.Month == 6 ? i.Junio :
+                                 fechaFin.Month == 7 ? i.Julio :
+                                 fechaFin.Month == 8 ? i.Agosto :
+                                 fechaFin.Month == 9 ? i.Septiembre :
+                                 fechaFin.Month == 10 ? i.Octubre :
+                                 fechaFin.Month == 11 ? i.Noviembre :
+                                 fechaFin.Month == 13 ? i.Diciembre : i.Enero,
+                         Precio = t.Tinta_Precio,
+                         Subtotal = (fechaFin.Month == 1 ? i.Enero :
+                                    fechaFin.Month == 2 ? i.Febrero :
+                                    fechaFin.Month == 3 ? i.Marzo :
+                                    fechaFin.Month == 4 ? i.Abril :
+                                    fechaFin.Month == 5 ? i.Mayo :
+                                    fechaFin.Month == 6 ? i.Junio :
+                                    fechaFin.Month == 7 ? i.Julio :
+                                    fechaFin.Month == 8 ? i.Agosto :
+                                    fechaFin.Month == 9 ? i.Septiembre :
+                                    fechaFin.Month == 10 ? i.Octubre :
+                                    fechaFin.Month == 11 ? i.Noviembre :
+                                    fechaFin.Month == 13 ? i.Diciembre : i.Enero) * t.Tinta_Precio,
+                         IdCategoria = t.CatMP_Id,
+                     };
+
+            if (mp == null && tinta == null) return BadRequest("No se encontraron Materias Primas/Reciclados en las fechas consultadas");
+            else return Ok(mp.Concat(tinta));
         }
 
         // PUT: api/InventarioInicialXDia_MatPrima/5
