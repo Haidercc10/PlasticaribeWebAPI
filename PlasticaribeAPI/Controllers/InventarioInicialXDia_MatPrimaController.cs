@@ -294,7 +294,7 @@ namespace PlasticaribeAPI.Controllers
                      select new {
                          Fecha_Inventario = new DateTime(fechaFin.Year, fechaFin.Month, 1),
                          Ot = "",
-                         Item = i.MatPri_Id,
+                         Item = Convert.ToString(i.MatPri_Id),
                          Referencia = m.MatPri_Nombre,
                          Stock = fechaFin.Month == 1 ? i.Enero :
                                  fechaFin.Month == 2 ? i.Febrero :
@@ -332,7 +332,7 @@ namespace PlasticaribeAPI.Controllers
                      {
                          Fecha_Inventario = new DateTime(fechaFin.Year, fechaFin.Month, 1),
                          Ot = "",
-                         Item = i.Tinta_Id,
+                         Item = Convert.ToString(i.Tinta_Id),
                          Referencia = t.Tinta_Nombre,
                          Stock = fechaFin.Month == 1 ? i.Enero :
                                  fechaFin.Month == 2 ? i.Febrero :
@@ -345,7 +345,7 @@ namespace PlasticaribeAPI.Controllers
                                  fechaFin.Month == 9 ? i.Septiembre :
                                  fechaFin.Month == 10 ? i.Octubre :
                                  fechaFin.Month == 11 ? i.Noviembre :
-                                 fechaFin.Month == 13 ? i.Diciembre : i.Enero,
+                                 fechaFin.Month == 12 ? i.Diciembre : i.Enero,
                          Precio = t.Tinta_Precio,
                          Subtotal = (fechaFin.Month == 1 ? i.Enero :
                                     fechaFin.Month == 2 ? i.Febrero :
@@ -358,12 +358,48 @@ namespace PlasticaribeAPI.Controllers
                                     fechaFin.Month == 9 ? i.Septiembre :
                                     fechaFin.Month == 10 ? i.Octubre :
                                     fechaFin.Month == 11 ? i.Noviembre :
-                                    fechaFin.Month == 13 ? i.Diciembre : i.Enero) * t.Tinta_Precio,
+                                    fechaFin.Month == 12 ? i.Diciembre : i.Enero) * t.Tinta_Precio,
                          IdCategoria = t.CatMP_Id,
                      };
 
-            if (mp == null && tinta == null) return BadRequest("No se encontraron Materias Primas/Reciclados en las fechas consultadas");
-            else return Ok(mp.Concat(tinta));
+            var bopp = from i in _context.Set<InventarioInicialXDia_MatPrima>()
+                       join b in _context.Set<BOPP>() on i.Bopp_Id equals b.BoppGen_Id
+                       join bg in _context.Set<Bopp_Generico>() on i.Bopp_Id equals bg.BoppGen_Id
+                       where i.Bopp_Id != 0 && 
+                       b.BoppGen_Id == bg.BoppGen_Id
+                       group b by new { 
+                           Id = b.BoppGen_Id, 
+                           Nombre = bg.BoppGen_Nombre,
+                           Mes = (fechaFin.Month == 1 ? i.Enero :
+                                  fechaFin.Month == 2 ? i.Febrero :
+                                  fechaFin.Month == 3 ? i.Marzo :
+                                  fechaFin.Month == 4 ? i.Abril :
+                                  fechaFin.Month == 5 ? i.Mayo :
+                                  fechaFin.Month == 6 ? i.Junio :
+                                  fechaFin.Month == 7 ? i.Julio :
+                                  fechaFin.Month == 8 ? i.Agosto :
+                                  fechaFin.Month == 9 ? i.Septiembre :
+                                  fechaFin.Month == 10 ? i.Octubre :
+                                  fechaFin.Month == 11 ? i.Noviembre :
+                                  fechaFin.Month == 12 ? i.Diciembre : i.Enero),
+                           Precio = b.BOPP_Precio, 
+                           Categoria = b.CatMP_Id
+                       }
+                       into g
+                       select new
+                       {
+                            Fecha_Inventario = new DateTime(fechaFin.Year, fechaFin.Month, 1),
+                            Ot = "",
+                            Item = Convert.ToString(g.Key.Id),
+                            Referencia = g.Key.Nombre,
+                            Stock = g.Key.Mes,
+                            Precio = g.Key.Precio,
+                            Subtotal = (g.Key.Mes * g.Key.Precio),
+                            IdCategoria = g.Key.Categoria,
+                       }; 
+
+            if (mp == null && tinta == null && bopp == null) return BadRequest("No se encontraron Materias Primas/Reciclados en las fechas consultadas");
+            else return Ok(mp.Concat(tinta).Concat(bopp));
         }
 
         // PUT: api/InventarioInicialXDia_MatPrima/5

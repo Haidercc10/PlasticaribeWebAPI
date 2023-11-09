@@ -368,6 +368,12 @@ namespace PlasticaribeAPI.Controllers
                                      Nombre_Materia_Prima = mp.MatPri_Nombre,
                                      Inicial = inv.InvInicial_Stock,
                                      Actual = mp.MatPri_Stock,
+                                     Item = mp.MatPri_Id,
+                                     Referencia = mp.MatPri_Nombre,
+                                     Stock = mp.MatPri_Stock,
+                                     Precio = mp.MatPri_Precio,
+                                     Subtotal = (mp.MatPri_Stock * mp.MatPri_Precio),
+                                     IdCategoria = mp.CatMP_Id,
                                  };
 
             var bopp = from bp in _context.Set<BOPP>()
@@ -378,6 +384,12 @@ namespace PlasticaribeAPI.Controllers
                            Nombre_Materia_Prima = bp.BOPP_Nombre,
                            Inicial = bp.BOPP_CantidadInicialKg,
                            Actual = bp.BOPP_Stock,
+                           Item = bp.BOPP_Serial,
+                           Referencia = bp.BOPP_Nombre,
+                           Stock = bp.BOPP_Stock,
+                           Precio = bp.BOPP_Precio,
+                           Subtotal = (bp.BOPP_Stock * bp.BOPP_Precio),
+                           IdCategoria = bp.CatMP_Id,
                        };
 
             var tintas = from t in _context.Set<Tinta>()
@@ -387,6 +399,12 @@ namespace PlasticaribeAPI.Controllers
                              Nombre_Materia_Prima = t.Tinta_Nombre,
                              Inicial = t.Tinta_InvInicial,
                              Actual = t.Tinta_Stock,
+                             Item = t.Tinta_Id,
+                             Referencia = t.Tinta_Nombre,
+                             Stock = t.Tinta_Stock,
+                             Precio = t.Tinta_Precio,
+                             Subtotal = (t.Tinta_Stock * t.Tinta_Precio),
+                             IdCategoria = t.CatMP_Id
                          };
 
             return Ok(materiasPrimas.Concat(bopp).Concat(tintas));
