@@ -161,6 +161,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<CajaMenor_Plasticaribe> CajaMenor_Plasticaribe { get; set; }
         public DbSet<Productos_MateriasPrimas> Productos_MateriasPrimas { get; set; }
         public DbSet<Inventario_Areas> Inventarios_Areas { get; set; }
+        public DbSet<Produccion_Areas> Produccion_Areas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -920,6 +921,9 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Inventario_Areas>().HasOne(x => x.MatPrima).WithMany().HasForeignKey(y => y.MatPri_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Inventario_Areas>().HasOne(x => x.Proceso).WithMany().HasForeignKey(y => y.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Inventario_Areas>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Produccion_Areas
+            modelBuilder.Entity<Produccion_Areas>().HasOne(x => x.Proceso).WithMany().HasForeignKey(y => y.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
