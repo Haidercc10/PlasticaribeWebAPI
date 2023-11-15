@@ -106,6 +106,23 @@ namespace PlasticaribeAPI.Controllers
             else return Ok(clientes);
         }
 
+        [HttpGet("getSedesClientes_NombreCliente/{nombre}")]
+        public ActionResult GetSedesClientes_NombreCliente(string nombre)
+        {
+            var sedes = from sede in _context.Set<SedesClientes>()
+                        join cli in _context.Set<Clientes>() on sede.Cli_Id equals cli.Cli_Id
+                        where cli.Cli_Nombre.Contains(nombre)
+                        select new
+                        {
+                            sede.SedeCli_Id,
+                            sede.SedeCli_CodBagPro,
+                            cli.Cli_Id,
+                            cli.Cli_Nombre,
+                            sede.SedeCliente_Ciudad,
+                        };
+            return Ok(sedes);
+        }
+
         // PUT: api/Clientes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
