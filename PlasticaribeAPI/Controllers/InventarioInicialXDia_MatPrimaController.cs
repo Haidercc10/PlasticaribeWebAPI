@@ -287,6 +287,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getMatPrimasInicioMes/{fechaFin}")]
         public ActionResult GetMatPrimasInicioMes(DateTime fechaFin)
         {
+#pragma warning disable CS8604 // Possible null reference argument.
             var mp = from i in _context.Set<InventarioInicialXDia_MatPrima>()
                      join m in _context.Set<Materia_Prima>()
                      on i.MatPri_Id equals m.MatPri_Id
@@ -396,10 +397,10 @@ namespace PlasticaribeAPI.Controllers
                             Precio = g.Key.Precio,
                             Subtotal = (g.Key.Mes * g.Key.Precio),
                             IdCategoria = g.Key.Categoria,
-                       }; 
-
+                       };
             if (mp == null && tinta == null && bopp == null) return BadRequest("No se encontraron Materias Primas/Reciclados en las fechas consultadas");
             else return Ok(mp.Concat(tinta).Concat(bopp));
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
         // PUT: api/InventarioInicialXDia_MatPrima/5

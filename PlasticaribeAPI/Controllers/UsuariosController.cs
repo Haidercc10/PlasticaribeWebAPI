@@ -205,6 +205,19 @@ namespace PlasticaribeAPI.Controllers
             return Ok(usuario);
         }
 
+        [HttpGet("getOperariosProduccion")]
+        public ActionResult GetOperariosProduccion()
+        {
+            var operarios = from op in _context.Set<Usuario>()
+                            where op.RolUsu_Id == 59
+                            select new
+                            {
+                                op.Usua_Id,
+                                op.Usua_Nombre
+                            };
+            return operarios.Any() ? Ok(operarios) : NotFound();
+        }
+
         // PUT: api/Usuarios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
