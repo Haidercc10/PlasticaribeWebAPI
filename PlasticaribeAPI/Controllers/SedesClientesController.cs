@@ -168,6 +168,26 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        //Funcion que consultará la informacion de una sede de cliente basandose en el Codigo de BagPro, Ciudad y Dirección
+        [HttpGet("getSedeClientexNitBagPro/{cod}")]
+        public ActionResult getSedeClientexNitBagPro(string cod)
+        {
+            var con = from sd in _context.Set<SedesClientes>()
+                      from cl in _context.Set<Clientes>()
+                      where cl.Cli_Id == sd.Cli_Id &&
+                      sd.SedeCli_CodBagPro == cod
+                      select new
+                      {
+                          idSede = sd.SedeCli_Id,
+                          idCliente = sd.Cli_Id,
+                          Cliente = cl.Cli_Nombre,
+                          idVendedor = Convert.ToString(cl.usua_Id),
+                          Vendedor = cl.Usua.Usua_Nombre,
+                      }; 
+            
+            return Ok(con);
+        }
+
         // PUT: api/SedesClientes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
