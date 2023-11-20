@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Aspose.Pdf.Facades;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
@@ -241,6 +242,22 @@ namespace PlasticaribeAPI.Controllers
                     CopyDirectory(subDir.FullName, newDestinationDir, true);
                 }
             }
+        }
+
+        [HttpGet("imprimirArchivo")]
+        public void ImprimirArchivo()
+        {
+            string usuario = Environment.UserName;
+            //Crear objeto PdfViewer
+            PdfViewer viewer = new PdfViewer();
+            //Buscar ultimo PDF
+            var file = Directory.GetFiles($"C:\\Users\\{usuario}\\Downloads", "*.pdf");
+            //Abrir archivo PDF de entrada
+            viewer.BindPdf(file[0]);
+            //Imprimir documento PDF
+            viewer.PrintDocument();
+            //Cerrar archivo PDF
+            viewer.Close();
         }
 
         private static string GetContentType(string path)

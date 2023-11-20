@@ -13,13 +13,13 @@ namespace PlasticaribeAPI.Models
         public Producto? Producto { get; set; }
         public long Cli_Id { get; set; }
         public Clientes? Clientes { get; set; }
-        public long Operario1_Id { get; set; }
+        public long? Operario1_Id { get; set; }
         public Usuario? Operario1 { get; set; }
-        public long Operario2_Id { get; set; }
+        public long? Operario2_Id { get; set; }
         public Usuario? Operario2 { get; set; }
-        public long Operario3_Id { get; set; }
+        public long? Operario3_Id { get; set; }
         public Usuario? Operario3 { get; set; }
-        public long Operario4_Id { get; set; }
+        public long? Operario4_Id { get; set; }
         public Usuario? Operario4 { get; set; }
         public int Pesado_Entre { get; set; }
         public int Maquina { get; set; }
@@ -63,5 +63,7 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(20)")]
         public string Hora { get; set; }
+        public long Creador_Id { get; set; }
+        public Usuario? Creador { get; set; }
     }
 }

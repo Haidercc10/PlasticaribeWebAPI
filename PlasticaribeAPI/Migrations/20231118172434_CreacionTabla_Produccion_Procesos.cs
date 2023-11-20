@@ -20,10 +20,10 @@ namespace PlasticaribeAPI.Migrations
                     Numero_Rollo = table.Column<long>(type: "bigint", nullable: false),
                     Prod_Id = table.Column<int>(type: "int", nullable: false),
                     Cli_Id = table.Column<long>(type: "bigint", nullable: false),
-                    Operario1_Id = table.Column<long>(type: "bigint", nullable: false),
-                    Operario2_Id = table.Column<long>(type: "bigint", nullable: false),
-                    Operario3_Id = table.Column<long>(type: "bigint", nullable: false),
-                    Operario4_Id = table.Column<long>(type: "bigint", nullable: false),
+                    Operario1_Id = table.Column<long>(type: "bigint", nullable: true),
+                    Operario2_Id = table.Column<long>(type: "bigint", nullable: true),
+                    Operario3_Id = table.Column<long>(type: "bigint", nullable: true),
+                    Operario4_Id = table.Column<long>(type: "bigint", nullable: true),
                     Pesado_Entre = table.Column<int>(type: "int", nullable: false),
                     Maquina = table.Column<int>(type: "int", nullable: false),
                     Cono_Id = table.Column<string>(type: "varchar(10)", nullable: false),
@@ -41,7 +41,8 @@ namespace PlasticaribeAPI.Migrations
                     Envio_Zeus = table.Column<bool>(type: "bit", nullable: false),
                     Datos_Etiqueta = table.Column<string>(type: "varchar(max)", nullable: false),
                     Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Hora = table.Column<string>(type: "varchar(20)", nullable: false)
+                    Hora = table.Column<string>(type: "varchar(20)", nullable: false),
+                    Creador_Id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -83,6 +84,12 @@ namespace PlasticaribeAPI.Migrations
                         principalColumn: "UndMed_Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
+                        name: "FK_Produccion_Procesos_Usuarios_Creador_Id",
+                        column: x => x.Creador_Id,
+                        principalTable: "Usuarios",
+                        principalColumn: "Usua_Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Produccion_Procesos_Usuarios_Operario1_Id",
                         column: x => x.Operario1_Id,
                         principalTable: "Usuarios",
@@ -117,6 +124,11 @@ namespace PlasticaribeAPI.Migrations
                 name: "IX_Produccion_Procesos_Cono_Id",
                 table: "Produccion_Procesos",
                 column: "Cono_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Produccion_Procesos_Creador_Id",
+                table: "Produccion_Procesos",
+                column: "Creador_Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Produccion_Procesos_Operario1_Id",

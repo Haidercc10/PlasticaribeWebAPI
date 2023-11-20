@@ -937,6 +937,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Produccion_Procesos>().HasOne(x => x.Unidad_Medida).WithMany().HasForeignKey(y => y.Presentacion).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Produccion_Procesos>().HasOne(x => x.Proceso).WithMany().HasForeignKey(y => y.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Produccion_Procesos>().HasOne(x => x.Turno).WithMany().HasForeignKey(y => y.Turno_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Produccion_Procesos>().HasOne(x => x.Creador).WithMany().HasForeignKey(y => y.Creador_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
