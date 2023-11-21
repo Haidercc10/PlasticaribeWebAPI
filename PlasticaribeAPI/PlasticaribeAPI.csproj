@@ -3,6 +3,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <IsPublishable>True</IsPublishable>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Migrations\20220428230504_AdiciosEmpresa.cs" />
@@ -16,6 +17,7 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Aspose.BarCode" Version="23.10.0" />
     <PackageReference Include="Aspose.Imaging" Version="23.10.0" />
     <PackageReference Include="Aspose.PDF" Version="23.11.0" />
     <PackageReference Include="Grpc.Core" Version="2.46.6" />
@@ -36,6 +38,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Core" Version="8.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
+    <PackageReference Include="Zen.Barcode.Rendering.Framework" Version="3.1.10729.1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\Imagenes\" />

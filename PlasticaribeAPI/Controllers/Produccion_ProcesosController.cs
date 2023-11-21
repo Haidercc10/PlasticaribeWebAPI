@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Aspose.BarCode.Generation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -87,6 +88,17 @@ namespace PlasticaribeAPI.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProduccion_Procesos", new { id = produccion_Procesos.Id }, produccion_Procesos);
+        }
+
+        public void GenerarCodigoBarras(string rollo)
+        {
+            BarcodeGenerator generator = new BarcodeGenerator(EncodeTypes.Code128, rollo);
+
+            // establecer resolución
+            generator.Parameters.Resolution = 400;
+
+            // generar código de barras
+            generator.Save("generate-barcode.png");
         }
 
         // DELETE: api/Produccion_Procesos/5
