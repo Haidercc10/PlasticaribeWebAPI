@@ -59,6 +59,8 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(max)")]
         public string Datos_Etiqueta { get; set; }
+
+        [Column(TypeName = "date")]
         public DateTime Fecha { get; set; }
 
         [Column(TypeName = "varchar(20)")]

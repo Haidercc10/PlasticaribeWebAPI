@@ -98,5 +98,8 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(max)", Order = 25)]
         public string Ot_Observacion { get; set; }
+
+        [Column(Order = 26)]
+        public bool MotrarEmpresaEtiquetas { get; set; }
     }
 }

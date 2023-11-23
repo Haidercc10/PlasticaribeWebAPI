@@ -12,7 +12,7 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    [Migration("20231118172434_CreacionTabla_Produccion_Procesos")]
+    [Migration("20231122224618_CreacionTabla_Produccion_Procesos")]
     partial class CreacionTabla_Produccion_Procesos
     {
         /// <inheritdoc />
@@ -5639,7 +5639,7 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<string>("Hora")
                         .IsRequired()

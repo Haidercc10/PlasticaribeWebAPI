@@ -244,22 +244,6 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        [HttpGet("imprimirArchivo")]
-        public void ImprimirArchivo()
-        {
-            string usuario = Environment.UserName;
-            //Crear objeto PdfViewer
-            PdfViewer viewer = new PdfViewer();
-            //Buscar ultimo PDF
-            var file = Directory.GetFiles($"C:\\Users\\{usuario}\\Downloads", "*.pdf");
-            //Abrir archivo PDF de entrada
-            viewer.BindPdf(file[0]);
-            //Imprimir documento PDF
-            viewer.PrintDocument();
-            //Cerrar archivo PDF
-            viewer.Close();
-        }
-
         private static string GetContentType(string path)
         {
 #pragma warning disable CS8600 // Se va a convertir un literal nulo o un posible valor nulo en un tipo que no acepta valores NULL

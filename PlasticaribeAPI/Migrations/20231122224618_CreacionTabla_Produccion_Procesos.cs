@@ -40,7 +40,7 @@ namespace PlasticaribeAPI.Migrations
                     Turno_Id = table.Column<string>(type: "varchar(50)", nullable: false),
                     Envio_Zeus = table.Column<bool>(type: "bit", nullable: false),
                     Datos_Etiqueta = table.Column<string>(type: "varchar(max)", nullable: false),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Fecha = table.Column<DateTime>(type: "date", nullable: false),
                     Hora = table.Column<string>(type: "varchar(20)", nullable: false),
                     Creador_Id = table.Column<long>(type: "bigint", nullable: false)
                 },
