@@ -1,5 +1,4 @@
-﻿using Aspose.Pdf.Facades;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
