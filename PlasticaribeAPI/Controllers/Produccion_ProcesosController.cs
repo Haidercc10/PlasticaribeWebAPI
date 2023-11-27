@@ -43,6 +43,31 @@ namespace PlasticaribeAPI.Controllers
 
             return produccion_Procesos;
         }
+        
+        // Consulta que devolverá toda la información de un rollo
+        [HttpGet("getInformationAboutProduction/{production}")]
+        public ActionResult GetInformationAboutProduction(long production)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var data = from pp in _context.Set<Produccion_Procesos>()
+                       join ot in _context.Set<Orden_Trabajo>() on pp.OT equals ot.Numero_OT
+                       join otExt in _context.Set<OT_Extrusion>() on ot.Ot_Id equals otExt.Ot_Id
+                       where pp.Numero_Rollo == production && pp.Envio_Zeus == false
+                       select new
+                       {
+                            orderProduction = pp.OT,
+                            ot.MotrarEmpresaEtiquetas,
+                            product = pp.Producto,
+                            client = pp.Clientes,
+                            turn = pp.Turno,
+                            process = pp.Proceso,
+                            material = otExt.Material_MatPrima,
+                            dataExtrusion = otExt,
+                            dataProduction = pp
+                       };
+            return data.Any() ? Ok(data) : NotFound();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
 
         [HttpGet("EnviarAjuste/{ordenTrabajo}/{articulo}/{presentacion}/{rollo}/{cantidad}/{costo}")]
         public async Task<ActionResult> EnviarAjuste(string ordenTrabajo, string articulo, string presentacion, long rollo, decimal cantidad, decimal costo)

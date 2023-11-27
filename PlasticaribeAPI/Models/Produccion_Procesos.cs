@@ -9,6 +9,8 @@ namespace PlasticaribeAPI.Models
         [Key]
         public int Id { get; set; }
         public long Numero_Rollo { get; set; }
+        public long OT { get; set; }
+        //public Orden_Trabajo? Orden_Trabajo { get; set; }
         public int Prod_Id { get; set; }
         public Producto? Producto { get; set; }
         public long Cli_Id { get; set; }
