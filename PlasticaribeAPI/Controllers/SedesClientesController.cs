@@ -179,9 +179,9 @@ namespace PlasticaribeAPI.Controllers
                       select new
                       {
                           idSede = sd.SedeCli_Id,
-                          idCliente = sd.Cli_Id,
+                          id_Cliente = sd.Cli_Id,
                           Cliente = cl.Cli_Nombre,
-                          idVendedor = Convert.ToString(cl.usua_Id),
+                          id_Vendedor = Convert.ToString(cl.usua_Id),
                           Vendedor = cl.Usua.Usua_Nombre,
                       }; 
             
