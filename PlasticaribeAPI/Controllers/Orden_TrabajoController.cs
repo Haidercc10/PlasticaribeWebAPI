@@ -329,6 +329,7 @@ namespace PlasticaribeAPI.Controllers
                           Numero_Orden = ot.Numero_OT,
                           Id_SedeCliente = ot.SedeCli.SedeCli_CodBagPro,
                           Id_Cliente = ot.SedeCli.Cli_Id,
+                          NitCliente = ot.SedeCli.SedeCli_CodBagPro,
                           Cliente = ot.SedeCli.Cli.Cli_Nombre,
                           Ciudad = ot.SedeCli.SedeCliente_Ciudad,
                           Direccion = ot.SedeCli.SedeCliente_Direccion,
