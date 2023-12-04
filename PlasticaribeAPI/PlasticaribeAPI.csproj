@@ -14,7 +14,41 @@
     <Compile Remove="Migrations\20220429132409_Areas.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Remove="wwwroot\Imagenes\Assets\correo.png" />
+    <Content Remove="wwwroot\Imagenes\Assets\facebook.png" />
+    <Content Remove="wwwroot\Imagenes\Assets\FondoPlasticaribe.jpg" />
+    <Content Remove="wwwroot\Imagenes\Assets\instagram.png" />
+    <Content Remove="wwwroot\Imagenes\Assets\logo-footer.png" />
+    <Content Remove="wwwroot\Imagenes\Assets\mapa.png" />
+    <Content Remove="wwwroot\Imagenes\Assets\telefono.png" />
+    <Content Remove="wwwroot\Imagenes\Assets\whatsapp.png" />
+    <Content Remove="wwwroot\Imagenes\correo.png" />
+    <Content Remove="wwwroot\Imagenes\facebook.png" />
+    <Content Remove="wwwroot\Imagenes\FondoPlasticaribe.jpg" />
+    <Content Remove="wwwroot\Imagenes\instagram.png" />
+    <Content Remove="wwwroot\Imagenes\logo-footer.png" />
+    <Content Remove="wwwroot\Imagenes\mapa.png" />
+    <Content Remove="wwwroot\Imagenes\telefono.png" />
+    <Content Remove="wwwroot\Imagenes\whatsapp.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
+    <None Include="wwwroot\Imagenes\Assets\correo.png" />
+    <None Include="wwwroot\Imagenes\Assets\facebook.png" />
+    <None Include="wwwroot\Imagenes\Assets\FondoPlasticaribe.jpg" />
+    <None Include="wwwroot\Imagenes\Assets\instagram.png" />
+    <None Include="wwwroot\Imagenes\Assets\logo-footer.png" />
+    <None Include="wwwroot\Imagenes\Assets\mapa.png" />
+    <None Include="wwwroot\Imagenes\Assets\telefono.png" />
+    <None Include="wwwroot\Imagenes\Assets\whatsapp.png" />
+    <None Include="wwwroot\Imagenes\correo.png" />
+    <None Include="wwwroot\Imagenes\facebook.png" />
+    <None Include="wwwroot\Imagenes\FondoPlasticaribe.jpg" />
+    <None Include="wwwroot\Imagenes\instagram.png" />
+    <None Include="wwwroot\Imagenes\logo-footer.png" />
+    <None Include="wwwroot\Imagenes\mapa.png" />
+    <None Include="wwwroot\Imagenes\telefono.png" />
+    <None Include="wwwroot\Imagenes\whatsapp.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Aspose.Imaging" Version="23.10.0" />
@@ -41,9 +75,6 @@
     <PackageReference Include="System.ServiceModel.Http" Version="6.2.0" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="6.2.0" />
     <PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="wwwroot\Imagenes\" />
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>

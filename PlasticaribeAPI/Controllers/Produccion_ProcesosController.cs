@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
+using PlasticaribeAPI.Migrations;
 using PlasticaribeAPI.Models;
 using ServiceReference1;
 
@@ -44,13 +45,13 @@ namespace PlasticaribeAPI.Controllers
 
             return produccion_Procesos;
         }
-        
+
         // Consulta que devolverá toda la información de un rollo
-        [HttpGet("getInformationAboutProduction/{production}")]
-        public ActionResult GetInformationAboutProduction(long production)
+        [HttpGet("getInformationAboutProductionToUpdateZeus/{production}")]
+        public ActionResult GetInformationAboutProductionToUpdateZeus(long production)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var data = from pp in _context.Set<Produccion_Procesos>()
+            /*var data = from pp in _context.Set<Produccion_Procesos>()
                        join ot in _context.Set<Orden_Trabajo>() on pp.OT equals ot.Numero_OT
                        join otExt in _context.Set<OT_Extrusion>() on ot.Ot_Id equals otExt.Ot_Id
                        where pp.Numero_Rollo == production && pp.Envio_Zeus == false
@@ -65,6 +66,65 @@ namespace PlasticaribeAPI.Controllers
                             material = otExt.Material_MatPrima,
                             dataExtrusion = otExt,
                             dataProduction = pp
+                       };*/
+
+            var data = from pp in _context.Set<Produccion_Procesos>()
+                       where pp.Numero_Rollo == production && pp.Envio_Zeus == false
+                       select new
+                       {
+                           pp,
+                           pp.Clientes,
+                           pp.Proceso,
+                           pp.Producto,
+                           pp.Turno,
+                           pp.Operario1,
+                           pp.Operario2,
+                           pp.Operario3,
+                           pp.Operario4,
+                           pp.Cono,
+                           pp.Creador,
+                       };
+            return data.Any() ? Ok(data) : NotFound();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
+        // Consulta que devolverá toda la información de un rollo
+        [HttpGet("getInformationAboutProduction/{production}")]
+        public ActionResult GetInformationAboutProduction(long production)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            /*var data = from pp in _context.Set<Produccion_Procesos>()
+                       join ot in _context.Set<Orden_Trabajo>() on pp.OT equals ot.Numero_OT
+                       join otExt in _context.Set<OT_Extrusion>() on ot.Ot_Id equals otExt.Ot_Id
+                       where pp.Numero_Rollo == production && pp.Envio_Zeus == false
+                       select new
+                       {
+                            orderProduction = pp.OT,
+                            ot.MotrarEmpresaEtiquetas,
+                            product = pp.Producto,
+                            client = pp.Clientes,
+                            turn = pp.Turno,
+                            process = pp.Proceso,
+                            material = otExt.Material_MatPrima,
+                            dataExtrusion = otExt,
+                            dataProduction = pp
+                       };*/
+
+            var data = from pp in _context.Set<Produccion_Procesos>()
+                       where pp.Numero_Rollo == production
+                       select new
+                       {
+                           pp,
+                           pp.Clientes,
+                           pp.Proceso,
+                           pp.Producto,
+                           pp.Turno,
+                           pp.Operario1,
+                           pp.Operario2,
+                           pp.Operario3,
+                           pp.Operario4,
+                           pp.Cono,
+                           pp.Creador,
                        };
             return data.Any() ? Ok(data) : NotFound();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -170,6 +230,8 @@ namespace PlasticaribeAPI.Controllers
             var endpoint = new EndpointAddress("http://192.168.0.85/wsGenericoZeus/ServiceWS.asmx");
             WebservicesGenericoZeusSoapClient client = new WebservicesGenericoZeusSoapClient(binding, endpoint);
             SoapResponse response = await client.ExecuteActionSOAPAsync(request);
+            Existencia_ProductosController existencia_ProductosController = new Existencia_ProductosController(_context);
+            existencia_ProductosController.PutExistencia(Convert.ToInt32(articulo), presentacion, costo, cantidad);
             PutEnvioZeus(rollo);
             return Convert.ToString(response.Status) == "SUCCESS" ? Ok(response) : BadRequest(response);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -182,8 +244,10 @@ namespace PlasticaribeAPI.Controllers
             var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.Numero_Rollo == rollo select prod).FirstOrDefault();
             dataProduction.Envio_Zeus = true;
             _context.Entry(dataProduction).State = EntityState.Modified;
+            _context.SaveChanges();
             try
             {
+                
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)

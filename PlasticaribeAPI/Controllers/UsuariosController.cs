@@ -87,18 +87,17 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        [HttpGet("getCondutores")]
+        [HttpGet("getConductores")]
         public ActionResult GetCondutores()
         {
             var con = from usua in _context.Set<Usuario>()
-                      where usua.RolUsu_Id == 11
+                      where usua.RolUsu_Id == 11 && usua.Estado_Id == 1
                       select new
                       {
                           Nombre = usua.Usua_Nombre,
                           Id = usua.Usua_Id
                       };
-            if (con.Count() > 0) return Ok(con);
-            else return NoContent();
+            return con.Any() ? Ok(con) : NotFound();
         }
 
         [HttpGet("UsuariosxId/{ID}")]

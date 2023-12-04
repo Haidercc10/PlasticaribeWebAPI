@@ -63,7 +63,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: myAllowSpecificOrigins, builder =>
     {
-        builder.WithOrigins("http://192.168.0.193:4600", "http://192.168.0.85:4700", "http://localhost:4200", "http://192.168.0.193:5000", "http://192.168.0.137:4700").AllowAnyMethod().AllowAnyHeader();
+        builder.WithOrigins(
+            "http://192.168.0.193:4600",
+            "http://192.168.0.85:4700", 
+            "http://localhost:4200", 
+            "http://192.168.0.193:5000", 
+            "http://192.168.0.137:4700"
+        ).AllowAnyMethod().AllowAnyHeader();
     });
 });
 

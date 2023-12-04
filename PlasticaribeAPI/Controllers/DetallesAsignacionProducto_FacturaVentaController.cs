@@ -301,6 +301,53 @@ namespace PlasticaribeAPI.Controllers
             return Ok(QueryAsignacion.Concat(QueryEntrada).Concat(QueryDevolucion).Concat(QueryPreCargue));
         }
 
+        [HttpGet("getRollosEnviadosCamion/{inicio}/{fin}")]
+        public ActionResult GetRollosEnviadosCamion(DateTime inicio, DateTime fin, string? factura = "", string? placa = "", string? conductor = "")
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var fact = from asg in _context.Set<AsignacionProducto_FacturaVenta>() 
+                       where asg.AsigProdFV_Fecha >= inicio &&
+                             asg.AsigProdFV_Fecha <= fin &&
+                             (factura != "" ? asg.FacturaVta_Id == factura : true) &&
+                             (placa != "" ? asg.AsigProdFV_PlacaCamion == placa : true) &&
+                             (conductor != "" ? Convert.ToInt32(asg.Usua_Conductor) == Convert.ToInt32(conductor) : true)
+                       select new
+                       {
+                          Factura = asg.FacturaVta_Id,
+                          Placa = asg.AsigProdFV_PlacaCamion,
+                          Id_Conductor = asg.Usua_Conductor,
+                          Conductor = asg.Usuario.Usua_Nombre,
+                          Fecha = asg.AsigProdFV_Fecha,
+                          Hora = asg.AsigProdFV_Hora,
+                          Id_Cliente = asg.Cli_Id,
+                          Cliente = asg.Cliente.Cli_Nombre,
+                          Observacion = asg.AsigProdFV_Observacion,
+                          PesoTotal = (
+                            from dt in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
+                            join rollo in _context.Set<Produccion_Procesos>() on dt.Rollo_Id equals rollo.Numero_Rollo
+                            where dt.AsigProdFV_Id == asg.AsigProdFV_Id
+                            select rollo.Peso_Neto
+                          ).Sum(),
+                          Details = (
+                            from dt in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
+                            join rollo in _context.Set<Produccion_Procesos>() on dt.Rollo_Id equals rollo.Numero_Rollo
+                            where dt.AsigProdFV_Id == asg.AsigProdFV_Id
+                            select new
+                            {
+                                Rollo = dt.Rollo_Id,
+                                Item = dt.Prod_Id,
+                                Referencia = dt.Prod.Prod_Nombre,
+                                Cantidad = dt.DtAsigProdFV_Cantidad,
+                                Peso = rollo.Peso_Neto,
+                                Presentacion = dt.UndMed_Id,
+                            }
+                          ).ToList(),
+                       };
+
+            return fact.Any() ? Ok(fact) : NotFound();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
         // PUT: api/DetallesAsignacionProducto_FacturaVenta/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
