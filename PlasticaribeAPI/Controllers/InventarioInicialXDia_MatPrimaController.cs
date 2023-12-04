@@ -308,7 +308,7 @@ namespace PlasticaribeAPI.Controllers
                                  fechaFin.Month == 9 ? i.Septiembre :
                                  fechaFin.Month == 10 ? i.Octubre :
                                  fechaFin.Month == 11 ? i.Noviembre :
-                                 fechaFin.Month == 13 ? i.Diciembre : i.Enero,
+                                 fechaFin.Month == 12 ? i.Diciembre : i.Enero,
                          Precio = m.MatPri_Precio,
                          Subtotal = (fechaFin.Month == 1 ? i.Enero :
                                     fechaFin.Month == 2 ? i.Febrero :
@@ -321,7 +321,7 @@ namespace PlasticaribeAPI.Controllers
                                     fechaFin.Month == 9 ? i.Septiembre :
                                     fechaFin.Month == 10 ? i.Octubre :
                                     fechaFin.Month == 11 ? i.Noviembre :
-                                    fechaFin.Month == 13 ? i.Diciembre : i.Enero) * m.MatPri_Precio,
+                                    fechaFin.Month == 12 ? i.Diciembre : i.Enero) * m.MatPri_Precio,
                         IdCategoria = m.CatMP_Id,
                      };
 

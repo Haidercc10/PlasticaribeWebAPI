@@ -212,7 +212,8 @@ namespace PlasticaribeAPI.Controllers
                             select new
                             {
                                 op.Usua_Id,
-                                op.Usua_Nombre
+                                op.Usua_Nombre,
+                                op.Area_Id
                             };
             return operarios.Any() ? Ok(operarios) : NotFound();
         }
