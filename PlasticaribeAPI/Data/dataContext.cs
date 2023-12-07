@@ -163,6 +163,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<Inventario_Areas> Inventarios_Areas { get; set; }
         public DbSet<Produccion_Areas> Produccion_Areas { get; set; }
         public DbSet<Produccion_Procesos> Produccion_Procesos { get; set; }
+        public DbSet<Conceptos_Automaticos> Conceptos_Automaticos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -265,6 +266,9 @@ namespace PlasticaribeAPI.Data
             //modelBuilder.Entity<Proveedor>().ToTable(tb => tb.HasTrigger("Auditoria_Proveedores"));
             modelBuilder.Entity<Proveedor>().HasOne(prv => prv.TipoIdentificacion).WithMany().HasForeignKey(prv => prv.TipoIdentificacion_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Proveedor>().HasOne(prv => prv.TpProv).WithMany().HasForeignKey(prv => prv.TpProv_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Proveedor>().HasOne(prv => prv.CA_ReteFuente).WithMany().HasForeignKey(prv => prv.ReteFuente).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Proveedor>().HasOne(prv => prv.CA_ReteIVA).WithMany().HasForeignKey(prv => prv.ReteIVA).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Proveedor>().HasOne(prv => prv.CA_ReteICA).WithMany().HasForeignKey(prv => prv.ReteICA).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Proveedor>().Property(p => p.Prov_Codigo).UseIdentityColumn().ValueGeneratedOnAddOrUpdate();
 
             //Relaciones Provedor_MateriaPrima
@@ -945,6 +949,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Tipo_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Usuarios"));
             modelBuilder.Entity<Archivos>().ToTable(tb => tb.HasTrigger("Auditoria_Archivos"));
             modelBuilder.Entity<Tipo_Solicitud_Rollos_Areas>().ToTable(tb => tb.HasTrigger("Auditoria_Tipo_Solicitud_Rollos_Areas"));
+            modelBuilder.Entity<Conceptos_Automaticos>().ToTable(tb => tb.HasTrigger("Auditoria_Conceptos_Automaticos"));
 
             /*modelBuilder.Entity<Log_Errores>().ToTable(tb => tb.HasTrigger("Auditoria_Log_Errores"));
             modelBuilder.Entity<Tipos_Sellados>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Sellados"));

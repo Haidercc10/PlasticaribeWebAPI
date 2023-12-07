@@ -45,6 +45,16 @@ namespace PlasticaribeAPI.Models
         public string? Oc_Observacion { get; set; }
 
         public int IVA { get; set; }
+
+        [Precision(18, 2)]
+        public decimal ReteFuente { get; set; }
+
+        [Precision(18, 2)]
+        public decimal ReteIVA { get; set; }
+
+        [Precision(18, 2)]
+        public decimal ReteICA { get; set; }
+
         //public IList<OrdenesCompras_FacturasCompras>? OrdenFactura { get; set; }
         //public IList<Remision_OrdenCompra>? OrdenRemision { get; set; }
     }

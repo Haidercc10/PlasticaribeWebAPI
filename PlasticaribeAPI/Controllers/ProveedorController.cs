@@ -50,13 +50,18 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getProveedorLike/{nombre}")]
         public ActionResult getProveedorLike(string nombre)
         {
-            var con = _context.Proveedores
-                .Where(x => x.Prov_Nombre.StartsWith(nombre) || Convert.ToString(x.Prov_Id).StartsWith(nombre))
-                .Select(x => new
-                {
-                    x.Prov_Id,
-                    x.Prov_Nombre,
-                });
+            var con = from prov in _context.Set<Proveedor>()
+                      join rtFuente in _context.Set<Conceptos_Automaticos>() on prov.ReteFuente equals rtFuente.Id
+                      join rtIva in _context.Set<Conceptos_Automaticos>() on prov.ReteIVA equals rtIva.Id
+                      join rtIca in _context.Set<Conceptos_Automaticos>() on prov.ReteICA equals rtIca.Id
+                      where prov.Prov_Nombre.Contains(nombre)
+                      select new
+                      {
+                          prov,
+                          rtFuente,
+                          rtIva,
+                          rtIca
+                      };
             return Ok(con);
         }
 

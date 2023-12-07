@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20231204215457_Pigmt_Hexadecimal")]
+    partial class Pigmt_Hexadecimal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -933,36 +936,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("usua_Id");
 
                     b.ToTable("Clientes");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Conceptos_Automaticos", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Base")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<string>("Concepto")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<decimal>("Porcentaje")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Conceptos_Automaticos", t =>
-                        {
-                            t.HasTrigger("Auditoria_Conceptos_Automaticos");
-                        });
-
-                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Cono", b =>
@@ -5000,18 +4973,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("Prov_Id")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal>("ReteFuente")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ReteICA")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ReteIVA")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("TpDoc_Id")
                         .IsRequired()
                         .HasColumnType("varchar(10)");
@@ -6025,15 +5986,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<string>("Prov_Telefono")
                         .HasColumnType("varchar(100)");
 
-                    b.Property<int>("ReteFuente")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReteICA")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReteIVA")
-                        .HasColumnType("int");
-
                     b.Property<string>("TipoIdentificacion_Id")
                         .IsRequired()
                         .HasColumnType("varchar(10)");
@@ -6042,12 +5994,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Prov_Id");
-
-                    b.HasIndex("ReteFuente");
-
-                    b.HasIndex("ReteICA");
-
-                    b.HasIndex("ReteIVA");
 
                     b.HasIndex("TipoIdentificacion_Id");
 
@@ -10602,24 +10548,6 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Proveedor", b =>
                 {
-                    b.HasOne("PlasticaribeAPI.Models.Conceptos_Automaticos", "CA_ReteFuente")
-                        .WithMany()
-                        .HasForeignKey("ReteFuente")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Conceptos_Automaticos", "CA_ReteICA")
-                        .WithMany()
-                        .HasForeignKey("ReteICA")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Conceptos_Automaticos", "CA_ReteIVA")
-                        .WithMany()
-                        .HasForeignKey("ReteIVA")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.TipoIdentificacion", "TipoIdentificacion")
                         .WithMany()
                         .HasForeignKey("TipoIdentificacion_Id")
@@ -10631,12 +10559,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("TpProv_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("CA_ReteFuente");
-
-                    b.Navigation("CA_ReteICA");
-
-                    b.Navigation("CA_ReteIVA");
 
                     b.Navigation("TipoIdentificacion");
 

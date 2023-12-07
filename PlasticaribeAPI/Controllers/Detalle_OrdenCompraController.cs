@@ -58,6 +58,10 @@ namespace PlasticaribeAPI.Controllers
                           Valor_Total = Oc.Oc_ValorTotal,
                           Peso_Total = Oc.Oc_PesoTotal,
                           iva = Oc.IVA,
+                          ReteIva = Oc.ReteIVA,
+                          ReteFuente = Oc.ReteFuente,
+                          ReteIca = Oc.ReteICA,
+                          Base= Oc.Proveedor.CA_ReteICA.Base,
 
                           Empresa_Id = Emp.Empresa_Id,
                           Empresa_Ciudad = Emp.Empresa_Ciudad,

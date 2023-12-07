@@ -13,5 +13,8 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(MAX)")]
         public string Pigmt_Descripcion { get; set; }
+
+        [Column(TypeName = "varchar(50)")]
+        public string Pigmt_Hexadecimal { get; set; }
     }
 }

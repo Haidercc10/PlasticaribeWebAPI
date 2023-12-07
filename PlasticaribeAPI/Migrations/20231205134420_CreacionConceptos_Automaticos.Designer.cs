@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20231205134420_CreacionConceptos_Automaticos")]
+    partial class CreacionConceptos_Automaticos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6025,15 +6028,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<string>("Prov_Telefono")
                         .HasColumnType("varchar(100)");
 
-                    b.Property<int>("ReteFuente")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReteICA")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReteIVA")
-                        .HasColumnType("int");
-
                     b.Property<string>("TipoIdentificacion_Id")
                         .IsRequired()
                         .HasColumnType("varchar(10)");
@@ -6042,12 +6036,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Prov_Id");
-
-                    b.HasIndex("ReteFuente");
-
-                    b.HasIndex("ReteICA");
-
-                    b.HasIndex("ReteIVA");
 
                     b.HasIndex("TipoIdentificacion_Id");
 
@@ -10602,24 +10590,6 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Proveedor", b =>
                 {
-                    b.HasOne("PlasticaribeAPI.Models.Conceptos_Automaticos", "CA_ReteFuente")
-                        .WithMany()
-                        .HasForeignKey("ReteFuente")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Conceptos_Automaticos", "CA_ReteICA")
-                        .WithMany()
-                        .HasForeignKey("ReteICA")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Conceptos_Automaticos", "CA_ReteIVA")
-                        .WithMany()
-                        .HasForeignKey("ReteIVA")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.TipoIdentificacion", "TipoIdentificacion")
                         .WithMany()
                         .HasForeignKey("TipoIdentificacion_Id")
@@ -10631,12 +10601,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("TpProv_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("CA_ReteFuente");
-
-                    b.Navigation("CA_ReteICA");
-
-                    b.Navigation("CA_ReteIVA");
 
                     b.Navigation("TipoIdentificacion");
 
