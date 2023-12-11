@@ -17,5 +17,8 @@ namespace PlasticaribeAPI.Models
 
         [Precision(14, 2)]
         public decimal Porcentaje { get; set; }
+
+        public int TpCcpto_Id { get; set; }
+        public Tipos_Conceptos? TipoCpto { get; set; }
     }
 }

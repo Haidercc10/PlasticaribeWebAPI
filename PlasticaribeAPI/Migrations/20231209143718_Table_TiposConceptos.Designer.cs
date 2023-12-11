@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20231209143718_Table_TiposConceptos")]
+    partial class Table_TiposConceptos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -955,12 +958,7 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
 
-                    b.Property<int>("TpCcpto_Id")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("TpCcpto_Id");
 
                     b.ToTable("Conceptos_Automaticos", t =>
                         {
@@ -8048,17 +8046,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("TipoIdentificacion");
 
                     b.Navigation("Usua");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Conceptos_Automaticos", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Tipos_Conceptos", "TipoCpto")
-                        .WithMany()
-                        .HasForeignKey("TpCcpto_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("TipoCpto");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.ControlCalidad_CorteDoblado", b =>

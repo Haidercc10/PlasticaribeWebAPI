@@ -165,6 +165,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<Produccion_Procesos> Produccion_Procesos { get; set; }
         public DbSet<Conceptos_Automaticos> Conceptos_Automaticos { get; set; }
 
+        public DbSet<Tipos_Conceptos> Tipos_Conceptos { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Relaciones de productos
@@ -943,6 +945,9 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Produccion_Procesos>().HasOne(x => x.Proceso).WithMany().HasForeignKey(y => y.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Produccion_Procesos>().HasOne(x => x.Turno).WithMany().HasForeignKey(y => y.Turno_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Produccion_Procesos>().HasOne(x => x.Creador).WithMany().HasForeignKey(y => y.Creador_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Conceptos Automaticos
+            modelBuilder.Entity<Conceptos_Automaticos>().HasOne(x => x.TipoCpto).WithMany().HasForeignKey(y => y.TpCcpto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
