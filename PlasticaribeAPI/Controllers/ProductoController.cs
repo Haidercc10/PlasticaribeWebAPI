@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -133,6 +134,36 @@ namespace PlasticaribeAPI.Controllers
                       };
 
             return Ok(con);
+        }
+
+        // Funcion que realizará una consulta en la base de datos para obtener información de los productos cuando el nombre de estos tenga la información recibida como parametro
+        [HttpGet("getProductsByName/{name}")]
+        public ActionResult GetProductsByName(string name)
+        {
+            var products = from prod in _context.Set<Producto>()
+                           join exis in _context.Set<Existencia_Productos>() on prod.Prod_Id equals exis.Prod_Id
+                           where prod.Prod_Nombre.Contains(name)
+                           select new
+                           {
+                               prod,
+                               exis
+                           };
+            return products.Any() ? Ok(products) : NotFound();
+        }
+
+        // Funcion que realizará una consulta en la base de datos para obtener información de los productos cuando el nombre de estos tenga la información recibida como parametro
+        [HttpGet("getProductsById/{id}")]
+        public ActionResult GetProductsById(int id)
+        {
+            var products = from prod in _context.Set<Producto>()
+                           join exis in _context.Set<Existencia_Productos>() on prod.Prod_Id equals exis.Prod_Id
+                           where prod.Prod_Id == id
+                           select new
+                           {
+                               prod,
+                               exis
+                           };
+            return products.Any() ? Ok(products) : NotFound();
         }
 
         // PUT: api/Producto/5
