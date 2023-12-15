@@ -134,9 +134,15 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getAvaibleProduction/{item}")]
         public ActionResult GetAvaibleProduction(int item)
         {
+            var notAvaibleProduccion = from order in _context.Set<Detalles_OrdenFacturacion>()
+                                       select order.Numero_Rollo;
+
             var production = from pp in _context.Set<Produccion_Procesos>()
                              join prod in _context.Set<Producto>() on pp.Prod_Id equals prod.Prod_Id
-                             where pp.Prod_Id == item && pp.Estado_Rollo == 19 && pp.Envio_Zeus == true
+                             where pp.Prod_Id == item && 
+                                   pp.Estado_Rollo == 19 && 
+                                   pp.Envio_Zeus == true &&
+                                   !notAvaibleProduccion.Contains(pp.Numero_Rollo)
                              select new
                              {
                                  pp,
