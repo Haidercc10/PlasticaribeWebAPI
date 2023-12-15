@@ -163,6 +163,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<Inventario_Areas> Inventarios_Areas { get; set; }
         public DbSet<Produccion_Areas> Produccion_Areas { get; set; }
         public DbSet<Produccion_Procesos> Produccion_Procesos { get; set; }
+        public DbSet<OrdenFacturacion> OrdenFacturacion { get; set; }
+        public DbSet<Detalles_OrdenFacturacion> Detalles_OrdenFacturacion { get; set; }
         public DbSet<Conceptos_Automaticos> Conceptos_Automaticos { get; set; }
 
         public DbSet<Tipos_Conceptos> Tipos_Conceptos { get; set; }
@@ -946,6 +948,16 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Produccion_Procesos>().HasOne(x => x.Proceso).WithMany().HasForeignKey(y => y.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Produccion_Procesos>().HasOne(x => x.Turno).WithMany().HasForeignKey(y => y.Turno_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Produccion_Procesos>().HasOne(x => x.Creador).WithMany().HasForeignKey(y => y.Creador_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Produccion_Procesos>().HasOne(x => x.Estado).WithMany().HasForeignKey(y => y.Estado_Rollo).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            // OrdenFacturacion
+            modelBuilder.Entity<OrdenFacturacion>().HasOne(x => x.Clientes).WithMany().HasForeignKey(y => y.Cli_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<OrdenFacturacion>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            // Detalles_OrdenFacturacion
+            modelBuilder.Entity<Detalles_OrdenFacturacion>().HasOne(x => x.OrdenFacturacion).WithMany().HasForeignKey(y => y.Id_OrdenFacturacion).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_OrdenFacturacion>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_OrdenFacturacion>().HasOne(x => x.Und).WithMany().HasForeignKey(y => y.Presentacion).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Conceptos Automaticos
             modelBuilder.Entity<Conceptos_Automaticos>().HasOne(x => x.TipoCpto).WithMany().HasForeignKey(y => y.TpCcpto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);

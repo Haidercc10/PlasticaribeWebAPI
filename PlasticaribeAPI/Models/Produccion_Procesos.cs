@@ -69,5 +69,7 @@ namespace PlasticaribeAPI.Models
         public string Hora { get; set; }
         public long Creador_Id { get; set; }
         public Usuario? Creador { get; set; }
+        public int Estado_Rollo { get; set; }
+        public Estado? Estado { get; set; }
     }
 }

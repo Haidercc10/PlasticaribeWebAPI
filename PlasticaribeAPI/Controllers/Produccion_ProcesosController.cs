@@ -130,6 +130,21 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
+        //consulta que devolverá la informacion de los rollos que está disponibles, es decir, los rollos que no han sido facturados o enviados al cliente
+        [HttpGet("getAvaibleProduction/{item}")]
+        public ActionResult GetAvaibleProduction(int item)
+        {
+            var production = from pp in _context.Set<Produccion_Procesos>()
+                             join prod in _context.Set<Producto>() on pp.Prod_Id equals prod.Prod_Id
+                             where pp.Prod_Id == item && pp.Estado_Rollo == 19 && pp.Envio_Zeus == true
+                             select new
+                             {
+                                 pp,
+                                 prod
+                             };
+            return production.Any() ? Ok(production) : NotFound();
+        }
+
         [HttpGet("EnviarAjuste/{ordenTrabajo}/{articulo}/{presentacion}/{rollo}/{cantidad}/{costo}")]
         public async Task<ActionResult> EnviarAjuste(string ordenTrabajo, string articulo, string presentacion, long rollo, decimal cantidad, decimal costo)
         {
@@ -371,6 +386,28 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
+        [HttpPut("putCambiarEstadoRollo/{rollo}")]
+        public async Task<IActionResult> PutcambiarEstadoRollo(long rollo)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.Numero_Rollo == rollo select prod).FirstOrDefault();
+            dataProduction.Estado_Rollo = 23;
+            _context.Entry(dataProduction).State = EntityState.Modified;
+            _context.SaveChanges();
+            try
+            {
+
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+
+            return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
         // PUT: api/Produccion_Procesos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -412,6 +449,7 @@ namespace PlasticaribeAPI.Controllers
                                      select prod.Numero_Rollo).FirstOrDefault();
 
             produccion_Procesos.Numero_Rollo = numeroUltimoRollo + 1;
+            produccion_Procesos.Estado_Rollo = 19;
             _context.Produccion_Procesos.Add(produccion_Procesos);
             await _context.SaveChangesAsync();
             return CreatedAtAction("GetProduccion_Procesos", new { id = produccion_Procesos.Id }, produccion_Procesos);
