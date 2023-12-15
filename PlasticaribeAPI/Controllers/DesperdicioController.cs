@@ -68,7 +68,7 @@ namespace PlasticaribeAPI.Controllers
                           des.Desp_Id,
                           des.Desp_FechaRegistro,
                           des.Desp_OT,
-                          des.Activo.Actv_Serial,
+                          des.Maquina,
                           des.Usuario1.Usua_Nombre,
                           des.Prod_Id,
                           des.Producto.Prod_Nombre,
@@ -116,9 +116,7 @@ namespace PlasticaribeAPI.Controllers
                                    d.Falla_Id,
                                    d.Falla.Falla_Nombre,
                                    d.Desp_Impresion,
-                                   d.Actv_Id,
-                                   d.Activo.Actv_Nombre,
-                                   d.Activo.Actv_Serial,
+                                   d.Maquina,
                                    Operario = d.Usua_Operario,
                                    d.Usuario1.Usua_Nombre,
                                    d.Usua_Id,
@@ -150,7 +148,7 @@ namespace PlasticaribeAPI.Controllers
                           des.Desp_Id,
                           des.Desp_FechaRegistro,
                           des.Desp_OT,
-                          des.Activo.Actv_Serial,
+                          des.Maquina,
                           des.Usuario1.Usua_Nombre,
                           des.Prod_Id,
                           des.Producto.Prod_Nombre,
@@ -217,12 +215,12 @@ namespace PlasticaribeAPI.Controllers
                                Convert.ToString(des.Prod_Id).Contains(item) &&
                                Convert.ToString(des.Falla_Id).Contains(falla) &&
                                Convert.ToString(des.Proceso_Id).Contains(proceso) &&
-                               Convert.ToString(des.Actv_Id).Contains(maquina)
+                               Convert.ToString(des.Maquina).Contains(maquina)
                                select new
                                {
                                    des.Desp_Id,
                                    des.Desp_OT,
-                                   des.Activo.Actv_Serial,
+                                   des.Maquina,
                                    des.Usuario1.Usua_Nombre,
                                    des.Prod_Id,
                                    des.Producto.Prod_Nombre,

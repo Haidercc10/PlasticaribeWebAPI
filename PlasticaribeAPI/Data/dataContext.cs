@@ -693,13 +693,15 @@ namespace PlasticaribeAPI.Data
 
             //Desperdicio
             modelBuilder.Entity<Desperdicio>().ToTable(tb => tb.HasTrigger("Auditoria_Desperdicios"));
+            modelBuilder.Entity<Desperdicio>().ToTable(tb => tb.HasTrigger("TR_InsertDesperdicioBagpro"));
             modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Producto).WithMany().HasForeignKey(desp => desp.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Material).WithMany().HasForeignKey(desp => desp.Material_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Usuario1).WithMany().HasForeignKey(desp => desp.Usua_Operario).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Usuario2).WithMany().HasForeignKey(desp => desp.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Proceso).WithMany().HasForeignKey(desp => desp.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Falla).WithMany().HasForeignKey(desp => desp.Falla_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
-            modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Activo).WithMany().HasForeignKey(desp => desp.Actv_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Turnos).WithMany().HasForeignKey(desp => desp.Turno_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            //modelBuilder.Entity<Desperdicio>().HasOne(desp => desp.Activo).WithMany().HasForeignKey(desp => desp.Actv_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Log Transacciones
             modelBuilder.Entity<Log_Transacciones>().HasOne(trn => trn.Usuario).WithMany().HasForeignKey(trn => trn.Transac_Usuario).OnDelete(deleteBehavior: DeleteBehavior.Restrict);

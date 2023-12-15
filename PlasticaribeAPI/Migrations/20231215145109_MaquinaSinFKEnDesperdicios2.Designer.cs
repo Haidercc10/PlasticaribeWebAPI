@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20231215145109_MaquinaSinFKEnDesperdicios2")]
+    partial class MaquinaSinFKEnDesperdicios2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1586,10 +1589,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Prod_Id")
                         .HasColumnType("int");
 
-                    b.Property<string>("Turno_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
                     b.Property<long>("Usua_Id")
                         .HasColumnType("bigint");
 
@@ -1606,8 +1605,6 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Prod_Id");
 
-                    b.HasIndex("Turno_Id");
-
                     b.HasIndex("Usua_Id");
 
                     b.HasIndex("Usua_Operario");
@@ -1615,8 +1612,6 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Desperdicios", t =>
                         {
                             t.HasTrigger("Auditoria_Desperdicios");
-
-                            t.HasTrigger("TR_InsertDesperdicioBagpro");
                         });
 
                     b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
@@ -8244,12 +8239,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Turno", "Turnos")
-                        .WithMany()
-                        .HasForeignKey("Turno_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario2")
                         .WithMany()
                         .HasForeignKey("Usua_Id")
@@ -8269,8 +8258,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Proceso");
 
                     b.Navigation("Producto");
-
-                    b.Navigation("Turnos");
 
                     b.Navigation("Usuario1");
 
