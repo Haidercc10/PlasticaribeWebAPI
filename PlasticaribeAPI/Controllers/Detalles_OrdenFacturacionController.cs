@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ using PlasticaribeAPI.Models;
 namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class Detalles_OrdenFacturacionController : ControllerBase
     {
         private readonly dataContext _context;
@@ -59,6 +60,26 @@ namespace PlasticaribeAPI.Controllers
             return fact.Any() ? Ok(fact) : NotFound();
         }
 
+        [HttpGet("getInformationOrderFactByFactForDevolution/{fact}")]
+        public ActionResult GetInformationOrderFactByFactForDevolution(string fact)
+        {
+            var devolutions = from dev in _context.Set<DetalleDevolucion_ProductoFacturado>() select dev.Rollo_Id;
+
+            var data = from order in _context.Set<OrdenFacturacion>()
+                       join dtOrder in _context.Set<Detalles_OrdenFacturacion>() on order.Id equals dtOrder.Id_OrdenFacturacion
+                       where order.Factura == fact &&
+                             !devolutions.Contains(dtOrder.Numero_Rollo)
+                       select new
+                       {
+                           order,
+                           order.Clientes,
+                           order.Usuario,
+                           dtOrder,
+                           dtOrder.Producto
+                       };
+            return data.Any() ? Ok(data) : NotFound();
+        }
+
         [HttpGet("getOrders/{startDate}/{endDate}")]
         public ActionResult GetOrderd(DateTime startDate, DateTime endDate, string? order = "")
         {
@@ -71,6 +92,7 @@ namespace PlasticaribeAPI.Controllers
                            or,
                            or.Clientes,
                            or.Usuario,
+                           Type = "Orden"
                        };
             return fact.Any() ? Ok(fact) : NotFound();
         }
