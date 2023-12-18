@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
+using PlasticaribeAPI.Migrations;
 using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
@@ -227,6 +228,79 @@ namespace PlasticaribeAPI.Controllers
                            Id_Existencia = e.ExProd_Id,
                        });
             return Ok(con);
+        }
+
+        // Consulta que devolverá el inventario de los productos con cada uno de los rollos que tiene disponibles
+        [HttpGet("getStockProducts_AvaibleProduction")]
+        public ActionResult GetStockProducts_AvaibleProduction()
+        {
+            var notAvaibleProduccion = from order in _context.Set<Detalles_OrdenFacturacion>()
+                                       select order.Numero_Rollo;
+
+            var stock = from prod in _context.Set<Producto>()
+                        join exi in _context.Set<Existencia_Productos>() on prod.Prod_Id equals exi.Prod_Id
+                        where exi.ExProd_Cantidad > 2
+                        select new
+                        {
+                            Product = new
+                            {
+                                Item = prod.Prod_Id,
+                                Reference = prod.Prod_Nombre,
+                            },
+                            Stock = new
+                            {
+                                Stock = exi.ExProd_Cantidad,
+                                Price = exi.ExProd_PrecioVenta,
+                                Presentation = exi.UndMed_Id,
+                                StockPrice = exi.ExProd_PrecioExistencia,
+                            },
+                            Client = (
+                                from cp in _context.Set<Cliente_Producto>()
+                                join cli in _context.Set<Clientes>() on cp.Cli_Id equals cli.Cli_Id
+                                join vende in _context.Set<Usuario>() on cli.usua_Id equals vende.Usua_Id
+                                where prod.Prod_Id == cp.Prod_Id
+                                select new
+                                {
+                                    cli = new {
+                                        Id_Client = cli.Cli_Id,
+                                        Client = cli.Cli_Nombre,
+                                    },
+                                    vende = new
+                                    {
+                                        Id_Vende = vende.Usua_Id,
+                                        Name_Vende = vende.Usua_Nombre,
+                                    }
+                                }
+                            ).ToList(),
+                            Avaible_Production = (
+                                from pp in _context.Set<Produccion_Procesos>()
+                                where pp.Prod_Id == prod.Prod_Id &&
+                                      pp.Estado_Rollo == 19 &&
+                                      pp.Envio_Zeus == true &&
+                                      !notAvaibleProduccion.Contains(pp.Numero_Rollo)
+                                select new
+                                {
+                                    Number = pp.Numero_Rollo,
+                                    Quantity = pp.Cantidad,
+                                    Weight = pp.Peso_Neto,
+                                    Presentation = pp.Presentacion,
+                                    Process = pp.Proceso.Proceso_Nombre,
+                                    Date = pp.Fecha,
+                                    Hour = pp.Hora,
+                                    Price = pp.Precio,
+                                    Turn = pp.Turno,
+                                    Information = pp.Datos_Etiqueta,
+                                    orderProduction = pp.OT,
+                                }
+                            ).ToList(),
+                            Stock_MonthByMonth = (
+                                from mm in _context.Set<Inventario_Mensual_Productos>()
+                                where mm.Prod_Id == prod.Prod_Id &&
+                                      mm.UndMed_Id == exi.UndMed_Id
+                                select mm
+                            ).ToList(),
+                        };
+            return Ok(stock);
         }
 
         // PUT: api/Existencia_Productos/5
