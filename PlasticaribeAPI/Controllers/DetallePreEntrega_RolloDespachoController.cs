@@ -194,6 +194,22 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        [HttpGet("getInformactionAboutPreIn_ById/{id}")]
+        public ActionResult GetInformactionAboutPreIn_ById(int id)
+        {
+            var preIn = from pre in _context.Set<PreEntrega_RolloDespacho>()
+                        join dtPre in _context.Set<DetallePreEntrega_RolloDespacho>() on pre.PreEntRollo_Id equals dtPre.PreEntRollo_Id
+                        where pre.PreEntRollo_Id == id
+                        select new
+                        {
+                            pre,
+                            dtPre.Prod,
+                            dtPre.Proceso,
+                            dtPre
+                        };
+            return preIn.Any() ? Ok(preIn) : NotFound();
+        }
+
         // PUT: api/DetallePreEntrega_RolloDespacho/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
