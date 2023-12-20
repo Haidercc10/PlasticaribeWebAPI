@@ -460,7 +460,7 @@ namespace PlasticaribeAPI.Controllers
                 existencia.ExProd_PrecioVenta = precio;
                 existencia.ExProd_Cantidad += cantidad;
                 _context.SaveChanges();
-                return NoContent();
+                return Ok("Existencia Actualizada");
             }
             catch (DbUpdateConcurrencyException)
             {

@@ -179,7 +179,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("EnviarAjuste/{ordenTrabajo}/{articulo}/{presentacion}/{rollo}/{cantidad}/{costo}")]
-        public async Task<ActionResult> EnviarAjuste(string ordenTrabajo, string articulo, string presentacion, long rollo, decimal cantidad, decimal costo)
+        public async Task<ActionResult> EnviarAjuste(string ordenTrabajo, int articulo, string presentacion, long rollo, decimal cantidad, decimal costo)
         {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             string today = DateTime.Today.ToString("yyyy-MM-dd");
@@ -278,8 +278,7 @@ namespace PlasticaribeAPI.Controllers
             var endpoint = new EndpointAddress("http://192.168.0.85/wsGenericoZeus/ServiceWS.asmx");
             WebservicesGenericoZeusSoapClient client = new WebservicesGenericoZeusSoapClient(binding, endpoint);
             SoapResponse response = await client.ExecuteActionSOAPAsync(request);
-            Existencia_ProductosController existencia_ProductosController = new Existencia_ProductosController(_context);
-            existencia_ProductosController.PutExistencia(Convert.ToInt32(articulo), presentacion, costo, cantidad);
+            PutExistencia(Convert.ToInt32(articulo), presentacion, costo, cantidad);
             PutEnvioZeus(rollo);
             return Convert.ToString(response.Status) == "SUCCESS" ? Ok(response) : BadRequest(response);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -397,6 +396,30 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
+        [HttpPut("putExistencia/{producto}/{presentacion}/{precio}/{cantidad}")]
+        public async Task<IActionResult> PutExistencia(int producto, string presentacion, decimal precio, decimal cantidad)
+        {
+            if (presentacion == "KLS") presentacion = "Kg";
+            else if (presentacion == "UND") presentacion = "Und";
+            else if (presentacion == "PAQ") presentacion = "Paquete";
+
+            var existencia = (from exis in _context.Set<Existencia_Productos>() where exis.Prod_Id == producto && exis.UndMed_Id == presentacion select exis).FirstOrDefault();
+            existencia.ExProd_PrecioVenta = precio;
+            existencia.ExProd_Cantidad += cantidad;
+            existencia.ExProd_PrecioExistencia = precio * existencia.ExProd_Cantidad;
+            _context.Entry(existencia).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
+
         [HttpPut("putEnvioZeus{rollo}")]
         public async Task<IActionResult> PutEnvioZeus(long rollo)
         {
@@ -407,7 +430,7 @@ namespace PlasticaribeAPI.Controllers
             _context.SaveChanges();
             try
             {
-                
+
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
