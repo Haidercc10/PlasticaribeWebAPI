@@ -83,6 +83,7 @@ namespace PlasticaribeAPI.Controllers
                            pp.Operario4,
                            pp.Cono,
                            pp.Creador,
+                           numero_RolloBagPro = 0,
                        };
             return data.Any() ? Ok(data) : NotFound();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -280,23 +281,8 @@ namespace PlasticaribeAPI.Controllers
             SoapResponse response = await client.ExecuteActionSOAPAsync(request);
             PutExistencia(Convert.ToInt32(articulo), presentacion, Convert.ToDecimal(costo), Convert.ToDecimal(cantidad));
             //PutEnvioZeus(rollo);
-
-            var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.Numero_Rollo == rollo select prod).FirstOrDefault();
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            dataProduction.Envio_Zeus = true;
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-            _context.Entry(dataProduction).State = EntityState.Modified;
-            _context.SaveChanges();
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
-
             return Convert.ToString(response.Status) == "SUCCESS" ? Ok(response) : BadRequest(response);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
@@ -436,7 +422,7 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("putEnvioZeus{rollo}")]
+        [HttpPut("putEnvioZeus/{rollo}")]
         public async Task<IActionResult> PutEnvioZeus(long rollo)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
