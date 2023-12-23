@@ -83,6 +83,7 @@ namespace PlasticaribeAPI.Controllers
                            pp.Operario4,
                            pp.Cono,
                            pp.Creador,
+                           numero_RolloBagPro = 0,
                        };
             return data.Any() ? Ok(data) : NotFound();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -179,7 +180,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("EnviarAjuste/{ordenTrabajo}/{articulo}/{presentacion}/{rollo}/{cantidad}/{costo}")]
-        public async Task<ActionResult> EnviarAjuste(string ordenTrabajo, int articulo, string presentacion, long rollo, decimal cantidad, decimal costo)
+        public async Task<ActionResult> EnviarAjuste(string ordenTrabajo, string articulo, string presentacion, long rollo, string cantidad, string costo)
         {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             string today = DateTime.Today.ToString("yyyy-MM-dd");
@@ -278,9 +279,10 @@ namespace PlasticaribeAPI.Controllers
             var endpoint = new EndpointAddress("http://192.168.0.85/wsGenericoZeus/ServiceWS.asmx");
             WebservicesGenericoZeusSoapClient client = new WebservicesGenericoZeusSoapClient(binding, endpoint);
             SoapResponse response = await client.ExecuteActionSOAPAsync(request);
-            PutExistencia(Convert.ToInt32(articulo), presentacion, costo, cantidad);
-            PutEnvioZeus(rollo);
+            PutExistencia(Convert.ToInt32(articulo), presentacion, Convert.ToDecimal(costo), Convert.ToDecimal(cantidad));
+            //PutEnvioZeus(rollo);
             return Convert.ToString(response.Status) == "SUCCESS" ? Ok(response) : BadRequest(response);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
@@ -420,7 +422,7 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("putEnvioZeus{rollo}")]
+        [HttpPut("putEnvioZeus/{rollo}")]
         public async Task<IActionResult> PutEnvioZeus(long rollo)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
