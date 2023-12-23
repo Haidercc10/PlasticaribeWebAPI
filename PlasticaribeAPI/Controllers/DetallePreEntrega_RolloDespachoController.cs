@@ -210,6 +210,37 @@ namespace PlasticaribeAPI.Controllers
             return preIn.Any() ? Ok(preIn) : NotFound();
         }
 
+        //Consulta para movimientos de preingresos de producción
+        [HttpGet("getDataPreInProduction/{fechaInicial}/{fechaFinal}")]
+        public ActionResult getDataPreInProduction(DateTime fechaInicial, DateTime fechaFinal, string? process = "", string? ot = "", string? item = "")
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+            var con = from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
+                      where pre.PreEntregaRollo.PreEntRollo_Fecha >= fechaInicial
+                            && pre.PreEntregaRollo.PreEntRollo_Fecha <= fechaFinal
+                            && Convert.ToString(pre.Proceso_Id).Contains(process)
+                            && Convert.ToString(pre.DtlPreEntRollo_OT).Contains(ot)
+                            && Convert.ToString(pre.Prod_Id).Contains(item)
+                      select new
+                      {
+                          Orden = pre.DtlPreEntRollo_OT,
+                          Rollo = pre.Rollo_Id,
+                          Id_Producto = pre.Prod_Id,
+                          Producto = pre.Prod.Prod_Nombre,
+                          Fecha_Ingreso = pre.PreEntregaRollo.PreEntRollo_Fecha,
+                          Hora_Ingreso = pre.PreEntregaRollo.PreEntRollo_Hora,
+                          Cantidad = pre.DtlPreEntRollo_Cantidad,
+                          Presentacion = pre.UndMed_Rollo,
+                          Proceso = pre.Proceso_Id,
+                          NombreProceso = pre.Proceso.Proceso_Nombre,
+                      };
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            if (con == null) return BadRequest("No se encontraron resultados de búsqueda");
+            return Ok(con);
+        }
+
         // PUT: api/DetallePreEntrega_RolloDespacho/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
