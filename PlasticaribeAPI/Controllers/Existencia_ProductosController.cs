@@ -258,7 +258,8 @@ namespace PlasticaribeAPI.Controllers
                                 from cp in _context.Set<Cliente_Producto>()
                                 join cli in _context.Set<Clientes>() on cp.Cli_Id equals cli.Cli_Id
                                 join vende in _context.Set<Usuario>() on cli.usua_Id equals vende.Usua_Id
-                                where prod.Prod_Id == cp.Prod_Id
+                                where prod.Prod_Id == cp.Prod_Id &&
+                                      cp.Cli_Id != 1
                                 select new
                                 {
                                     cli = new {
@@ -280,6 +281,7 @@ namespace PlasticaribeAPI.Controllers
                                       !notAvaibleProduccion.Contains(pp.Numero_Rollo)
                                 select new
                                 {
+                                    Number_BagPro = pp.NumeroRollo_BagPro,
                                     Number = pp.Numero_Rollo,
                                     Quantity = pp.Cantidad,
                                     Weight = pp.Peso_Neto,
@@ -288,6 +290,7 @@ namespace PlasticaribeAPI.Controllers
                                     Date = pp.Fecha,
                                     Hour = pp.Hora,
                                     Price = pp.Precio,
+                                    SellPrice = pp.PrecioVenta_Producto,
                                     Turn = pp.Turno,
                                     Information = pp.Datos_Etiqueta,
                                     orderProduction = pp.OT,
@@ -299,6 +302,88 @@ namespace PlasticaribeAPI.Controllers
                                       mm.UndMed_Id == exi.UndMed_Id
                                 select mm
                             ).ToList(),
+                        };
+            return Ok(stock);
+        }
+
+        //Consulta que devolverá el inventario de los rollos que se han pesado en empaque pero no se han entregado a despacho
+        [HttpGet("getStockProducts_Process/{process}")]
+        public ActionResult GetStockProducts_Process(string process)
+        {
+            var products = from pp in _context.Set<Produccion_Procesos>() where pp.Proceso_Id == process && pp.Envio_Zeus == false && pp.Estado_Rollo == 19 select pp.Prod_Id;
+
+            var stock = from prod in _context.Set<Producto>()
+                        join exi in _context.Set<Existencia_Productos>() on prod.Prod_Id equals exi.Prod_Id
+                        where exi.ExProd_Cantidad > 2 &&
+                              products.Contains(prod.Prod_Id)
+                        select new
+                        {
+                            Product = new
+                            {
+                                Item = prod.Prod_Id,
+                                Reference = prod.Prod_Nombre,
+                            },
+                            Stock = new
+                            {
+                                Stock = exi.UndMed_Id == "Kg" ? (from pp in _context.Set<Produccion_Procesos>()
+                                         where pp.Prod_Id == prod.Prod_Id &&
+                                               pp.Estado_Rollo == 19 &&
+                                               pp.Envio_Zeus == false &&
+                                               pp.Proceso_Id == process
+                                         select pp.Peso_Neto).Sum() : (from pp in _context.Set<Produccion_Procesos>()
+                                                                      where pp.Prod_Id == prod.Prod_Id &&
+                                                                            pp.Estado_Rollo == 19 &&
+                                                                            pp.Envio_Zeus == false &&
+                                                                            pp.Proceso_Id == process
+                                                                      select pp.Cantidad).Sum(),
+                                Price = exi.ExProd_PrecioVenta,
+                                Presentation = exi.UndMed_Id,
+                                StockPrice = exi.ExProd_PrecioExistencia,
+                            },
+                            Client = (
+                                from cp in _context.Set<Cliente_Producto>()
+                                join cli in _context.Set<Clientes>() on cp.Cli_Id equals cli.Cli_Id
+                                join vende in _context.Set<Usuario>() on cli.usua_Id equals vende.Usua_Id
+                                where prod.Prod_Id == cp.Prod_Id &&
+                                      cp.Cli_Id != 1
+                                select new
+                                {
+                                    cli = new
+                                    {
+                                        Id_Client = cli.Cli_Id,
+                                        Client = cli.Cli_Nombre,
+                                    },
+                                    vende = new
+                                    {
+                                        Id_Vende = vende.Usua_Id,
+                                        Name_Vende = vende.Usua_Nombre,
+                                    }
+                                }
+                            ).ToList(),
+                            Avaible_Production = (
+                                from pp in _context.Set<Produccion_Procesos>()
+                                where pp.Prod_Id == prod.Prod_Id &&
+                                      pp.Estado_Rollo == 19 &&
+                                      pp.Envio_Zeus == false &&
+                                      pp.Proceso_Id == process
+                                select new
+                                {
+                                    Number_BagPro = pp.NumeroRollo_BagPro,
+                                    Number = pp.Numero_Rollo,
+                                    Quantity = pp.Cantidad,
+                                    Weight = pp.Peso_Neto,
+                                    Presentation = pp.Presentacion,
+                                    Process = pp.Proceso.Proceso_Nombre,
+                                    Date = pp.Fecha,
+                                    Hour = pp.Hora,
+                                    Price = pp.Precio,
+                                    SellPrice = pp.PrecioVenta_Producto,
+                                    Turn = pp.Turno,
+                                    Information = pp.Datos_Etiqueta,
+                                    orderProduction = pp.OT,
+                                }
+                            ).ToList(),
+                            Stock_MonthByMonth = (from mm in _context.Set<Inventario_Mensual_Productos>() where mm.Prod_Id == prod.Prod_Id && mm.UndMed_Id == exi.UndMed_Id select mm).ToList(),
                         };
             return Ok(stock);
         }

@@ -51,6 +51,7 @@ namespace PlasticaribeAPI.Models
 
         [Precision(18, 2)]
         public decimal Precio { get; set; }
+        public decimal PrecioVenta_Producto { get; set; }
         public string Presentacion { get; set; }
         public Unidad_Medida? Unidad_Medida { get; set; }
         public string Proceso_Id { get; set; }
@@ -71,5 +72,6 @@ namespace PlasticaribeAPI.Models
         public Usuario? Creador { get; set; }
         public int Estado_Rollo { get; set; }
         public Estado? Estado { get; set; }
+        public long NumeroRollo_BagPro { get; set; }
     }
 }

@@ -401,6 +401,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpPut("putExistencia/{producto}/{presentacion}/{precio}/{cantidad}")]
         public async Task<IActionResult> PutExistencia(int producto, string presentacion, decimal precio, decimal cantidad)
         {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             if (presentacion == "KLS") presentacion = "Kg";
             else if (presentacion == "UND") presentacion = "Und";
             else if (presentacion == "PAQ") presentacion = "Paquete";
@@ -420,6 +421,7 @@ namespace PlasticaribeAPI.Controllers
                 return NotFound();
             }
             return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         [HttpPut("putEnvioZeus/{rollo}")]
