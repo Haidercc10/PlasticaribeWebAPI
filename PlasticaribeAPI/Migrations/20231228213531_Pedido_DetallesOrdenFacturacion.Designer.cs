@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20231228213531_Pedido_DetallesOrdenFacturacion")]
+    partial class Pedido_DetallesOrdenFacturacion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4998,9 +5001,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("Cli_Id")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("Estado_Id")
-                        .HasColumnType("int");
-
                     b.Property<string>("Factura")
                         .IsRequired()
                         .HasColumnType("varchar(50)");
@@ -5022,8 +5022,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Cli_Id");
-
-                    b.HasIndex("Estado_Id");
 
                     b.HasIndex("Usua_Id");
 
@@ -10274,12 +10272,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Estado", "Estado")
-                        .WithMany()
-                        .HasForeignKey("Estado_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("Usua_Id")
@@ -10287,8 +10279,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Clientes");
-
-                    b.Navigation("Estado");
 
                     b.Navigation("Usuario");
                 });

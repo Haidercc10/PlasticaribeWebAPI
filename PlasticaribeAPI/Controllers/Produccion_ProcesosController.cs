@@ -143,7 +143,7 @@ namespace PlasticaribeAPI.Controllers
                              where pp.Prod_Id == item && 
                                    pp.Estado_Rollo == 19 && 
                                    pp.Envio_Zeus == true &&
-                                   !notAvaibleProduccion.Contains(pp.Numero_Rollo)
+                                   !notAvaibleProduccion.Contains(pp.NumeroRollo_BagPro)
                              select new
                              {
                                  pp,
@@ -279,7 +279,7 @@ namespace PlasticaribeAPI.Controllers
             var endpoint = new EndpointAddress("http://192.168.0.85/wsGenericoZeus/ServiceWS.asmx");
             WebservicesGenericoZeusSoapClient client = new WebservicesGenericoZeusSoapClient(binding, endpoint);
             SoapResponse response = await client.ExecuteActionSOAPAsync(request);
-            PutExistencia(Convert.ToInt32(articulo), presentacion, Convert.ToDecimal(costo), Convert.ToDecimal(cantidad));
+            //PutExistencia(Convert.ToInt32(articulo), presentacion, Convert.ToDecimal(costo), Convert.ToDecimal(cantidad));
             //PutEnvioZeus(rollo);
             return Convert.ToString(response.Status) == "SUCCESS" ? Ok(response) : BadRequest(response);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -505,8 +505,11 @@ namespace PlasticaribeAPI.Controllers
         public async Task<ActionResult<Produccion_Procesos>> PostProduccion_Procesos(Produccion_Procesos produccion_Procesos)
         {
             var numeroUltimoRollo = (from prod in _context.Set<Produccion_Procesos>()
-                                     orderby prod.Numero_Rollo descending
+                                     orderby prod.Id descending
                                      select prod.Numero_Rollo).FirstOrDefault();
+            var ultimoId = (from prod in _context.Set<Produccion_Procesos>()
+                            orderby prod.Id descending
+                            select prod.Id).FirstOrDefault();
 
             produccion_Procesos.Numero_Rollo = numeroUltimoRollo + 1;
             produccion_Procesos.Estado_Rollo = 19;
@@ -535,5 +538,6 @@ namespace PlasticaribeAPI.Controllers
         {
             return _context.Produccion_Procesos.Any(e => e.Id == id);
         }
+
     }
 }

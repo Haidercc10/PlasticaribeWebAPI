@@ -260,6 +260,7 @@ namespace PlasticaribeAPI.Controllers
                                 join vende in _context.Set<Usuario>() on cli.usua_Id equals vende.Usua_Id
                                 where prod.Prod_Id == cp.Prod_Id &&
                                       cp.Cli_Id != 1
+                                orderby cp.Codigo descending
                                 select new
                                 {
                                     cli = new {
@@ -346,6 +347,7 @@ namespace PlasticaribeAPI.Controllers
                                 join vende in _context.Set<Usuario>() on cli.usua_Id equals vende.Usua_Id
                                 where prod.Prod_Id == cp.Prod_Id &&
                                       cp.Cli_Id != 1
+                                orderby cp.Codigo descending
                                 select new
                                 {
                                     cli = new

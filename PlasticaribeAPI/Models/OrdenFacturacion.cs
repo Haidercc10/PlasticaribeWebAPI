@@ -23,5 +23,7 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(max)")]
         public string Observacion { get; set; }
+        public int Estado_Id { get; set; }
+        public Estado? Estado { get; set; }
     }
 }

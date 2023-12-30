@@ -43,6 +43,46 @@ namespace PlasticaribeAPI.Controllers
             return ordenFacturacion;
         }
 
+        [HttpPut("putStatusOrder/{order}")]
+        public async Task<IActionResult> PutStatusOrder(int order)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var ordenFacturacion = (from of in _context.Set<OrdenFacturacion>() where of.Id == order select of).FirstOrDefault();
+            ordenFacturacion.Estado_Id = 21;
+            _context.Entry(ordenFacturacion).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+
+            return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
+        [HttpPut("putFactOrder/{order}/{fact}")]
+        public async Task<IActionResult> PutFactOrder(int order, string fact)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var ordenFacturacion = (from of in _context.Set<OrdenFacturacion>() where of.Id == order select of).FirstOrDefault();
+            ordenFacturacion.Factura = fact;
+            _context.Entry(ordenFacturacion).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+
+            return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
         // PUT: api/OrdenFacturacion/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

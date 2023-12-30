@@ -68,7 +68,8 @@ namespace PlasticaribeAPI.Controllers
             var data = from order in _context.Set<OrdenFacturacion>()
                        join dtOrder in _context.Set<Detalles_OrdenFacturacion>() on order.Id equals dtOrder.Id_OrdenFacturacion
                        where order.Factura == fact &&
-                             !devolutions.Contains(dtOrder.Numero_Rollo)
+                             !devolutions.Contains(dtOrder.Numero_Rollo) &&
+                             order.Estado_Id == 11
                        select new
                        {
                            order,

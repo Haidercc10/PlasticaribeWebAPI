@@ -18,5 +18,6 @@ namespace PlasticaribeAPI.Models
 
         public string Presentacion { get; set; }
         public Unidad_Medida? Und {  get; set; }
+        public string? Consecutivo_Pedido { get; set; }
     }
 }

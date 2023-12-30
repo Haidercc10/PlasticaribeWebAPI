@@ -51,6 +51,8 @@ namespace PlasticaribeAPI.Models
 
         [Precision(18, 2)]
         public decimal Precio { get; set; }
+
+        [Precision(18, 2)]
         public decimal PrecioVenta_Producto { get; set; }
         public string Presentacion { get; set; }
         public Unidad_Medida? Unidad_Medida { get; set; }
