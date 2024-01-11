@@ -396,6 +396,38 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
+        [HttpGet("getInfoProduction/{date1}/{date2}")]
+        public ActionResult getInfoProduction(DateTime date1, DateTime date2, string? ot = "", string? process = "", string? roll = "")
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var data = from pp in _context.Set<Produccion_Procesos>()
+                       where pp.Fecha >= date1 &&
+                             pp.Fecha <= date2 &&
+                             Convert.ToString(pp.OT).Contains(ot) &&
+                             pp.Proceso_Id.Contains(process) &&
+                             Convert.ToString(pp.NumeroRollo_BagPro).Contains(roll) &&
+                             pp.Envio_Zeus == false &&
+                             pp.Estado_Rollo == 19
+                       select new
+                       {
+                           pp.OT,
+                           pp.Id,
+                           pp.Numero_Rollo,
+                           pp.NumeroRollo_BagPro,
+                           pp.Prod_Id,
+                           pp.Producto.Prod_Nombre,
+                           pp.Cantidad,
+                           pp.Peso_Bruto,
+                           pp.Peso_Neto,
+                           pp.Presentacion,
+                           pp.Proceso_Id,
+                           pp.Proceso.Proceso_Nombre,
+                           pp.Fecha,
+                       };
+            return data.Any() ? Ok(data) : NotFound();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
         [HttpPut("putExistencia/{producto}/{presentacion}/{precio}/{cantidad}")]
         public async Task<IActionResult> PutExistencia(int producto, string presentacion, decimal precio, decimal cantidad)
         {
