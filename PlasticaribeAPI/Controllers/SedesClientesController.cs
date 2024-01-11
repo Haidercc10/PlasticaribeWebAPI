@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SedesClientes>>> GetSedes_Clientes()
         {
-          if (_context.Sedes_Clientes == null)
-          {
-              return NotFound();
-          }
+            if (_context.Sedes_Clientes == null)
+            {
+                return NotFound();
+            }
             return await _context.Sedes_Clientes.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SedesClientes>> GetSedesClientes(long id)
         {
-          if (_context.Sedes_Clientes == null)
-          {
-              return NotFound();
-          }
+            if (_context.Sedes_Clientes == null)
+            {
+                return NotFound();
+            }
             var sedesClientes = await _context.Sedes_Clientes.FindAsync(id);
 
             if (sedesClientes == null)
@@ -137,14 +132,7 @@ namespace PlasticaribeAPI.Controllers
                     sc.SedeCli_CodBagPro,
                 }).ToList();
 
-            if (clientes == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(clientes);
-            }
+            return clientes == null ? BadRequest($"¡No se encontró información del cliente {Cli_Nombre} con la ciudad {ciudad} y dirección {direccion}!") : Ok(clientes);
         }
 
         //Funcion que consultará la informacion de una sede de cliente basandose en el Codigo de BagPro, Ciudad y Dirección
@@ -174,9 +162,29 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetSedes_Clientes(long id)
         {
             var con = (from sc in _context.Set<SedesClientes>()
-                      where sc.Cli_Id == id
-                      orderby sc.SedeCli_Id descending
-                      select sc.SedeCli_Id).FirstOrDefault();
+                       where sc.Cli_Id == id
+                       orderby sc.SedeCli_Id descending
+                       select sc.SedeCli_Id).FirstOrDefault();
+            return Ok(con);
+        }
+
+        //Funcion que consultará la informacion de una sede de cliente basandose en el Codigo de BagPro, Ciudad y Dirección
+        [HttpGet("getSedeClientexNitBagPro/{cod}")]
+        public ActionResult getSedeClientexNitBagPro(string cod)
+        {
+            var con = from sd in _context.Set<SedesClientes>()
+                      from cl in _context.Set<Clientes>()
+                      where cl.Cli_Id == sd.Cli_Id &&
+                      sd.SedeCli_CodBagPro == cod
+                      select new
+                      {
+                          idSede = sd.SedeCli_Id,       
+                          id_Cliente = sd.Cli_Id,
+                          Cliente = cl.Cli_Nombre,
+                          id_Vendedor = Convert.ToString(cl.usua_Id),
+                          Vendedor = cl.Usua.Usua_Nombre,
+                      }; 
+            
             return Ok(con);
         }
 
@@ -216,10 +224,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<SedesClientes>> PostSedesClientes(SedesClientes sedesClientes)
         {
-          if (_context.Sedes_Clientes == null)
-          {
-              return Problem("Entity set 'dataContext.Sedes_Clientes'  is null.");
-          }
+            if (_context.Sedes_Clientes == null)
+            {
+                return Problem("Entity set 'dataContext.Sedes_Clientes'  is null.");
+            }
             _context.Sedes_Clientes.Add(sedesClientes);
             try
             {

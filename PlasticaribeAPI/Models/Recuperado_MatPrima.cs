@@ -11,7 +11,7 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "date")]
         public DateTime RecMp_FechaIngreso { get; set; }
- 
+
         public long Usua_Id { get; set; } //Llave primaria Usuario
         public Usuario? Usua { get; set; } //Propiedad de navegación Usuario 
 
@@ -37,9 +37,9 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "date")]
         public DateTime? RecMp_FechaEntrega { get; set; }
 
-        
-        [Column(TypeName = "varchar(20)", Order = 2) ]
-        public string RecMp_HoraIngreso { get; set; } 
+
+        [Column(TypeName = "varchar(20)", Order = 2)]
+        public string RecMp_HoraIngreso { get; set; }
 
         //public IList<DetalleRecuperado_MateriaPrima>? DetRecMatPri { get; set; }
 

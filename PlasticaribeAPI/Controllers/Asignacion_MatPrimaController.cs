@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Asignacion_MatPrima>>> GetAsignaciones_MatPrima()
         {
-          if (_context.Asignaciones_MatPrima == null)
-          {
-              return NotFound();
-          }
+            if (_context.Asignaciones_MatPrima == null)
+            {
+                return NotFound();
+            }
             return await _context.Asignaciones_MatPrima.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Asignacion_MatPrima>> GetAsignacion_MatPrima(long id)
         {
-          if (_context.Asignaciones_MatPrima == null)
-          {
-              return NotFound();
-          }
+            if (_context.Asignaciones_MatPrima == null)
+            {
+                return NotFound();
+            }
             var asignacion_MatPrima = await _context.Asignaciones_MatPrima.FindAsync(id);
 
             if (asignacion_MatPrima == null)
@@ -63,8 +58,8 @@ namespace PlasticaribeAPI.Controllers
             }
             else
             {
-                return Ok(asignacion_MatPrima); 
-            }            
+                return Ok(asignacion_MatPrima);
+            }
         }
 
         [HttpPut("{id}")]
@@ -101,10 +96,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Asignacion_MatPrima>> PostAsignacion_MatPrima(Asignacion_MatPrima asignacion_MatPrima)
         {
-          if (_context.Asignaciones_MatPrima == null)
-          {
-              return Problem("Entity set 'dataContext.Asignaciones_MatPrima'  is null.");
-          }
+            if (_context.Asignaciones_MatPrima == null)
+            {
+                return Problem("Entity set 'dataContext.Asignaciones_MatPrima'  is null.");
+            }
             _context.Asignaciones_MatPrima.Add(asignacion_MatPrima);
             await _context.SaveChangesAsync();
 

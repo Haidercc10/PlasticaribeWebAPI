@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<InventarioInicialXDia_MatPrima>>> GetInventarioInicialXDias_MatPrima()
         {
-          if (_context.InventarioInicialXDias_MatPrima == null)
-          {
-              return NotFound();
-          }
+            if (_context.InventarioInicialXDias_MatPrima == null)
+            {
+                return NotFound();
+            }
             return await _context.InventarioInicialXDias_MatPrima.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<InventarioInicialXDia_MatPrima>> GetInventarioInicialXDia_MatPrima(long id)
         {
-          if (_context.InventarioInicialXDias_MatPrima == null)
-          {
-              return NotFound();
-          }
+            if (_context.InventarioInicialXDias_MatPrima == null)
+            {
+                return NotFound();
+            }
             var inventarioInicialXDia_MatPrima = await _context.InventarioInicialXDias_MatPrima.FindAsync(id);
 
             if (inventarioInicialXDia_MatPrima == null)
@@ -54,7 +49,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("get_Cantidad_Material_Meses")]
         public ActionResult Get_Cantidad_Material_Meses()
         {
-            var enero = (from inv in _context.Set<InventarioInicialXDia_MatPrima>() 
+            var enero = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
                          join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
                          select inv.Enero * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
                                                                        join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
@@ -65,10 +60,10 @@ namespace PlasticaribeAPI.Controllers
             var febrero = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
                            join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
                            select inv.Febrero * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
-                                                                         join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
-                                                                         select inv.Febrero * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
-                                                                                                                        where bp.BOPP_FechaIngreso.Month == 2 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
-                                                                                                                        select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+                                                                           join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                           select inv.Febrero * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                          where bp.BOPP_FechaIngreso.Month == 2 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                          select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
 
             var marzo = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
                          join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
@@ -89,10 +84,10 @@ namespace PlasticaribeAPI.Controllers
             var mayo = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
                         join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
                         select inv.Mayo * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
-                                                                      join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
-                                                                      select inv.Mayo * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
-                                                                                                                  where bp.BOPP_FechaIngreso.Month == 5 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
-                                                                                                                  select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+                                                                     join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                     select inv.Mayo * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                 where bp.BOPP_FechaIngreso.Month == 5 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                 select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
 
             var junio = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
                          join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
@@ -113,42 +108,42 @@ namespace PlasticaribeAPI.Controllers
             var agosto = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
                           join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
                           select inv.Agosto * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
-                                                                        join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
-                                                                        select inv.Agosto * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
-                                                                                                                      where bp.BOPP_FechaIngreso.Month == 8 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
-                                                                                                                      select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+                                                                         join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                         select inv.Agosto * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                       where bp.BOPP_FechaIngreso.Month == 8 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                       select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
 
             var septiembre = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
                               join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
                               select inv.Septiembre * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
-                                                                            join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
-                                                                            select inv.Septiembre * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
-                                                                                                                              where bp.BOPP_FechaIngreso.Month == 9 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
-                                                                                                                              select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+                                                                                 join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                                 select inv.Septiembre * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                                   where bp.BOPP_FechaIngreso.Month == 9 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                                   select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
 
             var octubre = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
                            join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
                            select inv.Octubre * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
-                                                                         join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
-                                                                         select inv.Octubre * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
-                                                                                                                        where bp.BOPP_FechaIngreso.Month == 10 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
-                                                                                                                        select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+                                                                           join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                           select inv.Octubre * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                          where bp.BOPP_FechaIngreso.Month == 10 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                          select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
 
             var novimebre = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
                              join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
                              select inv.Noviembre * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
-                                                                           join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
-                                                                           select inv.Noviembre * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
-                                                                                                                            where bp.BOPP_FechaIngreso.Month == 11 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
-                                                                                                                            select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+                                                                               join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                               select inv.Noviembre * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                                where bp.BOPP_FechaIngreso.Month == 11 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                                select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
 
             var diciembre = (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
                              join mp in _context.Set<Materia_Prima>() on inv.MatPri_Id equals mp.MatPri_Id
                              select inv.Diciembre * mp.MatPri_Precio).Sum() + (from inv in _context.Set<InventarioInicialXDia_MatPrima>()
-                                                                           join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
-                                                                           select inv.Diciembre * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
-                                                                                                                            where bp.BOPP_FechaIngreso.Month == 12 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
-                                                                                                                            select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
+                                                                               join tt in _context.Set<Tinta>() on inv.MatPri_Id equals tt.Tinta_Id
+                                                                               select inv.Diciembre * tt.Tinta_Precio).Sum() + (from bp in _context.Set<BOPP>()
+                                                                                                                                where bp.BOPP_FechaIngreso.Month == 12 && bp.BOPP_FechaIngreso.Year == DateTime.Today.Year
+                                                                                                                                select bp.BOPP_Precio * bp.BOPP_CantidadInicialKg).Sum();
 
             var result = new List<object>();
             result.Add($"'Enero': '{enero}'," +
@@ -268,10 +263,10 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var biorientado = (from b in _context.Set<BOPP>()
-                              where b.BOPP_FechaIngreso.Year <= anio &&
-                                    (b.BOPP_FechaIngreso.Year == anio ? b.BOPP_FechaIngreso.Month <= mes : true)
-                              orderby b.BOPP_Serial descending
-                              select b.BOPP_Precio * b.BOPP_CantidadInicialKg).Sum();
+                               where b.BOPP_FechaIngreso.Year <= anio &&
+                                     (b.BOPP_FechaIngreso.Year == anio ? b.BOPP_FechaIngreso.Month <= mes : true)
+                               orderby b.BOPP_Serial descending
+                               select b.BOPP_Precio * b.BOPP_CantidadInicialKg).Sum();
 
             var asignado = (from asg in _context.Set<DetalleAsignacion_BOPP>()
                             join b in _context.Set<BOPP>() on asg.BOPP_Id equals b.BOPP_Id
@@ -287,6 +282,125 @@ namespace PlasticaribeAPI.Controllers
 
             return Ok(biorientado - asignado + devuelto);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
+        [HttpGet("getMatPrimasInicioMes/{fechaFin}")]
+        public ActionResult GetMatPrimasInicioMes(DateTime fechaFin)
+        {
+#pragma warning disable CS8604 // Possible null reference argument.
+            var mp = from i in _context.Set<InventarioInicialXDia_MatPrima>()
+                     join m in _context.Set<Materia_Prima>()
+                     on i.MatPri_Id equals m.MatPri_Id
+                     where i.MatPri_Id != 0
+                     select new {
+                         Fecha_Inventario = new DateTime(fechaFin.Year, fechaFin.Month, 1),
+                         Ot = "",
+                         Item = Convert.ToString(i.MatPri_Id),
+                         Referencia = m.MatPri_Nombre,
+                         Stock = fechaFin.Month == 1 ? i.Enero :
+                                 fechaFin.Month == 2 ? i.Febrero :
+                                 fechaFin.Month == 3 ? i.Marzo :
+                                 fechaFin.Month == 4 ? i.Abril :
+                                 fechaFin.Month == 5 ? i.Mayo :
+                                 fechaFin.Month == 6 ? i.Junio :
+                                 fechaFin.Month == 7 ? i.Julio :
+                                 fechaFin.Month == 8 ? i.Agosto :
+                                 fechaFin.Month == 9 ? i.Septiembre :
+                                 fechaFin.Month == 10 ? i.Octubre :
+                                 fechaFin.Month == 11 ? i.Noviembre :
+                                 fechaFin.Month == 12 ? i.Diciembre : i.Enero,
+                         Precio = m.MatPri_Precio,
+                         Subtotal = (fechaFin.Month == 1 ? i.Enero :
+                                    fechaFin.Month == 2 ? i.Febrero :
+                                    fechaFin.Month == 3 ? i.Marzo :
+                                    fechaFin.Month == 4 ? i.Abril :
+                                    fechaFin.Month == 5 ? i.Mayo :
+                                    fechaFin.Month == 6 ? i.Junio :
+                                    fechaFin.Month == 7 ? i.Julio :
+                                    fechaFin.Month == 8 ? i.Agosto :
+                                    fechaFin.Month == 9 ? i.Septiembre :
+                                    fechaFin.Month == 10 ? i.Octubre :
+                                    fechaFin.Month == 11 ? i.Noviembre :
+                                    fechaFin.Month == 12 ? i.Diciembre : i.Enero) * m.MatPri_Precio,
+                        IdCategoria = m.CatMP_Id,
+                     };
+
+            var tinta = from i in _context.Set<InventarioInicialXDia_MatPrima>()
+                     join t in _context.Set<Tinta>()
+                     on i.Tinta_Id equals t.Tinta_Id
+                     where i.Tinta_Id != 0
+                     select new
+                     {
+                         Fecha_Inventario = new DateTime(fechaFin.Year, fechaFin.Month, 1),
+                         Ot = "",
+                         Item = Convert.ToString(i.Tinta_Id),
+                         Referencia = t.Tinta_Nombre,
+                         Stock = fechaFin.Month == 1 ? i.Enero :
+                                 fechaFin.Month == 2 ? i.Febrero :
+                                 fechaFin.Month == 3 ? i.Marzo :
+                                 fechaFin.Month == 4 ? i.Abril :
+                                 fechaFin.Month == 5 ? i.Mayo :
+                                 fechaFin.Month == 6 ? i.Junio :
+                                 fechaFin.Month == 7 ? i.Julio :
+                                 fechaFin.Month == 8 ? i.Agosto :
+                                 fechaFin.Month == 9 ? i.Septiembre :
+                                 fechaFin.Month == 10 ? i.Octubre :
+                                 fechaFin.Month == 11 ? i.Noviembre :
+                                 fechaFin.Month == 12 ? i.Diciembre : i.Enero,
+                         Precio = t.Tinta_Precio,
+                         Subtotal = (fechaFin.Month == 1 ? i.Enero :
+                                    fechaFin.Month == 2 ? i.Febrero :
+                                    fechaFin.Month == 3 ? i.Marzo :
+                                    fechaFin.Month == 4 ? i.Abril :
+                                    fechaFin.Month == 5 ? i.Mayo :
+                                    fechaFin.Month == 6 ? i.Junio :
+                                    fechaFin.Month == 7 ? i.Julio :
+                                    fechaFin.Month == 8 ? i.Agosto :
+                                    fechaFin.Month == 9 ? i.Septiembre :
+                                    fechaFin.Month == 10 ? i.Octubre :
+                                    fechaFin.Month == 11 ? i.Noviembre :
+                                    fechaFin.Month == 12 ? i.Diciembre : i.Enero) * t.Tinta_Precio,
+                         IdCategoria = t.CatMP_Id,
+                     };
+
+            var bopp = from i in _context.Set<InventarioInicialXDia_MatPrima>()
+                       join b in _context.Set<BOPP>() on i.Bopp_Id equals b.BoppGen_Id
+                       join bg in _context.Set<Bopp_Generico>() on i.Bopp_Id equals bg.BoppGen_Id
+                       where i.Bopp_Id != 0 && 
+                       b.BoppGen_Id == bg.BoppGen_Id
+                       group b by new { 
+                           Id = b.BoppGen_Id, 
+                           Nombre = bg.BoppGen_Nombre,
+                           Mes = (fechaFin.Month == 1 ? i.Enero :
+                                  fechaFin.Month == 2 ? i.Febrero :
+                                  fechaFin.Month == 3 ? i.Marzo :
+                                  fechaFin.Month == 4 ? i.Abril :
+                                  fechaFin.Month == 5 ? i.Mayo :
+                                  fechaFin.Month == 6 ? i.Junio :
+                                  fechaFin.Month == 7 ? i.Julio :
+                                  fechaFin.Month == 8 ? i.Agosto :
+                                  fechaFin.Month == 9 ? i.Septiembre :
+                                  fechaFin.Month == 10 ? i.Octubre :
+                                  fechaFin.Month == 11 ? i.Noviembre :
+                                  fechaFin.Month == 12 ? i.Diciembre : i.Enero),
+                           Precio = b.BOPP_Precio, 
+                           Categoria = b.CatMP_Id
+                       }
+                       into g
+                       select new
+                       {
+                            Fecha_Inventario = new DateTime(fechaFin.Year, fechaFin.Month, 1),
+                            Ot = "",
+                            Item = Convert.ToString(g.Key.Id),
+                            Referencia = g.Key.Nombre,
+                            Stock = g.Key.Mes,
+                            Precio = g.Key.Precio,
+                            Subtotal = (g.Key.Mes * g.Key.Precio),
+                            IdCategoria = g.Key.Categoria,
+                       };
+            if (mp == null && tinta == null && bopp == null) return BadRequest("No se encontraron Materias Primas/Reciclados en las fechas consultadas");
+            else return Ok(mp.Concat(tinta).Concat(bopp));
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
         // PUT: api/InventarioInicialXDia_MatPrima/5
@@ -325,10 +439,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<InventarioInicialXDia_MatPrima>> PostInventarioInicialXDia_MatPrima(InventarioInicialXDia_MatPrima inventarioInicialXDia_MatPrima)
         {
-          if (_context.InventarioInicialXDias_MatPrima == null)
-          {
-              return Problem("Entity set 'dataContext.InventarioInicialXDias_MatPrima'  is null.");
-          }
+            if (_context.InventarioInicialXDias_MatPrima == null)
+            {
+                return Problem("Entity set 'dataContext.InventarioInicialXDias_MatPrima'  is null.");
+            }
             _context.InventarioInicialXDias_MatPrima.Add(inventarioInicialXDia_MatPrima);
             try
             {

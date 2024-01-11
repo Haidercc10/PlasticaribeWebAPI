@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Remision_FacturaCompra>>> GetRemisiones_FacturasCompras()
         {
-          if (_context.Remisiones_FacturasCompras == null)
-          {
-              return NotFound();
-          }
+            if (_context.Remisiones_FacturasCompras == null)
+            {
+                return NotFound();
+            }
             return await _context.Remisiones_FacturasCompras.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Remision_FacturaCompra>> GetRemision_FacturaCompra(long id)
         {
-          if (_context.Remisiones_FacturasCompras == null)
-          {
-              return NotFound();
-          }
+            if (_context.Remisiones_FacturasCompras == null)
+            {
+                return NotFound();
+            }
             var remision_FacturaCompra = await _context.Remisiones_FacturasCompras.FindAsync(id);
 
             if (remision_FacturaCompra == null)
@@ -103,10 +98,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Remision_FacturaCompra>> PostRemision_FacturaCompra(Remision_FacturaCompra remision_FacturaCompra)
         {
-          if (_context.Remisiones_FacturasCompras == null)
-          {
-              return Problem("Entity set 'dataContext.Remisiones_FacturasCompras'  is null.");
-          }
+            if (_context.Remisiones_FacturasCompras == null)
+            {
+                return Problem("Entity set 'dataContext.Remisiones_FacturasCompras'  is null.");
+            }
             _context.Remisiones_FacturasCompras.Add(remision_FacturaCompra);
             try
             {

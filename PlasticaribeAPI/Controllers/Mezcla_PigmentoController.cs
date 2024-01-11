@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Mezcla_Pigmento>>> GetMezclas_Pigmentos()
         {
-          if (_context.Mezclas_Pigmentos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Mezclas_Pigmentos == null)
+            {
+                return NotFound();
+            }
             return await _context.Mezclas_Pigmentos.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Mezcla_Pigmento>> GetMezcla_Pigmento(int id)
         {
-          if (_context.Mezclas_Pigmentos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Mezclas_Pigmentos == null)
+            {
+                return NotFound();
+            }
             var mezcla_Pigmento = await _context.Mezclas_Pigmentos.FindAsync(id);
 
             if (mezcla_Pigmento == null)
@@ -99,10 +94,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Mezcla_Pigmento>> PostMezcla_Pigmento(Mezcla_Pigmento mezcla_Pigmento)
         {
-          if (_context.Mezclas_Pigmentos == null)
-          {
-              return Problem("Entity set 'dataContext.Mezclas_Pigmentos'  is null.");
-          }
+            if (_context.Mezclas_Pigmentos == null)
+            {
+                return Problem("Entity set 'dataContext.Mezclas_Pigmentos'  is null.");
+            }
             _context.Mezclas_Pigmentos.Add(mezcla_Pigmento);
             await _context.SaveChangesAsync();
 

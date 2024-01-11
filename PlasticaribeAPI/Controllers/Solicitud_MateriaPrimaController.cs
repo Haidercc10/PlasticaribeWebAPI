@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Solicitud_MateriaPrima>>> GetSolicitud_MateriaPrima()
         {
-          if (_context.Solicitud_MateriaPrima == null)
-          {
-              return NotFound();
-          }
+            if (_context.Solicitud_MateriaPrima == null)
+            {
+                return NotFound();
+            }
             return await _context.Solicitud_MateriaPrima.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Solicitud_MateriaPrima>> GetSolicitud_MateriaPrima(long id)
         {
-          if (_context.Solicitud_MateriaPrima == null)
-          {
-              return NotFound("No hay registros en la tabla");
-          }
+            if (_context.Solicitud_MateriaPrima == null)
+            {
+                return NotFound("No hay registros en la tabla");
+            }
             var solicitud_MateriaPrima = await _context.Solicitud_MateriaPrima.FindAsync(id);
 
             if (solicitud_MateriaPrima == null)
@@ -159,10 +154,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Solicitud_MateriaPrima>> PostSolicitud_MateriaPrima(Solicitud_MateriaPrima solicitud_MateriaPrima)
         {
-          if (_context.Solicitud_MateriaPrima == null)
-          {
-              return Problem("Entity set 'dataContext.Solicitud_MateriaPrima'  is null.");
-          }
+            if (_context.Solicitud_MateriaPrima == null)
+            {
+                return Problem("Entity set 'dataContext.Solicitud_MateriaPrima'  is null.");
+            }
             _context.Solicitud_MateriaPrima.Add(solicitud_MateriaPrima);
             await _context.SaveChangesAsync();
 

@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -29,7 +28,7 @@ namespace PlasticaribeAPI.Migrations
             migrationBuilder.DropTable(
                 name: "Tipos_Monedas");
 
-            
+
         }
     }
 }

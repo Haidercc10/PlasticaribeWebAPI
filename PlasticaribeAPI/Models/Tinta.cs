@@ -27,20 +27,20 @@ namespace PlasticaribeAPI.Models
 
 
         [Column(TypeName = "varchar(10)")]
-        public string UndMed_Id { get; set; } //Llave foranea Unidad_Medida           
-        public Unidad_Medida? UndMed { get; set; } //Propiedad de Navegación Unidad_Medida
+        public string UndMed_Id { get; set; }
+        public Unidad_Medida? UndMed { get; set; }
 
 
         [Precision(18, 2)]
         public decimal Tinta_Precio { get; set; }
 
-        public int CatMP_Id { get; set; }  //Llave foranea Categorias_MatPrima.        
-        public Categoria_MatPrima? CatMP { get; set; }  //Propiedad de Navegación Categorias_MatPrima
+        public int CatMP_Id { get; set; }
+        public Categoria_MatPrima? CatMP { get; set; }
 
-        public int TpBod_Id { get; set; } //Llave foranea Tipo_Bodega
-        public Tipo_Bodega? TpBod { get; set; } //Propiedad de Navegación Tipos_Bodegas
+        public int TpBod_Id { get; set; }
+        public Tipo_Bodega? TpBod { get; set; }
 
-        [Precision(14,2)]
+        [Precision(14, 2)]
         public decimal Tinta_InvInicial { get; set; }
 
 
@@ -50,9 +50,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string? Tinta_Hora { get; set; }
 
-        //public IList<Tinta_MateriaPrima>? TintaMatPri { get; set; }
-
-        //Lista requerida para relación detalles asignacion_matpri - tintas
-        //public IList<DetalleAsignacion_Tinta>? DetAsigTinta { get; set; }
+        [Precision(18, 2)]
+        public decimal Tinta_PrecioEstandar { get; set; }
     }
 }

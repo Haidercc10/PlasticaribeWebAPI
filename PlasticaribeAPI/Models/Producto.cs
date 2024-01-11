@@ -20,9 +20,9 @@ namespace PlasticaribeAPI.Models
         [Column(Order = 1)]
         public int Prod_Id { get; set; } /** IDARTICULO | ClienteItems */
 
-        
+
         [Column(TypeName = "varchar(100)", Order = 2)]
-        
+
         public string Prod_Nombre { get; set; } /** NOMBRE | ClienteItemsNom */
 
         [Column(TypeName = "varchar(max)")]
@@ -85,7 +85,7 @@ namespace PlasticaribeAPI.Models
 
 
         //public IList<PedidoProducto>? PedExtProd { get; set; }
-        
+
         //Lista requerida para relación clientes-productos
         //public IList<Cliente_Producto>? CliProd { get; set; }
 

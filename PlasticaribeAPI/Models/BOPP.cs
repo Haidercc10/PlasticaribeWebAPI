@@ -21,7 +21,7 @@ namespace PlasticaribeAPI.Models
 
 
         [Precision(18, 2)]
-        public decimal BOPP_CantidadMicras { get; set; } 
+        public decimal BOPP_CantidadMicras { get; set; }
 
 
         [Column(TypeName = "varchar(10)")]
@@ -40,7 +40,7 @@ namespace PlasticaribeAPI.Models
         public int TpBod_Id { get; set; } //Llave foranea Tipo_Bodega
         public Tipo_Bodega? TpBod { get; set; } //Propiedad de Navegación Tipos_Bodegas
 
-        
+
         [Column(TypeName = "Date")]
         public DateTime BOPP_FechaIngreso { get; set; }
 
@@ -60,9 +60,9 @@ namespace PlasticaribeAPI.Models
         public string UndMed_Kg { get; set; } //Llave foranea Unidad_Medida           
         public Unidad_Medida? UndMed2 { get; set; } //Propiedad de Navegación Unidad_Medida
 
-        
+
         [Precision(14, 2)] //
-        public decimal BOPP_CantidadInicialKg { get; set; } 
+        public decimal BOPP_CantidadInicialKg { get; set; }
 
         public long Usua_Id { get; set; }
         public Usuario? Usua { get; set; }
@@ -75,8 +75,8 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(50)")]
         public string? BOPP_CodigoDoc { get; set; }
 
-        public long BoppGen_Id { get; set; }          
-        public Bopp_Generico? boppGenerico { get; set; }  
+        public long BoppGen_Id { get; set; }
+        public Bopp_Generico? boppGenerico { get; set; }
 
 
         //Lista requerida para relacion con BOPP en detalles asignaciones bopp

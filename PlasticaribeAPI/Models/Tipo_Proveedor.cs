@@ -8,7 +8,7 @@ namespace PlasticaribeAPI.Models
         [Key]
         public int TpProv_Id { get; set; }
 
-        [Column(TypeName="varchar(MAX)")]
+        [Column(TypeName = "varchar(MAX)")]
         public string TpProv_Nombre { get; set; }
 
         [Column(TypeName = "varchar(MAX)")]

@@ -7,11 +7,14 @@ namespace PlasticaribeAPI.Models
     {
         [Key]
         public int Pigmt_Id { get; set; }
-        
+
         [Column(TypeName = "varchar(100)")]
         public string Pigmt_Nombre { get; set; }
 
         [Column(TypeName = "varchar(MAX)")]
         public string Pigmt_Descripcion { get; set; }
+
+        [Column(TypeName = "varchar(50)")]
+        public string Pigmt_Hexadecimal { get; set; }
     }
 }

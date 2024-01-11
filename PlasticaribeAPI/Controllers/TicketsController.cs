@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using Aspose.Imaging;
+﻿using Aspose.Imaging;
 using Aspose.Imaging.ImageOptions;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
-using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -30,10 +25,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Tickets>>> GetTickets()
         {
-          if (_context.Tickets == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tickets == null)
+            {
+                return NotFound();
+            }
             return await _context.Tickets.ToListAsync();
         }
 
@@ -41,10 +36,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Tickets>> GetTickets(long id)
         {
-          if (_context.Tickets == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tickets == null)
+            {
+                return NotFound();
+            }
             var tickets = await _context.Tickets.FindAsync(id);
 
             if (tickets == null)
@@ -95,15 +90,15 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var tickets = from tk in _context.Set<Tickets>()
-                           where tk.Estado_Id == 28 
-                                 || tk.Estado_Id == 29
-                           select new
-                           {
-                               Codigo = tk.Ticket_Id,
-                               Fecha = tk.Ticket_Fecha + " - " + tk.Ticket_Hora,
-                               Estado = tk.Estado.Estado_Nombre,
-                               Descripcion = tk.Ticket_Descripcion
-                           };
+                          where tk.Estado_Id == 28
+                                || tk.Estado_Id == 29
+                          select new
+                          {
+                              Codigo = tk.Ticket_Id,
+                              Fecha = tk.Ticket_Fecha + " - " + tk.Ticket_Hora,
+                              Estado = tk.Estado.Estado_Nombre,
+                              Descripcion = tk.Ticket_Descripcion
+                          };
             if (tickets.Count() > 0) return Ok(tickets);
             else return BadRequest("No hay tickets por resolver");
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -111,7 +106,7 @@ namespace PlasticaribeAPI.Controllers
 
         // Consulta que devolverá la cantidad de los tickets que estan abiertos, en revision y los resuletos en el mes
         [HttpGet("get_CantidadTickets")]
-        public ActionResult Get_CantidadTickets() 
+        public ActionResult Get_CantidadTickets()
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var fecha = DateTime.Today;
@@ -131,25 +126,10 @@ namespace PlasticaribeAPI.Controllers
                            };
 
             var EnRevision = from tk in _context.Set<Tickets>()
-                           where tk.Estado_Id == 29
-                                 && tk.Ticket_Fecha.Month == fecha.Month
-                                 && tk.Ticket_Fecha.Year == fecha.Year
+                             where tk.Estado_Id == 29
+                                   && tk.Ticket_Fecha.Month == fecha.Month
+                                   && tk.Ticket_Fecha.Year == fecha.Year
                              group tk by new
-                           {
-                               tk.Estado.Estado_Nombre,
-                               tk.Estado_Id,
-                           } into tk
-                           select new
-                           {
-                               Estado = tk.Key.Estado_Nombre,
-                               Cantidad = tk.Count(),
-                           };
-
-            var Resueltos = from tk in _context.Set<Tickets>()
-                             where tk.Estado_Id == 30
-                                 && tk.Ticket_Fecha.Month == fecha.Month
-                                 && tk.Ticket_Fecha.Year == fecha.Year
-                            group tk by new
                              {
                                  tk.Estado.Estado_Nombre,
                                  tk.Estado_Id,
@@ -159,6 +139,21 @@ namespace PlasticaribeAPI.Controllers
                                  Estado = tk.Key.Estado_Nombre,
                                  Cantidad = tk.Count(),
                              };
+
+            var Resueltos = from tk in _context.Set<Tickets>()
+                            where tk.Estado_Id == 30
+                                && tk.Ticket_Fecha.Month == fecha.Month
+                                && tk.Ticket_Fecha.Year == fecha.Year
+                            group tk by new
+                            {
+                                tk.Estado.Estado_Nombre,
+                                tk.Estado_Id,
+                            } into tk
+                            select new
+                            {
+                                Estado = tk.Key.Estado_Nombre,
+                                Cantidad = tk.Count(),
+                            };
             return Ok(abiertos.Concat(EnRevision).Concat(Resueltos));
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
         }
@@ -211,7 +206,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Tickets>> PostTickets(Tickets tickets)
         {
-          if (_context.Tickets == null) return Problem("Entity set 'dataContext.Tickets'  is null.");
+            if (_context.Tickets == null) return Problem("Entity set 'dataContext.Tickets'  is null.");
             _context.Tickets.Add(tickets);
             await _context.SaveChangesAsync();
 
@@ -220,30 +215,41 @@ namespace PlasticaribeAPI.Controllers
 
         //Creacion de Archivos en Carpeta
         [HttpPost("SubirArchivo")]
-        public ActionResult PostArchivo([FromForm] List<IFormFile> archivo) {
+        public ActionResult PostArchivo([FromForm] List<IFormFile> archivo)
+        {
             string filePath = "C:\\Users\\SANDRA\\Desktop\\Plasticaribe";
-            
-            if (filePath != null) {
-                try {
+
+            if (filePath != null)
+            {
+                try
+                {
                     if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);
-                    if (archivo != null) {
-                        if (archivo.Count > 0) {
+                    if (archivo != null)
+                    {
+                        if (archivo.Count > 0)
+                        {
                             using var stream = System.IO.File.Create(filePath + "\\" + archivo[0].FileName, 100000, FileOptions.Asynchronous);
                             archivo[0].CopyToAsync(stream);
 
                             using Image image = Image.Load(stream);
-                            PngOptions options = new() {
+                            PngOptions options = new()
+                            {
                                 CompressionLevel = 9
                             };
                             image.Save(filePath + "\\Tickets\\" + archivo[0].FileName, options);
 
-                        } else return BadRequest("No hay archivos por crear");
-                    } else return Ok("Se ha creado el archivo satisfactoriamente");
-                } catch (Exception ex) {
+                        }
+                        else return BadRequest("No hay archivos por crear");
+                    }
+                    else return Ok("Se ha creado el archivo satisfactoriamente");
+                }
+                catch (Exception ex)
+                {
                     return BadRequest(ex.Message);
                 }
                 return Ok(archivo);
-            } else return BadRequest("La ruta suministrada para almacenar los archivos no es valida");
+            }
+            else return BadRequest("La ruta suministrada para almacenar los archivos no es valida");
         }
 
         // DELETE: api/Tickets/5

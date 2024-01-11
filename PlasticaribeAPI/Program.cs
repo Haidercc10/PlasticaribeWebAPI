@@ -6,7 +6,6 @@ using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Service;
 using System.Text;
 using ConfigurationManager = PlasticaribeAPI.Service.ConfigurationManager;
-using PlasticaribeAPI.Controllers;
 
 var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -14,9 +13,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen(options => {
+builder.Services.AddSwaggerGen(options =>
+{
     options.SwaggerDoc("V1", new OpenApiInfo { Version = "V1", Title = "Plasticaribe WebAPI", Description = "" });
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
@@ -33,16 +34,20 @@ builder.Services.AddSwaggerGen(options => {
 });
 
 builder.Services.AddScoped<ICacheService, CacheService>();
-builder.Services.AddDbContext<dataContext>(options => { 
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlServerOptionsAction: SqlOptions => { SqlOptions.EnableRetryOnFailure(); }); 
+builder.Services.AddDbContext<dataContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlServerOptionsAction: SqlOptions => { SqlOptions.EnableRetryOnFailure(); });
 });
 
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
-builder.Services.AddAuthentication(opt => {
+builder.Services.AddAuthentication(opt =>
+{
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options => {
-    options.TokenValidationParameters = new TokenValidationParameters {
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
@@ -54,14 +59,24 @@ builder.Services.AddAuthentication(opt => {
 });
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
 
-builder.Services.AddCors(options => {
-    options.AddPolicy(name: myAllowSpecificOrigins, builder => {
-        builder.WithOrigins("http://192.168.0.193:4600", "http://192.168.0.85:4700", "http://localhost:4200", "http://192.168.0.193:5000").AllowAnyMethod().AllowAnyHeader();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: myAllowSpecificOrigins, builder =>
+    {
+        builder.WithOrigins(
+            "http://192.168.0.193:4600",
+            "http://192.168.0.85:4700",
+            "https://localhost:4200",
+            "http://localhost:4200", 
+            "http://192.168.0.193:5000", 
+            "http://192.168.0.137:4700"
+        ).AllowAnyMethod().AllowAnyHeader();
     });
 });
 
 var app = builder.Build();
-if (app.Environment.IsDevelopment()) {
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI(options => { options.SwaggerEndpoint("/swagger/V1/swagger.json", "Plasticaribe WebAPI"); });
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Nomina_Plasticaribe>>> GetNomina_Plasticaribe()
         {
-          if (_context.Nomina_Plasticaribe == null)
-          {
-              return NotFound();
-          }
+            if (_context.Nomina_Plasticaribe == null)
+            {
+                return NotFound();
+            }
             return await _context.Nomina_Plasticaribe.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Nomina_Plasticaribe>> GetNomina_Plasticaribe(int id)
         {
-          if (_context.Nomina_Plasticaribe == null)
-          {
-              return NotFound();
-          }
+            if (_context.Nomina_Plasticaribe == null)
+            {
+                return NotFound();
+            }
             var nomina_Plasticaribe = await _context.Nomina_Plasticaribe.FindAsync(id);
 
             if (nomina_Plasticaribe == null)
@@ -75,6 +70,29 @@ namespace PlasticaribeAPI.Controllers
                       };
             return con.Any() ? Ok(con) : NoContent();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+        }
+
+        //Consulta que devolverá los movimientos de las nominas ingresadas en un rango de fechas
+        [HttpGet("getNominaIngresada/{fechaInicio}/{fechaFin}")]
+        public ActionResult GetNominaIngresada(DateTime fechaInicio, DateTime fechaFin)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var nomina = from nom in _context.Set<Nomina_Plasticaribe>()
+                         where nom.Nomina_FechaIncial >= fechaInicio &&
+                               nom.Nomina_FechaFinal <= fechaFin
+                         select new
+                         {
+                             Id = nom.Nomina_Id,
+                             FechaRegistro = nom.Nomina_FechaRegistro,
+                             registradoPor = nom.Usuario.Usua_Nombre,
+                             FechaInicio = nom.Nomina_FechaIncial,
+                             FechaFin = nom.Nomina_FechaFinal,
+                             ValorNomina = nom.Nomina_Costo,
+                             TipoNomina = nom.Tipos_Nomina.TpNomina_Nombre,
+                             Observacion = nom.Nomina_Observacion
+                         };
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            return Ok(nomina);
         }
 
         // PUT: api/Nomina_Plasticaribe/5
@@ -113,10 +131,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Nomina_Plasticaribe>> PostNomina_Plasticaribe(Nomina_Plasticaribe nomina_Plasticaribe)
         {
-          if (_context.Nomina_Plasticaribe == null)
-          {
-              return Problem("Entity set 'dataContext.Nomina_Plasticaribe'  is null.");
-          }
+            if (_context.Nomina_Plasticaribe == null)
+            {
+                return Problem("Entity set 'dataContext.Nomina_Plasticaribe'  is null.");
+            }
             _context.Nomina_Plasticaribe.Add(nomina_Plasticaribe);
             await _context.SaveChangesAsync();
 

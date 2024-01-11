@@ -18,11 +18,11 @@ namespace PlasticaribeAPI.Migrations
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
-        {            
+        {
             migrationBuilder.DropColumn(
                 name: "SedeCliente_Direccion",
                 table: "Sedes_Clientes");
-                       
+
         }
     }
 }

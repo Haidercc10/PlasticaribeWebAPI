@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Provedor_MateriaPrima>>> GetProveedores_MateriasPrimas()
         {
-          if (_context.Proveedores_MateriasPrimas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Proveedores_MateriasPrimas == null)
+            {
+                return NotFound();
+            }
             return await _context.Proveedores_MateriasPrimas.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Provedor_MateriaPrima>> GetProvedor_MateriaPrima(long id)
         {
-          if (_context.Proveedores_MateriasPrimas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Proveedores_MateriasPrimas == null)
+            {
+                return NotFound();
+            }
             var provedor_MateriaPrima = await _context.Proveedores_MateriasPrimas.FindAsync(id);
 
             if (provedor_MateriaPrima == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Provedor_MateriaPrima>> PostProvedor_MateriaPrima(Provedor_MateriaPrima provedor_MateriaPrima)
         {
-          if (_context.Proveedores_MateriasPrimas == null)
-          {
-              return Problem("Entity set 'dataContext.Proveedores_MateriasPrimas'  is null.");
-          }
+            if (_context.Proveedores_MateriasPrimas == null)
+            {
+                return Problem("Entity set 'dataContext.Proveedores_MateriasPrimas'  is null.");
+            }
             _context.Proveedores_MateriasPrimas.Add(provedor_MateriaPrima);
             try
             {

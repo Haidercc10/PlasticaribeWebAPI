@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -11,7 +10,7 @@ namespace PlasticaribeAPI.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-          
+
             migrationBuilder.CreateTable(
                 name: "Pedidos_Mantenimientos",
                 columns: table => new
@@ -329,7 +328,7 @@ namespace PlasticaribeAPI.Migrations
             migrationBuilder.DropTable(
                 name: "Tipos_Activos");
 
-            
+
         }
     }
 }

@@ -19,18 +19,18 @@ namespace PlasticaribeAPI.Models
         public Tinta? Tinta { get; set; }
 
         public long? BOPP_Id { get; set; }
-        public BOPP? Bopp { get; set; } 
+        public BOPP? Bopp { get; set; }
 
 
         [Precision(14, 2)]
         public decimal DtDevMatPri_CantidadDevuelta { get; set; }
-        
+
         [Column(TypeName = "varchar(10)")]
         public string UndMed_Id { get; set; }
         public Unidad_Medida? UndMed { get; set; }
 
         [Column(TypeName = "varchar(10)")]
-        public string Proceso_Id { get; set; } 
+        public string Proceso_Id { get; set; }
         public Proceso? Proceso { get; set; }
 
     }

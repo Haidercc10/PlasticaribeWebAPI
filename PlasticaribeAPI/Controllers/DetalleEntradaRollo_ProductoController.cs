@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -169,6 +164,30 @@ namespace PlasticaribeAPI.Controllers
             return Ok(from e in _context.Set<DetalleEntradaRollo_Producto>() where rollos.Contains(e.Rollo_Id) select new { e.Rollo_Id, e.Proceso_Id });
         }
 
+        [HttpGet("getDataProductionIncome/{startDate}/{endDate}")]
+        public ActionResult GetDataProductionIncome(DateTime startDate, DateTime endDate, string? production = "", string? orderProduction = "", string? item = "")
+        {
+            var con = from dt in _context.Set<DetalleEntradaRollo_Producto>()
+                      join ent in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals ent.EntRolloProd_Id
+                      join reel in _context.Set<Produccion_Procesos>() on dt.Rollo_Id equals reel.Numero_Rollo
+                      where ent.EntRolloProd_Fecha >= startDate &&
+                            ent.EntRolloProd_Fecha <= endDate &&
+                            (production != "" ? reel.NumeroRollo_BagPro == Convert.ToInt64(production) : true) &&
+                            (orderProduction != "" ? dt.DtEntRolloProd_OT == Convert.ToInt64(orderProduction) : true) &&
+                            (item != "" ? dt.Prod_Id == Convert.ToInt64(item) : true)
+                      select new
+                      {
+                          ent,
+                          Details = dt,
+                          Product = dt.Prod,
+                          Process = dt.Proceso,
+                          User = ent.Usua,
+                          DetailsProduction = reel,
+                      };
+
+            return con.Any() ? Ok(con) : NotFound();
+        }
+
         // PUT: api/DetalleEntradaRollo_Producto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -234,16 +253,16 @@ namespace PlasticaribeAPI.Controllers
             var x = (from y in _context.Set<DetalleEntradaRollo_Producto>()
                      where y.Rollo_Id == rollo
                      select y).FirstOrDefault();
-            
+
             if (x == null)
             {
                 return NoContent();
             }
-                _context.DetallesEntradasRollos_Productos.Remove(x);
-                _context.SaveChanges();
+            _context.DetallesEntradasRollos_Productos.Remove(x);
+            _context.SaveChanges();
 
-                return NoContent();
-            
+            return NoContent();
+
         }
 
         private bool DetalleEntradaRollo_ProductoExists(long id)

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DetalleAsignacion_BOPP>>> GetDetallesAsignaciones_BOPP()
         {
-          if (_context.DetallesAsignaciones_BOPP == null)
-          {
-              return NotFound();
-          }
+            if (_context.DetallesAsignaciones_BOPP == null)
+            {
+                return NotFound();
+            }
             return await _context.DetallesAsignaciones_BOPP.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DetalleAsignacion_BOPP>> GetDetalleAsignacion_BOPP(long id)
         {
-          if (_context.DetallesAsignaciones_BOPP == null)
-          {
-              return NotFound();
-          }
+            if (_context.DetallesAsignaciones_BOPP == null)
+            {
+                return NotFound();
+            }
             var detalleAsignacion_BOPP = await _context.DetallesAsignaciones_BOPP.FindAsync(id);
 
             if (detalleAsignacion_BOPP == null)
@@ -64,6 +59,25 @@ namespace PlasticaribeAPI.Controllers
             {
                 return Ok(detalleAsignacion_BOPP);
             }
+        }
+
+        //Consulta que traerá la cantidad de materia prima asignada, teniendo en cuenta la materia prima devuelta
+        [HttpGet("getBiorientadoAsignado/{ot}")]
+        public ActionResult GetBiorientadoAsignado(int ot)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.            
+            var asgBopp = (from asgbopp in _context.Set<DetalleAsignacion_BOPP>()
+                           where asgbopp.DtAsigBOPP_OrdenTrabajo == ot
+                           select asgbopp.DtAsigBOPP_Cantidad).Sum();
+
+            var devol = (from dev in _context.Set<DetalleDevolucion_MateriaPrima>()
+                         where dev.DevMatPri.DevMatPri_OrdenTrabajo == ot &&
+                               dev.BOPP_Id != 449
+                         select dev.DtDevMatPri_CantidadDevuelta).Sum();
+
+            var asigs = asgBopp - devol;
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(asigs);
         }
 
         // PUT: api/DetalleAsignacion_BOPP/5
@@ -108,8 +122,8 @@ namespace PlasticaribeAPI.Controllers
             try
             {
                 var actualizado = _context.DetallesAsignaciones_BOPP
-                    .Where(x => x.DtAsigBOPP_OrdenTrabajo == ot 
-                           && x.BOPP_Id == bopp 
+                    .Where(x => x.DtAsigBOPP_OrdenTrabajo == ot
+                           && x.BOPP_Id == bopp
                            && x.AsigBOPP_Id == id)
                     .First<DetalleAsignacion_BOPP>();
                 actualizado.DtAsigBOPP_Cantidad = detalleAsignacion_BOPP.DtAsigBOPP_Cantidad;
@@ -135,10 +149,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<DetalleAsignacion_BOPP>> PostDetalleAsignacion_BOPP(DetalleAsignacion_BOPP detalleAsignacion_BOPP)
         {
-          if (_context.DetallesAsignaciones_BOPP == null)
-          {
-              return Problem("Entity set 'dataContext.DetallesAsignaciones_BOPP'  is null.");
-          }
+            if (_context.DetallesAsignaciones_BOPP == null)
+            {
+                return Problem("Entity set 'dataContext.DetallesAsignaciones_BOPP'  is null.");
+            }
             _context.DetallesAsignaciones_BOPP.Add(detalleAsignacion_BOPP);
             try
             {
@@ -187,10 +201,10 @@ namespace PlasticaribeAPI.Controllers
             {
                 return NotFound();
             }
-            var detalleAsignacion_BOPP =  _context.DetallesAsignaciones_BOPP.Where(x => x.AsigBOPP_Id == AsigBOPP_Id &&
+            var detalleAsignacion_BOPP = _context.DetallesAsignaciones_BOPP.Where(x => x.AsigBOPP_Id == AsigBOPP_Id &&
                                                                                    x.DtAsigBOPP_OrdenTrabajo == DtAsigBOPP_OrdenTrabajo
                                                                                    ).ToList();
-           
+
             if (detalleAsignacion_BOPP == null)
             {
                 return NotFound();

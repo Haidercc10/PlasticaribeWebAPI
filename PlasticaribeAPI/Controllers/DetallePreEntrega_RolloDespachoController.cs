@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -60,7 +55,8 @@ namespace PlasticaribeAPI.Controllers
                       from emp in _context.Set<Empresa>()
                       where rollo.PreEntRollo_Id == ot
                             && emp.Empresa_Id == 800188732
-                      group rollo by new {
+                      group rollo by new
+                      {
                           rollo.PreEntregaRollo.PreEntRollo_Id,
                           rollo.Prod_Id,
                           rollo.Prod.Prod_Nombre,
@@ -128,7 +124,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("CrearPDFUltimoID/{id}")]
-        public ActionResult Get(long id )
+        public ActionResult Get(long id)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from dt in _context.Set<DetallePreEntrega_RolloDespacho>()
@@ -136,7 +132,8 @@ namespace PlasticaribeAPI.Controllers
                       where dt.PreEntregaRollo.PreEntRollo_Id == id
                             && emp.Empresa_Id == 800188732
                       orderby dt.PreEntregaRollo.PreEntRollo_Id
-                      select new {
+                      select new
+                      {
                           dt.PreEntRollo_Id,
                           dt.PreEntregaRollo.PreEntRollo_Fecha,
                           dt.PreEntregaRollo.PreEntRollo_Observacion,
@@ -194,6 +191,53 @@ namespace PlasticaribeAPI.Controllers
                       };
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        [HttpGet("getInformactionAboutPreIn_ById/{id}")]
+        public ActionResult GetInformactionAboutPreIn_ById(int id)
+        {
+            var preIn = from pre in _context.Set<PreEntrega_RolloDespacho>()
+                        join dtPre in _context.Set<DetallePreEntrega_RolloDespacho>() on pre.PreEntRollo_Id equals dtPre.PreEntRollo_Id
+                        where pre.PreEntRollo_Id == id
+                        select new
+                        {
+                            pre,
+                            dtPre.Prod,
+                            dtPre.Proceso,
+                            dtPre
+                        };
+            return preIn.Any() ? Ok(preIn) : NotFound();
+        }
+
+        //Consulta para movimientos de preingresos de producción
+        [HttpGet("getDataPreInProduction/{fechaInicial}/{fechaFinal}")]
+        public ActionResult getDataPreInProduction(DateTime fechaInicial, DateTime fechaFinal, string? process = "", string? ot = "", string? item = "")
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+#pragma warning disable CS8604 // Posible argumento de referencia nulo
+            var con = from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
+                      where pre.PreEntregaRollo.PreEntRollo_Fecha >= fechaInicial
+                            && pre.PreEntregaRollo.PreEntRollo_Fecha <= fechaFinal
+                            && Convert.ToString(pre.Proceso_Id).Contains(process)
+                            && Convert.ToString(pre.DtlPreEntRollo_OT).Contains(ot)
+                            && Convert.ToString(pre.Prod_Id).Contains(item)
+                      select new
+                      {
+                          Orden = pre.DtlPreEntRollo_OT,
+                          Rollo = pre.Rollo_Id,
+                          Id_Producto = pre.Prod_Id,
+                          Producto = pre.Prod.Prod_Nombre,
+                          Fecha_Ingreso = pre.PreEntregaRollo.PreEntRollo_Fecha,
+                          Hora_Ingreso = pre.PreEntregaRollo.PreEntRollo_Hora,
+                          Cantidad = pre.DtlPreEntRollo_Cantidad,
+                          Presentacion = pre.UndMed_Rollo,
+                          Proceso = pre.Proceso_Id,
+                          NombreProceso = pre.Proceso.Proceso_Nombre,
+                      };
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            if (con == null) return BadRequest("No se encontraron resultados de búsqueda");
             return Ok(con);
         }
 
@@ -267,13 +311,13 @@ namespace PlasticaribeAPI.Controllers
             {
                 return NoContent();
             }
-           
-            
-                _context.DetallesPreEntrega_RollosDespacho.Remove(x);
-                _context.SaveChanges();
 
-                return NoContent();
-            
+
+            _context.DetallesPreEntrega_RollosDespacho.Remove(x);
+            _context.SaveChanges();
+
+            return NoContent();
+
         }
 
         private bool DetallePreEntrega_RolloDespachoExists(long id)

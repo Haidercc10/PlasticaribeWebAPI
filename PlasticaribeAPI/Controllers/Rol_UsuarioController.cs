@@ -1,10 +1,5 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -49,7 +44,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getNombreRol/{rol}")]
         public ActionResult GetNombreRol_Usuario(string rol)
         {
-            var rol_Usuario =  _context.Roles_Usuarios.Where(r => r.RolUsu_Nombre == rol).
+            var rol_Usuario = _context.Roles_Usuarios.Where(r => r.RolUsu_Nombre == rol).
                                                        Select(r => new
                                                        {
                                                            r.RolUsu_Nombre
@@ -85,7 +80,7 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetInformacionRoles(string rol)
         {
             var con = from r in _context.Set<Rol_Usuario>()
-                      from vp in _context.Set<Vistas_Permisos>() 
+                      from vp in _context.Set<Vistas_Permisos>()
                       where vp.Vp_Id_Roles.Contains($"|{rol}|") &&
                             r.RolUsu_Id == Convert.ToInt16(rol)
                       select new
@@ -141,7 +136,7 @@ namespace PlasticaribeAPI.Controllers
 
             return CreatedAtAction("GetRol_Usuario", new { id = rol_Usuario.RolUsu_Id }, rol_Usuario);
         }
-        
+
         [Authorize]
         // DELETE: api/Rol_Usuario/5
         [HttpDelete("{id}")]

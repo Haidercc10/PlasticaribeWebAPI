@@ -27,5 +27,8 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(10)")]
         public string? BoppGen_Hora { get; set; }
+
+        [Precision(18, 2)]
+        public decimal BoppGen_PrecioEstandar { get; set; }
     }
 }

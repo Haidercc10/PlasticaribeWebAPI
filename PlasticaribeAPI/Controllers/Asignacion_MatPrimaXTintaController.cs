@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Asignacion_MatPrimaXTinta>>> GetAsignaciones_MatPrimasXTintas()
         {
-          if (_context.Asignaciones_MatPrimasXTintas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Asignaciones_MatPrimasXTintas == null)
+            {
+                return NotFound();
+            }
             return await _context.Asignaciones_MatPrimasXTintas.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Asignacion_MatPrimaXTinta>> GetAsignacion_MatPrimaXTinta(long id)
         {
-          if (_context.Asignaciones_MatPrimasXTintas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Asignaciones_MatPrimasXTintas == null)
+            {
+                return NotFound();
+            }
             var asignacion_MatPrimaXTinta = await _context.Asignaciones_MatPrimasXTintas.FindAsync(id);
 
             if (asignacion_MatPrimaXTinta == null)
@@ -90,7 +85,7 @@ namespace PlasticaribeAPI.Controllers
                              Stock = tnt.Tinta_Stock,
                              Unidad = tnt.UndMed_Id,
                              IDCategoria = tnt.CatMP_Id,
-                             NombreCategoria = tnt.CatMP.CatMP_Nombre, 
+                             NombreCategoria = tnt.CatMP.CatMP_Nombre,
                              PrecioMP = tnt.Tinta_Precio
                          });
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -178,10 +173,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Asignacion_MatPrimaXTinta>> PostAsignacion_MatPrimaXTinta(Asignacion_MatPrimaXTinta asignacion_MatPrimaXTinta)
         {
-          if (_context.Asignaciones_MatPrimasXTintas == null)
-          {
-              return Problem("Entity set 'dataContext.Asignaciones_MatPrimasXTintas'  is null.");
-          }
+            if (_context.Asignaciones_MatPrimasXTintas == null)
+            {
+                return Problem("Entity set 'dataContext.Asignaciones_MatPrimasXTintas'  is null.");
+            }
             _context.Asignaciones_MatPrimasXTintas.Add(asignacion_MatPrimaXTinta);
             await _context.SaveChangesAsync();
 

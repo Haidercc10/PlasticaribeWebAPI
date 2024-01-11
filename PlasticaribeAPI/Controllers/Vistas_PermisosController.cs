@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -56,7 +51,8 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetCategorias(string rol)
         {
             var con = from vp in _context.Set<Vistas_Permisos>()
-                      where vp.Vp_Id_Roles.Contains($"|{rol}|")
+                      where vp.Vp_Id_Roles.Contains($"|{rol}|") && 
+                            vp.Vp_Estado == 1
                       select vp.Vp_Categoria;
             return Ok(con);
         }
@@ -67,7 +63,8 @@ namespace PlasticaribeAPI.Controllers
         {
             var con = from vp in _context.Set<Vistas_Permisos>()
                       where vp.Vp_Id_Roles.Contains($"|{rol}|") &&
-                            vp.Vp_Categoria.Contains($"|{categoria}|")
+                            vp.Vp_Categoria.Contains($"|{categoria}|") &&
+                            vp.Vp_Estado == 1
                       select vp;
             return Ok(con);
         }
@@ -78,7 +75,8 @@ namespace PlasticaribeAPI.Controllers
         {
             var con = from vp in _context.Set<Vistas_Permisos>()
                       where vp.Vp_Id_Roles.Contains($"|{rol}|") &&
-                            vp.Vp_Nombre == ruta
+                            vp.Vp_Nombre == ruta && 
+                            vp.Vp_Estado == 1
                       select vp.Vp_Nombre;
             return con.Any() ? Ok(con) : NotFound();
         }
@@ -88,7 +86,8 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult Get_By_Rol(string rol)
         {
             var con = from vp in _context.Set<Vistas_Permisos>()
-                      where vp.Vp_Id_Roles.Contains($"|{rol}|")
+                      where vp.Vp_Id_Roles.Contains($"|{rol}|") && 
+                            vp.Vp_Estado == 1
                       select new
                       {
                           Id = vp.Vp_Id,
@@ -136,10 +135,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Vistas_Permisos>> PostVistas_Permisos(Vistas_Permisos vistas_Permisos)
         {
-          if (_context.Vistas_Permisos == null)
-          {
-              return Problem("Entity set 'dataContext.Vistas_Permisos'  is null.");
-          }
+            if (_context.Vistas_Permisos == null)
+            {
+                return Problem("Entity set 'dataContext.Vistas_Permisos'  is null.");
+            }
             _context.Vistas_Permisos.Add(vistas_Permisos);
             await _context.SaveChangesAsync();
 

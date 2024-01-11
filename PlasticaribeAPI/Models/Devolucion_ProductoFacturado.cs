@@ -33,7 +33,7 @@ namespace PlasticaribeAPI.Models
 
         public IList<DetalleDevolucion_ProductoFacturado>? DtDevProd_Fact { get; set; }
 
-        public long Usua_Id {get; set;}
+        public long Usua_Id { get; set; }
         public Usuario? Usua { get; set; }
 
         //[Column(TypeName = "varchar(10)")]

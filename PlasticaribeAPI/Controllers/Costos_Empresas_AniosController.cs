@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Costos_Empresas_Anios>>> GetCostos_Empresas_Anios()
         {
-          if (_context.Costos_Empresas_Anios == null)
-          {
-              return NotFound();
-          }
+            if (_context.Costos_Empresas_Anios == null)
+            {
+                return NotFound();
+            }
             return await _context.Costos_Empresas_Anios.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Costos_Empresas_Anios>> GetCostos_Empresas_Anios(int id)
         {
-          if (_context.Costos_Empresas_Anios == null)
-          {
-              return NotFound();
-          }
+            if (_context.Costos_Empresas_Anios == null)
+            {
+                return NotFound();
+            }
             var costos_Empresas_Anios = await _context.Costos_Empresas_Anios.FindAsync(id);
 
             if (costos_Empresas_Anios == null)
@@ -109,10 +104,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Costos_Empresas_Anios>> PostCostos_Empresas_Anios(Costos_Empresas_Anios costos_Empresas_Anios)
         {
-          if (_context.Costos_Empresas_Anios == null)
-          {
-              return Problem("Entity set 'dataContext.Costos_Empresas_Anios'  is null.");
-          }
+            if (_context.Costos_Empresas_Anios == null)
+            {
+                return Problem("Entity set 'dataContext.Costos_Empresas_Anios'  is null.");
+            }
             _context.Costos_Empresas_Anios.Add(costos_Empresas_Anios);
             await _context.SaveChangesAsync();
 

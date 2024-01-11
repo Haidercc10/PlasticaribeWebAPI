@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DetalleAsignacion_MatPrimaXTinta>>> GetDetallesAsignaciones_MatPrimasXTintas()
         {
-          if (_context.DetallesAsignaciones_MatPrimasXTintas == null)
-          {
-              return NotFound();
-          }
+            if (_context.DetallesAsignaciones_MatPrimasXTintas == null)
+            {
+                return NotFound();
+            }
             return await _context.DetallesAsignaciones_MatPrimasXTintas.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DetalleAsignacion_MatPrimaXTinta>> GetDetalleAsignacion_MatPrimaXTinta(long id)
         {
-          if (_context.DetallesAsignaciones_MatPrimasXTintas == null)
-          {
-              return NotFound();
-          }
+            if (_context.DetallesAsignaciones_MatPrimasXTintas == null)
+            {
+                return NotFound();
+            }
             var detalleAsignacion_MatPrimaXTinta = await _context.DetallesAsignaciones_MatPrimasXTintas.FindAsync(id);
 
             if (detalleAsignacion_MatPrimaXTinta == null)
@@ -58,14 +53,14 @@ namespace PlasticaribeAPI.Controllers
             var con = from creacion in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
                       where creacion.AsigMPxTinta.AsigMPxTinta_FechaEntrega >= fecha1
                             && creacion.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= fecha2
-                       group creacion by new { creacion.AsigMPxTinta.Tinta_Id, creacion.AsigMPxTinta.Tinta.Tinta_Nombre }
+                      group creacion by new { creacion.AsigMPxTinta.Tinta_Id, creacion.AsigMPxTinta.Tinta.Tinta_Nombre }
                        into creacion
-                       select new
-                       {
-                           creacion.Key.Tinta_Id,
-                           creacion.Key.Tinta_Nombre,
-                           cantidad = creacion.Sum(x => x.AsigMPxTinta.AsigMPxTinta_Cantidad),
-                       };
+                      select new
+                      {
+                          creacion.Key.Tinta_Id,
+                          creacion.Key.Tinta_Nombre,
+                          cantidad = creacion.Sum(x => x.AsigMPxTinta.AsigMPxTinta_Cantidad),
+                      };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
@@ -130,10 +125,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<DetalleAsignacion_MatPrimaXTinta>> PostDetalleAsignacion_MatPrimaXTinta(DetalleAsignacion_MatPrimaXTinta detalleAsignacion_MatPrimaXTinta)
         {
-          if (_context.DetallesAsignaciones_MatPrimasXTintas == null)
-          {
-              return Problem("Entity set 'dataContext.DetallesAsignaciones_MatPrimasXTintas'  is null.");
-          }
+            if (_context.DetallesAsignaciones_MatPrimasXTintas == null)
+            {
+                return Problem("Entity set 'dataContext.DetallesAsignaciones_MatPrimasXTintas'  is null.");
+            }
             _context.DetallesAsignaciones_MatPrimasXTintas.Add(detalleAsignacion_MatPrimaXTinta);
             try
             {

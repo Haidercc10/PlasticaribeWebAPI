@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Tipos_Nomina>>> GetTipos_Nomina()
         {
-          if (_context.Tipos_Nomina == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tipos_Nomina == null)
+            {
+                return NotFound();
+            }
             return await _context.Tipos_Nomina.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Tipos_Nomina>> GetTipos_Nomina(int id)
         {
-          if (_context.Tipos_Nomina == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tipos_Nomina == null)
+            {
+                return NotFound();
+            }
             var tipos_Nomina = await _context.Tipos_Nomina.FindAsync(id);
 
             if (tipos_Nomina == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Tipos_Nomina>> PostTipos_Nomina(Tipos_Nomina tipos_Nomina)
         {
-          if (_context.Tipos_Nomina == null)
-          {
-              return Problem("Entity set 'dataContext.Tipos_Nomina'  is null.");
-          }
+            if (_context.Tipos_Nomina == null)
+            {
+                return Problem("Entity set 'dataContext.Tipos_Nomina'  is null.");
+            }
             _context.Tipos_Nomina.Add(tipos_Nomina);
             await _context.SaveChangesAsync();
 

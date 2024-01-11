@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Tipo_Proveedor>>> GetTipos_Proveedores()
         {
-          if (_context.Tipos_Proveedores == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tipos_Proveedores == null)
+            {
+                return NotFound();
+            }
             return await _context.Tipos_Proveedores.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Tipo_Proveedor>> GetTipo_Proveedor(int id)
         {
-          if (_context.Tipos_Proveedores == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tipos_Proveedores == null)
+            {
+                return NotFound();
+            }
             var tipo_Proveedor = await _context.Tipos_Proveedores.FindAsync(id);
 
             if (tipo_Proveedor == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Tipo_Proveedor>> PostTipo_Proveedor(Tipo_Proveedor tipo_Proveedor)
         {
-          if (_context.Tipos_Proveedores == null)
-          {
-              return Problem("Entity set 'dataContext.Tipos_Proveedores'  is null.");
-          }
+            if (_context.Tipos_Proveedores == null)
+            {
+                return Problem("Entity set 'dataContext.Tipos_Proveedores'  is null.");
+            }
             _context.Tipos_Proveedores.Add(tipo_Proveedor);
             await _context.SaveChangesAsync();
 

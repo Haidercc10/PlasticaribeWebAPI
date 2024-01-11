@@ -1,11 +1,12 @@
 ﻿using Newtonsoft.Json;
 using StackExchange.Redis;
-using ConnectionHelper = PlasticaribeAPI.Service.ConnectionHelper;
 
 namespace PlasticaribeAPI.Service
 {
     public class CacheService : ICacheService
     {
+#pragma warning disable CS8604 // Possible null reference argument.
+#pragma warning disable CS8603 // Possible null reference return.
         private IDatabase _db;
         public CacheService()
         {
@@ -18,15 +19,8 @@ namespace PlasticaribeAPI.Service
         public T GetData<T>(string key)
         {
             var value = _db.StringGet(key);
-            if (!string.IsNullOrEmpty(value))
-            {
-#pragma warning disable CS8603 // Posible tipo de valor devuelto de referencia nulo
-#pragma warning disable CS8604 // Posible argumento de referencia nulo
-                return JsonConvert.DeserializeObject<T>(value);
-#pragma warning restore CS8604 // Posible argumento de referencia nulo
-            }
+            if (!string.IsNullOrEmpty(value)) return JsonConvert.DeserializeObject<T>(value);
             return default;
-#pragma warning restore CS8603 // Posible tipo de valor devuelto de referencia nulo
         }
         public bool SetData<T>(string key, T value, DateTimeOffset expirationTime)
         {
@@ -37,11 +31,10 @@ namespace PlasticaribeAPI.Service
         public object RemoveData(string key)
         {
             bool _isKeyExist = _db.KeyExists(key);
-            if (_isKeyExist == true)
-            {
-                return _db.KeyDelete(key);
-            }
+            if (_isKeyExist == true) return _db.KeyDelete(key);
             return false;
         }
+#pragma warning restore CS8603 // Possible null reference return.
+#pragma warning restore CS8604 // Possible null reference argument.
     }
 }

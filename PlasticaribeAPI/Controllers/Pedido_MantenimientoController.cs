@@ -43,11 +43,11 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetPedido_Mtto(long id)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var pedidos =  _context.Pedidos_Mantenimientos.Where(p => p.PedMtto_Id == id)
+            var pedidos = _context.Pedidos_Mantenimientos.Where(p => p.PedMtto_Id == id)
                                                           .Select(ped => new
                                                           {
                                                               ped.PedMtto_Id,
-                                                              ped.PedMtto_Fecha, 
+                                                              ped.PedMtto_Fecha,
                                                               ped.PedMtto_Hora,
                                                               ped.Usua_Id,
                                                               ped.Usuario.Usua_Nombre,
@@ -70,8 +70,8 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult<Pedido_Mantenimiento> getUltimoIdPedido()
         {
             var con = (from pm in _context.Set<Pedido_Mantenimiento>()
-                      orderby pm.PedMtto_Id descending
-                      select pm.PedMtto_Id).FirstOrDefault();
+                       orderby pm.PedMtto_Id descending
+                       select pm.PedMtto_Id).FirstOrDefault();
             return Ok(con);
         }
 

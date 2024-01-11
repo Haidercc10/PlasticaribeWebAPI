@@ -6,8 +6,8 @@ namespace PlasticaribeAPI.Models
     public class Categoria_Insumo
 
     {
-       [Key]
-       public int CatInsu_Id { get; set; }
+        [Key]
+        public int CatInsu_Id { get; set; }
 
         [Column(TypeName = "varchar(100)")]
         public string CatInsu_Nombre { get; set; }

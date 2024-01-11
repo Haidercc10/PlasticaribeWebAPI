@@ -1,11 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <IsPublishable>True</IsPublishable>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="Migrations\20220428230504_AdiciosEmpresa.cs" />
     <Compile Remove="Migrations\20220428230504_AdiciosEmpresa.Designer.cs" />
@@ -14,43 +13,72 @@
     <Compile Remove="Migrations\20220429132409_Areas.cs" />
     <Compile Remove="Migrations\20220429132409_Areas.Designer.cs" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Content Remove="wwwroot\Imagenes\Assets\correo.png" />
+    <Content Remove="wwwroot\Imagenes\Assets\facebook.png" />
+    <Content Remove="wwwroot\Imagenes\Assets\FondoPlasticaribe.jpg" />
+    <Content Remove="wwwroot\Imagenes\Assets\instagram.png" />
+    <Content Remove="wwwroot\Imagenes\Assets\logo-footer.png" />
+    <Content Remove="wwwroot\Imagenes\Assets\mapa.png" />
+    <Content Remove="wwwroot\Imagenes\Assets\telefono.png" />
+    <Content Remove="wwwroot\Imagenes\Assets\whatsapp.png" />
+    <Content Remove="wwwroot\Imagenes\correo.png" />
+    <Content Remove="wwwroot\Imagenes\facebook.png" />
+    <Content Remove="wwwroot\Imagenes\FondoPlasticaribe.jpg" />
+    <Content Remove="wwwroot\Imagenes\instagram.png" />
+    <Content Remove="wwwroot\Imagenes\logo-footer.png" />
+    <Content Remove="wwwroot\Imagenes\mapa.png" />
+    <Content Remove="wwwroot\Imagenes\telefono.png" />
+    <Content Remove="wwwroot\Imagenes\whatsapp.png" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
+    <None Include="wwwroot\Imagenes\Assets\correo.png" />
+    <None Include="wwwroot\Imagenes\Assets\facebook.png" />
+    <None Include="wwwroot\Imagenes\Assets\FondoPlasticaribe.jpg" />
+    <None Include="wwwroot\Imagenes\Assets\instagram.png" />
+    <None Include="wwwroot\Imagenes\Assets\logo-footer.png" />
+    <None Include="wwwroot\Imagenes\Assets\mapa.png" />
+    <None Include="wwwroot\Imagenes\Assets\telefono.png" />
+    <None Include="wwwroot\Imagenes\Assets\whatsapp.png" />
+    <None Include="wwwroot\Imagenes\correo.png" />
+    <None Include="wwwroot\Imagenes\facebook.png" />
+    <None Include="wwwroot\Imagenes\FondoPlasticaribe.jpg" />
+    <None Include="wwwroot\Imagenes\instagram.png" />
+    <None Include="wwwroot\Imagenes\logo-footer.png" />
+    <None Include="wwwroot\Imagenes\mapa.png" />
+    <None Include="wwwroot\Imagenes\telefono.png" />
+    <None Include="wwwroot\Imagenes\whatsapp.png" />
   </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="Aspose.Imaging" Version="23.7.0" />
-    <PackageReference Include="EntityFramework" Version="6.4.4" />
+    <PackageReference Include="Aspose.Imaging" Version="23.12.0" />
     <PackageReference Include="Grpc.Core" Version="2.46.6" />
     <PackageReference Include="Intercom.Dotnet.Client" Version="2.1.1" />
-    <PackageReference Include="MailKit" Version="4.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.1.39" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.10">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.10">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Core" Version="7.0.9" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.9" />
-    <PackageReference Include="MimeKit" Version="4.1.0" />
+    <PackageReference Include="MailKit" Version="4.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.0" />
+    <PackageReference Include="MimeKit" Version="4.3.0" />
     <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
-    <PackageReference Include="StackExchange.Redis" Version="2.6.122" />
+    <PackageReference Include="StackExchange.Redis" Version="2.7.10" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="EntityFramework" Version="6.4.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Core" Version="8.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="6.0.0" />
+    <PackageReference Include="System.ServiceModel.Federation" Version="8.0.0" />
+    <PackageReference Include="System.ServiceModel.Http" Version="8.0.0" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="8.0.0" />
+    <PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\Imagenes\" />
-  </ItemGroup>
-
-  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
-
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties appsettings_1json__JsonSchema="" properties_4launchsettings_1json__JsonSchema="" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

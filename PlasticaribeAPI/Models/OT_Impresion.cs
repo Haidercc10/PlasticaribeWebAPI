@@ -19,7 +19,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "int")]
         public int Pista_Id { get; set; }
         //public Pistas? Pistas { get; set; }
-        public long Tinta1_Id  { get; set; }
+        public long Tinta1_Id { get; set; }
         public Tinta? Tinta1 { get; set; }
         public long Tinta2_Id { get; set; }
         public Tinta? Tinta2 { get; set; }

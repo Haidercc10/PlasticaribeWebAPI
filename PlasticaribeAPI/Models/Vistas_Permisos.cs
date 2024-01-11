@@ -12,5 +12,7 @@ namespace PlasticaribeAPI.Models
         public string Vp_Ruta { get; set; }
         public string Vp_Categoria { get; set; }
         public string Vp_Id_Roles { get; set; }
+        public int Vp_Estado { get; set; }
+        public Estado? Estado { get; set;}
     }
 }

@@ -1,14 +1,11 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -90,18 +87,17 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        [HttpGet("getCondutores")]
+        [HttpGet("getConductores")]
         public ActionResult GetCondutores()
         {
             var con = from usua in _context.Set<Usuario>()
-                      where usua.RolUsu_Id == 11
+                      where usua.RolUsu_Id == 11 && usua.Estado_Id == 1
                       select new
                       {
                           Nombre = usua.Usua_Nombre,
                           Id = usua.Usua_Id
                       };
-            if (con.Count() > 0) return Ok(con);
-            else return NoContent();
+            return con.Any() ? Ok(con) : NotFound();
         }
 
         [HttpGet("UsuariosxId/{ID}")]
@@ -111,52 +107,6 @@ namespace PlasticaribeAPI.Controllers
             {
                 var usuario = _context.Usuarios.Where(tp => tp.Usua_Id == ID)
                                                .Select(usu => new
-                                               {
-                                                usu.Usua_Id, 
-                                                usu.Usua_Nombre, 
-                                                usu.tpUsu_Id,
-                                                usu.tpUsu.tpUsu_Nombre,
-                                                usu.Area_Id, 
-                                                usu.Area.Area_Nombre,
-                                                usu.RolUsu_Id,
-                                                usu.RolUsu.RolUsu_Nombre, 
-                                                usu.Estado_Id, 
-                                                usu.Estado.Estado_Nombre,
-                                                usu.Usua_Telefono,
-                                                usu.fPen_Id, 
-                                                usu.fPen.fPen_Nombre,
-                                                usu.Usua_Email, 
-                                                usu.cajComp_Id,
-                                                usu.cajComp.cajComp_Nombre, 
-                                                usu.eps_Id,
-                                                usu.EPS.eps_Nombre, 
-                                                usu.Usua_Contrasena,
-                                                usu.Empresa_Id,
-                                                usu.Empresa.Empresa_Nombre,
-                                                usu.TipoIdentificacion_Id,
-                                                usu.Usua_Fecha,
-                                                usu.Usua_Hora
-                                               }).ToList();
-                if (usuario == null)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    return Ok(usuario);
-                }
-            }
-            catch (Exception ex)
-            {
-                return NotFound(ex);
-            }
-        }
-
-        [HttpGet("UsuariosSinParametros")]
-        public ActionResult<Usuario> GetUsuarios2()
-        {
-           
-                var usuario = _context.Usuarios.Select(usu => new
                                                {
                                                    usu.Usua_Id,
                                                    usu.Usua_Nombre,
@@ -178,7 +128,7 @@ namespace PlasticaribeAPI.Controllers
                                                    usu.EPS.eps_Nombre,
                                                    usu.Usua_Contrasena,
                                                    usu.Empresa_Id,
-                                                   usu.Empresa.Empresa_Nombre, 
+                                                   usu.Empresa.Empresa_Nombre,
                                                    usu.TipoIdentificacion_Id,
                                                    usu.Usua_Fecha,
                                                    usu.Usua_Hora
@@ -191,8 +141,54 @@ namespace PlasticaribeAPI.Controllers
                 {
                     return Ok(usuario);
                 }
-            
-           
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex);
+            }
+        }
+
+        [HttpGet("UsuariosSinParametros")]
+        public ActionResult<Usuario> GetUsuarios2()
+        {
+
+            var usuario = _context.Usuarios.Select(usu => new
+            {
+                usu.Usua_Id,
+                usu.Usua_Nombre,
+                usu.tpUsu_Id,
+                usu.tpUsu.tpUsu_Nombre,
+                usu.Area_Id,
+                usu.Area.Area_Nombre,
+                usu.RolUsu_Id,
+                usu.RolUsu.RolUsu_Nombre,
+                usu.Estado_Id,
+                usu.Estado.Estado_Nombre,
+                usu.Usua_Telefono,
+                usu.fPen_Id,
+                usu.fPen.fPen_Nombre,
+                usu.Usua_Email,
+                usu.cajComp_Id,
+                usu.cajComp.cajComp_Nombre,
+                usu.eps_Id,
+                usu.EPS.eps_Nombre,
+                usu.Usua_Contrasena,
+                usu.Empresa_Id,
+                usu.Empresa.Empresa_Nombre,
+                usu.TipoIdentificacion_Id,
+                usu.Usua_Fecha,
+                usu.Usua_Hora
+            }).ToList();
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(usuario);
+            }
+
+
         }
 
         [HttpGet("getVendedores")]
@@ -206,6 +202,20 @@ namespace PlasticaribeAPI.Controllers
                               usu.Usua_Id
                           };
             return Ok(usuario);
+        }
+
+        [HttpGet("getOperariosProduccion")]
+        public ActionResult GetOperariosProduccion()
+        {
+            var operarios = from op in _context.Set<Usuario>()
+                            where op.RolUsu_Id == 59
+                            select new
+                            {
+                                op.Usua_Id,
+                                op.Usua_Nombre,
+                                op.Area_Id
+                            };
+            return operarios.Any() ? Ok(operarios) : NotFound();
         }
 
         // PUT: api/Usuarios/5
@@ -284,5 +294,6 @@ namespace PlasticaribeAPI.Controllers
         {
             return _context.Usuarios.Any(e => e.Usua_Id == id);
         }
+
     }
 }

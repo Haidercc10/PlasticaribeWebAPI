@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Clientes>>> GetClientes()
         {
-          if (_context.Clientes == null)
-          {
-              return NotFound();
-          }
+            if (_context.Clientes == null)
+            {
+                return NotFound();
+            }
             return await _context.Clientes.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Clientes>> GetClientes(long id)
         {
-          if (_context.Clientes == null)
-          {
-              return NotFound();
-          }
+            if (_context.Clientes == null)
+            {
+                return NotFound();
+            }
             var clientes = await _context.Clientes.FindAsync(id);
 
             if (clientes == null)
@@ -86,10 +81,15 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getClientesVendedores_LikeNombre/{vendedor}/{nombre}")]
         public ActionResult GetClientes_LikeNombre(long vendedor, string nombre)
         {
+            var sede = from sd in _context.Set<SedesClientes>()
+                       where sd.Cli.Cli_Nombre.Contains(nombre)
+                       select sd;
+
             var cliente = from cli in _context.Set<Clientes>()
                           where cli.Estado_Id == 1
                                 && cli.usua_Id == vendedor
                                 && cli.Cli_Nombre.Contains(nombre)
+                                && sede.Count() > 0
                           select cli;
 
             if (cliente == null || cliente.Count() == 0) return BadRequest("No se encontró ningún cliente");
@@ -100,10 +100,27 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult<Clientes> LikeGetClientes(string Cli_Nombre)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
-            var clientes = _context.Clientes.Where(pp => pp.Cli_Nombre.Contains(Cli_Nombre)).Select(cl => new { cl.Cli_Id, cl.Cli_Nombre }).ToList();
+            var clientes = _context.Clientes.Where(pp => pp.Cli_Nombre.Contains(Cli_Nombre) && pp.Estado_Id == 1).Select(cl => new { cl.Cli_Id, cl.Cli_Nombre, cl.usua_Id }).ToList();
 
             if (clientes == null) return NotFound();
             else return Ok(clientes);
+        }
+
+        [HttpGet("getSedesClientes_NombreCliente/{nombre}")]
+        public ActionResult GetSedesClientes_NombreCliente(string nombre)
+        {
+            var sedes = from sede in _context.Set<SedesClientes>()
+                        join cli in _context.Set<Clientes>() on sede.Cli_Id equals cli.Cli_Id
+                        where cli.Cli_Nombre.Contains(nombre)
+                        select new
+                        {
+                            sede.SedeCli_Id,
+                            sede.SedeCli_CodBagPro,
+                            cli.Cli_Id,
+                            cli.Cli_Nombre,
+                            sede.SedeCliente_Ciudad,
+                        };
+            return Ok(sedes);
         }
 
         // PUT: api/Clientes/5
@@ -143,7 +160,7 @@ namespace PlasticaribeAPI.Controllers
         {
             try
             {
-                var con = _context.Clientes.Where(x => x.Cli_Id == id).First<Clientes>();
+                var con = _context.Clientes.Where(x => x.Cli_Id == id).First();
                 con.Estado_Id = estado;
                 _context.SaveChanges();
             }
@@ -161,10 +178,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Clientes>> PostClientes(Clientes clientes)
         {
-          if (_context.Clientes == null)
-          {
-              return Problem("Entity set 'dataContext.Clientes'  is null.");
-          }
+            if (_context.Clientes == null)
+            {
+                return Problem("Entity set 'dataContext.Clientes'  is null.");
+            }
             _context.Clientes.Add(clientes);
             try
             {

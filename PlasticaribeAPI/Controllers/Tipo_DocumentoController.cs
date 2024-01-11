@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Tipo_Documento>>> GetTipos_Documentos()
         {
-          if (_context.Tipos_Documentos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tipos_Documentos == null)
+            {
+                return NotFound();
+            }
             return await _context.Tipos_Documentos.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Tipo_Documento>> GetTipo_Documento(string id)
         {
-          if (_context.Tipos_Documentos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tipos_Documentos == null)
+            {
+                return NotFound();
+            }
             var tipo_Documento = await _context.Tipos_Documentos.FindAsync(id);
 
             if (tipo_Documento == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Tipo_Documento>> PostTipo_Documento(Tipo_Documento tipo_Documento)
         {
-          if (_context.Tipos_Documentos == null)
-          {
-              return Problem("Entity set 'dataContext.Tipos_Documentos'  is null.");
-          }
+            if (_context.Tipos_Documentos == null)
+            {
+                return Problem("Entity set 'dataContext.Tipos_Documentos'  is null.");
+            }
             _context.Tipos_Documentos.Add(tipo_Documento);
             try
             {

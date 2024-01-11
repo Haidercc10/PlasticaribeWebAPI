@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Formato>>> GetFormato()
         {
-          if (_context.Formato == null)
-          {
-              return NotFound();
-          }
+            if (_context.Formato == null)
+            {
+                return NotFound();
+            }
             return await _context.Formato.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Formato>> GetFormato(long id)
         {
-          if (_context.Formato == null)
-          {
-              return NotFound();
-          }
+            if (_context.Formato == null)
+            {
+                return NotFound();
+            }
             var formato = await _context.Formato.FindAsync(id);
 
             if (formato == null)
@@ -110,10 +105,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Formato>> PostFormato(Formato formato)
         {
-          if (_context.Formato == null)
-          {
-              return Problem("Entity set 'dataContext.Formato'  is null.");
-          }
+            if (_context.Formato == null)
+            {
+                return Problem("Entity set 'dataContext.Formato'  is null.");
+            }
             _context.Formato.Add(formato);
             await _context.SaveChangesAsync();
 

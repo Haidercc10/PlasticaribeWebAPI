@@ -8,13 +8,13 @@ namespace PlasticaribeAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-           /* migrationBuilder.DropForeignKey(
-                name: "FK_Estados_Tipos_Estados_TpEstado_Id1",
-                table: "Estados");
+            /* migrationBuilder.DropForeignKey(
+                 name: "FK_Estados_Tipos_Estados_TpEstado_Id1",
+                 table: "Estados");
 
-            migrationBuilder.DropColumn(
-                name: "TpEstado_Id",
-                table: "Estados"); */
+             migrationBuilder.DropColumn(
+                 name: "TpEstado_Id",
+                 table: "Estados"); */
 
             migrationBuilder.CreateTable(
                 name: "Categorias_Insumos",
@@ -30,38 +30,38 @@ namespace PlasticaribeAPI.Migrations
                     table.PrimaryKey("PK_Categorias_Insumos", x => x.CatInsu_Id);
                 });
 
-           /* migrationBuilder.AddForeignKey(
-                name: "FK_Estados_Tipos_Estados_TpEstado_Id1",
-                table: "Estados",
-                column: "TpEstado_Id1",
-                principalTable: "Tipos_Estados",
-                principalColumn: "TpEstado_Id",
-                onDelete: ReferentialAction.Restrict); */
+            /* migrationBuilder.AddForeignKey(
+                 name: "FK_Estados_Tipos_Estados_TpEstado_Id1",
+                 table: "Estados",
+                 column: "TpEstado_Id1",
+                 principalTable: "Tipos_Estados",
+                 principalColumn: "TpEstado_Id",
+                 onDelete: ReferentialAction.Restrict); */
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-          /* migrationBuilder.DropForeignKey(
-                name: "FK_Estados_Tipos_Estados_TpEstado_Id1",
-                table: "Estados"); */
+            /* migrationBuilder.DropForeignKey(
+                  name: "FK_Estados_Tipos_Estados_TpEstado_Id1",
+                  table: "Estados"); */
 
             migrationBuilder.DropTable(
                 name: "Categorias_Insumos");
 
-           /* migrationBuilder.AddColumn<int>(
-                name: "TpEstado_Id",
-                table: "Estados",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+            /* migrationBuilder.AddColumn<int>(
+                 name: "TpEstado_Id",
+                 table: "Estados",
+                 type: "int",
+                 nullable: false,
+                 defaultValue: 0);
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Estados_Tipos_Estados_TpEstado_Id1",
-                table: "Estados",
-                column: "TpEstado_Id1",
-                principalTable: "Tipos_Estados",
-                principalColumn: "TpEstado_Id",
-                onDelete: ReferentialAction.Cascade); */
-        } 
+             migrationBuilder.AddForeignKey(
+                 name: "FK_Estados_Tipos_Estados_TpEstado_Id1",
+                 table: "Estados",
+                 column: "TpEstado_Id1",
+                 principalTable: "Tipos_Estados",
+                 principalColumn: "TpEstado_Id",
+                 onDelete: ReferentialAction.Cascade); */
+        }
     }
 }

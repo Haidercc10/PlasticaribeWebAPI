@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Humanizer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +22,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Producto>>> GetProductos()
         {
-          if (_context.Productos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Productos == null)
+            {
+                return NotFound();
+            }
             return await _context.Productos.ToListAsync();
         }
 
@@ -37,10 +33,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Producto>> GetProducto(int id)
         {
-          if (_context.Productos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Productos == null)
+            {
+                return NotFound();
+            }
             var producto = await _context.Productos.FindAsync(id);
 
             if (producto == null)
@@ -55,10 +51,10 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetItem(string letras)
         {
             var productos = _context.Productos.Where(p => p.Prod_Nombre.StartsWith(letras))
-                                              .Select(p => new {p.Prod_Id,  p.Prod_Nombre })
+                                              .Select(p => new { p.Prod_Id, p.Prod_Nombre })
                                               .Take(30)
                                               .ToList();
-                            
+
             return Ok(productos);
         }
 
@@ -134,9 +130,40 @@ namespace PlasticaribeAPI.Controllers
                           Tipo_Sellado = produ.TiposSellados.TpSellados_Nombre,
                           Material = produ.MaterialMP.Material_Nombre,
                           Pigmento = produ.Pigmt.Pigmt_Nombre,
+                          PrecioUnidad = exis.ExProd_PrecioVenta
                       };
 
             return Ok(con);
+        }
+
+        // Funcion que realizará una consulta en la base de datos para obtener información de los productos cuando el nombre de estos tenga la información recibida como parametro
+        [HttpGet("getProductsByName/{name}")]
+        public ActionResult GetProductsByName(string name)
+        {
+            var products = from prod in _context.Set<Producto>()
+                           join exis in _context.Set<Existencia_Productos>() on prod.Prod_Id equals exis.Prod_Id
+                           where prod.Prod_Nombre.Contains(name)
+                           select new
+                           {
+                               prod,
+                               exis
+                           };
+            return products.Any() ? Ok(products) : NotFound();
+        }
+
+        // Funcion que realizará una consulta en la base de datos para obtener información de los productos cuando el nombre de estos tenga la información recibida como parametro
+        [HttpGet("getProductsById/{id}")]
+        public ActionResult GetProductsById(int id)
+        {
+            var products = from prod in _context.Set<Producto>()
+                           join exis in _context.Set<Existencia_Productos>() on prod.Prod_Id equals exis.Prod_Id
+                           where prod.Prod_Id == id
+                           select new
+                           {
+                               prod,
+                               exis
+                           };
+            return products.Any() ? Ok(products) : NotFound();
         }
 
         // PUT: api/Producto/5
@@ -183,7 +210,8 @@ namespace PlasticaribeAPI.Controllers
                 var con = _context.Productos.Where(x => x.Prod_Id == id).First<Producto>();
                 con.Estado_Id = producto.Estado_Id;
                 _context.SaveChanges();
-            } catch (DbUpdateConcurrencyException)
+            }
+            catch (DbUpdateConcurrencyException)
             {
                 if (!ProductoExists(id))
                 {
@@ -202,10 +230,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Producto>> PostProducto(Producto producto)
         {
-          if (_context.Productos == null)
-          {
-              return Problem("Entity set 'dataContext.Productos'  is null.");
-          }
+            if (_context.Productos == null)
+            {
+                return Problem("Entity set 'dataContext.Productos'  is null.");
+            }
             _context.Productos.Add(producto);
             try
             {

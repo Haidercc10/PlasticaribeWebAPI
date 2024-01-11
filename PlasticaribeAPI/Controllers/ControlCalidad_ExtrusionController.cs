@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
@@ -25,10 +20,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ControlCalidad_Extrusion>>> GetControlCalidad_Extrusion()
         {
-          if (_context.ControlCalidad_Extrusion == null)
-          {
-              return NotFound();
-          }
+            if (_context.ControlCalidad_Extrusion == null)
+            {
+                return NotFound();
+            }
             return await _context.ControlCalidad_Extrusion.ToListAsync();
         }
 
@@ -36,10 +31,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ControlCalidad_Extrusion>> GetControlCalidad_Extrusion(long id)
         {
-          if (_context.ControlCalidad_Extrusion == null)
-          {
-              return NotFound();
-          }
+            if (_context.ControlCalidad_Extrusion == null)
+            {
+                return NotFound();
+            }
             var controlCalidad_Extrusion = await _context.ControlCalidad_Extrusion.FindAsync(id);
 
             if (controlCalidad_Extrusion == null)
@@ -64,15 +59,15 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // GET ronda por OT
-        [HttpGet("getRonda/{maquina}")]
-        public ActionResult GetRonda(long maquina)
+        [HttpGet("getRonda/{ot}")]
+        public ActionResult GetRonda(long ot)
         {
 #pragma warning disable CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
             var controlExtrusion = (from cce in _context.Set<ControlCalidad_Extrusion>()
-                                   where cce.CcExt_Maquina == maquina &&
-                                   cce.CcExt_Fecha == DateTime.Today
-                                   orderby cce.CcExt_Id descending
-                                   select cce.CcExt_Ronda).FirstOrDefault();
+                                    where cce.CcExt_OT == ot &&
+                                    cce.CcExt_Fecha == DateTime.Today
+                                    orderby cce.CcExt_Id descending
+                                    select cce.CcExt_Ronda).FirstOrDefault();
 
             return controlExtrusion == null ? Ok(0) : Ok(controlExtrusion);
 #pragma warning restore CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
@@ -114,10 +109,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ControlCalidad_Extrusion>> PostControlCalidad_Extrusion(ControlCalidad_Extrusion controlCalidad_Extrusion)
         {
-          if (_context.ControlCalidad_Extrusion == null)
-          {
-              return Problem("Entity set 'dataContext.ControlCalidad_Extrusion'  is null.");
-          }
+            if (_context.ControlCalidad_Extrusion == null)
+            {
+                return Problem("Entity set 'dataContext.ControlCalidad_Extrusion'  is null.");
+            }
             _context.ControlCalidad_Extrusion.Add(controlCalidad_Extrusion);
             await _context.SaveChangesAsync();
 

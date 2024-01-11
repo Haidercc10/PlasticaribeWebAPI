@@ -11,6 +11,7 @@ namespace PlasticaribeAPI.Models
         public long Codigo { get; set; }
         public long MatPri_Id { get; set; }
         public long Tinta_Id { get; set; }
+        public long? Bopp_Id { get; set; } //Bopp Generico
 
         [Precision(14, 2)]
         public decimal InvInicial_Stock { get; set; }

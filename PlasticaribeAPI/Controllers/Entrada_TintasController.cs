@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Entrada_Tintas>>> GetEntradas_Tintas()
         {
-          if (_context.Entradas_Tintas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Entradas_Tintas == null)
+            {
+                return NotFound();
+            }
             return await _context.Entradas_Tintas.ToListAsync();
         }
 
@@ -46,10 +41,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Entrada_Tintas>> GetEntrada_Tintas(int id)
         {
-          if (_context.Entradas_Tintas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Entradas_Tintas == null)
+            {
+                return NotFound();
+            }
             var entrada_Tintas = await _context.Entradas_Tintas.FindAsync(id);
 
             if (entrada_Tintas == null)
@@ -96,10 +91,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Entrada_Tintas>> PostEntrada_Tintas(Entrada_Tintas entrada_Tintas)
         {
-          if (_context.Entradas_Tintas == null)
-          {
-              return Problem("Entity set 'dataContext.Entradas_Tintas'  is null.");
-          }
+            if (_context.Entradas_Tintas == null)
+            {
+                return Problem("Entity set 'dataContext.Entradas_Tintas'  is null.");
+            }
             _context.Entradas_Tintas.Add(entrada_Tintas);
             await _context.SaveChangesAsync();
 

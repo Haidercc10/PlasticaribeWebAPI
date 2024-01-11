@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -260,20 +255,20 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var ingreso = from ing in _context.Set<DetallesIngRollos_Extrusion>()
-                      where ing.DtIngRollo_OT == ot
-                      group ing by new
-                      {
-                          ing.IngRollo_Id,
-                          ing.IngresoRollos_Extrusion.IngRollo_Fecha,
-                          ing.IngresoRollos_Extrusion.Usua.Usua_Nombre,
-                      } into ing
-                      select new
-                      {
-                          OT = ing.Key.IngRollo_Id,
-                          Fecha = ing.Key.IngRollo_Fecha,
-                          Tipo = "Ingreso de Rollos",
-                          Usuario = ing.Key.Usua_Nombre,
-                      };
+                          where ing.DtIngRollo_OT == ot
+                          group ing by new
+                          {
+                              ing.IngRollo_Id,
+                              ing.IngresoRollos_Extrusion.IngRollo_Fecha,
+                              ing.IngresoRollos_Extrusion.Usua.Usua_Nombre,
+                          } into ing
+                          select new
+                          {
+                              OT = ing.Key.IngRollo_Id,
+                              Fecha = ing.Key.IngRollo_Fecha,
+                              Tipo = "Ingreso de Rollos",
+                              Usuario = ing.Key.Usua_Nombre,
+                          };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(ingreso);
         }

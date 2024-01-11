@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -81,6 +76,57 @@ namespace PlasticaribeAPI.Controllers
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
+        }
+
+        // Consulta que devolverá la informacaión una devolución
+        [HttpGet("getInformationDevById/{id}")]
+        public ActionResult GetInformationDevById(long id)
+        {
+            var infoDev = from dev in _context.Set<Devolucion_ProductoFacturado>()
+                          join dtDev in _context.Set<DetalleDevolucion_ProductoFacturado>() on dev.DevProdFact_Id equals dtDev.DevProdFact_Id
+                          where dev.DevProdFact_Id == id
+                          select new
+                          {
+                              dev,
+                              dev.Cliente,
+                              dev.Usua,
+                              dtDev = new
+                              {
+                                  dtDev.DtDevProdFact_Id,
+                                  dtDev.DevProdFact_Id,
+                                  dtDev.Prod_Id,
+                                  Numero_Rollo = dtDev.Rollo_Id,
+                                  Cantidad = dtDev.DtDevProdFact_Cantidad,
+                                  Presentacion = dtDev.UndMed_Id
+                              },
+                              dtDev.Prod
+                          };
+            return infoDev.Any() ? Ok(infoDev) : NotFound();
+        }
+
+        [HttpGet("getDevolutions/{startDate}/{endDate}")]
+        public ActionResult GetOrderd(DateTime startDate, DateTime endDate, string? order = "")
+        {
+
+            var infoDev = from dev in _context.Set<Devolucion_ProductoFacturado>()
+                          where dev.DevProdFact_Fecha >= startDate &&
+                                dev.DevProdFact_Fecha <= endDate &&
+                                (order != "" ? Convert.ToString(dev.DevProdFact_Id) == order : true)
+                          select new
+                          {
+                              or = new {
+                                  Id = dev.DevProdFact_Id,
+                                  Factura = dev.FacturaVta_Id,
+                                  Fecha = dev.DevProdFact_Fecha,
+                                  Hora = dev.DevProdFact_Hora,
+                                  dev.Cli_Id,
+                                  Observacion = dev.DevProdFact_Observacion
+                              },
+                              Clientes = dev.Cliente,
+                              Usuario = dev.Usua,
+                              Type = "Devolucion"
+                          };
+            return infoDev.Any() ? Ok(infoDev) : NotFound();
         }
 
         // PUT: api/DetalleDevolucion_ProductoFacturado/5

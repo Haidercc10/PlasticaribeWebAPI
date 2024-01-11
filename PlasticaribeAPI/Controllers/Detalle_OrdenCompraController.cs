@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -63,6 +58,10 @@ namespace PlasticaribeAPI.Controllers
                           Valor_Total = Oc.Oc_ValorTotal,
                           Peso_Total = Oc.Oc_PesoTotal,
                           iva = Oc.IVA,
+                          ReteIva = Oc.ReteIVA,
+                          ReteFuente = Oc.ReteFuente,
+                          ReteIca = Oc.ReteICA,
+                          Base= Oc.Proveedor.CA_ReteICA.Base,
 
                           Empresa_Id = Emp.Empresa_Id,
                           Empresa_Ciudad = Emp.Empresa_Ciudad,
@@ -159,10 +158,10 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("InfoOrdenCompraxId/{OC}")]
-        public  ActionResult GetDetalle_OrdenCompraxID(long OC)
+        public ActionResult GetDetalle_OrdenCompraxID(long OC)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var detalle_OrdenCompra =  _context.Detalles_OrdenesCompras.Where(d => d.Oc_Id == OC).Select(doc => new
+            var detalle_OrdenCompra = _context.Detalles_OrdenesCompras.Where(d => d.Oc_Id == OC).Select(doc => new
             {
                 doc.Oc_Id,
                 doc.MatPri_Id,
@@ -178,7 +177,7 @@ namespace PlasticaribeAPI.Controllers
                 doc.Doc_PrecioUnitario,
                 doc.Orden_Compra.Prov_Id,
                 doc.Orden_Compra.Proveedor.Prov_Nombre,
-                
+
             }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -258,7 +257,7 @@ namespace PlasticaribeAPI.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }   
+        }
 
         private bool Detalle_OrdenCompraExists(long id)
         {

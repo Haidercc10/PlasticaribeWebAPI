@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Detalles_SolicitudRollos>>> GetDetalles_SolicitudRollos()
         {
-          if (_context.Detalles_SolicitudRollos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Detalles_SolicitudRollos == null)
+            {
+                return NotFound();
+            }
             return await _context.Detalles_SolicitudRollos.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Detalles_SolicitudRollos>> GetDetalles_SolicitudRollos(long id)
         {
-          if (_context.Detalles_SolicitudRollos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Detalles_SolicitudRollos == null)
+            {
+                return NotFound();
+            }
             var detalles_SolicitudRollos = await _context.Detalles_SolicitudRollos.FindAsync(id);
 
             if (detalles_SolicitudRollos == null)
@@ -203,10 +198,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Detalles_SolicitudRollos>> PostDetalles_SolicitudRollos(Detalles_SolicitudRollos detalles_SolicitudRollos)
         {
-          if (_context.Detalles_SolicitudRollos == null)
-          {
-              return Problem("Entity set 'dataContext.Detalles_SolicitudRollos'  is null.");
-          }
+            if (_context.Detalles_SolicitudRollos == null)
+            {
+                return Problem("Entity set 'dataContext.Detalles_SolicitudRollos'  is null.");
+            }
             _context.Detalles_SolicitudRollos.Add(detalles_SolicitudRollos);
             await _context.SaveChangesAsync();
 

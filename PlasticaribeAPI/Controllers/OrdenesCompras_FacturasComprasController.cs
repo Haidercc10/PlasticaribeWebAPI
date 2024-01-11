@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -71,26 +66,28 @@ namespace PlasticaribeAPI.Controllers
             var Ordenes3 = _context.Detalles_OrdenesCompras.Where(o => o.Oc_Id == OC).Select(of => of.BOPP_Id);
 
             /** Selecciona las mat. primas y tintas de facturas compras materias primas. */
-            var FacCompras = _context.FacturasCompras_MateriaPrimas.Where(f => Facturas.Contains(f.Facco_Id) && 
+            var FacCompras = _context.FacturasCompras_MateriaPrimas.Where(f => Facturas.Contains(f.Facco_Id) &&
                                                                           Ordenes.Contains(f.MatPri_Id) &&
-                                                                          Ordenes2.Contains(f.Tinta_Id) && 
+                                                                          Ordenes2.Contains(f.Tinta_Id) &&
                                                                           Ordenes3.Contains(f.Bopp_Id)
-                                                                          ).GroupBy(agr => new {
-                                                                                               agr.MatPri_Id, 
-                                                                                               agr.Tinta_Id, 
-                                                                                               agr.UndMed_Id, 
-                                                                                               agr.Bopp_Id
-                                                                          }).Select(fco => new {
-                                                                                        fco.Key.MatPri_Id,
-                                                                                        fco.Key.Tinta_Id,
-                                                                                        fco.Key.Bopp_Id,
-                                                                                        Suma = fco.Sum(a=>a.FaccoMatPri_Cantidad),
-                                                                                        fco.Key.UndMed_Id
-                                                                         }).ToList();
+                                                                          ).GroupBy(agr => new
+                                                                          {
+                                                                              agr.MatPri_Id,
+                                                                              agr.Tinta_Id,
+                                                                              agr.UndMed_Id,
+                                                                              agr.Bopp_Id
+                                                                          }).Select(fco => new
+                                                                          {
+                                                                              fco.Key.MatPri_Id,
+                                                                              fco.Key.Tinta_Id,
+                                                                              fco.Key.Bopp_Id,
+                                                                              Suma = fco.Sum(a => a.FaccoMatPri_Cantidad),
+                                                                              fco.Key.UndMed_Id
+                                                                          }).ToList();
             if (FacCompras == null)
             {
                 return NotFound();
-            } 
+            }
             else
             {
                 return Ok(FacCompras);
@@ -102,8 +99,8 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetFactura2(long OC)
         {
             var facxOrden = from ocfc2 in _context.Set<OrdenesCompras_FacturasCompras>()
-                         where ocfc2.Oc_Id == OC
-                         select ocfc2.Facco_Id;
+                            where ocfc2.Oc_Id == OC
+                            select ocfc2.Facco_Id;
 
             var FacCompras = from ocfc in _context.Set<OrdenesCompras_FacturasCompras>()
                              from fac in _context.Set<FacturaCompra_MateriaPrima>()
@@ -116,7 +113,7 @@ namespace PlasticaribeAPI.Controllers
                              ocfc.Oc_Id == doc.Oc_Id
                              group fac by new { fac.MatPri_Id, fac.Tinta_Id, fac.UndMed_Id, fac.Bopp_Id } into fc
                              select new
-                             { 
+                             {
                                  fc.Key.MatPri_Id,
                                  fc.Key.Tinta_Id,
                                  fc.Key.Bopp_Id,

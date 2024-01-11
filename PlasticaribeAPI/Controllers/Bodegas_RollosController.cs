@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Bodegas_Rollos>>> GetBodegas_Rollos()
         {
-          if (_context.Bodegas_Rollos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Bodegas_Rollos == null)
+            {
+                return NotFound();
+            }
             return await _context.Bodegas_Rollos.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Bodegas_Rollos>> GetBodegas_Rollos(long id)
         {
-          if (_context.Bodegas_Rollos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Bodegas_Rollos == null)
+            {
+                return NotFound();
+            }
             var bodegas_Rollos = await _context.Bodegas_Rollos.FindAsync(id);
 
             if (bodegas_Rollos == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Bodegas_Rollos>> PostBodegas_Rollos(Bodegas_Rollos bodegas_Rollos)
         {
-          if (_context.Bodegas_Rollos == null)
-          {
-              return Problem("Entity set 'dataContext.Bodegas_Rollos'  is null.");
-          }
+            if (_context.Bodegas_Rollos == null)
+            {
+                return Problem("Entity set 'dataContext.Bodegas_Rollos'  is null.");
+            }
             _context.Bodegas_Rollos.Add(bodegas_Rollos);
             await _context.SaveChangesAsync();
 

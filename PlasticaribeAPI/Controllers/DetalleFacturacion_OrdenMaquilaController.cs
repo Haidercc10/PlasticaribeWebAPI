@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DetalleFacturacion_OrdenMaquila>>> GetDetalleFacturacion_OrdenMaquila()
         {
-          if (_context.DetalleFacturacion_OrdenMaquila == null)
-          {
-              return NotFound();
-          }
+            if (_context.DetalleFacturacion_OrdenMaquila == null)
+            {
+                return NotFound();
+            }
             return await _context.DetalleFacturacion_OrdenMaquila.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DetalleFacturacion_OrdenMaquila>> GetDetalleFacturacion_OrdenMaquila(long id)
         {
-          if (_context.DetalleFacturacion_OrdenMaquila == null)
-          {
-              return NotFound();
-          }
+            if (_context.DetalleFacturacion_OrdenMaquila == null)
+            {
+                return NotFound();
+            }
             var detalleFacturacion_OrdenMaquila = await _context.DetalleFacturacion_OrdenMaquila.FindAsync(id);
 
             if (detalleFacturacion_OrdenMaquila == null)
@@ -143,10 +138,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<DetalleFacturacion_OrdenMaquila>> PostDetalleFacturacion_OrdenMaquila(DetalleFacturacion_OrdenMaquila detalleFacturacion_OrdenMaquila)
         {
-          if (_context.DetalleFacturacion_OrdenMaquila == null)
-          {
-              return Problem("Entity set 'dataContext.DetalleFacturacion_OrdenMaquila'  is null.");
-          }
+            if (_context.DetalleFacturacion_OrdenMaquila == null)
+            {
+                return Problem("Entity set 'dataContext.DetalleFacturacion_OrdenMaquila'  is null.");
+            }
             _context.DetalleFacturacion_OrdenMaquila.Add(detalleFacturacion_OrdenMaquila);
             await _context.SaveChangesAsync();
 

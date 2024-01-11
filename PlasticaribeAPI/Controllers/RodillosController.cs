@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Rodillos>>> GetRodillos()
         {
-          if (_context.Rodillos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Rodillos == null)
+            {
+                return NotFound();
+            }
             return await _context.Rodillos.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Rodillos>> GetRodillos(int id)
         {
-          if (_context.Rodillos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Rodillos == null)
+            {
+                return NotFound();
+            }
             var rodillos = await _context.Rodillos.FindAsync(id);
 
             if (rodillos == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Rodillos>> PostRodillos(Rodillos rodillos)
         {
-          if (_context.Rodillos == null)
-          {
-              return Problem("Entity set 'dataContext.Rodillos'  is null.");
-          }
+            if (_context.Rodillos == null)
+            {
+                return Problem("Entity set 'dataContext.Rodillos'  is null.");
+            }
             _context.Rodillos.Add(rodillos);
             await _context.SaveChangesAsync();
 

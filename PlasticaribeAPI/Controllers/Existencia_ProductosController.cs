@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
+using PlasticaribeAPI.Migrations;
 using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
@@ -26,10 +22,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Existencia_Productos>>> GetExistencias_Productos()
         {
-          if (_context.Existencias_Productos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Existencias_Productos == null)
+            {
+                return NotFound();
+            }
             return await _context.Existencias_Productos.ToListAsync();
         }
 
@@ -37,10 +33,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Existencia_Productos>> GetExistencia_Productos(long id)
         {
-          if (_context.Existencias_Productos == null)
-          {
-              return NotFound();
-          }
+            if (_context.Existencias_Productos == null)
+            {
+                return NotFound();
+            }
             var existencia_Productos = await _context.Existencias_Productos.FindAsync(id);
 
             if (existencia_Productos == null)
@@ -107,7 +103,7 @@ namespace PlasticaribeAPI.Controllers
                     p.Prod_Id,
                     p.Prod.Prod_Nombre,
                     p.ExProd_Cantidad,
-                    p.UndMed_Id,                  
+                    p.UndMed_Id,
                     p.ExProd_Id,
                     p.ExProd_Precio,
                     p.ExProd_PrecioExistencia,
@@ -115,8 +111,8 @@ namespace PlasticaribeAPI.Controllers
                     p.TpMoneda_Id,
                     p.ExProd_PrecioVenta,
                     p.ExProd_CantMinima,
-                    p.ExProd_Fecha, 
-                    p.ExProd_Hora                   
+                    p.ExProd_Fecha,
+                    p.ExProd_Hora
                 })
                 .ToList();
 
@@ -171,7 +167,6 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-
         [HttpGet("InventarioProductos")]
         public ActionResult<Existencia_Productos> GetInventarioProductos()
         {
@@ -179,9 +174,9 @@ namespace PlasticaribeAPI.Controllers
             var producto = _context.Existencias_Productos.Where(p => p.Prod_Id == p.Prod.Prod_Id && p.ExProd_Cantidad >= 1)
                 .Include(p => p.Prod)
                 .Select(p => new
-                {                    
+                {
                     p.Prod_Id,
-                    p.Prod.Prod_Nombre, 
+                    p.Prod.Prod_Nombre,
                     p.ExProd_PrecioVenta,
                     p.ExProd_Cantidad,
                     p.UndMed_Id,
@@ -189,12 +184,12 @@ namespace PlasticaribeAPI.Controllers
                 })
                 .ToList();
 
-            
+
             if (producto == null)
             {
                 return NotFound();
             }
-            else 
+            else
             {
                 return Ok(producto);
             }
@@ -216,6 +211,183 @@ namespace PlasticaribeAPI.Controllers
             {
                 return Ok(producto);
             }
+        }
+
+        // Consulta que devolverá la información de un producto
+        [HttpGet("getInfoProducto/{producto}")]
+        public ActionResult GetInfoProducto(string producto)
+        {
+            var con = (from e in _context.Set<Existencia_Productos>()
+                       where e.Prod_Id.ToString().Contains(producto) ||
+                             e.Prod.Prod_Nombre.Contains(producto)
+                       select new
+                       {
+                           Id = e.Prod_Id,
+                           Nombre = e.Prod.Prod_Nombre,
+                           Presentacion = e.UndMed_Id,
+                           Id_Existencia = e.ExProd_Id,
+                       });
+            return Ok(con);
+        }
+
+        // Consulta que devolverá el inventario de los productos con cada uno de los rollos que tiene disponibles
+        [HttpGet("getStockProducts_AvaibleProduction")]
+        public ActionResult GetStockProducts_AvaibleProduction()
+        {
+            var notAvaibleProduccion = from order in _context.Set<Detalles_OrdenFacturacion>()
+                                       select order.Numero_Rollo;
+
+            var stock = from prod in _context.Set<Producto>()
+                        join exi in _context.Set<Existencia_Productos>() on prod.Prod_Id equals exi.Prod_Id
+                        where exi.ExProd_Cantidad > 2
+                        select new
+                        {
+                            Product = new
+                            {
+                                Item = prod.Prod_Id,
+                                Reference = prod.Prod_Nombre,
+                            },
+                            Stock = new
+                            {
+                                Stock = exi.ExProd_Cantidad,
+                                Price = exi.ExProd_PrecioVenta,
+                                Presentation = exi.UndMed_Id,
+                                StockPrice = exi.ExProd_PrecioExistencia,
+                            },
+                            Client = (
+                                from cp in _context.Set<Cliente_Producto>()
+                                join cli in _context.Set<Clientes>() on cp.Cli_Id equals cli.Cli_Id
+                                join vende in _context.Set<Usuario>() on cli.usua_Id equals vende.Usua_Id
+                                where prod.Prod_Id == cp.Prod_Id &&
+                                      cp.Cli_Id != 1
+                                orderby cp.Codigo descending
+                                select new
+                                {
+                                    cli = new {
+                                        Id_Client = cli.Cli_Id,
+                                        Client = cli.Cli_Nombre,
+                                    },
+                                    vende = new
+                                    {
+                                        Id_Vende = vende.Usua_Id,
+                                        Name_Vende = vende.Usua_Nombre,
+                                    }
+                                }
+                            ).ToList(),
+                            Avaible_Production = (
+                                from pp in _context.Set<Produccion_Procesos>()
+                                where pp.Prod_Id == prod.Prod_Id &&
+                                      pp.Estado_Rollo == 19 &&
+                                      pp.Envio_Zeus == true &&
+                                      !notAvaibleProduccion.Contains(pp.Numero_Rollo)
+                                select new
+                                {
+                                    Number_BagPro = pp.NumeroRollo_BagPro,
+                                    Number = pp.Numero_Rollo,
+                                    Quantity = pp.Cantidad,
+                                    Weight = pp.Peso_Neto,
+                                    Presentation = pp.Presentacion,
+                                    Process = pp.Proceso.Proceso_Nombre,
+                                    Date = pp.Fecha,
+                                    Hour = pp.Hora,
+                                    Price = pp.Precio,
+                                    SellPrice = pp.PrecioVenta_Producto,
+                                    Turn = pp.Turno,
+                                    Information = pp.Datos_Etiqueta,
+                                    orderProduction = pp.OT,
+                                }
+                            ).ToList(),
+                            Stock_MonthByMonth = (
+                                from mm in _context.Set<Inventario_Mensual_Productos>()
+                                where mm.Prod_Id == prod.Prod_Id &&
+                                      mm.UndMed_Id == exi.UndMed_Id
+                                select mm
+                            ).ToList(),
+                        };
+            return Ok(stock);
+        }
+
+        //Consulta que devolverá el inventario de los rollos que se han pesado en empaque pero no se han entregado a despacho
+        [HttpGet("getStockProducts_Process/{process}")]
+        public ActionResult GetStockProducts_Process(string process)
+        {
+            var products = from pp in _context.Set<Produccion_Procesos>() where pp.Proceso_Id == process && pp.Envio_Zeus == false && pp.Estado_Rollo == 19 select pp.Prod_Id;
+
+            var stock = from prod in _context.Set<Producto>()
+                        join exi in _context.Set<Existencia_Productos>() on prod.Prod_Id equals exi.Prod_Id
+                        where exi.ExProd_Cantidad > 2 &&
+                              products.Contains(prod.Prod_Id)
+                        select new
+                        {
+                            Product = new
+                            {
+                                Item = prod.Prod_Id,
+                                Reference = prod.Prod_Nombre,
+                            },
+                            Stock = new
+                            {
+                                Stock = exi.UndMed_Id == "Kg" ? (from pp in _context.Set<Produccion_Procesos>()
+                                         where pp.Prod_Id == prod.Prod_Id &&
+                                               pp.Estado_Rollo == 19 &&
+                                               pp.Envio_Zeus == false &&
+                                               pp.Proceso_Id == process
+                                         select pp.Peso_Neto).Sum() : (from pp in _context.Set<Produccion_Procesos>()
+                                                                      where pp.Prod_Id == prod.Prod_Id &&
+                                                                            pp.Estado_Rollo == 19 &&
+                                                                            pp.Envio_Zeus == false &&
+                                                                            pp.Proceso_Id == process
+                                                                      select pp.Cantidad).Sum(),
+                                Price = exi.ExProd_PrecioVenta,
+                                Presentation = exi.UndMed_Id,
+                                StockPrice = exi.ExProd_PrecioExistencia,
+                            },
+                            Client = (
+                                from cp in _context.Set<Cliente_Producto>()
+                                join cli in _context.Set<Clientes>() on cp.Cli_Id equals cli.Cli_Id
+                                join vende in _context.Set<Usuario>() on cli.usua_Id equals vende.Usua_Id
+                                where prod.Prod_Id == cp.Prod_Id &&
+                                      cp.Cli_Id != 1
+                                orderby cp.Codigo descending
+                                select new
+                                {
+                                    cli = new
+                                    {
+                                        Id_Client = cli.Cli_Id,
+                                        Client = cli.Cli_Nombre,
+                                    },
+                                    vende = new
+                                    {
+                                        Id_Vende = vende.Usua_Id,
+                                        Name_Vende = vende.Usua_Nombre,
+                                    }
+                                }
+                            ).ToList(),
+                            Avaible_Production = (
+                                from pp in _context.Set<Produccion_Procesos>()
+                                where pp.Prod_Id == prod.Prod_Id &&
+                                      pp.Estado_Rollo == 19 &&
+                                      pp.Envio_Zeus == false &&
+                                      pp.Proceso_Id == process
+                                select new
+                                {
+                                    Number_BagPro = pp.NumeroRollo_BagPro,
+                                    Number = pp.Numero_Rollo,
+                                    Quantity = pp.Cantidad,
+                                    Weight = pp.Peso_Neto,
+                                    Presentation = pp.Presentacion,
+                                    Process = pp.Proceso.Proceso_Nombre,
+                                    Date = pp.Fecha,
+                                    Hour = pp.Hora,
+                                    Price = pp.Precio,
+                                    SellPrice = pp.PrecioVenta_Producto,
+                                    Turn = pp.Turno,
+                                    Information = pp.Datos_Etiqueta,
+                                    orderProduction = pp.OT,
+                                }
+                            ).ToList(),
+                            Stock_MonthByMonth = (from mm in _context.Set<Inventario_Mensual_Productos>() where mm.Prod_Id == prod.Prod_Id && mm.UndMed_Id == exi.UndMed_Id select mm).ToList(),
+                        };
+            return Ok(stock);
         }
 
         // PUT: api/Existencia_Productos/5
@@ -343,15 +515,62 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        [HttpPut("putPrecioProducto/{producto}/{presentacion}/{precio}")]
+        public IActionResult PutPrecioProducto(int producto, string presentacion, decimal precio)
+        {
+            try
+            {
+                var existencia = (from exis in _context.Set<Existencia_Productos>() where exis.Prod_Id == producto && exis.UndMed_Id == presentacion select exis).FirstOrDefault();
+                existencia.ExProd_PrecioVenta = precio;
+                _context.SaveChanges();
+                return NoContent();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!Existencia_ProductosExists(producto))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        [HttpPut("putExistencia/{producto}/{presentacion}/{precio}/{cantidad}")]
+        public IActionResult PutExistencia(int producto, string presentacion, decimal precio, decimal cantidad)
+        {
+            try
+            {
+                var existencia = (from exis in _context.Set<Existencia_Productos>() where exis.Prod_Id == producto && exis.UndMed_Id == presentacion select exis).FirstOrDefault();
+                existencia.ExProd_PrecioVenta = precio;
+                existencia.ExProd_Cantidad += cantidad;
+                _context.SaveChanges();
+                return Ok("Existencia Actualizada");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!Existencia_ProductosExists(producto))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
         // POST: api/Existencia_Productos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Existencia_Productos>> PostExistencia_Productos(Existencia_Productos existencia_Productos)
         {
-          if (_context.Existencias_Productos == null)
-          {
-              return Problem("Entity set 'dataContext.Existencias_Productos'  is null.");
-          }
+            if (_context.Existencias_Productos == null)
+            {
+                return Problem("Entity set 'dataContext.Existencias_Productos'  is null.");
+            }
             _context.Existencias_Productos.Add(existencia_Productos);
             await _context.SaveChangesAsync();
 

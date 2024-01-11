@@ -21,8 +21,8 @@ namespace PlasticaribeAPI.Models
         public Material_MatPrima? Material { get; set; }
 
 
-        public long Actv_Id { get; set; }
-        public Activo? Activo { get; set; } 
+        public long Maquina { get; set; }
+        //public Activo? Activo { get; set; }
 
 
         public long Usua_Operario { get; set; }
@@ -42,7 +42,7 @@ namespace PlasticaribeAPI.Models
         public Falla_Tecnica? Falla { get; set; }
 
 
-        [Precision(18,2)]
+        [Precision(18, 2)]
         public decimal Desp_PesoKg { get; set; }
 
 
@@ -65,6 +65,11 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(10)")]
         public string? Desp_HoraRegistro { get; set; }
+
+
+        [Column(TypeName = "varchar(50)")]
+        public string Turno_Id { get; set; }
+        public Turno? Turnos { get; set; }
 
     }
 }

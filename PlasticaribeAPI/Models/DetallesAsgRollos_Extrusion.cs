@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
@@ -12,7 +11,7 @@ namespace PlasticaribeAPI.Models
         public AsignacionRollos_Extrusion? AsignacionRollos { get; set; }
         public long DtAsgRollos_OT { get; set; }
         public long Rollo_Id { get; set; }
-        
+
         [Precision(18, 2)]
         public decimal? DtAsgRollos_Cantidad { get; set; }
         public string UndMed_Id { get; set; }

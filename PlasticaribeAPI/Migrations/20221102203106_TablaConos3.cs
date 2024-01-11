@@ -8,7 +8,7 @@ namespace PlasticaribeAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-           
+
 
             migrationBuilder.CreateTable(
                 name: "Conos",
@@ -24,14 +24,14 @@ namespace PlasticaribeAPI.Migrations
                     table.PrimaryKey("PK_Conos", x => x.Cono_Id);
                 });
 
-           
+
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            
+
             migrationBuilder.DropTable(
-                name: "Conos");       
+                name: "Conos");
 
         }
     }

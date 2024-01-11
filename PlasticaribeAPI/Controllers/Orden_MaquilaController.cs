@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Orden_Maquila>>> GetOrden_Maquila()
         {
-          if (_context.Orden_Maquila == null)
-          {
-              return NotFound();
-          }
+            if (_context.Orden_Maquila == null)
+            {
+                return NotFound();
+            }
             return await _context.Orden_Maquila.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Orden_Maquila>> GetOrden_Maquila(long id)
         {
-          if (_context.Orden_Maquila == null)
-          {
-              return NotFound();
-          }
+            if (_context.Orden_Maquila == null)
+            {
+                return NotFound();
+            }
             var orden_Maquila = await _context.Orden_Maquila.FindAsync(id);
 
             if (orden_Maquila == null)
@@ -188,10 +183,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Orden_Maquila>> PostOrden_Maquila(Orden_Maquila orden_Maquila)
         {
-          if (_context.Orden_Maquila == null)
-          {
-              return Problem("Entity set 'dataContext.Orden_Maquila'  is null.");
-          }
+            if (_context.Orden_Maquila == null)
+            {
+                return Problem("Entity set 'dataContext.Orden_Maquila'  is null.");
+            }
             _context.Orden_Maquila.Add(orden_Maquila);
             await _context.SaveChangesAsync();
 

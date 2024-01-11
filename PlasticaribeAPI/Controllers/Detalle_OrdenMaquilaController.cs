@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Detalle_OrdenMaquila>>> GetDetalle_OrdenMaquila()
         {
-          if (_context.Detalle_OrdenMaquila == null)
-          {
-              return NotFound();
-          }
+            if (_context.Detalle_OrdenMaquila == null)
+            {
+                return NotFound();
+            }
             return await _context.Detalle_OrdenMaquila.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Detalle_OrdenMaquila>> GetDetalle_OrdenMaquila(long id)
         {
-          if (_context.Detalle_OrdenMaquila == null)
-          {
-              return NotFound();
-          }
+            if (_context.Detalle_OrdenMaquila == null)
+            {
+                return NotFound();
+            }
             var detalle_OrdenMaquila = await _context.Detalle_OrdenMaquila.FindAsync(id);
 
             if (detalle_OrdenMaquila == null)
@@ -60,7 +55,7 @@ namespace PlasticaribeAPI.Controllers
                                 || om.MatPri_Id == mp
                                 || om.Tinta_Id == mp)
                       select om.DtOM_Codigo;
-            return Ok(con);
+            return con.Any() ? Ok(con.FirstOrDefault()) : BadRequest();
         }
 
         [HttpGet("getInfoOrdenMaquila_Id/{id}")]
@@ -150,10 +145,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Detalle_OrdenMaquila>> PostDetalle_OrdenMaquila(Detalle_OrdenMaquila detalle_OrdenMaquila)
         {
-          if (_context.Detalle_OrdenMaquila == null)
-          {
-              return Problem("Entity set 'dataContext.Detalle_OrdenMaquila'  is null.");
-          }
+            if (_context.Detalle_OrdenMaquila == null)
+            {
+                return Problem("Entity set 'dataContext.Detalle_OrdenMaquila'  is null.");
+            }
             _context.Detalle_OrdenMaquila.Add(detalle_OrdenMaquila);
             await _context.SaveChangesAsync();
 

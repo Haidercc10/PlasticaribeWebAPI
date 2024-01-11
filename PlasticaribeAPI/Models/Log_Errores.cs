@@ -8,7 +8,7 @@ namespace PlasticaribeAPI.Models
         [Key]
         public int Id { get; set; }
         public string? Base_Datos { get; set; }
-        
+
         [Column(TypeName = "date")]
         public DateTime Fecha { get; set; }
         public string Hora { get; set; }

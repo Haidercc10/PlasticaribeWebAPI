@@ -24,7 +24,7 @@ namespace PlasticaribeAPI.Migrations
                 type: "decimal(18,2)",
                 precision: 18,
                 scale: 2,
-                nullable: true, 
+                nullable: true,
                 defaultValue: 0);
         }
 

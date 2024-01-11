@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Recuperado_MatPrima>>> GetRecuperados_MatPrima()
         {
-          if (_context.Recuperados_MatPrima == null)
-          {
-              return NotFound();
-          }
+            if (_context.Recuperados_MatPrima == null)
+            {
+                return NotFound();
+            }
             return await _context.Recuperados_MatPrima.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Recuperado_MatPrima>> GetRecuperado_MatPrima(long id)
         {
-          if (_context.Recuperados_MatPrima == null)
-          {
-              return NotFound();
-          }
+            if (_context.Recuperados_MatPrima == null)
+            {
+                return NotFound();
+            }
             var recuperado_MatPrima = await _context.Recuperados_MatPrima.FindAsync(id);
 
             if (recuperado_MatPrima == null)
@@ -62,7 +57,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("fecha/{RecMp_FechaIngreso}")]
         public ActionResult<Recuperado_MatPrima> Getfecha(DateTime RecMp_FechaIngreso)
         {
-            var recuperado_MatPrima = _context.Recuperados_MatPrima.Where(rec => rec.RecMp_FechaIngreso == RecMp_FechaIngreso).ToList();    
+            var recuperado_MatPrima = _context.Recuperados_MatPrima.Where(rec => rec.RecMp_FechaIngreso == RecMp_FechaIngreso).ToList();
 
             if (recuperado_MatPrima == null)
             {
@@ -73,7 +68,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("fechas/")]
-        public ActionResult<Recuperado_MatPrima> Getfechas(DateTime RecMp_FechaIngreso1 , DateTime RecMp_FechaIngreso2)
+        public ActionResult<Recuperado_MatPrima> Getfechas(DateTime RecMp_FechaIngreso1, DateTime RecMp_FechaIngreso2)
         {
             var recuperado_MatPrima = _context.Recuperados_MatPrima.Where(rec => rec.RecMp_FechaIngreso >= RecMp_FechaIngreso1 && rec.RecMp_FechaIngreso <= RecMp_FechaIngreso2).ToList();
 
@@ -121,10 +116,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Recuperado_MatPrima>> PostRecuperado_MatPrima(Recuperado_MatPrima recuperado_MatPrima)
         {
-          if (_context.Recuperados_MatPrima == null)
-          {
-              return Problem("Entity set 'dataContext.Recuperados_MatPrima'  is null.");
-          }
+            if (_context.Recuperados_MatPrima == null)
+            {
+                return Problem("Entity set 'dataContext.Recuperados_MatPrima'  is null.");
+            }
             _context.Recuperados_MatPrima.Add(recuperado_MatPrima);
             await _context.SaveChangesAsync();
 

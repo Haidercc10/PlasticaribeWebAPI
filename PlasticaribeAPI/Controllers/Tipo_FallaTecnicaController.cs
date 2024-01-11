@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Tipo_FallaTecnica>>> GetTipos_FallasTecnicas()
         {
-          if (_context.Tipos_FallasTecnicas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tipos_FallasTecnicas == null)
+            {
+                return NotFound();
+            }
             return await _context.Tipos_FallasTecnicas.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Tipo_FallaTecnica>> GetTipo_FallaTecnica(int id)
         {
-          if (_context.Tipos_FallasTecnicas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tipos_FallasTecnicas == null)
+            {
+                return NotFound();
+            }
             var tipo_FallaTecnica = await _context.Tipos_FallasTecnicas.FindAsync(id);
 
             if (tipo_FallaTecnica == null)
@@ -87,10 +82,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Tipo_FallaTecnica>> PostTipo_FallaTecnica(Tipo_FallaTecnica tipo_FallaTecnica)
         {
-          if (_context.Tipos_FallasTecnicas == null)
-          {
-              return Problem("Entity set 'dataContext.Tipos_FallasTecnicas'  is null.");
-          }
+            if (_context.Tipos_FallasTecnicas == null)
+            {
+                return Problem("Entity set 'dataContext.Tipos_FallasTecnicas'  is null.");
+            }
             _context.Tipos_FallasTecnicas.Add(tipo_FallaTecnica);
             await _context.SaveChangesAsync();
 

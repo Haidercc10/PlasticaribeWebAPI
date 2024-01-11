@@ -27,7 +27,7 @@ namespace PlasticaribeAPI.Models
         public long Rollo_Id { get; set; }
 
 
-        [Precision(18,2)]
+        [Precision(18, 2)]
         public decimal Rollo_Ancho { get; set; }
 
 
@@ -76,7 +76,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string Rollo_Hora { get; set; }
 
-       
+
         public int Rollo_Maquina { get; set; }
 
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Facturas_Invergoal_Inversuez>>> GetFacturas_Invergoal_Inversuez()
         {
-          if (_context.Facturas_Invergoal_Inversuez == null)
-          {
-              return NotFound();
-          }
+            if (_context.Facturas_Invergoal_Inversuez == null)
+            {
+                return NotFound();
+            }
             return await _context.Facturas_Invergoal_Inversuez.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Facturas_Invergoal_Inversuez>> GetFacturas_Invergoal_Inversuez(int id)
         {
-          if (_context.Facturas_Invergoal_Inversuez == null)
-          {
-              return NotFound();
-          }
+            if (_context.Facturas_Invergoal_Inversuez == null)
+            {
+                return NotFound();
+            }
             var facturas_Invergoal_Inversuez = await _context.Facturas_Invergoal_Inversuez.FindAsync(id);
 
             if (facturas_Invergoal_Inversuez == null)
@@ -145,12 +140,12 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetFacturasPapel(int anio, int mes, string cuenta, [FromBody] List<string> facturas)
         {
             var con = (from fac in _context.Set<Facturas_Invergoal_Inversuez>()
-                      where fac.Fecha_Factura.Year == anio &&
-                            fac.Fecha_Factura.Month == mes &&
-                            fac.Restar_DashboardCostos == true &&
-                            facturas.Contains(fac.Codigo_Factura) &&
-                            fac.Cuenta == cuenta
-                      select fac.Valor_Factura).Sum();
+                       where fac.Fecha_Factura.Year == anio &&
+                             fac.Fecha_Factura.Month == mes &&
+                             fac.Restar_DashboardCostos == true &&
+                             facturas.Contains(fac.Codigo_Factura) &&
+                             fac.Cuenta == cuenta
+                       select fac.Valor_Factura).Sum();
             return con > 0 ? Ok(con) : Ok(0);
         }
 
@@ -159,9 +154,9 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetFacturasPapaelIngresadas(int anio)
         {
             var con = from fac in _context.Set<Facturas_Invergoal_Inversuez>()
-                       where fac.Fecha_Factura.Year == anio &&
-                             fac.Restar_DashboardCostos == true
-                       select fac.Codigo_Factura;
+                      where fac.Fecha_Factura.Year == anio &&
+                            fac.Restar_DashboardCostos == true
+                      select fac.Codigo_Factura;
             return con.Any() ? Ok(con) : NotFound();
         }
 
@@ -201,10 +196,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Facturas_Invergoal_Inversuez>> PostFacturas_Invergoal_Inversuez(Facturas_Invergoal_Inversuez facturas_Invergoal_Inversuez)
         {
-          if (_context.Facturas_Invergoal_Inversuez == null)
-          {
-              return Problem("Entity set 'dataContext.Facturas_Invergoal_Inversuez'  is null.");
-          }
+            if (_context.Facturas_Invergoal_Inversuez == null)
+            {
+                return Problem("Entity set 'dataContext.Facturas_Invergoal_Inversuez'  is null.");
+            }
             _context.Facturas_Invergoal_Inversuez.Add(facturas_Invergoal_Inversuez);
             await _context.SaveChangesAsync();
 

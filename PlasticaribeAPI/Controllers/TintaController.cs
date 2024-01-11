@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -26,10 +21,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Tinta>>> GetTintas()
         {
-          if (_context.Tintas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tintas == null)
+            {
+                return NotFound();
+            }
             return await _context.Tintas.ToListAsync();
         }
 
@@ -37,10 +32,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Tinta>> GetTinta(long id)
         {
-          if (_context.Tintas == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tintas == null)
+            {
+                return NotFound();
+            }
             var tinta = await _context.Tintas.FindAsync(id);
 
             if (tinta == null)
@@ -63,7 +58,8 @@ namespace PlasticaribeAPI.Controllers
             if (tinta == null)
             {
                 return NotFound();
-            } else
+            }
+            else
             {
                 return Ok(tinta);
             }
@@ -162,10 +158,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Tinta>> PostTinta(Tinta tinta)
         {
-          if (_context.Tintas == null)
-          {
-              return Problem("Entity set 'dataContext.Tintas'  is null.");
-          }
+            if (_context.Tintas == null)
+            {
+                return Problem("Entity set 'dataContext.Tintas'  is null.");
+            }
             _context.Tintas.Add(tinta);
             await _context.SaveChangesAsync();
 

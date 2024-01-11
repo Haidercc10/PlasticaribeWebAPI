@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -86,7 +81,8 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var bOPP = _context.BOPP.Where(x => x.BOPP_Stock > 0)
                                     .GroupBy(x => new { x.CatMP_Id, x.CatMP.CatMP_Nombre })
-                                    .Select(bopp => new {
+                                    .Select(bopp => new
+                                    {
                                         bopp.Key.CatMP_Id,
                                         bopp.Key.CatMP_Nombre,
                                         sumaPrecio = bopp.Sum(x => x.BOPP_Precio),
@@ -163,53 +159,24 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetNombresRepetitivos()
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
-            var con = _context.BOPP.GroupBy(a => a.BOPP_Descripcion)
+            var con = _context.BOPP.GroupBy(a => new { a.BOPP_Descripcion, a.BOPP_CantidadMicras })
                                    .Where(b => b.Count() > 10)
-                                   .Select(b => b.Key).Distinct().ToList();
-
+                                   .Select(b => new { 
+                                       Nombre = b.Key.BOPP_Descripcion, 
+                                       Micras = b.Key.BOPP_CantidadMicras, 
+                                   }).Distinct().ToList(); 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL. 
             return Ok(con);
         }
 
-
-        [HttpGet("getMicras")]
-        public ActionResult GetMicrasRepetitivas()
+        [HttpGet("getUltimoPrecioBopp")]
+        public ActionResult GetUltimoPrecioBopp()
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.BOPP.GroupBy(a => a.BOPP_CantidadMicras)
-                                   .Where(b => b.Count() > 10)
-                                   .Select(b => b.Key).Distinct().ToList();
-
+            var con = (from b in _context.Set<BOPP>() orderby b.BOPP_Id descending select b.BOPP_Precio).FirstOrDefault();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
-
-
-        [HttpGet("getPrecios")]
-        public ActionResult GePreciosRepetitivos()
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.BOPP.GroupBy(a => a.BOPP_Precio)
-                                   .Where(b => b.Count() > 10)
-                                   .Select(b => b.Key).Distinct().ToList();
-
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
-
-        [HttpGet("getAnchos")]
-        public ActionResult GetAnchosRepetitivos()
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = _context.BOPP.GroupBy(a => a.BOPP_Ancho)
-                                   .Where(b => b.Count() > 10)
-                                   .Select(b => b.Key).Distinct().ToList();
-
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(con);
-        }
-
 
         [HttpGet("getSeriales")]
         public ActionResult GetSerialesRepetitivos()
@@ -217,12 +184,12 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = _context.BOPP.GroupBy(a => Convert.ToString(a.BOPP_Serial).Substring(0, 5))
                                    .Where(b => b.Count() > 10)
-                                   .Select(b => b.Key.Substring(0, 5)).Distinct().ToList();
-
+                                   .Select(b => new { 
+                                       Serial = b.Key.Substring(0, 5)    
+                                   }).Distinct().ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
-
 
         [HttpGet("getInventarioBoppsGenericos")]
         public ActionResult GetInventarioBoppsGenericos()
@@ -234,26 +201,26 @@ namespace PlasticaribeAPI.Controllers
                       where b.BoppGen_Id == bg.BoppGen_Id &&
                       b.BOPP_Stock > 0 &&
                       b.CatMP_Id == cat.CatMP_Id
-                      group b by new { b.BoppGen_Id, bg.BoppGen_Nombre, bg.BoppGen_Micra, bg.BoppGen_Ancho, cat.CatMP_Id, cat.CatMP_Nombre, b.UndMed_Kg }
+                      group b by new { b.BoppGen_Id, bg.BoppGen_Nombre, bg.BoppGen_Micra, bg.BoppGen_Ancho, cat.CatMP_Id, cat.CatMP_Nombre, b.UndMed_Kg, b.BOPP_Precio }
                       into b
                       select new
                       {
                           Id = b.Key.BoppGen_Id,
                           Nombre = b.Key.BoppGen_Nombre,
-                          Micras = b.Key.BoppGen_Micra, 
-                          Ancho = b.Key.BoppGen_Ancho, 
+                          Micras = b.Key.BoppGen_Micra,
+                          Ancho = b.Key.BoppGen_Ancho,
                           IdCategoria = b.Key.CatMP_Id,
                           NombreCategoria = b.Key.CatMP_Nombre,
                           Rollos = b.Count(),
                           Medida = b.Key.UndMed_Kg,
                           Stock = b.Sum(xx => xx.BOPP_Stock),
+                          Precio = b.Key.BOPP_Precio,
                       };
 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             if (con != null) return Ok(con);
             else return BadRequest("No se encontrar Biorientados asociados a Bopps genéricos");
         }
-
 
         [HttpGet("getInventarioBopps/{fecha1}/{fecha2}/{id}")]
         public ActionResult GetInventarioBopps(DateTime fecha1, DateTime fecha2, long id)
@@ -275,7 +242,7 @@ namespace PlasticaribeAPI.Controllers
                       where b.BoppGen_Id == id
                       && (b.BOPP_Stock > 0 || EntradaBOPP > 0)
                       select new
-                      { 
+                      {
                           Id = b.BOPP_Id,
                           Serial = b.BOPP_Serial,
                           Nombre = b.BOPP_Nombre,
@@ -285,11 +252,11 @@ namespace PlasticaribeAPI.Controllers
                           Entrada = EntradaBOPP,
                           Salida = AsgBopp,
                           Stock = b.BOPP_Stock,
-                          Diferencia = (b.BOPP_Stock - b.BOPP_CantidadInicialKg), 
-                          Medida = b.UndMed_Id, 
-                          Precio = b.BOPP_Precio, 
+                          Diferencia = (b.BOPP_Stock - b.BOPP_CantidadInicialKg),
+                          Medida = b.UndMed_Id,
+                          Precio = b.BOPP_Precio,
                           Subtotal = (b.BOPP_Stock * b.BOPP_Precio),
-                          CategoriaId = b.CatMP_Id, 
+                          CategoriaId = b.CatMP_Id,
                           Categoria = b.CatMP.CatMP_Nombre,
                       };
 
@@ -338,10 +305,12 @@ namespace PlasticaribeAPI.Controllers
             bopp.BOPP_Stock = cantidad;
             _context.Entry(bopp).State = EntityState.Modified;
 
-            try {
+            try
+            {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException) {
+            catch (DbUpdateConcurrencyException)
+            {
                 if (!BOPPExists(id)) return NotFound();
                 else throw;
             }
@@ -354,10 +323,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<BOPP>> PostBOPP(BOPP bOPP)
         {
-          if (_context.BOPP == null)
-          {
-              return Problem("Entity set 'dataContext.BOPP'  is null.");
-          }
+            if (_context.BOPP == null)
+            {
+                return Problem("Entity set 'dataContext.BOPP'  is null.");
+            }
             _context.BOPP.Add(bOPP);
             await _context.SaveChangesAsync();
 

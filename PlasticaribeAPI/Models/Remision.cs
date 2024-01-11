@@ -9,16 +9,16 @@ namespace PlasticaribeAPI.Models
         [Key]
         public int Rem_Id { get; set; } //ID Interno
 
-        [Column(TypeName="varchar(100)")]
+        [Column(TypeName = "varchar(100)")]
         public string Rem_Codigo { get; set; } //Codigo Externo
 
-        [Column(TypeName="Date")]
+        [Column(TypeName = "Date")]
         public DateTime Rem_Fecha { get; set; }
 
         [Column(TypeName = "varchar(10)")]
         public string? Rem_Hora { get; set; } //Codigo Externo
 
-        [Precision(18,2)]
+        [Precision(18, 2)]
         public decimal? Rem_PrecioEstimado { get; set; }
 
         public long Prov_Id { get; set; } //Llave foranea de proveedores. 
@@ -34,7 +34,7 @@ namespace PlasticaribeAPI.Models
         public string TpDoc_Id { get; set; }  //Llave foranea de Tipo_Documento. 
         public Tipo_Documento? TpDoc { get; set; } //Propiedad de navegación de Tipo_Documento.
 
-        [Column(TypeName = "varchar(max)")] 
+        [Column(TypeName = "varchar(max)")]
         public string? Rem_Observacion { get; set; }
 
         //public IList<Remision_MateriaPrima>? RemiMatPri { get; set; }
