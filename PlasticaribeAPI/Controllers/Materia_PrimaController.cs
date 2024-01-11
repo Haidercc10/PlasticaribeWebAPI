@@ -366,6 +366,7 @@ namespace PlasticaribeAPI.Controllers
                                  {
                                      Id_Materia_Prima = mp.MatPri_Id,
                                      Nombre_Materia_Prima = mp.MatPri_Nombre,
+                                     Descripcion = mp.MatPri_Descripcion,
                                      Inicial = inv.InvInicial_Stock,
                                      Actual = mp.MatPri_Stock,
                                      Item = mp.MatPri_Id,
@@ -382,6 +383,7 @@ namespace PlasticaribeAPI.Controllers
                        {
                            Id_Materia_Prima = bp.BOPP_Serial,
                            Nombre_Materia_Prima = bp.BOPP_Nombre,
+                           Descripcion = bp.BOPP_Descripcion,
                            Inicial = bp.BOPP_CantidadInicialKg,
                            Actual = bp.BOPP_Stock,
                            Item = bp.BOPP_Serial,
@@ -397,6 +399,7 @@ namespace PlasticaribeAPI.Controllers
                          {
                              Id_Materia_Prima = t.Tinta_Id,
                              Nombre_Materia_Prima = t.Tinta_Nombre,
+                             Descripcion = t.Tinta_Descripcion,
                              Inicial = t.Tinta_InvInicial,
                              Actual = t.Tinta_Stock,
                              Item = t.Tinta_Id,
@@ -509,6 +512,7 @@ namespace PlasticaribeAPI.Controllers
                        {
                            mp.MatPri_Id,
                            mp.MatPri_Nombre,
+                           mp.MatPri_Descripcion,
                            Inv.InvInicial_Stock,
                            mp.MatPri_Stock,
                            mp.UndMed_Id,
@@ -522,6 +526,7 @@ namespace PlasticaribeAPI.Controllers
                            Id = x.Key.MatPri_Id,
                            Id2 = x.Key.MatPri_Id,
                            Nombre = x.Key.MatPri_Nombre,
+                           Descripcion = x.Key.MatPri_Descripcion,
                            Ancho = Convert.ToDouble(0.00),
                            Micras = Convert.ToDouble(0.00),
                            Inicial = x.Key.InvInicial_Stock,
@@ -547,6 +552,7 @@ namespace PlasticaribeAPI.Controllers
                                Id = bopp.BOPP_Serial,
                                Id2 = bopp.BOPP_Id,
                                Nombre = bopp.BOPP_Nombre,
+                               Descripcion = bopp.BOPP_Descripcion,
                                Ancho = Convert.ToDouble(bopp.BOPP_Ancho),
                                Micras = Convert.ToDouble(bopp.BOPP_CantidadMicras),
                                Inicial = bopp.BOPP_CantidadInicialKg,
@@ -570,6 +576,7 @@ namespace PlasticaribeAPI.Controllers
                                 Id = tinta.Tinta_Id,
                                 Id2 = tinta.Tinta_Id,
                                 Nombre = tinta.Tinta_Nombre,
+                                Descripcion = tinta.Tinta_Descripcion,
                                 Ancho = Convert.ToDouble(0.00),
                                 Micras = Convert.ToDouble(0.00),
                                 Inicial = tinta.Tinta_InvInicial,

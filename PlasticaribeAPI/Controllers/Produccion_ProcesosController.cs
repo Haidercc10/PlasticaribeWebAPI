@@ -291,7 +291,7 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             return from PS in _context.Set<Produccion_Procesos>()
-                   where PS.Fecha == fecha &&
+                   where PS.Fecha >= fecha &&
                          !PS.Hora.StartsWith("00") &&
                          !PS.Hora.StartsWith("01") &&
                          !PS.Hora.StartsWith("02") &&
@@ -308,7 +308,7 @@ namespace PlasticaribeAPI.Controllers
         private IQueryable<long> UltimosRolloPesado(DateTime fecha)
         {
             return from PS2 in _context.Set<Produccion_Procesos>()
-                   where PS2.Fecha == fecha
+                   where PS2.Fecha <= fecha
                    orderby PS2.Numero_Rollo descending
                    select PS2.Numero_Rollo;
         }
@@ -329,15 +329,13 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("getNominaSellado/{inicio}/{fin}/{item}/{persona}")]
-        public ActionResult GetNominaSellado(DateTime inicio, DateTime fin, long item, long persona)
+        public ActionResult GetNominaSellado(DateTime inicio, DateTime fin)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var nomina = from prod in _context.Set<Produccion_Procesos>()
-                         where prod.Proceso_Id == "SELLA" &&
+                         where (prod.Proceso_Id == "SELLA" || prod.Proceso_Id == "WIKE") &&
                                prod.Fecha >= inicio &&
                                prod.Fecha <= fin &&
-                               (prod.Operario1_Id == persona || prod.Operario2_Id == persona || prod.Operario3_Id == persona || prod.Operario4_Id == persona) &&
-                               prod.Prod_Id == item &&
                                prod.Numero_Rollo >= PrimerRolloPesado(inicio).FirstOrDefault() &&
                                (RollosPesadosMadrugada(inicio.AddDays(1)).Any() ? prod.Numero_Rollo < RollosPesadosMadrugada(fin.AddDays(1)).FirstOrDefault() : prod.Numero_Rollo <= UltimosRolloPesado(fin).FirstOrDefault())
                          select new
@@ -388,10 +386,10 @@ namespace PlasticaribeAPI.Controllers
                     $"'Valor_Total': '{res.Total}'," +
                     $"'Pesado_Entre': '{res.Pesado_Entre}' ";
 
-                if (res.Operario1_Id == persona) result.Add($"'Cedula': '{res.Operario1_Id}', 'Operario': '{res.Operario1}', {data}");
-                if (res.Operario2_Id == persona) result.Add($"'Cedula': '{res.Operario2_Id}', 'Operario': '{res.Operario2}', {data}");
-                if (res.Operario3_Id == persona) result.Add($"'Cedula': '{res.Operario3_Id}', 'Operario': '{res.Operario3}', {data}");
-                if (res.Operario4_Id == persona) result.Add($"'Cedula': '{res.Operario4_Id}', 'Operario': '{res.Operario4}', {data}");
+                result.Add($"'Cedula': '{res.Operario1_Id}', 'Operario': '{res.Operario1}', {data}");
+                if (res.Operario2_Id != 0) result.Add($"'Cedula': '{res.Operario2_Id}', 'Operario': '{res.Operario2}', {data}");
+                if (res.Operario3_Id != 0) result.Add($"'Cedula': '{res.Operario3_Id}', 'Operario': '{res.Operario3}', {data}");
+                if (res.Operario4_Id != 0) result.Add($"'Cedula': '{res.Operario4_Id}', 'Operario': '{res.Operario4}', {data}");
             }
 
             return result.Count() > 0 ? Ok(result) : NotFound();
@@ -507,11 +505,12 @@ namespace PlasticaribeAPI.Controllers
             var numeroUltimoRollo = (from prod in _context.Set<Produccion_Procesos>()
                                      orderby prod.Id descending
                                      select prod.Numero_Rollo).FirstOrDefault();
-            var ultimoId = (from prod in _context.Set<Produccion_Procesos>()
-                            orderby prod.Id descending
-                            select prod.Id).FirstOrDefault();
 
-            produccion_Procesos.Numero_Rollo = numeroUltimoRollo + 1;
+            var seed = Environment.TickCount;
+            var random = new Random(seed);
+            var value = random.Next(1, 15);
+
+            produccion_Procesos.Numero_Rollo = numeroUltimoRollo + value;
             produccion_Procesos.Estado_Rollo = 19;
             _context.Produccion_Procesos.Add(produccion_Procesos);
             await _context.SaveChangesAsync();
