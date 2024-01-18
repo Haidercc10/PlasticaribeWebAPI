@@ -188,6 +188,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Insumo>().HasOne<Categoria_Insumo>().WithMany().HasForeignKey(Ins2 => Ins2.CatInsu_Id);
 
             //Relaciones de usuarios
+            modelBuilder.Entity<Usuario>().ToTable(tb => tb.HasTrigger("CrearOperarios_BagPro"));
             modelBuilder.Entity<Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Usuarios"));
             modelBuilder.Entity<Usuario>().HasOne(Usu => Usu.TipoIdentificacion).WithMany().HasForeignKey(Usu => Usu.TipoIdentificacion_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Usuario>().HasOne(Usu => Usu.Area).WithMany().HasForeignKey(Usu => Usu.Area_Id).OnDelete(DeleteBehavior.Restrict);
