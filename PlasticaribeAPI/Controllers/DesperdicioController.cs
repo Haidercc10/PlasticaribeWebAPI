@@ -104,31 +104,32 @@ namespace PlasticaribeAPI.Controllers
                                e.Empresa_Id == 800188732
                                select new
                                {
-                                   d.Desp_Id,
-                                   d.Desp_OT,
-                                   d.Prod_Id,
-                                   d.Desp_PesoKg,
-                                   d.Producto.Prod_Nombre,
-                                   d.Proceso_Id,
-                                   d.Proceso.Proceso_Nombre,
-                                   d.Material_Id,
-                                   d.Material.Material_Nombre,
-                                   d.Falla_Id,
-                                   d.Falla.Falla_Nombre,
-                                   d.Desp_Impresion,
-                                   d.Maquina,
-                                   Operario = d.Usua_Operario,
-                                   d.Usuario1.Usua_Nombre,
-                                   d.Usua_Id,
-                                   Usuario = d.Usuario2.Usua_Nombre,
-                                   d.Desp_Fecha,
-                                   d.Desp_Observacion,
-                                   d.Desp_FechaRegistro,
-                                   d.Desp_HoraRegistro,
-                                   e.Empresa_Id,
-                                   e.Empresa_Nombre,
-                                   e.Empresa_Ciudad,
-                                   e.Empresa_Direccion
+                                  Bulto = d.Desp_Id,
+                                  OT = d.Desp_OT,
+                                  Item = d.Prod_Id,
+                                  Cantidad = d.Desp_PesoKg,
+                                  Presentacion = Convert.ToString("Kg"),
+                                  Referencia = d.Producto.Prod_Nombre,
+                                  Id_Proceso = d.Proceso_Id,
+                                  Proceso = d.Proceso.Proceso_Nombre,
+                                  Id_Material = d.Material_Id,
+                                  Material = d.Material.Material_Nombre,
+                                  Id_Falla = d.Falla_Id,
+                                  Falla = d.Falla.Falla_Nombre,
+                                  Impreso = d.Desp_Impresion,
+                                  Maquina = d.Maquina,
+                                  Id_Operario = d.Usua_Operario,
+                                  Operario = d.Usuario1.Usua_Nombre,
+                                  Id_Usuario = d.Usua_Id,
+                                  Usuario = d.Usuario2.Usua_Nombre,
+                                  Fecha = d.Desp_Fecha,
+                                  Observacion = d.Desp_Observacion,
+                                  Fecha_Registro = d.Desp_FechaRegistro,
+                                  Hora_Registro = d.Desp_HoraRegistro,
+                                  Nit_Empresa = e.Empresa_Id,
+                                  Empresa = e.Empresa_Nombre,
+                                  Ciudad_Empresa = e.Empresa_Ciudad,
+                                  Direccion_Empresa = e.Empresa_Direccion,
                                }).ToList();
 
             //if (Desperdicio == null) return NotFound();           
@@ -186,19 +187,34 @@ namespace PlasticaribeAPI.Controllers
                                Convert.ToString(d.Desp_OT).Contains(OT) &&
                                Convert.ToString(d.Material_Id).Contains(material) &&
                                Convert.ToString(d.Prod_Id).Contains(item)
-                               group d by new { d.Desp_OT, d.Desp_Impresion, d.Prod_Id, d.Producto.Prod_Nombre, d.Material_Id, d.Material.Material_Nombre } into grupo
                                select new
                                {
-                                   OT = grupo.Key.Desp_OT,
-                                   Item = grupo.Key.Prod_Id,
-                                   NombreItem = grupo.Key.Prod_Nombre,
-                                   Material = grupo.Key.Material_Nombre,
-                                   Impreso = grupo.Key.Desp_Impresion,
-                                   PesoTotal = grupo.Sum(dd => dd.Desp_PesoKg)
+                                   Bulto = d.Desp_Id,
+                                   OT = d.Desp_OT,
+                                   Item = d.Prod_Id,
+                                   Cantidad = d.Desp_PesoKg,
+                                   Presentacion = Convert.ToString("Kg"),
+                                   Referencia = d.Producto.Prod_Nombre,
+                                   Id_Proceso = d.Proceso_Id,
+                                   Proceso = d.Proceso.Proceso_Nombre,
+                                   Id_Material = d.Material_Id,
+                                   Material = d.Material.Material_Nombre,
+                                   Id_Falla = d.Falla_Id,
+                                   Falla = d.Falla.Falla_Nombre,
+                                   Impreso = d.Desp_Impresion,
+                                   Maquina = d.Maquina,
+                                   Id_Operario = d.Usua_Operario,
+                                   Operario = d.Usuario1.Usua_Nombre,
+                                   Id_Usuario = d.Usua_Id,
+                                   Usuario = d.Usuario2.Usua_Nombre,
+                                   Fecha = d.Desp_Fecha,
+                                   Observacion = d.Desp_Observacion,
+                                   Fecha_Registro = d.Desp_FechaRegistro,
+                                   Hora_Registro = d.Desp_HoraRegistro,
                                }).ToList();
 
-            //if (Desperdicio == null) return NotFound();           
-            return Ok(Desperdicio);
+            if (Desperdicio == null) return NotFound();           
+            else return Ok(Desperdicio);
         }
 
         /** Movimientos Desperdicios*/
