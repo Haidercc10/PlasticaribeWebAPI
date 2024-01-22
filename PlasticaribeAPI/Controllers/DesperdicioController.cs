@@ -208,7 +208,7 @@ namespace PlasticaribeAPI.Controllers
                                    Id_Usuario = d.Usua_Id,
                                    Usuario = d.Usuario2.Usua_Nombre,
                                    Fecha = d.Desp_Fecha,
-                                   Observacion = d.Desp_Observacion,
+                                   Observacion = Convert.ToString(d.Desp_Observacion).Contains("ProcDesperdicio") ? Convert.ToString(d.Desp_Observacion).Replace("Rollo #", "").Replace(" en ProcDesperdicio Bagpro", "") : Convert.ToString(d.Desp_Observacion).Replace("Rollo #", "").Replace(" en ProcExtrusion Bagpro", ""), 
                                    Fecha_Registro = d.Desp_FechaRegistro,
                                    Hora_Registro = d.Desp_HoraRegistro,
                                }).ToList();
