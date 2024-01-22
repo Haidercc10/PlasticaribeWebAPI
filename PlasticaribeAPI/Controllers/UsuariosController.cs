@@ -208,7 +208,7 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetOperariosProduccion()
         {
             var operarios = from op in _context.Set<Usuario>()
-                            where op.RolUsu_Id == 59
+                            where op.RolUsu_Id == 59 && op.Estado_Id == 1
                             select new
                             {
                                 op.Usua_Id,

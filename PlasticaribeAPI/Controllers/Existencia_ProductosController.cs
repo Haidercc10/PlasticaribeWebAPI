@@ -546,6 +546,7 @@ namespace PlasticaribeAPI.Controllers
                 var existencia = (from exis in _context.Set<Existencia_Productos>() where exis.Prod_Id == producto && exis.UndMed_Id == presentacion select exis).FirstOrDefault();
                 existencia.ExProd_PrecioVenta = precio;
                 existencia.ExProd_Cantidad += cantidad;
+                existencia.ExProd_PrecioExistencia += precio * cantidad;
                 _context.SaveChanges();
                 return Ok("Existencia Actualizada");
             }

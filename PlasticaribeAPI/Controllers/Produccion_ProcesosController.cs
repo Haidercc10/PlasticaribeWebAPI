@@ -400,6 +400,7 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult getInfoProduction(DateTime date1, DateTime date2, string? ot = "", string? process = "", string? roll = "")
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8604 // Possible null reference argument.
             var data = from pp in _context.Set<Produccion_Procesos>()
                        where pp.Fecha >= date1 &&
                              pp.Fecha <= date2 &&
@@ -425,6 +426,7 @@ namespace PlasticaribeAPI.Controllers
                            pp.Fecha,
                        };
             return data.Any() ? Ok(data) : NotFound();
+#pragma warning restore CS8604 // Possible null reference argument.
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 

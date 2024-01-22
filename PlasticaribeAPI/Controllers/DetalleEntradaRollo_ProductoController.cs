@@ -188,6 +188,35 @@ namespace PlasticaribeAPI.Controllers
             return con.Any() ? Ok(con) : NotFound();
         }
 
+        [HttpGet("getStartedProductionByItem/{item}")]
+        public ActionResult GetStartedProductionByItem(long item)
+        {
+            var notAvaibleProduction = (from exits in _context.Set<DetallesAsignacionProducto_FacturaVenta>() where exits.Prod_Id == item select exits.Rollo_Id);
+
+            var startedProduction = from p in _context.Set<DetalleEntradaRollo_Producto>()
+                                    join prod in _context.Set<Producto>() on p.Prod_Id equals prod.Prod_Id
+                                    join ent in _context.Set<EntradaRollo_Producto>() on p.EntRolloProd_Id equals ent.EntRolloProd_Id
+                                    where p.Prod_Id == item  && 
+                                          ent.EntRolloProd_Fecha > Convert.ToDateTime("2023-12-20") &&
+                                          !notAvaibleProduction.Contains(p.Rollo_Id)
+                                    group p by new
+                                    {
+                                        p.Prod_Id,
+                                        prod.Prod_Nombre,
+                                        ent.EntRolloProd_Observacion
+                                    } into p
+                                    select new
+                                    {
+                                        Item = p.Key.Prod_Id,
+                                        Referencia = p.Key.Prod_Nombre,
+                                        Ubicacion_Bodega = p.Key.EntRolloProd_Observacion,
+                                        Cantidad_Rollos = p.Count(),
+                                        Cantidad_Total = p.Sum(x => x.DtEntRolloProd_Cantidad)
+                                    };
+
+            return Ok(startedProduction);
+        }
+
         // PUT: api/DetalleEntradaRollo_Producto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
