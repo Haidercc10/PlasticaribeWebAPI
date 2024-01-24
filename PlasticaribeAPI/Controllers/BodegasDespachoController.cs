@@ -190,8 +190,8 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
-        [HttpGet("getInventarioPorUbicacionYProducto/{producto}")]
-        public ActionResult GetInventarioPorUbicacionYProducto(long producto)
+        [HttpGet("getInventarioPorUbicacionYProducto")]
+        public ActionResult GetInventarioPorUbicacionYProducto(string? producto = "", string? numeroRollo = "")
         {
             try
             {
@@ -203,7 +203,8 @@ namespace PlasticaribeAPI.Controllers
                                 e.EntRolloProd_Observacion != "" &&
                                 e.EntRolloProd_Observacion != "Ingreso inicial de inventario de productos por rollos" &&
                                 pp.Estado_Rollo == 19 &&
-                                p.Prod_Id == producto
+                                (producto != "" ? p.Prod_Id == Convert.ToInt64(producto) : true) &&
+                                (numeroRollo != "" ? pp.NumeroRollo_BagPro == Convert.ToInt64(numeroRollo) : true)
                           group new { p, dt, e, pp } by new
                           {
                               p.Prod_Id,
@@ -224,7 +225,8 @@ namespace PlasticaribeAPI.Controllers
                           };
 
                 return con.Any() ? Ok(con) : NotFound();
-            } catch (Exception ex)
+            } 
+            catch (Exception ex)
             {
                 return BadRequest(ex);
             }
@@ -246,19 +248,24 @@ namespace PlasticaribeAPI.Controllers
                               p.Prod_Id,
                               p.Prod_Nombre,
                               Ubicacion = e.EntRolloProd_Observacion,
+                              pp.OT,
                               pp.Numero_Rollo,
                               pp.NumeroRollo_BagPro,
-                              CantTotal = dt.DtEntRolloProd_Cantidad,
-                              Presentacion = dt.UndMed_Prod,
+                              Peso = pp.Peso_Neto,
+                              CantTotal = pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad,
+                              pp.Presentacion,
                               pp.PrecioVenta_Producto,
-                              SubTotal = dt.DtEntRolloProd_Cantidad * pp.PrecioVenta_Producto
+                              SubTotal = dt.DtEntRolloProd_Cantidad * pp.PrecioVenta_Producto,
+                              pp.Fecha,
+                              pp.Hora,
                           };
+
 
                 return con.Any() ? Ok(con) : NotFound();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                throw;
+                return BadRequest(ex);
             }
         }
 

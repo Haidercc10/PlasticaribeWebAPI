@@ -543,8 +543,9 @@ namespace PlasticaribeAPI.Controllers
             var seed = Environment.TickCount;
             var random = new Random(seed);
             var value = random.Next(1, 15);
+            var value2 = random.Next(1, 10);
 
-            produccion_Procesos.Numero_Rollo = numeroUltimoRollo + value;
+            produccion_Procesos.Numero_Rollo = numeroUltimoRollo + value + value2;
             produccion_Procesos.Estado_Rollo = 19;
             _context.Produccion_Procesos.Add(produccion_Procesos);
             await _context.SaveChangesAsync();
