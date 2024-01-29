@@ -8,10 +8,14 @@ namespace PlasticaribeAPI.Data
     {
         protected readonly IConfiguration Configuration;
         public dataContext(DbContextOptions<dataContext> options, IConfiguration configuration) : base(options) { Configuration = configuration; }
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
+
+        /*protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
-        }
+        }*/
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), o => o.UseCompatibilityLevel(120));
+
         public DbSet<TipoIdentificacion> TipoIdentificaciones { get; set; }
         public DbSet<Empresa> Empresas { get; set; }
         public DbSet<EPS> EPS { get; set; }
@@ -167,7 +171,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<Detalles_OrdenFacturacion> Detalles_OrdenFacturacion { get; set; }
         public DbSet<Conceptos_Automaticos> Conceptos_Automaticos { get; set; }
         public DbSet<Tipos_Conceptos> Tipos_Conceptos { get; set; }
-        public DbSet<PlasticaribeAPI.Models.BodegasDespacho> BodegasDespacho { get; set; } = default!;
+        public DbSet<BodegasDespacho> BodegasDespacho { get; set; } = default!;
+        public DbSet<ReImpresionEtiquetas> ReImpresionEtiquetas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -966,6 +971,10 @@ namespace PlasticaribeAPI.Data
 
             //Conceptos Automaticos
             modelBuilder.Entity<Conceptos_Automaticos>().HasOne(x => x.TipoCpto).WithMany().HasForeignKey(y => y.TpCcpto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //ReImpresionEtiquetas
+            modelBuilder.Entity<ReImpresionEtiquetas>().HasOne(x => x.Proceso).WithMany().HasForeignKey(y => y.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<ReImpresionEtiquetas>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));

@@ -98,6 +98,12 @@ namespace PlasticaribeAPI.Controllers
             return fact.Any() ? Ok(fact) : NotFound();
         }
 
+        [HttpGet("getNotAvaibleProduction")]
+        public ActionResult GetNorAvaibleProduction()
+        {
+            return Ok(from of in _context.Set<Detalles_OrdenFacturacion>() select of.Numero_Rollo);
+        }
+
         // PUT: api/Detalles_OrdenFacturacion/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

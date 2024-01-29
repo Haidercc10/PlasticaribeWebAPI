@@ -131,6 +131,34 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
+        // Consulta que devolverá la información de la producción pesada dependiendo del numero de rollo de bagpro
+        [HttpGet("getInformationAboutProductionBagPro/{production}")]
+        public ActionResult GetInformationAboutProductionBagPro(long production)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var data = from pp in _context.Set<Produccion_Procesos>()
+                       where pp.NumeroRollo_BagPro == production &&
+                             pp.Estado_Rollo == 19
+                       orderby pp.Id descending
+                       select new
+                       {
+                           pp,
+                           pp.Clientes,
+                           pp.Proceso,
+                           pp.Producto,
+                           pp.Turno,
+                           pp.Operario1,
+                           pp.Operario2,
+                           pp.Operario3,
+                           pp.Operario4,
+                           pp.Cono,
+                           pp.Creador,
+                           numero_RolloBagPro = 0,
+                       };
+            return data.Any() ? Ok(data.Take(1)) : NotFound();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
         //consulta que devolverá la informacion de los rollos que está disponibles, es decir, los rollos que no han sido facturados o enviados al cliente
         [HttpGet("getAvaibleProduction/{item}")]
         public ActionResult GetAvaibleProduction(int item)
@@ -466,12 +494,12 @@ namespace PlasticaribeAPI.Controllers
             _context.SaveChanges();
             try
             {
-
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                throw;
+                if (!RolloExists(rollo)) return NotFound();
+                else throw;
             }
 
             return NoContent();
@@ -488,12 +516,12 @@ namespace PlasticaribeAPI.Controllers
             _context.SaveChanges();
             try
             {
-
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                throw;
+                if (!RolloExists(rollo)) return NotFound();
+                else throw;
             }
 
             return NoContent();
@@ -509,7 +537,6 @@ namespace PlasticaribeAPI.Controllers
             {
                 return BadRequest();
             }
-
             _context.Entry(produccion_Procesos).State = EntityState.Modified;
 
             try
@@ -573,5 +600,14 @@ namespace PlasticaribeAPI.Controllers
             return _context.Produccion_Procesos.Any(e => e.Id == id);
         }
 
+        private bool RolloExists(long numeroRollo)
+        {
+            return _context.Produccion_Procesos.Any(x => x.Numero_Rollo == numeroRollo);
+        }
+
+        private bool RolloBagProExists(string proceso, long numeroRollo)
+        {
+            return _context.Produccion_Procesos.Any(x => x.NumeroRollo_BagPro == numeroRollo && x.Proceso_Id == proceso);
+        }
     }
 }
