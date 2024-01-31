@@ -69,7 +69,9 @@ namespace PlasticaribeAPI.Controllers
                        };*/
 
             var data = from pp in _context.Set<Produccion_Procesos>()
-                       where pp.Numero_Rollo == production && pp.Envio_Zeus == false
+                       where pp.Numero_Rollo == production && 
+                             pp.Envio_Zeus == false &&
+                             (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE")
                        select new
                        {
                            pp,
@@ -171,7 +173,8 @@ namespace PlasticaribeAPI.Controllers
                              where pp.Prod_Id == item && 
                                    pp.Estado_Rollo == 19 && 
                                    pp.Envio_Zeus == true &&
-                                   !notAvaibleProduccion.Contains(pp.NumeroRollo_BagPro)
+                                   !notAvaibleProduccion.Contains(pp.NumeroRollo_BagPro) &&
+                                   (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE")
                              select new
                              {
                                  pp,
@@ -490,6 +493,7 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.Numero_Rollo == rollo select prod).FirstOrDefault();
             dataProduction.Envio_Zeus = true;
+            dataProduction.Estado_Rollo = 19;
             _context.Entry(dataProduction).State = EntityState.Modified;
             _context.SaveChanges();
             try
