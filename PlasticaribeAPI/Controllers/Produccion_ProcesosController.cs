@@ -51,23 +51,6 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetInformationAboutProductionToUpdateZeus(long production)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            /*var data = from pp in _context.Set<Produccion_Procesos>()
-                       join ot in _context.Set<Orden_Trabajo>() on pp.OT equals ot.Numero_OT
-                       join otExt in _context.Set<OT_Extrusion>() on ot.Ot_Id equals otExt.Ot_Id
-                       where pp.Numero_Rollo == production && pp.Envio_Zeus == false
-                       select new
-                       {
-                            orderProduction = pp.OT,
-                            ot.MotrarEmpresaEtiquetas,
-                            product = pp.Producto,
-                            client = pp.Clientes,
-                            turn = pp.Turno,
-                            process = pp.Proceso,
-                            material = otExt.Material_MatPrima,
-                            dataExtrusion = otExt,
-                            dataProduction = pp
-                       };*/
-
             var data = from pp in _context.Set<Produccion_Procesos>()
                        where pp.Numero_Rollo == production && 
                              pp.Envio_Zeus == false &&
@@ -96,25 +79,9 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetInformationAboutProduction(long production)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            /*var data = from pp in _context.Set<Produccion_Procesos>()
-                       join ot in _context.Set<Orden_Trabajo>() on pp.OT equals ot.Numero_OT
-                       join otExt in _context.Set<OT_Extrusion>() on ot.Ot_Id equals otExt.Ot_Id
-                       where pp.Numero_Rollo == production && pp.Envio_Zeus == false
-                       select new
-                       {
-                            orderProduction = pp.OT,
-                            ot.MotrarEmpresaEtiquetas,
-                            product = pp.Producto,
-                            client = pp.Clientes,
-                            turn = pp.Turno,
-                            process = pp.Proceso,
-                            material = otExt.Material_MatPrima,
-                            dataExtrusion = otExt,
-                            dataProduction = pp
-                       };*/
-
             var data = from pp in _context.Set<Produccion_Procesos>()
-                       where pp.Numero_Rollo == production
+                       where pp.Numero_Rollo == production &&
+                             (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE")
                        select new
                        {
                            pp,
