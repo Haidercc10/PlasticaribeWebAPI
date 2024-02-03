@@ -52,7 +52,7 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var data = from pp in _context.Set<Produccion_Procesos>()
-                       where pp.Numero_Rollo == production && 
+                       where pp.NumeroRollo_BagPro == production && 
                              pp.Envio_Zeus == false &&
                              (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE")
                        select new
@@ -80,7 +80,7 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var data = from pp in _context.Set<Produccion_Procesos>()
-                       where pp.Numero_Rollo == production &&
+                       where pp.NumeroRollo_BagPro == production &&
                              (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE")
                        select new
                        {
