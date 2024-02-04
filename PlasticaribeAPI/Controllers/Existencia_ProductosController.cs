@@ -255,17 +255,16 @@ namespace PlasticaribeAPI.Controllers
                                 StockPrice = exi.ExProd_PrecioExistencia,
                             },
                             Client = (
-                                from cp in _context.Set<Cliente_Producto>()
-                                join cli in _context.Set<Clientes>() on cp.Cli_Id equals cli.Cli_Id
-                                join vende in _context.Set<Usuario>() on cli.usua_Id equals vende.Usua_Id
-                                where prod.Prod_Id == cp.Prod_Id &&
-                                      cp.Cli_Id != 1
-                                orderby cp.Codigo descending
+                                from est in _context.Set<Estados_ProcesosOT>()
+                                join vende in _context.Set<Usuario>() on est.Usua_Id equals vende.Usua_Id
+                                where prod.Prod_Id == est.Prod_Id
+                                orderby est.Estado_Id descending
                                 select new
                                 {
-                                    cli = new {
-                                        Id_Client = cli.Cli_Id,
-                                        Client = cli.Cli_Nombre,
+                                    cli = new
+                                    {
+                                        Id_Client = 1,
+                                        Client = est.EstProcOT_Cliente,
                                     },
                                     vende = new
                                     {
@@ -342,18 +341,16 @@ namespace PlasticaribeAPI.Controllers
                                 StockPrice = exi.ExProd_PrecioExistencia,
                             },
                             Client = (
-                                from cp in _context.Set<Cliente_Producto>()
-                                join cli in _context.Set<Clientes>() on cp.Cli_Id equals cli.Cli_Id
-                                join vende in _context.Set<Usuario>() on cli.usua_Id equals vende.Usua_Id
-                                where prod.Prod_Id == cp.Prod_Id &&
-                                      cp.Cli_Id != 1
-                                orderby cp.Codigo descending
+                                from est in _context.Set<Estados_ProcesosOT>()
+                                join vende in _context.Set<Usuario>() on est.Usua_Id equals vende.Usua_Id
+                                where prod.Prod_Id == est.Prod_Id
+                                orderby est.Estado_Id descending
                                 select new
                                 {
                                     cli = new
                                     {
-                                        Id_Client = cli.Cli_Id,
-                                        Client = cli.Cli_Nombre,
+                                        Id_Client = 1,
+                                        Client = est.EstProcOT_Cliente,
                                     },
                                     vende = new
                                     {

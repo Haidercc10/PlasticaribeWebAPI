@@ -143,7 +143,8 @@ namespace PlasticaribeAPI.Controllers
                       where e.EntRolloProd_Observacion != null &&
                             e.EntRolloProd_Observacion != "" &&
                             e.EntRolloProd_Observacion != "Ingreso inicial de inventario de productos por rollos" &&
-                            pp.Estado_Rollo == 19
+                            pp.Estado_Rollo == 19 && 
+                            pp.Envio_Zeus == true
                       group e by new
                       {
                           e.EntRolloProd_Observacion
@@ -167,7 +168,8 @@ namespace PlasticaribeAPI.Controllers
                       where e.EntRolloProd_Observacion != null &&
                             e.EntRolloProd_Observacion != "" &&
                             e.EntRolloProd_Observacion != "Ingreso inicial de inventario de productos por rollos" &&
-                            pp.Estado_Rollo == 19
+                            pp.Estado_Rollo == 19 &&
+                            pp.Envio_Zeus == true
                       group new { p, dt, e, pp } by new
                       {
                           p.Prod_Id,
@@ -203,6 +205,7 @@ namespace PlasticaribeAPI.Controllers
                                 e.EntRolloProd_Observacion != "" &&
                                 e.EntRolloProd_Observacion != "Ingreso inicial de inventario de productos por rollos" &&
                                 pp.Estado_Rollo == 19 &&
+                                pp.Envio_Zeus == true &&
                                 (producto != "" ? p.Prod_Id == Convert.ToInt64(producto) : true) &&
                                 (numeroRollo != "" ? pp.NumeroRollo_BagPro == Convert.ToInt64(numeroRollo) : true)
                           group new { p, dt, e, pp } by new
@@ -242,7 +245,8 @@ namespace PlasticaribeAPI.Controllers
                           join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
                           join pp in _context.Set<Produccion_Procesos>() on dt.Rollo_Id equals pp.Numero_Rollo
                           where e.EntRolloProd_Observacion == ubicacion &&
-                                pp.Estado_Rollo == 19
+                                pp.Estado_Rollo == 19 &&
+                                pp.Envio_Zeus == true
                           select new
                           {
                               p.Prod_Id,

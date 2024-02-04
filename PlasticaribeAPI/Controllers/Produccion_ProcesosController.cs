@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
@@ -47,14 +48,14 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // Consulta que devolverá toda la información de un rollo
-        [HttpGet("getInformationAboutProductionToUpdateZeus/{production}")]
-        public ActionResult GetInformationAboutProductionToUpdateZeus(long production)
+        [HttpGet("getInformationAboutProductionToUpdateZeus/{production}/{process}")]
+        public ActionResult GetInformationAboutProductionToUpdateZeus(long production, string process)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var data = from pp in _context.Set<Produccion_Procesos>()
                        where pp.NumeroRollo_BagPro == production && 
                              pp.Envio_Zeus == false &&
-                             (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE")
+                             (process != "TODO" ? process == "SELLA" ? (pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE") : (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP") : (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE"))
                        select new
                        {
                            pp,
@@ -75,13 +76,13 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // Consulta que devolverá toda la información de un rollo
-        [HttpGet("getInformationAboutProduction/{production}")]
-        public ActionResult GetInformationAboutProduction(long production)
+        [HttpGet("getInformationAboutProduction/{production}/{process}")]
+        public ActionResult GetInformationAboutProduction(long production, string process)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var data = from pp in _context.Set<Produccion_Procesos>()
                        where pp.NumeroRollo_BagPro == production &&
-                             (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE")
+                            (process != "TODO" ? process == "SELLA" ? (pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE") : (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP") : (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE"))
                        select new
                        {
                            pp,
@@ -95,6 +96,7 @@ namespace PlasticaribeAPI.Controllers
                            pp.Operario4,
                            pp.Cono,
                            pp.Creador,
+                           numero_RolloBagPro = 0,
                        };
             return data.Any() ? Ok(data) : NotFound();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -107,7 +109,8 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var data = from pp in _context.Set<Produccion_Procesos>()
                        where pp.NumeroRollo_BagPro == production &&
-                             pp.Estado_Rollo == 19
+                             pp.Estado_Rollo == 19 &&
+                             (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE")
                        orderby pp.Id descending
                        select new
                        {
