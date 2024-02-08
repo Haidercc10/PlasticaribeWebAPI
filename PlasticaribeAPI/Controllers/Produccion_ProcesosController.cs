@@ -12,6 +12,7 @@ using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Migrations;
 using PlasticaribeAPI.Models;
 using ServiceReference1;
+using StackExchange.Redis;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -109,7 +110,7 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var data = from pp in _context.Set<Produccion_Procesos>()
                        where pp.NumeroRollo_BagPro == production &&
-                             pp.Estado_Rollo == 19 &&
+                             (pp.Estado_Rollo != 23) &&
                              (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE")
                        orderby pp.Id descending
                        select new
@@ -148,7 +149,8 @@ namespace PlasticaribeAPI.Controllers
                              select new
                              {
                                  pp,
-                                 prod
+                                 prod,
+                                 pp.Clientes
                              };
             return production.Any() ? Ok(production) : NotFound();
         }
@@ -529,6 +531,65 @@ namespace PlasticaribeAPI.Controllers
                 }
             }
 
+            return NoContent();
+        }
+
+        [HttpPut("putEstadoNoDisponible/{orden}")]
+        async public Task<IActionResult> PutEstadoNoDisponible(int orden)
+        {
+            var rollos = from of in _context.Set<Detalles_OrdenFacturacion>()
+                         join pp in _context.Set<Produccion_Procesos>() on of.Numero_Rollo equals pp.NumeroRollo_BagPro
+                         where of.Id_OrdenFacturacion == orden
+                         select pp.Numero_Rollo;
+
+            int count = 0;
+            foreach (var item in rollos)
+            {
+                var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.Numero_Rollo == item select prod).FirstOrDefault();
+                dataProduction.Estado_Rollo = 23;
+                _context.Entry(dataProduction).State = EntityState.Modified;
+                _context.SaveChanges();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!RolloExists(item)) return NotFound();
+                    else throw;
+                }
+                count++;
+                if (count == rollos.Count()) return NoContent();
+            }
+            return NoContent();
+        }
+
+        [HttpPut("putEstadoPorDespachar/{orden}")]
+        async public Task<IActionResult> PutEstadoPorDespachar(int orden)
+        {
+            var rollos = from of in _context.Set<Detalles_OrdenFacturacion>() 
+                         join pp in _context.Set<Produccion_Procesos>() on of.Numero_Rollo equals pp.NumeroRollo_BagPro
+                         where of.Id_OrdenFacturacion == orden select pp.Numero_Rollo;
+
+            int count = 0;
+            foreach (var item in rollos)
+            {
+                var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.Numero_Rollo == item select prod).FirstOrDefault();
+                dataProduction.Estado_Rollo = 20;
+                _context.Entry(dataProduction).State = EntityState.Modified;
+                _context.SaveChanges();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!RolloExists(item)) return NotFound();
+                    else throw;
+                }
+                count++;
+                if (count == rollos.Count()) return NoContent();
+            }
             return NoContent();
         }
 

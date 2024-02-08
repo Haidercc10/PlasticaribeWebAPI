@@ -239,7 +239,7 @@ namespace PlasticaribeAPI.Controllers
 
             var stock = from prod in _context.Set<Producto>()
                         join exi in _context.Set<Existencia_Productos>() on prod.Prod_Id equals exi.Prod_Id
-                        where exi.ExProd_Cantidad > 2
+                        where exi.ExProd_Cantidad >= 1
                         select new
                         {
                             Product = new
@@ -278,7 +278,7 @@ namespace PlasticaribeAPI.Controllers
                                 where pp.Prod_Id == prod.Prod_Id &&
                                       pp.Estado_Rollo == 19 &&
                                       pp.Envio_Zeus == true &&
-                                      !notAvaibleProduccion.Contains(pp.Numero_Rollo)
+                                      !notAvaibleProduccion.Contains(pp.NumeroRollo_BagPro)
                                 select new
                                 {
                                     Number_BagPro = pp.NumeroRollo_BagPro,
@@ -314,7 +314,7 @@ namespace PlasticaribeAPI.Controllers
 
             var stock = from prod in _context.Set<Producto>()
                         join exi in _context.Set<Existencia_Productos>() on prod.Prod_Id equals exi.Prod_Id
-                        where exi.ExProd_Cantidad > 2 &&
+                        where exi.ExProd_Cantidad > 1 &&
                               products.Contains(prod.Prod_Id)
                         select new
                         {

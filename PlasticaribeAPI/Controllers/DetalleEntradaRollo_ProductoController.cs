@@ -161,7 +161,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost("getRollos")]
         public IActionResult getRollos([FromBody] List<long> rollos)
         {
-            return Ok(from e in _context.Set<DetalleEntradaRollo_Producto>() where rollos.Contains(e.Rollo_Id) select new { e.Rollo_Id, e.Proceso_Id });
+            return Ok(from e in _context.Set<DetalleEntradaRollo_Producto>() where rollos.Contains(e.Rollo_Id) && e.EntRolloProd_Id >= 28686 select new { e.Rollo_Id, e.Proceso_Id });
         }
 
         [HttpGet("getDataProductionIncome/{startDate}/{endDate}")]
@@ -169,12 +169,14 @@ namespace PlasticaribeAPI.Controllers
         {
             var con = from dt in _context.Set<DetalleEntradaRollo_Producto>()
                       join ent in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals ent.EntRolloProd_Id
-                      join reel in _context.Set<Produccion_Procesos>() on dt.Rollo_Id equals reel.Numero_Rollo
+                      from reel in _context.Set<Produccion_Procesos>()
                       where ent.EntRolloProd_Fecha >= startDate &&
                             ent.EntRolloProd_Fecha <= endDate &&
+                            (dt.Rollo_Id == reel.Numero_Rollo || dt.Rollo_Id == reel.NumeroRollo_BagPro) &&
                             (production != "" ? reel.NumeroRollo_BagPro == Convert.ToInt64(production) : true) &&
                             (orderProduction != "" ? dt.DtEntRolloProd_OT == Convert.ToInt64(orderProduction) : true) &&
-                            (item != "" ? dt.Prod_Id == Convert.ToInt64(item) : true)
+                            (item != "" ? dt.Prod_Id == Convert.ToInt64(item) : true) &&
+                            ent.EntRolloProd_Id >= 28686
                       select new
                       {
                           ent,
@@ -196,8 +198,8 @@ namespace PlasticaribeAPI.Controllers
             var startedProduction = from p in _context.Set<DetalleEntradaRollo_Producto>()
                                     join prod in _context.Set<Producto>() on p.Prod_Id equals prod.Prod_Id
                                     join ent in _context.Set<EntradaRollo_Producto>() on p.EntRolloProd_Id equals ent.EntRolloProd_Id
-                                    where p.Prod_Id == item  && 
-                                          ent.EntRolloProd_Fecha > Convert.ToDateTime("2023-12-20") &&
+                                    where p.Prod_Id == item  &&
+                                          ent.EntRolloProd_Id >= 28686 &&
                                           !notAvaibleProduction.Contains(p.Rollo_Id)
                                     group p by new
                                     {

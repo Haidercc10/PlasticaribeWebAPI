@@ -139,12 +139,13 @@ namespace PlasticaribeAPI.Controllers
             var con = from p in _context.Set<Producto>()
                       join dt in _context.Set<DetalleEntradaRollo_Producto>() on p.Prod_Id equals dt.Prod_Id
                       join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
-                      join pp in _context.Set<Produccion_Procesos>() on dt.Rollo_Id equals pp.Numero_Rollo
+                      from pp in _context.Set<Produccion_Procesos>()
                       where e.EntRolloProd_Observacion != null &&
                             e.EntRolloProd_Observacion != "" &&
                             e.EntRolloProd_Observacion != "Ingreso inicial de inventario de productos por rollos" &&
                             pp.Estado_Rollo == 19 && 
-                            pp.Envio_Zeus == true
+                            pp.Envio_Zeus == true &&
+                            (dt.Rollo_Id == pp.Numero_Rollo || dt.Rollo_Id == pp.NumeroRollo_BagPro)
                       group e by new
                       {
                           e.EntRolloProd_Observacion
@@ -164,12 +165,13 @@ namespace PlasticaribeAPI.Controllers
             var con = from p in _context.Set<Producto>()
                       join dt in _context.Set<DetalleEntradaRollo_Producto>() on p.Prod_Id equals dt.Prod_Id
                       join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
-                      join pp in _context.Set<Produccion_Procesos>() on dt.Rollo_Id equals pp.Numero_Rollo
+                      from pp in _context.Set<Produccion_Procesos>()
                       where e.EntRolloProd_Observacion != null &&
                             e.EntRolloProd_Observacion != "" &&
                             e.EntRolloProd_Observacion != "Ingreso inicial de inventario de productos por rollos" &&
                             pp.Estado_Rollo == 19 &&
-                            pp.Envio_Zeus == true
+                            pp.Envio_Zeus == true &&
+                            (dt.Rollo_Id == pp.Numero_Rollo || dt.Rollo_Id == pp.NumeroRollo_BagPro)
                       group new { p, dt, e, pp } by new
                       {
                           p.Prod_Id,
@@ -200,14 +202,16 @@ namespace PlasticaribeAPI.Controllers
                 var con = from p in _context.Set<Producto>()
                           join dt in _context.Set<DetalleEntradaRollo_Producto>() on p.Prod_Id equals dt.Prod_Id
                           join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
-                          join pp in _context.Set<Produccion_Procesos>() on dt.Rollo_Id equals pp.Numero_Rollo
+                          from pp in _context.Set<Produccion_Procesos>()
                           where e.EntRolloProd_Observacion != null &&
                                 e.EntRolloProd_Observacion != "" &&
                                 e.EntRolloProd_Observacion != "Ingreso inicial de inventario de productos por rollos" &&
                                 pp.Estado_Rollo == 19 &&
                                 pp.Envio_Zeus == true &&
+                                dt.Estado_Id == 19 &&
                                 (producto != "" ? p.Prod_Id == Convert.ToInt64(producto) : true) &&
-                                (numeroRollo != "" ? pp.NumeroRollo_BagPro == Convert.ToInt64(numeroRollo) : true)
+                                (numeroRollo != "" ? pp.NumeroRollo_BagPro == Convert.ToInt64(numeroRollo) : true) &&
+                                (dt.Rollo_Id == pp.Numero_Rollo || dt.Rollo_Id == pp.NumeroRollo_BagPro)
                           group new { p, dt, e, pp } by new
                           {
                               p.Prod_Id,
@@ -243,10 +247,12 @@ namespace PlasticaribeAPI.Controllers
                 var con = from p in _context.Set<Producto>()
                           join dt in _context.Set<DetalleEntradaRollo_Producto>() on p.Prod_Id equals dt.Prod_Id
                           join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
-                          join pp in _context.Set<Produccion_Procesos>() on dt.Rollo_Id equals pp.Numero_Rollo
+                          from pp in _context.Set<Produccion_Procesos>()
                           where e.EntRolloProd_Observacion == ubicacion &&
                                 pp.Estado_Rollo == 19 &&
-                                pp.Envio_Zeus == true
+                                dt.Estado_Id == 19 &&
+                                pp.Envio_Zeus == true &&
+                                (dt.Rollo_Id == pp.Numero_Rollo || dt.Rollo_Id == pp.NumeroRollo_BagPro)
                           select new
                           {
                               p.Prod_Id,
@@ -263,7 +269,6 @@ namespace PlasticaribeAPI.Controllers
                               pp.Fecha,
                               pp.Hora,
                           };
-
 
                 return con.Any() ? Ok(con) : NotFound();
             }

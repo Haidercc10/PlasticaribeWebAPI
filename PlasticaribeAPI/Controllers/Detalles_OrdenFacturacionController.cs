@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -43,19 +44,95 @@ namespace PlasticaribeAPI.Controllers
             return detalles_OrdenFacturacion;
         }
 
-        [HttpGet("getInformationOrderFact/{id}")]
-        public ActionResult GetInformacionOrderFact(int id)
+        [HttpGet("getInformationOrderFactToSend/{id}")]
+        public ActionResult GetInformacionOrderFactToSend(int id)
         {
             var fact = from order in _context.Set<OrdenFacturacion>()
                        join dtOrder in _context.Set<Detalles_OrdenFacturacion>() on order.Id equals dtOrder.Id_OrdenFacturacion
-                       where order.Id == id
+                       where order.Id == id &&
+                             order.Estado_Id == 19
                        select new
                        {
                            order,
                            order.Clientes,
                            order.Usuario,
                            dtOrder,
-                           dtOrder.Producto
+                           dtOrder.Producto,
+                           Ubication = (from pp in _context.Set<Produccion_Procesos>()
+                                        from dt in _context.Set<DetalleEntradaRollo_Producto>()
+                                        join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
+                                        where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo &&
+                                               (dt.Rollo_Id == pp.Numero_Rollo || dt.Rollo_Id == pp.NumeroRollo_BagPro) &&
+                                               pp.Prod_Id == dtOrder.Prod_Id &&
+                                               e.EntRolloProd_Id >= 28512
+                                        orderby e.EntRolloProd_Id descending
+                                        select e.EntRolloProd_Observacion).FirstOrDefault(),
+                       };
+            return fact.Any() ? Ok(fact) : NotFound();
+        }
+
+        [HttpGet("getInformationOrderFact/{id}")]
+        public ActionResult GetInformacionOrderFact(int id)
+        {
+            var dataSend = from asg in _context.Set<AsignacionProducto_FacturaVenta>()
+                           where asg.NotaCredito_Id == $"Orden de Facturación #{id}"
+                           select new
+                           {
+                               Conductor = asg.Usuario.Usua_Nombre,
+                               Placa = asg.AsigProdFV_PlacaCamion,
+                               Observacion = asg.AsigProdFV_Observacion,
+                               Fecha = asg.AsigProdFV_Fecha,
+                               Hora = asg.AsigProdFV_Hora,
+                               CreadoPor = asg.Usua.Usua_Nombre
+                           };
+
+            var fact = from order in _context.Set<OrdenFacturacion>()
+                       join dtOrder in _context.Set<Detalles_OrdenFacturacion>() on order.Id equals dtOrder.Id_OrdenFacturacion
+                       where order.Id == id
+                       select new
+                       {
+                           order = new
+                           {
+                               order.Id,
+                               order.Factura,
+                               order.Fecha,
+                               order.Hora,
+                               order.Observacion,
+                           },
+                           Clientes = new
+                           {
+                               order.Clientes.Cli_Id,
+                               order.Clientes.Cli_Nombre,
+                               order.Clientes.Cli_Telefono,
+                               order.Clientes.Cli_Email,
+                               order.Clientes.TipoIdentificacion_Id
+                           },
+                           Usuario = new
+                           {
+                               order.Usuario.Usua_Id,
+                               order.Usuario.Usua_Nombre
+                           },
+                           dtOrder = new
+                           {
+                               dtOrder.Cantidad,
+                               dtOrder.Presentacion,
+                               dtOrder.Numero_Rollo,
+                               dtOrder.Consecutivo_Pedido
+                           },
+                           Producto = new
+                           {
+                               dtOrder.Producto.Prod_Id,
+                               dtOrder.Producto.Prod_Nombre
+                           },
+                           Ubication = (from pp in _context.Set<Produccion_Procesos>()
+                                        from dt in _context.Set<DetalleEntradaRollo_Producto>()
+                                        join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
+                                        where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo &&
+                                               (dt.Rollo_Id == pp.Numero_Rollo || dt.Rollo_Id == pp.NumeroRollo_BagPro) &&
+                                               e.EntRolloProd_Id >= 28512
+                                        orderby e.EntRolloProd_Id descending
+                                        select e.EntRolloProd_Observacion).FirstOrDefault(),
+                           datosEnvio = dataSend.Any() ? (dataSend).FirstOrDefault() : null,
                        };
             return fact.Any() ? Ok(fact) : NotFound();
         }
@@ -68,15 +145,15 @@ namespace PlasticaribeAPI.Controllers
             var data = from order in _context.Set<OrdenFacturacion>()
                        join dtOrder in _context.Set<Detalles_OrdenFacturacion>() on order.Id equals dtOrder.Id_OrdenFacturacion
                        where order.Factura == fact &&
-                             !devolutions.Contains(dtOrder.Numero_Rollo) &&
-                             order.Estado_Id == 11
+                             !devolutions.Contains(dtOrder.Numero_Rollo)
                        select new
                        {
                            order,
                            order.Clientes,
                            order.Usuario,
                            dtOrder,
-                           dtOrder.Producto
+                           dtOrder.Producto,
+                           Type = "Devolucion",
                        };
             return data.Any() ? Ok(data) : NotFound();
         }
@@ -84,18 +161,54 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getOrders/{startDate}/{endDate}")]
         public ActionResult GetOrderd(DateTime startDate, DateTime endDate, string? order = "")
         {
+#pragma warning disable CS8604 // Possible null reference argument.
             var fact = from or in _context.Set<OrdenFacturacion>()
                        where or.Fecha >= startDate &&
                              or.Fecha <= endDate &&
-                             (order != "" ? or.Factura == order : true)
+                             (order != "" ? (or.Factura.Contains(order) || or.Id == Convert.ToInt32(order)) : true)
                        select new
                        {
                            or,
                            or.Clientes,
                            or.Usuario,
+                           or.Factura,
                            Type = "Orden"
                        };
             return fact.Any() ? Ok(fact) : NotFound();
+#pragma warning restore CS8604 // Possible null reference argument.
+        }
+
+        [HttpGet("getSendOrders/{startDate}/{endDate}")]
+        public ActionResult GetSendOrders(DateTime startDate, DateTime endDate, string? order = "")
+        {
+            var facts = from or in _context.Set<OrdenFacturacion>()
+                        where or.Fecha >= startDate &&
+                              or.Fecha <= endDate &&
+                              (order != "" ? or.Factura == order : true) &&
+                              or.Estado_Id == 21
+                        select or.Factura;
+
+            var sendOrders = from asg in _context.Set<AsignacionProducto_FacturaVenta>()
+                             join dt in _context.Set<DetallesAsignacionProducto_FacturaVenta>() on asg.AsigProdFV_Id equals dt.AsigProdFV_Id
+                             where facts.Contains(asg.FacturaVta_Id)
+                             select new
+                             {
+                                 or = new
+                                 {
+                                     Id = asg.AsigProdFV_Id,
+                                     Factura = asg.FacturaVta_Id,
+                                     Fecha = asg.AsigProdFV_Fecha,
+                                     Hora = asg.AsigProdFV_Hora,
+                                     asg.Cli_Id,
+                                     Observacion = asg.AsigProdFV_Observacion,
+                                 },
+                                 Conductor = asg.Usuario,
+                                 Placa = asg.AsigProdFV_PlacaCamion,
+                                 Clientes = asg.Cliente,
+                                 Usuario = asg.Usua,
+                                 Type = "Factura Enviada",
+                             };
+            return sendOrders.Any() ? Ok(sendOrders) : NotFound();
         }
 
         [HttpGet("getNotAvaibleProduction")]
