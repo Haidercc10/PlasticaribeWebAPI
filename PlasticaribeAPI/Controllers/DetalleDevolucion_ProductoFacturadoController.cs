@@ -88,8 +88,19 @@ namespace PlasticaribeAPI.Controllers
                           select new
                           {
                               dev,
-                              dev.Cliente,
-                              dev.Usua,
+                              Cliente = new
+                              {
+                                  dev.Cliente.TipoIdentificacion_Id,
+                                  dev.Cli_Id,
+                                  dev.Cliente.Cli_Nombre,
+                                  dev.Cliente.Cli_Telefono,
+                                  dev.Cliente.Cli_Email,
+                              },
+                              Usua = new
+                              {
+                                  dev.Usua_Id,
+                                  dev.Usua.Usua_Nombre
+                              },
                               dtDev = new
                               {
                                   dtDev.DtDevProdFact_Id,
@@ -99,7 +110,11 @@ namespace PlasticaribeAPI.Controllers
                                   Cantidad = dtDev.DtDevProdFact_Cantidad,
                                   Presentacion = dtDev.UndMed_Id
                               },
-                              dtDev.Prod
+                              Prod = new
+                              {
+                                  dtDev.Prod_Id,
+                                  dtDev.Prod.Prod_Nombre
+                              }
                           };
             return infoDev.Any() ? Ok(infoDev) : NotFound();
         }

@@ -132,12 +132,45 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
+        // Consulta que devolverá la información de la producción pesada dependiendo del numero de rollo de bagpro
+        [HttpGet("getInformationAboutProductionToSend/{production}/{orderFact}")]
+        public ActionResult GetInformationAboutProductionToSend(long production, int orderFact)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var itemsOrder = (from dt in _context.Set<Detalles_OrdenFacturacion>() where dt.Id_OrdenFacturacion == orderFact select dt.Prod_Id).ToArray();
+
+            var data = from pp in _context.Set<Produccion_Procesos>()
+                       where pp.NumeroRollo_BagPro == production &&
+                             (pp.Estado_Rollo == 20) &&
+                             itemsOrder.Contains(pp.Prod_Id) &&
+                             (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE")
+                       orderby pp.Id descending
+                       select new
+                       {
+                           pp,
+                           pp.Clientes,
+                           pp.Proceso,
+                           pp.Producto,
+                           pp.Turno,
+                           pp.Operario1,
+                           pp.Operario2,
+                           pp.Operario3,
+                           pp.Operario4,
+                           pp.Cono,
+                           pp.Creador,
+                           numero_RolloBagPro = 0,
+                       };
+            return data.Any() ? Ok(data.Take(1)) : NotFound();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
         //consulta que devolverá la informacion de los rollos que está disponibles, es decir, los rollos que no han sido facturados o enviados al cliente
         [HttpGet("getAvaibleProduction/{item}")]
         public ActionResult GetAvaibleProduction(int item)
         {
-            var notAvaibleProduccion = from order in _context.Set<Detalles_OrdenFacturacion>()
-                                       select order.Numero_Rollo;
+            var avaibleProduction = from dev in _context.Set<DetalleDevolucion_ProductoFacturado>() where dev.Prod_Id == item select dev.Rollo_Id;
+
+            var notAvaibleProduccion = from order in _context.Set<Detalles_OrdenFacturacion>() where !avaibleProduction.Contains(order.Numero_Rollo) && order.Prod_Id == item select order.Numero_Rollo;
 
             var production = from pp in _context.Set<Produccion_Procesos>()
                              join prod in _context.Set<Producto>() on pp.Prod_Id equals prod.Prod_Id
@@ -576,6 +609,36 @@ namespace PlasticaribeAPI.Controllers
             {
                 var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.Numero_Rollo == item select prod).FirstOrDefault();
                 dataProduction.Estado_Rollo = 20;
+                _context.Entry(dataProduction).State = EntityState.Modified;
+                _context.SaveChanges();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!RolloExists(item)) return NotFound();
+                    else throw;
+                }
+                count++;
+                if (count == rollos.Count()) return NoContent();
+            }
+            return NoContent();
+        }
+
+        [HttpPut("putEstadoDisponible/{devolucion}")]
+        async public Task<IActionResult> PutEstadoDisponible(int devolucion)
+        {
+            var rollos = from dev in _context.Set<DetalleDevolucion_ProductoFacturado>()
+                            join pp in _context.Set<Produccion_Procesos>() on dev.Rollo_Id equals pp.NumeroRollo_BagPro
+                            where dev.DevProdFact_Id == devolucion
+                            select pp.Numero_Rollo;
+
+            int count = 0;
+            foreach (var item in rollos)
+            {
+                var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.Numero_Rollo == item select prod).FirstOrDefault();
+                dataProduction.Estado_Rollo = 19;
                 _context.Entry(dataProduction).State = EntityState.Modified;
                 _context.SaveChanges();
                 try

@@ -278,7 +278,9 @@ namespace PlasticaribeAPI.Controllers
                                 where pp.Prod_Id == prod.Prod_Id &&
                                       pp.Estado_Rollo == 19 &&
                                       pp.Envio_Zeus == true &&
-                                      !notAvaibleProduccion.Contains(pp.NumeroRollo_BagPro)
+                                      !((from order in _context.Set<Detalles_OrdenFacturacion>()
+                                         where order.Prod_Id == pp.Prod_Id
+                                         select order.Numero_Rollo).ToList()).Contains(pp.NumeroRollo_BagPro)
                                 select new
                                 {
                                     Number_BagPro = pp.NumeroRollo_BagPro,

@@ -53,17 +53,44 @@ namespace PlasticaribeAPI.Controllers
                              order.Estado_Id == 19
                        select new
                        {
-                           order,
-                           order.Clientes,
-                           order.Usuario,
-                           dtOrder,
-                           dtOrder.Producto,
+                           order = new
+                           {
+                               order.Id,
+                               order.Factura,
+                               order.Fecha,
+                               order.Hora,
+                               order.Observacion,
+                           },
+                           Clientes = new
+                           {
+                               order.Clientes.Cli_Id,
+                               order.Clientes.Cli_Nombre,
+                               order.Clientes.Cli_Telefono,
+                               order.Clientes.Cli_Email,
+                               order.Clientes.TipoIdentificacion_Id
+                           },
+                           Usuario = new
+                           {
+                               order.Usuario.Usua_Id,
+                               order.Usuario.Usua_Nombre
+                           },
+                           dtOrder = new
+                           {
+                               dtOrder.Cantidad,
+                               dtOrder.Presentacion,
+                               dtOrder.Numero_Rollo,
+                               dtOrder.Consecutivo_Pedido
+                           },
+                           Producto = new
+                           {
+                               dtOrder.Producto.Prod_Id,
+                               dtOrder.Producto.Prod_Nombre
+                           },
                            Ubication = (from pp in _context.Set<Produccion_Procesos>()
                                         from dt in _context.Set<DetalleEntradaRollo_Producto>()
                                         join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
                                         where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo &&
-                                               (dt.Rollo_Id == pp.Numero_Rollo || dt.Rollo_Id == pp.NumeroRollo_BagPro) &&
-                                               pp.Prod_Id == dtOrder.Prod_Id &&
+                                               (dt.Rollo_Id == pp.Numero_Rollo) &&
                                                e.EntRolloProd_Id >= 28512
                                         orderby e.EntRolloProd_Id descending
                                         select e.EntRolloProd_Observacion).FirstOrDefault(),
@@ -128,7 +155,7 @@ namespace PlasticaribeAPI.Controllers
                                         from dt in _context.Set<DetalleEntradaRollo_Producto>()
                                         join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
                                         where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo &&
-                                               (dt.Rollo_Id == pp.Numero_Rollo || dt.Rollo_Id == pp.NumeroRollo_BagPro) &&
+                                               (dt.Rollo_Id == pp.Numero_Rollo) &&
                                                e.EntRolloProd_Id >= 28512
                                         orderby e.EntRolloProd_Id descending
                                         select e.EntRolloProd_Observacion).FirstOrDefault(),
@@ -138,13 +165,13 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("getInformationOrderFactByFactForDevolution/{fact}")]
-        public ActionResult GetInformationOrderFactByFactForDevolution(string fact)
+        public ActionResult GetInformationOrderFactByFactForDevolution(int fact)
         {
             var devolutions = from dev in _context.Set<DetalleDevolucion_ProductoFacturado>() select dev.Rollo_Id;
 
             var data = from order in _context.Set<OrdenFacturacion>()
                        join dtOrder in _context.Set<Detalles_OrdenFacturacion>() on order.Id equals dtOrder.Id_OrdenFacturacion
-                       where order.Factura == fact &&
+                       where order.Id == fact &&
                              !devolutions.Contains(dtOrder.Numero_Rollo)
                        select new
                        {
@@ -172,7 +199,8 @@ namespace PlasticaribeAPI.Controllers
                            or.Clientes,
                            or.Usuario,
                            or.Factura,
-                           Type = "Orden"
+                           Type = "Orden",
+                           Estado = or.Estado_Id == 19 ? "PENDIENTE" : "DESPACHADO"
                        };
             return fact.Any() ? Ok(fact) : NotFound();
 #pragma warning restore CS8604 // Possible null reference argument.
