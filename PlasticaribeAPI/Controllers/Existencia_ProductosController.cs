@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
-using PlasticaribeAPI.Migrations;
 using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
@@ -234,9 +233,6 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getStockProducts_AvaibleProduction")]
         public ActionResult GetStockProducts_AvaibleProduction()
         {
-            var notAvaibleProduccion = from order in _context.Set<Detalles_OrdenFacturacion>()
-                                       select order.Numero_Rollo;
-
             var stock = from prod in _context.Set<Producto>()
                         join exi in _context.Set<Existencia_Productos>() on prod.Prod_Id equals exi.Prod_Id
                         where exi.ExProd_Cantidad >= 1
@@ -279,7 +275,7 @@ namespace PlasticaribeAPI.Controllers
                                       pp.Estado_Rollo == 19 &&
                                       pp.Envio_Zeus == true &&
                                       !((from order in _context.Set<Detalles_OrdenFacturacion>()
-                                         where order.Prod_Id == pp.Prod_Id
+                                         where order.Prod_Id == pp.Prod_Id && order.OrdenFacturacion.Estado_Id != 24
                                          select order.Numero_Rollo).ToList()).Contains(pp.NumeroRollo_BagPro)
                                 select new
                                 {
@@ -298,12 +294,7 @@ namespace PlasticaribeAPI.Controllers
                                     orderProduction = pp.OT,
                                 }
                             ).ToList(),
-                            Stock_MonthByMonth = (
-                                from mm in _context.Set<Inventario_Mensual_Productos>()
-                                where mm.Prod_Id == prod.Prod_Id &&
-                                      mm.UndMed_Id == exi.UndMed_Id
-                                select mm
-                            ).ToList(),
+                            Stock_MonthByMonth = (from mm in _context.Set<Inventario_Mensual_Productos>() where mm.Prod_Id == prod.Prod_Id && mm.UndMed_Id == exi.UndMed_Id select mm).ToList(),
                         };
             return Ok(stock);
         }
@@ -328,16 +319,16 @@ namespace PlasticaribeAPI.Controllers
                             Stock = new
                             {
                                 Stock = exi.UndMed_Id == "Kg" ? (from pp in _context.Set<Produccion_Procesos>()
-                                         where pp.Prod_Id == prod.Prod_Id &&
-                                               pp.Estado_Rollo == 19 &&
-                                               pp.Envio_Zeus == false &&
-                                               pp.Proceso_Id == process
-                                         select pp.Peso_Neto).Sum() : (from pp in _context.Set<Produccion_Procesos>()
-                                                                      where pp.Prod_Id == prod.Prod_Id &&
-                                                                            pp.Estado_Rollo == 19 &&
-                                                                            pp.Envio_Zeus == false &&
-                                                                            pp.Proceso_Id == process
-                                                                      select pp.Cantidad).Sum(),
+                                                                 where pp.Prod_Id == prod.Prod_Id &&
+                                                                       pp.Estado_Rollo == 19 &&
+                                                                       pp.Envio_Zeus == false &&
+                                                                       pp.Proceso_Id == process
+                                                                 select pp.Peso_Neto).Sum() : (from pp in _context.Set<Produccion_Procesos>()
+                                                                                               where pp.Prod_Id == prod.Prod_Id &&
+                                                                                                     pp.Estado_Rollo == 19 &&
+                                                                                                     pp.Envio_Zeus == false &&
+                                                                                                     pp.Proceso_Id == process
+                                                                                               select pp.Cantidad).Sum(),
                                 Price = exi.ExProd_PrecioVenta,
                                 Presentation = exi.UndMed_Id,
                                 StockPrice = exi.ExProd_PrecioExistencia,
@@ -365,8 +356,10 @@ namespace PlasticaribeAPI.Controllers
                                 from pp in _context.Set<Produccion_Procesos>()
                                 where pp.Prod_Id == prod.Prod_Id &&
                                       pp.Estado_Rollo == 19 &&
-                                      pp.Envio_Zeus == false &&
-                                      pp.Proceso_Id == process
+                                      pp.Envio_Zeus == true &&
+                                      !((from order in _context.Set<Detalles_OrdenFacturacion>()
+                                         where order.Prod_Id == pp.Prod_Id && order.OrdenFacturacion.Estado_Id != 24
+                                         select order.Numero_Rollo).ToList()).Contains(pp.NumeroRollo_BagPro)
                                 select new
                                 {
                                     Number_BagPro = pp.NumeroRollo_BagPro,

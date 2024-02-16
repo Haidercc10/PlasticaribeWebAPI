@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Core.Metadata.Edm;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -50,7 +44,8 @@ namespace PlasticaribeAPI.Controllers
             var fact = from order in _context.Set<OrdenFacturacion>()
                        join dtOrder in _context.Set<Detalles_OrdenFacturacion>() on order.Id equals dtOrder.Id_OrdenFacturacion
                        where order.Id == id &&
-                             order.Estado_Id == 19
+                             order.Estado_Id == 19 &&
+                             dtOrder.Estado_Id == 20
                        select new
                        {
                            order = new
@@ -200,7 +195,7 @@ namespace PlasticaribeAPI.Controllers
                            or.Usuario,
                            or.Factura,
                            Type = "Orden",
-                           Estado = or.Estado_Id == 19 ? "PENDIENTE" : "DESPACHADO"
+                           Estado = or.Estado_Id == 19 ? "PENDIENTE" : or.Estado_Id == 21 ? "DESPACHADO" : "ANULADO"
                        };
             return fact.Any() ? Ok(fact) : NotFound();
 #pragma warning restore CS8604 // Possible null reference argument.
@@ -273,6 +268,31 @@ namespace PlasticaribeAPI.Controllers
                 }
             }
 
+            return NoContent();
+        }
+
+        [HttpPost("putStatusProduction/{order}")]
+        public async Task<IActionResult> PutStatusProduction([FromBody] List<long> productions, int order)
+        {
+            var dataOrder = from of in _context.Set<Detalles_OrdenFacturacion>() where of.Id_OrdenFacturacion == order && productions.Contains(of.Numero_Rollo) select of.Id;
+
+            int count = 0;
+            foreach (var item in dataOrder)
+            {
+                var detalles_OrdenFacturacion = (from of in _context.Set<Detalles_OrdenFacturacion>() where of.Id == item select of).FirstOrDefault();
+                detalles_OrdenFacturacion.Estado_Id = 24;
+                _context.Entry(detalles_OrdenFacturacion).State = EntityState.Modified;
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                count++;
+                if (count == dataOrder.Count()) return NoContent();
+            }
             return NoContent();
         }
 

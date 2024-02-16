@@ -15,9 +15,10 @@ namespace PlasticaribeAPI.Models
 
         [Precision(18, 2)]
         public decimal Cantidad { get; set; }
-
         public string Presentacion { get; set; }
         public Unidad_Medida? Und {  get; set; }
         public string? Consecutivo_Pedido { get; set; }
+        public Estado? Estados { get; set; }
+        public int Estado_Id { get; set; }
     }
 }

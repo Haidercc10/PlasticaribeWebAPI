@@ -967,6 +967,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Detalles_OrdenFacturacion>().HasOne(x => x.OrdenFacturacion).WithMany().HasForeignKey(y => y.Id_OrdenFacturacion).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalles_OrdenFacturacion>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalles_OrdenFacturacion>().HasOne(x => x.Und).WithMany().HasForeignKey(y => y.Presentacion).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_OrdenFacturacion>().HasOne(x => x.Estados).WithMany().HasForeignKey(y => y.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Conceptos Automaticos
             modelBuilder.Entity<Conceptos_Automaticos>().HasOne(x => x.TipoCpto).WithMany().HasForeignKey(y => y.TpCcpto_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);

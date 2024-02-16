@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.ServiceModel;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
-using PlasticaribeAPI.Migrations;
 using PlasticaribeAPI.Models;
 using ServiceReference1;
-using StackExchange.Redis;
+using System.ServiceModel;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -54,7 +46,7 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var data = from pp in _context.Set<Produccion_Procesos>()
-                       where pp.NumeroRollo_BagPro == production && 
+                       where pp.NumeroRollo_BagPro == production &&
                              pp.Envio_Zeus == false &&
                              (process != "TODO" ? process == "SELLA" ? (pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE") : (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP") : (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE"))
                        select new
@@ -170,12 +162,14 @@ namespace PlasticaribeAPI.Controllers
         {
             var avaibleProduction = from dev in _context.Set<DetalleDevolucion_ProductoFacturado>() where dev.Prod_Id == item select dev.Rollo_Id;
 
-            var notAvaibleProduccion = from order in _context.Set<Detalles_OrdenFacturacion>() where !avaibleProduction.Contains(order.Numero_Rollo) && order.Prod_Id == item select order.Numero_Rollo;
+            var notAvaibleProduccion = from order in _context.Set<Detalles_OrdenFacturacion>()
+                                       where !avaibleProduction.Contains(order.Numero_Rollo) && order.Prod_Id == item && order.OrdenFacturacion.Estado_Id != 3
+                                       select order.Numero_Rollo;
 
             var production = from pp in _context.Set<Produccion_Procesos>()
                              join prod in _context.Set<Producto>() on pp.Prod_Id equals prod.Prod_Id
-                             where pp.Prod_Id == item && 
-                                   pp.Estado_Rollo == 19 && 
+                             where pp.Prod_Id == item &&
+                                   pp.Estado_Rollo == 19 &&
                                    pp.Envio_Zeus == true &&
                                    !notAvaibleProduccion.Contains(pp.NumeroRollo_BagPro) &&
                                    (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE")
@@ -315,11 +309,30 @@ namespace PlasticaribeAPI.Controllers
             var endpoint = new EndpointAddress("http://192.168.0.85/wsGenericoZeus/ServiceWS.asmx");
             WebservicesGenericoZeusSoapClient client = new WebservicesGenericoZeusSoapClient(binding, endpoint);
             SoapResponse response = await client.ExecuteActionSOAPAsync(request);
-            //PutExistencia(Convert.ToInt32(articulo), presentacion, Convert.ToDecimal(costo), Convert.ToDecimal(cantidad));
-            //PutEnvioZeus(rollo);
+            PutStatusZeus(rollo, articulo);
             return Convert.ToString(response.Status) == "SUCCESS" ? Ok(response) : BadRequest(response);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+        }
+
+        [HttpPut("putStatusZeus/{rollo}")]
+        public async Task<IActionResult> PutStatusZeus(long rollo, string item)
+        {
+            var dataProduction = (from prod in _context.Set<Produccion_Procesos>() 
+                                  where prod.NumeroRollo_BagPro == rollo && prod.Prod_Id == Convert.ToInt64(item)
+                                  select prod).FirstOrDefault();
+            dataProduction.Envio_Zeus = true;
+            dataProduction.Estado_Rollo = 19;
+            _context.Entry(dataProduction).State = EntityState.Modified;
+            _context.SaveChanges();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            return NoContent();
         }
 
         //funcion que devolverá el primer rollo pesado
@@ -600,9 +613,10 @@ namespace PlasticaribeAPI.Controllers
         [HttpPut("putEstadoPorDespachar/{orden}")]
         async public Task<IActionResult> PutEstadoPorDespachar(int orden)
         {
-            var rollos = from of in _context.Set<Detalles_OrdenFacturacion>() 
+            var rollos = from of in _context.Set<Detalles_OrdenFacturacion>()
                          join pp in _context.Set<Produccion_Procesos>() on of.Numero_Rollo equals pp.NumeroRollo_BagPro
-                         where of.Id_OrdenFacturacion == orden select pp.Numero_Rollo;
+                         where of.Id_OrdenFacturacion == orden
+                         select pp.Numero_Rollo;
 
             int count = 0;
             foreach (var item in rollos)
@@ -626,13 +640,13 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("putEstadoDisponible/{devolucion}")]
-        async public Task<IActionResult> PutEstadoDisponible(int devolucion)
+        [HttpPut("putEstadoDisponible/{orden}")]
+        async public Task<IActionResult> PutEstadoDisponible(int orden)
         {
-            var rollos = from dev in _context.Set<DetalleDevolucion_ProductoFacturado>()
-                            join pp in _context.Set<Produccion_Procesos>() on dev.Rollo_Id equals pp.NumeroRollo_BagPro
-                            where dev.DevProdFact_Id == devolucion
-                            select pp.Numero_Rollo;
+            var rollos = from of in _context.Set<Detalles_OrdenFacturacion>()
+                         join pp in _context.Set<Produccion_Procesos>() on of.Numero_Rollo equals pp.NumeroRollo_BagPro
+                         where of.Id_OrdenFacturacion == orden
+                         select pp.Numero_Rollo;
 
             int count = 0;
             foreach (var item in rollos)
@@ -701,11 +715,6 @@ namespace PlasticaribeAPI.Controllers
         private bool RolloExists(long numeroRollo)
         {
             return _context.Produccion_Procesos.Any(x => x.Numero_Rollo == numeroRollo);
-        }
-
-        private bool RolloBagProExists(string proceso, long numeroRollo)
-        {
-            return _context.Produccion_Procesos.Any(x => x.NumeroRollo_BagPro == numeroRollo && x.Proceso_Id == proceso);
         }
     }
 }
