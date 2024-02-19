@@ -44,8 +44,7 @@ namespace PlasticaribeAPI.Controllers
             var fact = from order in _context.Set<OrdenFacturacion>()
                        join dtOrder in _context.Set<Detalles_OrdenFacturacion>() on order.Id equals dtOrder.Id_OrdenFacturacion
                        where order.Id == id &&
-                             order.Estado_Id == 19 &&
-                             dtOrder.Estado_Id == 20
+                             order.Estado_Id == 19
                        select new
                        {
                            order = new
@@ -151,6 +150,7 @@ namespace PlasticaribeAPI.Controllers
                                         join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
                                         where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo &&
                                                (dt.Rollo_Id == pp.Numero_Rollo) &&
+                                               dt.Estado_Id == 19 &&
                                                e.EntRolloProd_Id >= 28512
                                         orderby e.EntRolloProd_Id descending
                                         select e.EntRolloProd_Observacion).FirstOrDefault(),
@@ -195,6 +195,7 @@ namespace PlasticaribeAPI.Controllers
                            or.Usuario,
                            or.Factura,
                            Type = "Orden",
+                           FechaHora = or.Fecha + " " + or.Hora,
                            Estado = or.Estado_Id == 19 ? "PENDIENTE" : or.Estado_Id == 21 ? "DESPACHADO" : "ANULADO"
                        };
             return fact.Any() ? Ok(fact) : NotFound();
