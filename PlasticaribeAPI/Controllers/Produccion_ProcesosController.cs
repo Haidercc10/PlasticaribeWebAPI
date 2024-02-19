@@ -1,10 +1,21 @@
+
 ﻿using Microsoft.AspNetCore.Authorization;
+
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.ServiceModel;
+using System.Threading.Tasks;
+using Azure;
+using Microsoft.AspNetCore.Http;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 using ServiceReference1;
-using System.ServiceModel;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -669,6 +680,34 @@ namespace PlasticaribeAPI.Controllers
             }
             return NoContent();
         }
+
+        //.Función que recibirá los rollos a los que se les revertirá (actualizará) el Envio Zeus a 0 y el estado del rollo en 19 (Traslado)
+        [HttpPost("putReversionEnvioZeus")]
+        async public Task<IActionResult> putReversionEnvioZeus([FromBody] List<long> rolls)
+        {
+            int count = 0;
+            foreach (var roll in rolls)
+            {
+                var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.Numero_Rollo == roll select prod).FirstOrDefault();
+                dataProduction.Estado_Rollo = 19;
+                dataProduction.Envio_Zeus = false;
+                _context.Entry(dataProduction).State = EntityState.Modified;
+                _context.SaveChanges();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!RolloExists(roll)) return NotFound();
+                    else throw;
+                }
+                count++;
+                if (count == rolls.Count()) return NoContent();
+            }
+            return NoContent();
+        }
+
 
         // POST: api/Produccion_Procesos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

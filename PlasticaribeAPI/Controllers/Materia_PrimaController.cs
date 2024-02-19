@@ -212,7 +212,7 @@ namespace PlasticaribeAPI.Controllers
                            Id = bp.BoppGen_Id,
                            Nombre = bp.BoppGen_Nombre,
                            UndMedida = Convert.ToString("Kg"),
-                           Precio = Convert.ToDecimal(0),
+                           Precio = (from b in _context.Set<BOPP>() where b.BoppGen_Id == bp.BoppGen_Id orderby b.BOPP_Id descending select b.BOPP_Precio).FirstOrDefault(),  //Convert.ToDecimal(0),
                            Categoria = 6,
                            Stock = Convert.ToDecimal(0),
                        };
@@ -1137,8 +1137,27 @@ namespace PlasticaribeAPI.Controllers
                                    Referencia = mp.MatPri_Nombre,
                                    PrecioKg = mp.MatPri_Precio,
                                };
-            if (materiaPrima == null) return BadRequest("No se encontró el polietileno consultado!");
-            return Ok(materiaPrima);
+
+            var tinta = from tt in _context.Set<Tinta>()
+                        where tt.Tinta_Id != 2001
+                        select new
+                        {
+                            Item = tt.Tinta_Id,
+                            Referencia = tt.Tinta_Nombre,
+                            PrecioKg = tt.Tinta_Precio,
+                        };
+
+            var bopp = from bp in _context.Set<Bopp_Generico>()
+                       where bp.BoppGen_Id != 1
+                       select new
+                       {
+                           Item = bp.BoppGen_Id,
+                           Referencia = bp.BoppGen_Nombre,
+                           PrecioKg = (from b in _context.Set<BOPP>() where b.BoppGen_Id == bp.BoppGen_Id orderby b.BOPP_Id descending select b.BOPP_Precio).FirstOrDefault(),
+                       };
+
+            if (materiaPrima == null && tinta == null && bopp == null) return BadRequest("No se encontró el polietileno consultado!");
+            return Ok(materiaPrima.Concat(tinta).Concat(bopp));
         }
 
         // PUT: api/Materia_Prima/5

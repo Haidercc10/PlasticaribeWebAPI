@@ -37,8 +37,9 @@ namespace PlasticaribeAPI.Data
         public DbSet<PedidoExterno> Pedidos_Externos { get; set; }
         public DbSet<Existencia_Productos> Existencias_Productos { get; set; }
         public DbSet<Tipo_Estado> Tipos_Estados { get; set; }
-        public DbSet<Categoria_Insumo> Categorias_Insumos { get; set; }
-        public DbSet<Insumo> Insumos { get; set; }
+
+        //public DbSet<Categoria_Insumo> Categorias_Insumos { get; set; }
+        //public DbSet<Insumo> Insumos { get; set; }
         public DbSet<PedidoProducto> PedidosExternos_Productos { get; set; }
         public DbSet<Cliente_Producto> Clientes_Productos { get; set; }
         public DbSet<Pigmento> Pigmentos { get; set; }
@@ -188,8 +189,8 @@ namespace PlasticaribeAPI.Data
 
             //modelBuilder.Entity<Estado>().ToTable(tb => tb.HasTrigger("Auditoria_Estados"));
             modelBuilder.Entity<Estado>().HasOne<Tipo_Estado>().WithMany().HasForeignKey(Est => Est.TpEstado_Id).OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Insumo>().HasOne<Unidad_Medida>().WithMany().HasForeignKey(Ins => Ins.UndMed_Id);
-            modelBuilder.Entity<Insumo>().HasOne<Categoria_Insumo>().WithMany().HasForeignKey(Ins2 => Ins2.CatInsu_Id);
+            //modelBuilder.Entity<Insumo>().HasOne<Unidad_Medida>().WithMany().HasForeignKey(Ins => Ins.UndMed_Id);
+            //modelBuilder.Entity<Insumo>().HasOne<Categoria_Insumo>().WithMany().HasForeignKey(Ins2 => Ins2.CatInsu_Id);
 
             //Relaciones de usuarios
             modelBuilder.Entity<Usuario>().ToTable(tb => tb.HasTrigger("CrearOperarios_BagPro"));
@@ -937,6 +938,8 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Inventario_Areas>().HasOne(x => x.MatPrima).WithMany().HasForeignKey(y => y.MatPri_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Inventario_Areas>().HasOne(x => x.Proceso).WithMany().HasForeignKey(y => y.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Inventario_Areas>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Inventario_Areas>().HasOne(x => x.Bopp_Generico).WithMany().HasForeignKey(y => y.BoppGen_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Inventario_Areas>().HasOne(x => x.Tinta).WithMany().HasForeignKey(y => y.Tinta_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Produccion_Areas
             modelBuilder.Entity<Produccion_Areas>().HasOne(x => x.Proceso).WithMany().HasForeignKey(y => y.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using StackExchange.Redis;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -176,7 +177,8 @@ namespace PlasticaribeAPI.Controllers
                             (production != "" ? reel.NumeroRollo_BagPro == Convert.ToInt64(production) : true) &&
                             (orderProduction != "" ? dt.DtEntRolloProd_OT == Convert.ToInt64(orderProduction) : true) &&
                             (item != "" ? dt.Prod_Id == Convert.ToInt64(item) : true) &&
-                            ent.EntRolloProd_Id >= 28686
+                            ent.EntRolloProd_Id >= 28686 &&
+                            reel.Envio_Zeus == true
                       select new
                       {
                           ent,
@@ -185,6 +187,8 @@ namespace PlasticaribeAPI.Controllers
                           Process = dt.Proceso,
                           User = ent.Usua,
                           DetailsProduction = reel,
+                          State = reel.Estado, 
+                          StateEntry = dt.Estado
                       };
 
             return con.Any() ? Ok(con) : NotFound();
@@ -250,6 +254,77 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        //Consulta que seleccionará y cambiará el/los numero(s) de rollo(s) que se le pase(n) en el front end para cambiar su ubicacion.
+        [HttpPost("putChangeUbicationRoll/{ubication}")]
+        public async Task<IActionResult> putChangeUbicationRoll([FromBody] List<long> rolls, string ubication)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            int count = 0;
+            foreach (var roll in rolls)
+            {
+                var dataEntry = (from ent in _context.Set<EntradaRollo_Producto>()
+                                 from det in _context.Set<DetalleEntradaRollo_Producto>()
+                                 where ent.EntRolloProd_Id == det.EntRolloProd_Id &&
+                                 det.Rollo_Id == roll
+                                 select ent).FirstOrDefault();
+
+                dataEntry.EntRolloProd_Observacion = ubication;
+                _context.Entry(dataEntry).State = EntityState.Modified;
+                _context.SaveChanges();
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!RollExists(roll)) return NotFound();
+                    else throw;
+                }
+                count++;
+                if (count == rolls.Count()) return NoContent();
+            }
+            return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
+        //Consulta que seleccionará y cambiará el/los numero(s) de rollo(s) que se le pase(n) en el front end para cambiar su estado a devuelto.
+        [HttpPost("putStateReturnedRoll")]
+        public async Task<IActionResult> putStateReturnedRoll([FromBody] List<long> rolls)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            int count = 0;
+            foreach (var roll in rolls)
+            {
+                var dataEntry = (from ent in _context.Set<EntradaRollo_Producto>()
+                                 from det in _context.Set<DetalleEntradaRollo_Producto>()
+                                 where ent.EntRolloProd_Id == det.EntRolloProd_Id &&
+                                 det.Rollo_Id == roll
+                                 select det).FirstOrDefault();
+
+                if (dataEntry != null) {
+
+                    dataEntry.Estado_Id = 24;
+                    _context.Entry(dataEntry).State = EntityState.Modified;
+                    _context.SaveChanges();
+
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!RollExists(roll)) return NotFound();
+                        else throw;
+                    }
+                }
+                count++;
+                if (count == rolls.Count()) return NoContent();
+            }
+            return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
         // POST: api/DetalleEntradaRollo_Producto
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -299,6 +374,11 @@ namespace PlasticaribeAPI.Controllers
         private bool DetalleEntradaRollo_ProductoExists(long id)
         {
             return _context.DetallesEntradasRollos_Productos.Any(e => e.Codigo == id);
+        }
+
+        private bool RollExists(long roll)
+        {
+            return _context.DetallesEntradasRollos_Productos.Any(e => e.Rollo_Id == roll);
         }
     }
 }

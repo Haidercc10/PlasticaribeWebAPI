@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20240219202213_AddFields_BoppTinta_InvAreas4")]
+    partial class AddFields_BoppTinta_InvAreas4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2634,9 +2637,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<string>("Consecutivo_Pedido")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Estado_Id")
-                        .HasColumnType("int");
-
                     b.Property<int>("Id_OrdenFacturacion")
                         .HasColumnType("int");
 
@@ -2651,8 +2651,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Estado_Id");
 
                     b.HasIndex("Id_OrdenFacturacion");
 
@@ -9177,12 +9175,6 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Detalles_OrdenFacturacion", b =>
                 {
-                    b.HasOne("PlasticaribeAPI.Models.Estado", "Estados")
-                        .WithMany()
-                        .HasForeignKey("Estado_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.OrdenFacturacion", "OrdenFacturacion")
                         .WithMany()
                         .HasForeignKey("Id_OrdenFacturacion")
@@ -9200,8 +9192,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("Prod_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Estados");
 
                     b.Navigation("OrdenFacturacion");
 

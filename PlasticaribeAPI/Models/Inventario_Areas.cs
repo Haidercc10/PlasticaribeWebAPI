@@ -14,6 +14,13 @@ namespace PlasticaribeAPI.Models
         public long MatPri_Id { get; set; }
         public Materia_Prima? MatPrima { get; set; }
 
+        public long Tinta_Id { get; set; }
+        public Tinta? Tinta { get; set; }
+
+        public long BoppGen_Id { get; set; }
+        public Bopp_Generico? Bopp_Generico { get; set; }
+
+
         [Column(TypeName = "varchar(10)")]
         public string UndMed_Id { get; set; }
         public Unidad_Medida? UndMedida { get; set; }
