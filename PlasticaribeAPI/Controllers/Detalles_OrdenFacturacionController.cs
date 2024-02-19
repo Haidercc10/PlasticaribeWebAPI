@@ -196,6 +196,7 @@ namespace PlasticaribeAPI.Controllers
                            or.Factura,
                            Type = "Orden",
                            FechaHora = or.Fecha + " " + or.Hora,
+                           FechaDespacho = (from asg in _context.Set<AsignacionProducto_FacturaVenta>() where asg.NotaCredito_Id == $"Orden de Facturación #{or.Id}" select asg.AsigProdFV_Fecha).FirstOrDefault(),
                            Estado = or.Estado_Id == 19 ? "PENDIENTE" : or.Estado_Id == 21 ? "DESPACHADO" : "ANULADO"
                        };
             return fact.Any() ? Ok(fact) : NotFound();

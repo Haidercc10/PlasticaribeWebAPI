@@ -561,18 +561,13 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("ActualizacionCantMinima/{Prod_Id}")]
-        public IActionResult PutCantMinima(int Prod_Id, Existencia_Productos existencia_Productos)
+        [HttpPut("ActualizacionCantMinima/{Prod_Id}/{cantMinima}")]
+        public IActionResult PutCantMinima(int Prod_Id, decimal cantMinima)
         {
-            if (Prod_Id != existencia_Productos.Prod_Id)
-            {
-                return BadRequest();
-            }
-
             try
             {
-                var Actualizado = _context.Existencias_Productos.Where(x => x.Prod_Id == Prod_Id).First<Existencia_Productos>();
-                Actualizado.ExProd_CantMinima = existencia_Productos.ExProd_CantMinima;
+                var Actualizado = (from e in _context.Set<Existencia_Productos>() where e.Prod_Id == Prod_Id select e).FirstOrDefault();
+                Actualizado.ExProd_CantMinima = cantMinima;
                 _context.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)

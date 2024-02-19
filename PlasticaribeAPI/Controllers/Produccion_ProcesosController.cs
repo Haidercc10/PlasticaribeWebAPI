@@ -309,7 +309,7 @@ namespace PlasticaribeAPI.Controllers
             var endpoint = new EndpointAddress("http://192.168.0.85/wsGenericoZeus/ServiceWS.asmx");
             WebservicesGenericoZeusSoapClient client = new WebservicesGenericoZeusSoapClient(binding, endpoint);
             SoapResponse response = await client.ExecuteActionSOAPAsync(request);
-            PutStatusZeus(rollo, articulo);
+            if (Convert.ToString(response.Status) == "SUCCESS") PutStatusZeus(rollo, articulo);
             return Convert.ToString(response.Status) == "SUCCESS" ? Ok(response) : BadRequest(response);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
@@ -585,7 +585,7 @@ namespace PlasticaribeAPI.Controllers
         {
             var rollos = from of in _context.Set<Detalles_OrdenFacturacion>()
                          join pp in _context.Set<Produccion_Procesos>() on of.Numero_Rollo equals pp.NumeroRollo_BagPro
-                         where of.Id_OrdenFacturacion == orden
+                         where of.Id_OrdenFacturacion == orden && of.Prod_Id == pp.Prod_Id
                          select pp.Numero_Rollo;
 
             int count = 0;
@@ -615,7 +615,7 @@ namespace PlasticaribeAPI.Controllers
         {
             var rollos = from of in _context.Set<Detalles_OrdenFacturacion>()
                          join pp in _context.Set<Produccion_Procesos>() on of.Numero_Rollo equals pp.NumeroRollo_BagPro
-                         where of.Id_OrdenFacturacion == orden
+                         where of.Id_OrdenFacturacion == orden && of.Prod_Id == pp.Prod_Id
                          select pp.Numero_Rollo;
 
             int count = 0;
