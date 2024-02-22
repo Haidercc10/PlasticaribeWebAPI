@@ -1128,6 +1128,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getPolietilenos/{nombre}")]
         public ActionResult getPolietilenos(string nombre)
         {
+#pragma warning disable CS8604 // Possible null reference argument.
             var materiaPrima = from mp in _context.Set<Materia_Prima>()
                                where mp.MatPri_Id != 84
                                && mp.MatPri_Nombre.Contains(nombre)
@@ -1161,6 +1162,7 @@ namespace PlasticaribeAPI.Controllers
 
             if (materiaPrima == null && tinta == null && bopp == null) return BadRequest("No se encontró la materia prima consultada!");
             return Ok(materiaPrima.Concat(tinta).Concat(bopp));
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
         // PUT: api/Materia_Prima/5

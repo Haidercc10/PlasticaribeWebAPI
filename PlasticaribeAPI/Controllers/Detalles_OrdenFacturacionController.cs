@@ -196,7 +196,7 @@ namespace PlasticaribeAPI.Controllers
                            or.Factura,
                            Type = "Orden",
                            FechaHora = or.Fecha + " " + or.Hora,
-                           FechaDespacho = (from asg in _context.Set<AsignacionProducto_FacturaVenta>() where asg.NotaCredito_Id == $"Orden de Facturación #{or.Id}" select asg.AsigProdFV_Fecha).FirstOrDefault(),
+                           FechaDespacho = (from asg in _context.Set<AsignacionProducto_FacturaVenta>() where asg.NotaCredito_Id == "Orden de Facturación #" + or.Id select asg.AsigProdFV_Fecha).FirstOrDefault(),
                            Estado = or.Estado_Id == 19 ? "PENDIENTE" : or.Estado_Id == 21 ? "DESPACHADO" : "ANULADO"
                        };
             return fact.Any() ? Ok(fact) : NotFound();
@@ -276,14 +276,13 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost("putStatusProduction/{order}")]
         public async Task<IActionResult> PutStatusProduction([FromBody] List<long> productions, int order)
         {
-            var dataOrder = from of in _context.Set<Detalles_OrdenFacturacion>() where of.Id_OrdenFacturacion == order && productions.Contains(of.Numero_Rollo) select of.Id;
+            var dataOrder = from of in _context.Set<Detalles_OrdenFacturacion>() where of.Id_OrdenFacturacion == order && productions.Contains(of.Numero_Rollo) select of;
 
             int count = 0;
             foreach (var item in dataOrder)
             {
-                var detalles_OrdenFacturacion = (from of in _context.Set<Detalles_OrdenFacturacion>() where of.Id == item select of).FirstOrDefault();
-                detalles_OrdenFacturacion.Estado_Id = 24;
-                _context.Entry(detalles_OrdenFacturacion).State = EntityState.Modified;
+                item.Estado_Id = 24;
+                _context.Entry(item).State = EntityState.Modified;
                 try
                 {
                     await _context.SaveChangesAsync();

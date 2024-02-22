@@ -1,19 +1,10 @@
-
-﻿using Microsoft.AspNetCore.Authorization;
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.ServiceModel;
-using System.Threading.Tasks;
-using Azure;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 using ServiceReference1;
+using System.ServiceModel;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -595,14 +586,13 @@ namespace PlasticaribeAPI.Controllers
             var rollos = from of in _context.Set<Detalles_OrdenFacturacion>()
                          join pp in _context.Set<Produccion_Procesos>() on of.Numero_Rollo equals pp.NumeroRollo_BagPro
                          where of.Id_OrdenFacturacion == orden && of.Prod_Id == pp.Prod_Id
-                         select pp.Numero_Rollo;
+                         select pp;
 
             int count = 0;
             foreach (var item in rollos)
             {
-                var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.Numero_Rollo == item select prod).FirstOrDefault();
-                dataProduction.Estado_Rollo = 23;
-                _context.Entry(dataProduction).State = EntityState.Modified;
+                item.Estado_Rollo = 23;
+                _context.Entry(item).State = EntityState.Modified;
                 _context.SaveChanges();
                 try
                 {
@@ -610,8 +600,7 @@ namespace PlasticaribeAPI.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RolloExists(item)) return NotFound();
-                    else throw;
+                    throw;
                 }
                 count++;
                 if (count == rollos.Count()) return NoContent();
@@ -625,14 +614,13 @@ namespace PlasticaribeAPI.Controllers
             var rollos = from of in _context.Set<Detalles_OrdenFacturacion>()
                          join pp in _context.Set<Produccion_Procesos>() on of.Numero_Rollo equals pp.NumeroRollo_BagPro
                          where of.Id_OrdenFacturacion == orden && of.Prod_Id == pp.Prod_Id
-                         select pp.Numero_Rollo;
+                         select pp;
 
             int count = 0;
             foreach (var item in rollos)
             {
-                var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.Numero_Rollo == item select prod).FirstOrDefault();
-                dataProduction.Estado_Rollo = 20;
-                _context.Entry(dataProduction).State = EntityState.Modified;
+                item.Estado_Rollo = 20;
+                _context.Entry(item).State = EntityState.Modified;
                 _context.SaveChanges();
                 try
                 {
@@ -640,8 +628,7 @@ namespace PlasticaribeAPI.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RolloExists(item)) return NotFound();
-                    else throw;
+                    throw;
                 }
                 count++;
                 if (count == rollos.Count()) return NoContent();
@@ -655,14 +642,13 @@ namespace PlasticaribeAPI.Controllers
             var rollos = from of in _context.Set<Detalles_OrdenFacturacion>()
                          join pp in _context.Set<Produccion_Procesos>() on of.Numero_Rollo equals pp.NumeroRollo_BagPro
                          where of.Id_OrdenFacturacion == orden
-                         select pp.Numero_Rollo;
+                         select pp;
 
             int count = 0;
             foreach (var item in rollos)
             {
-                var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.Numero_Rollo == item select prod).FirstOrDefault();
-                dataProduction.Estado_Rollo = 19;
-                _context.Entry(dataProduction).State = EntityState.Modified;
+                item.Estado_Rollo = 19;
+                _context.Entry(item).State = EntityState.Modified;
                 _context.SaveChanges();
                 try
                 {
@@ -670,7 +656,7 @@ namespace PlasticaribeAPI.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RolloExists(item)) return NotFound();
+                    if (!RolloExists(item.Numero_Rollo)) return NotFound();
                     else throw;
                 }
                 count++;

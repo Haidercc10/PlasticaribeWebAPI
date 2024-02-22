@@ -12,15 +12,15 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    [Migration("20240219205112_AddFields_BoppTinta_InvAreas5")]
-    partial class AddFields_BoppTinta_InvAreas5
+    [Migration("20240222172332_NominaDetalladaPlasticaribe")]
+    partial class NominaDetalladaPlasticaribe
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -2637,6 +2637,9 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<string>("Consecutivo_Pedido")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Estado_Id")
+                        .HasColumnType("int");
+
                     b.Property<int>("Id_OrdenFacturacion")
                         .HasColumnType("int");
 
@@ -2651,6 +2654,8 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Estado_Id");
 
                     b.HasIndex("Id_OrdenFacturacion");
 
@@ -4604,6 +4609,272 @@ namespace PlasticaribeAPI.Migrations
                     b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
                 });
 
+            modelBuilder.Entity("PlasticaribeAPI.Models.NominaDetallada_Plasticaribe", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("AFP")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(38);
+
+                    b.Property<decimal>("Ahorro")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(39);
+
+                    b.Property<decimal>("Anticipo")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(41);
+
+                    b.Property<decimal>("AuxTransporte")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(32);
+
+                    b.Property<long>("Creador_Id")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(50);
+
+                    b.Property<decimal>("Dctos")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(44);
+
+                    b.Property<decimal>("Deducciones")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(45);
+
+                    b.Property<decimal>("Devengado")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(36);
+
+                    b.Property<int>("DiasAusente")
+                        .HasColumnType("int")
+                        .HasColumnOrder(6);
+
+                    b.Property<int>("DiasIncapAT")
+                        .HasColumnType("int")
+                        .HasColumnOrder(12);
+
+                    b.Property<int>("DiasIncapEG")
+                        .HasColumnType("int")
+                        .HasColumnOrder(10);
+
+                    b.Property<int>("DiasIncapPATMAT")
+                        .HasColumnType("int")
+                        .HasColumnOrder(14);
+
+                    b.Property<int>("DiasPagar")
+                        .HasColumnType("int")
+                        .HasColumnOrder(7);
+
+                    b.Property<decimal>("EPS")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(37);
+
+                    b.Property<int?>("Estado_Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Estado_Nomina")
+                        .HasColumnType("int")
+                        .HasColumnOrder(49);
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("date")
+                        .HasColumnOrder(51);
+
+                    b.Property<string>("Hora")
+                        .IsRequired()
+                        .HasPrecision(18, 2)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnOrder(52);
+
+                    b.Property<int>("HorasADCDiurnas")
+                        .HasColumnType("int")
+                        .HasColumnOrder(16);
+
+                    b.Property<int>("HorasExtDiuernasDom")
+                        .HasColumnType("int")
+                        .HasColumnOrder(20);
+
+                    b.Property<int>("HorasExtNocturnasDom")
+                        .HasColumnType("int")
+                        .HasColumnOrder(24);
+
+                    b.Property<int>("HorasNoctDom")
+                        .HasColumnType("int")
+                        .HasColumnOrder(18);
+
+                    b.Property<int>("HorasPagar")
+                        .HasColumnType("int")
+                        .HasColumnOrder(8);
+
+                    b.Property<int>("HorasRecargo035")
+                        .HasColumnType("int")
+                        .HasColumnOrder(22);
+
+                    b.Property<int>("HorasRecargo075")
+                        .HasColumnType("int")
+                        .HasColumnOrder(26);
+
+                    b.Property<int>("HorasRecargo100")
+                        .HasColumnType("int")
+                        .HasColumnOrder(28);
+
+                    b.Property<long>("Id_Trabajador")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(2);
+
+                    b.Property<string>("Novedades")
+                        .IsRequired()
+                        .HasColumnType("varchar(max)")
+                        .HasColumnOrder(47);
+
+                    b.Property<decimal>("PagoPTESemanaAnt")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(43);
+
+                    b.Property<DateTime>("PeriodoFin")
+                        .HasColumnType("date")
+                        .HasColumnOrder(5);
+
+                    b.Property<DateTime>("PeriodoInicio")
+                        .HasColumnType("date")
+                        .HasColumnOrder(4);
+
+                    b.Property<decimal>("Prestamo")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(40);
+
+                    b.Property<decimal>("ProductividadExt")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(34);
+
+                    b.Property<decimal>("ProductividadMontaje")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(35);
+
+                    b.Property<decimal>("ProductividadSella")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(33);
+
+                    b.Property<decimal>("SalarioBase")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(3);
+
+                    b.Property<decimal>("TarifaADC")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(30);
+
+                    b.Property<int>("TipoNomina")
+                        .HasColumnType("int")
+                        .HasColumnOrder(48);
+
+                    b.Property<decimal>("TotalDcto")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(42);
+
+                    b.Property<decimal>("TotalPagar")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(46);
+
+                    b.Property<decimal>("ValorADCDiurnas")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(17);
+
+                    b.Property<decimal>("ValorDiasPagar")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(9);
+
+                    b.Property<decimal>("ValorExtDiuernasDom")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(21);
+
+                    b.Property<decimal>("ValorExtNocturnasDom")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(25);
+
+                    b.Property<decimal>("ValorIncapAT")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(13);
+
+                    b.Property<decimal>("ValorIncapEG")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(11);
+
+                    b.Property<decimal>("ValorIncapPATMAT")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(15);
+
+                    b.Property<decimal>("ValorNoctDom")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(19);
+
+                    b.Property<decimal>("ValorRecargo035")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(23);
+
+                    b.Property<decimal>("ValorRecargo075")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(27);
+
+                    b.Property<decimal>("ValorRecargo100")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(29);
+
+                    b.Property<decimal>("ValorTotalADCComp")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(31);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Creador_Id");
+
+                    b.HasIndex("Estado_Id");
+
+                    b.HasIndex("Estado_Nomina");
+
+                    b.HasIndex("Id_Trabajador");
+
+                    b.ToTable("NominaDetallada_Plasticaribe", t =>
+                        {
+                            t.HasTrigger("Auditoria_NominaDetallada_Plasticaribe");
+                        });
+
+                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
+                });
+
             modelBuilder.Entity("PlasticaribeAPI.Models.Nomina_Plasticaribe", b =>
                 {
                     b.Property<int>("Nomina_Id")
@@ -5592,6 +5863,91 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("PreEntrega_RollosDespacho");
                 });
 
+            modelBuilder.Entity("PlasticaribeAPI.Models.Prestamos", b =>
+                {
+                    b.Property<long>("Ptm_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(1);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Ptm_Id"));
+
+                    b.Property<long>("Creador_Id")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(12);
+
+                    b.Property<int>("Estado_Id")
+                        .HasColumnType("int")
+                        .HasColumnOrder(8);
+
+                    b.Property<DateTime>("Ptm_Fecha")
+                        .HasColumnType("date")
+                        .HasColumnOrder(13);
+
+                    b.Property<DateTime>("Ptm_FechaPlazo")
+                        .HasColumnType("date")
+                        .HasColumnOrder(9);
+
+                    b.Property<DateTime?>("Ptm_FechaUltCuota")
+                        .IsRequired()
+                        .HasColumnType("date")
+                        .HasColumnOrder(10);
+
+                    b.Property<string>("Ptm_Hora")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)")
+                        .HasColumnOrder(14);
+
+                    b.Property<string>("Ptm_Observacion")
+                        .IsRequired()
+                        .HasColumnType("varchar(max)")
+                        .HasColumnOrder(11);
+
+                    b.Property<decimal>("Ptm_PctjeCuota")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(7);
+
+                    b.Property<decimal>("Ptm_Valor")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(3);
+
+                    b.Property<decimal>("Ptm_ValorCancelado")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(5);
+
+                    b.Property<decimal>("Ptm_ValorCuota")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(6);
+
+                    b.Property<decimal>("Ptm_ValorDeuda")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(4);
+
+                    b.Property<long>("Usua_Id")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("Ptm_Id");
+
+                    b.HasIndex("Creador_Id");
+
+                    b.HasIndex("Estado_Id");
+
+                    b.HasIndex("Usua_Id");
+
+                    b.ToTable("Prestamos", t =>
+                        {
+                            t.HasTrigger("Auditoria_Prestamos");
+                        });
+
+                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
+                });
+
             modelBuilder.Entity("PlasticaribeAPI.Models.Proceso", b =>
                 {
                     b.Property<string>("Proceso_Id")
@@ -6564,6 +6920,56 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Rollos_Desechos", t =>
                         {
                             t.HasTrigger("Auditoria_Rollos_Desechos");
+                        });
+
+                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
+                });
+
+            modelBuilder.Entity("PlasticaribeAPI.Models.SalariosTrabajadores", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("AFPMensual")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(6);
+
+                    b.Property<decimal>("AhorroTotal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(7);
+
+                    b.Property<decimal>("AuxilioTransp")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(4);
+
+                    b.Property<decimal>("EPSMensual")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(5);
+
+                    b.Property<long>("Id_Trabajador")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(2);
+
+                    b.Property<decimal>("SalarioBase")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id_Trabajador");
+
+                    b.ToTable("SalariosTrabajadores", t =>
+                        {
+                            t.HasTrigger("Auditoria_SalariosTrabajadores");
                         });
 
                     b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
@@ -9175,6 +9581,12 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Detalles_OrdenFacturacion", b =>
                 {
+                    b.HasOne("PlasticaribeAPI.Models.Estado", "Estados")
+                        .WithMany()
+                        .HasForeignKey("Estado_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("PlasticaribeAPI.Models.OrdenFacturacion", "OrdenFacturacion")
                         .WithMany()
                         .HasForeignKey("Id_OrdenFacturacion")
@@ -9192,6 +9604,8 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("Prod_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Estados");
 
                     b.Navigation("OrdenFacturacion");
 
@@ -10086,6 +10500,39 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Unidad_Medida");
                 });
 
+            modelBuilder.Entity("PlasticaribeAPI.Models.NominaDetallada_Plasticaribe", b =>
+                {
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Creador")
+                        .WithMany()
+                        .HasForeignKey("Creador_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Estado", "Estado")
+                        .WithMany()
+                        .HasForeignKey("Estado_Id");
+
+                    b.HasOne("PlasticaribeAPI.Models.Tipos_Nomina", "TiposNomina")
+                        .WithMany()
+                        .HasForeignKey("Estado_Nomina")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Trabajador")
+                        .WithMany()
+                        .HasForeignKey("Id_Trabajador")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Creador");
+
+                    b.Navigation("Estado");
+
+                    b.Navigation("TiposNomina");
+
+                    b.Navigation("Trabajador");
+                });
+
             modelBuilder.Entity("PlasticaribeAPI.Models.Nomina_Plasticaribe", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.Tipos_Nomina", "Tipos_Nomina")
@@ -10600,6 +11047,33 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("PlasticaribeAPI.Models.Prestamos", b =>
+                {
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Creador")
+                        .WithMany()
+                        .HasForeignKey("Creador_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Estado", "Estado")
+                        .WithMany()
+                        .HasForeignKey("Estado_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("Usua_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Creador");
+
+                    b.Navigation("Estado");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("PlasticaribeAPI.Models.Produccion_Areas", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.Proceso", "Proceso")
@@ -11109,6 +11583,17 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Turno");
 
                     b.Navigation("UndMedida");
+                });
+
+            modelBuilder.Entity("PlasticaribeAPI.Models.SalariosTrabajadores", b =>
+                {
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Trabajador")
+                        .WithMany()
+                        .HasForeignKey("Id_Trabajador")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Trabajador");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.SedesClientes", b =>

@@ -174,6 +174,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<BodegasDespacho> BodegasDespacho { get; set; } = default!;
         public DbSet<ReImpresionEtiquetas> ReImpresionEtiquetas { get; set; }
         public DbSet<Prestamos> Prestamos { get; set; }
+        public DbSet<NominaDetallada_Plasticaribe> NominaDetallada_Plasticaribe { get; set; }
+        public DbSet<SalariosTrabajadores> SalariosTrabajadores { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -980,8 +982,22 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<ReImpresionEtiquetas>().HasOne(x => x.Proceso).WithMany().HasForeignKey(y => y.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<ReImpresionEtiquetas>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            //Prestamos
+            modelBuilder.Entity<Prestamos>().ToTable(tb => tb.HasTrigger("Auditoria_Prestamos"));
             modelBuilder.Entity<Prestamos>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
-            modelBuilder.Entity<Prestamos>().HasOne(x => x.Usuario2).WithMany().HasForeignKey(y => y.Usua_Creador).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Prestamos>().HasOne(x => x.Creador).WithMany().HasForeignKey(y => y.Creador_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Prestamos>().HasOne(x => x.Estado).WithMany().HasForeignKey(y => y.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //NominaDetallada_Plasticaribe
+            modelBuilder.Entity<NominaDetallada_Plasticaribe>().ToTable(tb => tb.HasTrigger("Auditoria_NominaDetallada_Plasticaribe"));
+            modelBuilder.Entity<NominaDetallada_Plasticaribe>().HasOne(x => x.Trabajador).WithMany().HasForeignKey(y => y.Id_Trabajador).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<NominaDetallada_Plasticaribe>().HasOne(x => x.TiposNomina).WithMany().HasForeignKey(y => y.TipoNomina).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<NominaDetallada_Plasticaribe>().HasOne(x => x.TiposNomina).WithMany().HasForeignKey(y => y.Estado_Nomina).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<NominaDetallada_Plasticaribe>().HasOne(x => x.Creador).WithMany().HasForeignKey(y => y.Creador_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //SalariosTrabajadores
+            modelBuilder.Entity<SalariosTrabajadores>().ToTable(tb => tb.HasTrigger("Auditoria_SalariosTrabajadores"));
+            modelBuilder.Entity<SalariosTrabajadores>().HasOne(x => x.Trabajador).WithMany().HasForeignKey(y => y.Id_Trabajador).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
