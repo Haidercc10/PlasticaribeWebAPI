@@ -173,6 +173,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<Tipos_Conceptos> Tipos_Conceptos { get; set; }
         public DbSet<BodegasDespacho> BodegasDespacho { get; set; } = default!;
         public DbSet<ReImpresionEtiquetas> ReImpresionEtiquetas { get; set; }
+        public DbSet<Prestamos> Prestamos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -978,6 +979,9 @@ namespace PlasticaribeAPI.Data
             //ReImpresionEtiquetas
             modelBuilder.Entity<ReImpresionEtiquetas>().HasOne(x => x.Proceso).WithMany().HasForeignKey(y => y.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<ReImpresionEtiquetas>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Prestamos>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Prestamos>().HasOne(x => x.Usuario2).WithMany().HasForeignKey(y => y.Usua_Creador).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));

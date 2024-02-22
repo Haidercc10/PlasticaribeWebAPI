@@ -1,6 +1,5 @@
 
 ﻿using Microsoft.AspNetCore.Authorization;
-
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,7 +8,6 @@ using System.ServiceModel;
 using System.Threading.Tasks;
 using Azure;
 using Microsoft.AspNetCore.Http;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;

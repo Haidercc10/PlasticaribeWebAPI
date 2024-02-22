@@ -1136,6 +1136,7 @@ namespace PlasticaribeAPI.Controllers
                                    Item = mp.MatPri_Id,
                                    Referencia = mp.MatPri_Nombre,
                                    PrecioKg = mp.MatPri_Precio,
+                                   Categoria = mp.CatMP_Id,
                                };
 
             var tinta = from tt in _context.Set<Tinta>()
@@ -1145,6 +1146,7 @@ namespace PlasticaribeAPI.Controllers
                             Item = tt.Tinta_Id,
                             Referencia = tt.Tinta_Nombre,
                             PrecioKg = tt.Tinta_Precio,
+                            Categoria = tt.CatMP_Id,
                         };
 
             var bopp = from bp in _context.Set<Bopp_Generico>()
@@ -1154,9 +1156,10 @@ namespace PlasticaribeAPI.Controllers
                            Item = bp.BoppGen_Id,
                            Referencia = bp.BoppGen_Nombre,
                            PrecioKg = (from b in _context.Set<BOPP>() where b.BoppGen_Id == bp.BoppGen_Id orderby b.BOPP_Id descending select b.BOPP_Precio).FirstOrDefault(),
+                           Categoria = (from b in _context.Set<BOPP>() where b.BoppGen_Id == bp.BoppGen_Id orderby b.BOPP_Id descending select b.CatMP_Id).FirstOrDefault(),
                        };
 
-            if (materiaPrima == null && tinta == null && bopp == null) return BadRequest("No se encontró el polietileno consultado!");
+            if (materiaPrima == null && tinta == null && bopp == null) return BadRequest("No se encontró la materia prima consultada!");
             return Ok(materiaPrima.Concat(tinta).Concat(bopp));
         }
 
