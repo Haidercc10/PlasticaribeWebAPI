@@ -255,7 +255,7 @@ namespace PlasticaribeAPI.Controllers
                                 from est in _context.Set<Estados_ProcesosOT>()
                                 join vende in _context.Set<Usuario>() on est.Usua_Id equals vende.Usua_Id
                                 where prod.Prod_Id == est.Prod_Id
-                                orderby est.Estado_Id descending
+                                orderby est.EstProcOT_OrdenTrabajo descending
                                 select new
                                 {
                                     cli = new
@@ -269,14 +269,14 @@ namespace PlasticaribeAPI.Controllers
                                         Name_Vende = vende.Usua_Nombre,
                                     }
                                 }
-                            ).ToList(),
+                            ).FirstOrDefault(),
                             Avaible_Production = (
                                 from pp in _context.Set<Produccion_Procesos>()
                                 where pp.Prod_Id == prod.Prod_Id &&
                                       pp.Estado_Rollo == 19 &&
                                       pp.Envio_Zeus == true &&
                                       !((from order in _context.Set<Detalles_OrdenFacturacion>()
-                                         where order.Prod_Id == pp.Prod_Id && order.OrdenFacturacion.Estado_Id != 24
+                                         where order.Prod_Id == pp.Prod_Id && order.OrdenFacturacion.Estado_Id != 3
                                          select order.Numero_Rollo).ToList()).Contains(pp.NumeroRollo_BagPro)
                                 select new
                                 {
@@ -294,7 +294,8 @@ namespace PlasticaribeAPI.Controllers
                                     Information = (from dt in _context.Set<DetalleEntradaRollo_Producto>()
                                                    join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
                                                    where (dt.Rollo_Id == pp.Numero_Rollo) &&
-                                                          e.EntRolloProd_Id >= 28512
+                                                          e.EntRolloProd_Fecha >= Convert.ToDateTime("2024-02-04") &&
+                                                          dt.Prod_Id == pp.Prod_Id
                                                    orderby e.EntRolloProd_Id descending
                                                    select e.EntRolloProd_Observacion).FirstOrDefault(),
                                     orderProduction = pp.OT,
@@ -341,7 +342,7 @@ namespace PlasticaribeAPI.Controllers
                                         from est in _context.Set<Estados_ProcesosOT>()
                                         join vende in _context.Set<Usuario>() on est.Usua_Id equals vende.Usua_Id
                                         where pp.Key.Item == est.Prod_Id
-                                        orderby est.Estado_Id descending
+                                        orderby est.EstProcOT_OrdenTrabajo descending
                                         select new
                                         {
                                             cli = new
@@ -355,7 +356,7 @@ namespace PlasticaribeAPI.Controllers
                                                 Name_Vende = vende.Usua_Nombre,
                                             }
                                         }
-                                      ).ToList(),
+                                      ).FirstOrDefault(),
                                       Avaible_Production = (
                                         from pp2 in _context.Set<Produccion_Procesos>()
                                         where pp2.Prod_Id == pp.Key.Item &&
@@ -363,7 +364,7 @@ namespace PlasticaribeAPI.Controllers
                                               pp2.Envio_Zeus == false &&
                                               pp2.Fecha >= Convert.ToDateTime("2024-02-04") &&
                                               !((from order in _context.Set<Detalles_OrdenFacturacion>()
-                                                 where order.Prod_Id == pp2.Prod_Id && order.OrdenFacturacion.Estado_Id != 24
+                                                 where order.Prod_Id == pp2.Prod_Id && order.OrdenFacturacion.Estado_Id != 3
                                                  select order.Numero_Rollo).ToList()).Contains(pp2.NumeroRollo_BagPro)
                                         select new
                                         {
@@ -384,83 +385,6 @@ namespace PlasticaribeAPI.Controllers
                                       ).ToList(),
                                       Stock_MonthByMonth = (from mm in _context.Set<Inventario_Mensual_Productos>() where mm.Prod_Id == pp.Key.Item && mm.UndMed_Id == pp.Key.Presentation select mm).ToList(),
                                   };
-
-            var stock = from prod in _context.Set<Producto>()
-                        join exi in _context.Set<Existencia_Productos>() on prod.Prod_Id equals exi.Prod_Id
-                        where exi.ExProd_Cantidad > 1 &&
-                              products.Contains(prod.Prod_Id)
-                        select new
-                        {
-                            Product = new
-                            {
-                                Item = prod.Prod_Id,
-                                Reference = prod.Prod_Nombre,
-                            },
-                            Stock = new
-                            {
-                                Stock = exi.UndMed_Id == "Kg" ? (from pp in _context.Set<Produccion_Procesos>()
-                                                                 where pp.Prod_Id == prod.Prod_Id &&
-                                                                       pp.Estado_Rollo == 19 &&
-                                                                       pp.Envio_Zeus == false &&
-                                                                       pp.Proceso_Id == process &&
-                                                                       pp.Fecha >= Convert.ToDateTime("2024-02-04")
-                                                                 select pp.Peso_Neto).Sum() : (from pp in _context.Set<Produccion_Procesos>()
-                                                                                               where pp.Prod_Id == prod.Prod_Id &&
-                                                                                                     pp.Estado_Rollo == 19 &&
-                                                                                                     pp.Envio_Zeus == false &&
-                                                                                                     pp.Proceso_Id == process &&
-                                                                                                     pp.Fecha >= Convert.ToDateTime("2024-02-04")
-                                                                                               select pp.Cantidad).Sum(),
-                                Price = exi.ExProd_PrecioVenta,
-                                Presentation = exi.UndMed_Id,
-                                StockPrice = exi.ExProd_PrecioExistencia,
-                            },
-                            Client = (
-                                from est in _context.Set<Estados_ProcesosOT>()
-                                join vende in _context.Set<Usuario>() on est.Usua_Id equals vende.Usua_Id
-                                where prod.Prod_Id == est.Prod_Id
-                                orderby est.Estado_Id descending
-                                select new
-                                {
-                                    cli = new
-                                    {
-                                        Id_Client = 1,
-                                        Client = est.EstProcOT_Cliente,
-                                    },
-                                    vende = new
-                                    {
-                                        Id_Vende = vende.Usua_Id,
-                                        Name_Vende = vende.Usua_Nombre,
-                                    }
-                                }
-                            ).ToList(),
-                            Avaible_Production = (
-                                from pp in _context.Set<Produccion_Procesos>()
-                                where pp.Prod_Id == prod.Prod_Id &&
-                                      pp.Estado_Rollo == 19 &&
-                                      pp.Envio_Zeus == false &&
-                                      !((from order in _context.Set<Detalles_OrdenFacturacion>()
-                                         where order.Prod_Id == pp.Prod_Id && order.OrdenFacturacion.Estado_Id != 24
-                                         select order.Numero_Rollo).ToList()).Contains(pp.NumeroRollo_BagPro)
-                                select new
-                                {
-                                    Number_BagPro = pp.NumeroRollo_BagPro,
-                                    Number = pp.Numero_Rollo,
-                                    Quantity = pp.Cantidad,
-                                    Weight = pp.Peso_Neto,
-                                    Presentation = pp.Presentacion,
-                                    Process = pp.Proceso.Proceso_Nombre,
-                                    Date = pp.Fecha,
-                                    Hour = pp.Hora,
-                                    Price = pp.Precio,
-                                    SellPrice = pp.PrecioVenta_Producto,
-                                    Turn = pp.Turno,
-                                    Information = pp.Datos_Etiqueta,
-                                    orderProduction = pp.OT,
-                                }
-                            ).ToList(),
-                            Stock_MonthByMonth = (from mm in _context.Set<Inventario_Mensual_Productos>() where mm.Prod_Id == prod.Prod_Id && mm.UndMed_Id == exi.UndMed_Id select mm).ToList(),
-                        };
             return Ok(stockNotAvaible);
         }
 

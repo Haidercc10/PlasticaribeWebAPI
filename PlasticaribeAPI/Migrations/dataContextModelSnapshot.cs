@@ -4700,7 +4700,7 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("int")
                         .HasColumnOrder(16);
 
-                    b.Property<int>("HorasExtDiuernasDom")
+                    b.Property<int>("HorasExtDiurnasDom")
                         .HasColumnType("int")
                         .HasColumnOrder(20);
 
@@ -4804,7 +4804,7 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnOrder(9);
 
-                    b.Property<decimal>("ValorExtDiuernasDom")
+                    b.Property<decimal>("ValorExtDiurnasDom")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)")
                         .HasColumnOrder(21);

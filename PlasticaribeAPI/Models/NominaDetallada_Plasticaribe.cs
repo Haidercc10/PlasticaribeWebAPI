@@ -65,10 +65,10 @@ namespace PlasticaribeAPI.Models
         public decimal ValorNoctDom { get; set; }
 
         [Column(Order = 20), Required]
-        public int HorasExtDiuernasDom { get; set; }
+        public int HorasExtDiurnasDom { get; set; }
 
         [Column(Order = 21), Required, Precision(18, 2)]
-        public decimal ValorExtDiuernasDom { get; set; }
+        public decimal ValorExtDiurnasDom { get; set; }
 
         [Column(Order = 22), Required]
         public int HorasRecargo035 { get; set; }

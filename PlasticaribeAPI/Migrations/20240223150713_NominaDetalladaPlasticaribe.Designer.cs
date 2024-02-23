@@ -12,7 +12,7 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    [Migration("20240222172332_NominaDetalladaPlasticaribe")]
+    [Migration("20240223150713_NominaDetalladaPlasticaribe")]
     partial class NominaDetalladaPlasticaribe
     {
         /// <inheritdoc />
@@ -4703,7 +4703,7 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("int")
                         .HasColumnOrder(16);
 
-                    b.Property<int>("HorasExtDiuernasDom")
+                    b.Property<int>("HorasExtDiurnasDom")
                         .HasColumnType("int")
                         .HasColumnOrder(20);
 
@@ -4807,7 +4807,7 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnOrder(9);
 
-                    b.Property<decimal>("ValorExtDiuernasDom")
+                    b.Property<decimal>("ValorExtDiurnasDom")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)")
                         .HasColumnOrder(21);
