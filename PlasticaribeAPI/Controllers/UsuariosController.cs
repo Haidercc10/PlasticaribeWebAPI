@@ -218,6 +218,58 @@ namespace PlasticaribeAPI.Controllers
             return operarios.Any() ? Ok(operarios) : NotFound();
         }
 
+        [HttpGet("getTrabajadores/{starDate}/{endDate}/{areas}")]
+        public ActionResult GetTrabajadores(DateTime starDate, DateTime endDate, List<int> areas)
+        {
+            long[] areas = [1,3,4,6,7,8,9,10,11,12,19,20,21,22,25,28,29,30,31,32];
+
+            var workers = from u in _context.Set<Usuario>()
+                          join a in _context.Set<Area>() on u.Area_Id equals a.Area_Id
+                          join st in _context.Set<SalariosTrabajadores>() on u.Usua_Id equals st.Id_Trabajador
+                          where areas.Contains(u.Area_Id) &&
+                                u.Estado_Id == 1
+                          select new
+                          {
+                              Identification = u.Usua_Id,
+                              Name = u.Usua_Nombre,
+                              a.Area_Id,
+                              a.Area_Nombre,
+                              BaseSalary = st.SalarioBase,
+                              TransportAsistance = st.AuxilioTransp,
+                              Eps = st.EPSMensual,
+                              Afp = st.AFPMensual,
+                              Saving = st.AhorroTotal,
+                              Loan = (from l in _context.Set<Prestamos>()
+                                      where l.Usua_Id == u.Usua_Id &&
+                                            l.Estado_Id == 11
+                                      select new
+                                      {
+                                          TotalLoan = l.Ptm_Valor,
+                                          DebtValue = l.Ptm_ValorDeuda,
+                                          TotalPay = l.Ptm_ValorCancelado,
+                                          ValueQuota = l.Ptm_ValorCuota,
+                                          PercentageQuota = l.Ptm_PctjeCuota,
+                                          FinalDate = l.Ptm_FechaPlazo,
+                                          LastPay = l.Ptm_FechaUltCuota,
+                                      }).ToList(),
+                              Disability = (from d in _context.Set<Incapacidades>()
+                                            where d.FechaInicio >= starDate &&
+                                                  d.FechaFin <= endDate &&
+                                                  d.Id_Trabajador == u.Usua_Id
+                                            select new
+                                            {
+                                                StartDate = d.FechaInicio,
+                                                EndDate = d.FechaFin,
+                                                QuantityDays = d.CantDias,
+                                                TotalToPay = d.TotalPagar,
+                                                Id_TypeDisability = d.Id_TipoIncapacidad,
+                                                TypeDisability = d.TipoIncapacidad.Nombre,
+                                                Observation = d.Observacion
+                                            }).ToList(),
+                          };
+            return Ok(workers);
+        }
+
         // PUT: api/Usuarios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

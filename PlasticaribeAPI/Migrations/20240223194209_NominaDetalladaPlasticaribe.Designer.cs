@@ -12,7 +12,7 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    [Migration("20240223150713_NominaDetalladaPlasticaribe")]
+    [Migration("20240223194209_NominaDetalladaPlasticaribe")]
     partial class NominaDetalladaPlasticaribe
     {
         /// <inheritdoc />
@@ -3709,6 +3709,74 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Formato_Documentos", t =>
                         {
                             t.HasTrigger("Auditoria_Formato_Documentos");
+                        });
+
+                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
+                });
+
+            modelBuilder.Entity("PlasticaribeAPI.Models.Incapacidades", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CantDias")
+                        .HasColumnType("int")
+                        .HasColumnOrder(5);
+
+                    b.Property<long>("Creador_Id")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(11);
+
+                    b.Property<DateTime>("FechaFin")
+                        .HasColumnType("date")
+                        .HasColumnOrder(4);
+
+                    b.Property<DateTime>("FechaInicio")
+                        .HasColumnType("date")
+                        .HasColumnOrder(3);
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("date")
+                        .HasColumnOrder(9);
+
+                    b.Property<string>("HoraRegistro")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnOrder(10);
+
+                    b.Property<int>("Id_TipoIncapacidad")
+                        .HasColumnType("int")
+                        .HasColumnOrder(7);
+
+                    b.Property<long>("Id_Trabajador")
+                        .HasColumnType("bigint")
+                        .HasColumnOrder(2);
+
+                    b.Property<string>("Observacion")
+                        .IsRequired()
+                        .HasColumnType("varchar(max)")
+                        .HasColumnOrder(8);
+
+                    b.Property<decimal>("TotalPagar")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnOrder(6);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Creador_Id");
+
+                    b.HasIndex("Id_TipoIncapacidad");
+
+                    b.HasIndex("Id_Trabajador");
+
+                    b.ToTable("Incapacidades", t =>
+                        {
+                            t.HasTrigger("Auditoria_Incapacidades");
                         });
 
                     b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
@@ -7460,6 +7528,30 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("TipoIdentificaciones");
                 });
 
+            modelBuilder.Entity("PlasticaribeAPI.Models.TipoIncapacidad", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("varchar(max)")
+                        .HasColumnOrder(3);
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TipoIncapacidad");
+                });
+
             modelBuilder.Entity("PlasticaribeAPI.Models.TipoSalidas_CajaMenor", b =>
                 {
                     b.Property<int>("TpSal_Id")
@@ -10108,6 +10200,33 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("TipoFallaTecnica");
+                });
+
+            modelBuilder.Entity("PlasticaribeAPI.Models.Incapacidades", b =>
+                {
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Creador")
+                        .WithMany()
+                        .HasForeignKey("Creador_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.TipoIncapacidad", "TipoIncapacidad")
+                        .WithMany()
+                        .HasForeignKey("Id_TipoIncapacidad")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Trabajador")
+                        .WithMany()
+                        .HasForeignKey("Id_Trabajador")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Creador");
+
+                    b.Navigation("TipoIncapacidad");
+
+                    b.Navigation("Trabajador");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.IngresoRollos_Extrusion", b =>

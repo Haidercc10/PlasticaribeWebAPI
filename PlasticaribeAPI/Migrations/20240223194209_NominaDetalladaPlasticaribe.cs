@@ -172,10 +172,79 @@ namespace PlasticaribeAPI.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TipoIncapacidad",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "varchar(100)", nullable: false),
+                    Descripcion = table.Column<string>(type: "varchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TipoIncapacidad", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Incapacidades",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id_Trabajador = table.Column<long>(type: "bigint", nullable: false),
+                    FechaInicio = table.Column<DateTime>(type: "date", nullable: false),
+                    FechaFin = table.Column<DateTime>(type: "date", nullable: false),
+                    CantDias = table.Column<int>(type: "int", nullable: false),
+                    TotalPagar = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Id_TipoIncapacidad = table.Column<int>(type: "int", nullable: false),
+                    Observacion = table.Column<string>(type: "varchar(max)", nullable: false),
+                    FechaRegistro = table.Column<DateTime>(type: "date", nullable: false),
+                    HoraRegistro = table.Column<string>(type: "varchar(50)", nullable: false),
+                    Creador_Id = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Incapacidades", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Incapacidades_TipoIncapacidad_Id_TipoIncapacidad",
+                        column: x => x.Id_TipoIncapacidad,
+                        principalTable: "TipoIncapacidad",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Incapacidades_Usuarios_Creador_Id",
+                        column: x => x.Creador_Id,
+                        principalTable: "Usuarios",
+                        principalColumn: "Usua_Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Incapacidades_Usuarios_Id_Trabajador",
+                        column: x => x.Id_Trabajador,
+                        principalTable: "Usuarios",
+                        principalColumn: "Usua_Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Detalles_OrdenFacturacion_Estado_Id",
                 table: "Detalles_OrdenFacturacion",
                 column: "Estado_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Incapacidades_Creador_Id",
+                table: "Incapacidades",
+                column: "Creador_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Incapacidades_Id_TipoIncapacidad",
+                table: "Incapacidades",
+                column: "Id_TipoIncapacidad");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Incapacidades_Id_Trabajador",
+                table: "Incapacidades",
+                column: "Id_Trabajador");
 
             migrationBuilder.CreateIndex(
                 name: "IX_NominaDetallada_Plasticaribe_Creador_Id",
@@ -234,6 +303,9 @@ namespace PlasticaribeAPI.Migrations
                 table: "Detalles_OrdenFacturacion");
 
             migrationBuilder.DropTable(
+                name: "Incapacidades");
+
+            migrationBuilder.DropTable(
                 name: "NominaDetallada_Plasticaribe");
 
             migrationBuilder.DropTable(
@@ -241,6 +313,9 @@ namespace PlasticaribeAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "SalariosTrabajadores");
+
+            migrationBuilder.DropTable(
+                name: "TipoIncapacidad");
 
             migrationBuilder.DropIndex(
                 name: "IX_Detalles_OrdenFacturacion_Estado_Id",
