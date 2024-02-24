@@ -57,14 +57,14 @@ namespace PlasticaribeAPI.Controllers
                                    {
                                        Fecha_Inventario = ia.InvFecha_Inventario,
                                        OT = Convert.ToString(ia.OT) != "0" ? Convert.ToString(ia.OT) : "",
-                                       Item = ia.Prod_Id == 1 && ia.MatPri_Id != 84 ? ia.MatPri_Id : ia.Prod_Id,
-                                       Referencia = ia.Prod_Id == 1 && ia.MatPri_Id != 84 ? ia.MatPrima.MatPri_Nombre : ia.Item.Prod_Nombre,
+                                       Item = ia.Prod_Id == 1 && (ia.MatPri_Id != 84 || ia.BoppGen_Id != 1 || ia.Tinta_Id != 2001) ? ia.MatPri_Id != 84 ? ia.MatPri_Id : ia.BoppGen_Id != 1 ? ia.BoppGen_Id : ia.Tinta_Id != 2001 ? ia.Tinta_Id : ia.Prod_Id : 0,
+                                       Referencia = ia.Prod_Id == 1 && (ia.MatPri_Id != 84 || ia.BoppGen_Id != 1 || ia.Tinta_Id != 2001) ? ia.MatPri_Id != 84 ? ia.MatPrima.MatPri_Nombre : ia.BoppGen_Id != 1 ? ia.Bopp_Generico.BoppGen_Nombre : ia.Tinta_Id != 2001 ? ia.Tinta.Tinta_Nombre : ia.Item.Prod_Nombre : "",
                                        Stock = ia.InvStock,
                                        Precio = ia.InvPrecio,
                                        Subtotal = ia.InvStock * ia.InvPrecio,
                                        Id_Area = ia.Proceso_Id,
                                        Nombre_Area = ia.Proceso.Proceso_Nombre,
-                                       EsMaterial = ia.Prod_Id == 1 && ia.MatPri_Id != 84 ? true : false,
+                                       EsMaterial = ia.Prod_Id == 1 && (ia.MatPri_Id != 84 || ia.BoppGen_Id != 1 || ia.Tinta_Id != 2001) ? true : false,
                                    };
 
             if (inventario_Areas == null) return BadRequest("No se encontraron registros de inventarios en las fechas consultadas");

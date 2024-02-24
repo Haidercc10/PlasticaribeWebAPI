@@ -38,6 +38,44 @@ namespace PlasticaribeAPI.Controllers
             return nominaDetallada_Plasticaribe;
         }
 
+        //Función que consultará la nomina en un rango de fechas con parametros opcionales 
+        [HttpGet("getReportPayroll/{date1}/{date2}")]
+        public ActionResult getReportPayroll(DateTime date1, DateTime date2, string? id, string? name, string? area)
+        {
+            var payRoll = from pr in _context.Set<NominaDetallada_Plasticaribe>()
+                          from u in _context.Set<Usuario>()
+                          from a in _context.Set<Area>()
+                          where pr.Fecha >= date1 &&
+                          pr.Fecha <= date2 &&
+                          pr.Id_Trabajador == u.Usua_Id &&
+                          u.Area_Id == a.Area_Id &&
+                          Convert.ToString(pr.Id_Trabajador).Contains(id) &&
+                          Convert.ToString(u.Usua_Nombre).Contains(name) &&
+                          Convert.ToString(u.Area_Id).Contains(area)
+                          select new
+                          {
+                              IdEmployee = u.Usua_Id,
+                              CardEmployee = u.Usua_Id,
+                              Employee = u.Usua_Nombre,
+                              Rol = u.RolUsu_Id,
+                              Ocupation = u.RolUsu.RolUsu_Nombre,
+                              IdArea = u.Area_Id,
+                              Area = a.Area_Nombre,
+                              Days_Labor = pr.DiasPagar,
+                              Value_Inability = (pr.ValorIncapEG + pr.ValorIncapAT + pr.ValorIncapPATMAT),
+                              Value_HoursExtras = pr.ValorTotalADCComp, //(pr.ValorADCDiurnas + pr.ValorNoctDom + pr.ValorExtDiurnasDom + pr.ValorRecargo035 + pr.ValorExtNocturnasDom + pr.ValorRecargo100 + pr.ValorRecargo075 + pr.TarifaADC)
+                              Value_AuxTransport = pr.AuxTransporte,
+                              Remuneration = pr.Devengado,
+                              Eps = pr.EPS,
+                              Afp = pr.AFP,
+                              Saving = pr.Ahorro,
+                              Loan = pr.Prestamo,
+                              Advance = pr.Anticipo,
+                          };
+
+            return Ok(payRoll);
+        }
+
         // PUT: api/NominaDetallada_Plasticaribe/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

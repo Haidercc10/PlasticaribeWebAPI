@@ -70,5 +70,7 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(10)")]
         public string? Usua_Hora { get; set; }
+
+        public long? Usua_Cedula { get; set; } 
     }
 }

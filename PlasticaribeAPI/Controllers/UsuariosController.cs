@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -218,8 +219,9 @@ namespace PlasticaribeAPI.Controllers
             return operarios.Any() ? Ok(operarios) : NotFound();
         }
 
-        [HttpGet("getTrabajadores/{starDate}/{endDate}/{areas}")]
-        public ActionResult GetTrabajadores(DateTime starDate, DateTime endDate, List<int> areas)
+
+        [HttpGet("getTrabajadores/{starDate}/{endDate}/{area}")]
+        public ActionResult GetTrabajadores(DateTime starDate, DateTime endDate, List<int> area)
         {
             long[] areas = [1,3,4,6,7,8,9,10,11,12,19,20,21,22,25,28,29,30,31,32];
 
@@ -268,6 +270,19 @@ namespace PlasticaribeAPI.Controllers
                                             }).ToList(),
                           };
             return Ok(workers);
+        }
+
+        [HttpGet("getEmployees/{data}")]
+        public ActionResult getEmployees(string data)
+        {
+            var employees = from emp in _context.Set<Usuario>()
+                            where emp.RolUsu_Id == 59 
+                            && emp.Estado_Id == 1
+                            && (emp.Usua_Nombre.Contains(data) 
+                            || Convert.ToString(emp.Usua_Id) == data)
+                            select new { emp.Usua_Id, emp.Usua_Nombre, emp.Area_Id, emp.RolUsu_Id };
+
+            return employees.Any() ? Ok(employees) : NotFound();
         }
 
         // PUT: api/Usuarios/5
