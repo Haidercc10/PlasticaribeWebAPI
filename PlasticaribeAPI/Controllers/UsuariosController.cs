@@ -279,8 +279,8 @@ namespace PlasticaribeAPI.Controllers
                             where emp.RolUsu_Id == 59 
                             && emp.Estado_Id == 1
                             && (emp.Usua_Nombre.Contains(data) 
-                            || Convert.ToString(emp.Usua_Id) == data)
-                            select new { emp.Usua_Id, emp.Usua_Nombre, emp.Area_Id, emp.RolUsu_Id };
+                            || Convert.ToString(emp.Usua_Cedula) == data)
+                            select new { emp.Usua_Id, emp.Usua_Cedula, emp.Usua_Nombre, emp.Area_Id, emp.RolUsu_Id };
 
             return employees.Any() ? Ok(employees) : NotFound();
         }
