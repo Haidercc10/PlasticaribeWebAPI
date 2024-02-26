@@ -132,7 +132,8 @@ namespace PlasticaribeAPI.Controllers
                                                    usu.Empresa.Empresa_Nombre,
                                                    usu.TipoIdentificacion_Id,
                                                    usu.Usua_Fecha,
-                                                   usu.Usua_Hora
+                                                   usu.Usua_Hora, 
+                                                   usu.Usua_Cedula,
                                                }).ToList();
                 if (usuario == null)
                 {
@@ -178,7 +179,8 @@ namespace PlasticaribeAPI.Controllers
                 usu.Empresa.Empresa_Nombre,
                 usu.TipoIdentificacion_Id,
                 usu.Usua_Fecha,
-                usu.Usua_Hora
+                usu.Usua_Hora, 
+                usu.Usua_Cedula,
             }).ToList();
             if (usuario == null)
             {

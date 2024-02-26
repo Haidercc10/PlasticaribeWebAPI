@@ -71,6 +71,7 @@ namespace PlasticaribeAPI.Controllers
                               Saving = pr.Ahorro,
                               Loan = pr.Prestamo,
                               Advance = pr.Anticipo,
+                              TotalPay = pr.Devengado - (pr.EPS + pr.AFP + pr.Ahorro + pr.Prestamo + pr.Anticipo),
                           };
 
             return Ok(payRoll);
