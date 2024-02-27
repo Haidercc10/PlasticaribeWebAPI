@@ -223,35 +223,41 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //Consulta para movimientos de preingresos de producción
-        [HttpGet("getDataPreInProduction/{fechaInicial}/{fechaFinal}")]
-        public ActionResult getDataPreInProduction(DateTime fechaInicial, DateTime fechaFinal, string? process = "", string? ot = "", string? item = "")
+        [HttpGet("getPreInProduction/{fechaInicial}/{fechaFinal}")]
+        public ActionResult getPreInProduction(DateTime fechaInicial, DateTime fechaFinal, string? process = "", string? ot = "", string? item = "")
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
-            var con = from pre in _context.Set<DetallePreEntrega_RolloDespacho>()
-                      where pre.PreEntregaRollo.PreEntRollo_Fecha >= fechaInicial
-                            && pre.PreEntregaRollo.PreEntRollo_Fecha <= fechaFinal
-                            && Convert.ToString(pre.Proceso_Id).Contains(process)
-                            && Convert.ToString(pre.DtlPreEntRollo_OT).Contains(ot)
-                            && Convert.ToString(pre.Prod_Id).Contains(item)
+            var con = from det in _context.Set<DetallePreEntrega_RolloDespacho>()
+                      from pre in _context.Set<PreEntrega_RolloDespacho>()
+                      where pre.PreEntRollo_Fecha >= fechaInicial
+                            && pre.PreEntRollo_Fecha <= fechaFinal
+                            && pre.PreEntRollo_Id == det.PreEntRollo_Id 
+                            && Convert.ToString(det.Proceso_Id).Contains(process)
+                            && Convert.ToString(det.DtlPreEntRollo_OT).Contains(ot)
+                            && Convert.ToString(det.Prod_Id).Contains(item)
+                      group pre by new {
+                          pre.PreEntRollo_Id,
+                          pre.Usua_Id,
+                          pre.Usuario.Usua_Nombre,
+                          pre.PreEntRollo_Fecha,
+                          pre.PreEntRollo_Hora,
+                      } into p 
                       select new
                       {
-                          Orden = pre.DtlPreEntRollo_OT,
-                          Rollo = pre.Rollo_Id,
-                          Id_Producto = pre.Prod_Id,
-                          Producto = pre.Prod.Prod_Nombre,
-                          Fecha_Ingreso = pre.PreEntregaRollo.PreEntRollo_Fecha,
-                          Hora_Ingreso = pre.PreEntregaRollo.PreEntRollo_Hora,
-                          Cantidad = pre.DtlPreEntRollo_Cantidad,
-                          Presentacion = pre.UndMed_Rollo,
-                          Proceso = pre.Proceso_Id,
-                          NombreProceso = pre.Proceso.Proceso_Nombre,
+                          Id_PreIngreso = p.Key.PreEntRollo_Id,
+                          Id_Usuario = p.Key.Usua_Id,
+                          Usuario = p.Key.Usua_Nombre,
+                          Fecha_Ingreso = p.Key.PreEntRollo_Fecha,
+                          Hora_Ingreso = p.Key.PreEntRollo_Hora,
+                          Cantidad = p.Count(),
                       };
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             if (con == null) return BadRequest("No se encontraron resultados de búsqueda");
             return Ok(con);
         }
+
 
         // PUT: api/DetallePreEntrega_RolloDespacho/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

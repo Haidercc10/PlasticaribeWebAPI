@@ -54,8 +54,16 @@ namespace PlasticaribeAPI.Controllers
                           Convert.ToString(u.Area_Id).Contains(area)
                           select new
                           {
+                              PayRoll = pr,
+                              User = u,
+                              Role = u.RolUsu,
+                              Areas = a,
+                              Status = pr.Estado,
+                              payRollType = pr.TiposNomina,
+
+
                               IdEmployee = u.Usua_Id,
-                              CardEmployee = u.Usua_Id,
+                              CardEmployee = u.Usua_Cedula,
                               Employee = u.Usua_Nombre,
                               Rol = u.RolUsu_Id,
                               Ocupation = u.RolUsu.RolUsu_Nombre,
