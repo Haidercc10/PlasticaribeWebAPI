@@ -1,5 +1,4 @@
-﻿#nullable disable
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -221,16 +220,15 @@ namespace PlasticaribeAPI.Controllers
             return operarios.Any() ? Ok(operarios) : NotFound();
         }
 
-
-        [HttpGet("getTrabajadores/{starDate}/{endDate}/{area}")]
-        public ActionResult GetTrabajadores(DateTime starDate, DateTime endDate, List<int> area)
+        [HttpGet("getTrabajadores/{startDate}/{endDate}/{area}")]
+        public ActionResult GetTrabajadores(DateTime startDate, DateTime endDate, string area)
         {
-            long[] areas = [1,3,4,6,7,8,9,10,11,12,19,20,21,22,25,28,29,30,31,32];
+            string[] areas = area.Split("|");
 
             var workers = from u in _context.Set<Usuario>()
                           join a in _context.Set<Area>() on u.Area_Id equals a.Area_Id
                           join st in _context.Set<SalariosTrabajadores>() on u.Usua_Id equals st.Id_Trabajador
-                          where areas.Contains(u.Area_Id) &&
+                          where areas.Contains(Convert.ToString(u.Area_Id)) &&
                                 u.Estado_Id == 1
                           select new
                           {
@@ -257,8 +255,8 @@ namespace PlasticaribeAPI.Controllers
                                           LastPay = l.Ptm_FechaUltCuota,
                                       }).ToList(),
                               Disability = (from d in _context.Set<Incapacidades>()
-                                            where d.FechaInicio >= starDate &&
-                                                  d.FechaFin <= endDate &&
+                                            where ((d.FechaInicio < startDate && d.FechaFin >= startDate) || 
+                                                    d.FechaInicio >= startDate && d.FechaInicio <= endDate) &&
                                                   d.Id_Trabajador == u.Usua_Id
                                             select new
                                             {

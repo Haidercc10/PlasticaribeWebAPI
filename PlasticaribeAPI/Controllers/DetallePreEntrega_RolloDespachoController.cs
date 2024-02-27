@@ -202,10 +202,22 @@ namespace PlasticaribeAPI.Controllers
                         where pre.PreEntRollo_Id == id
                         select new
                         {
-                            pre,
-                            dtPre.Prod,
-                            dtPre.Proceso,
-                            dtPre
+                            Pre = new {
+                                Pre_Id = pre.PreEntRollo_Id,
+                                Date = pre.PreEntRollo_Fecha + " " + pre.PreEntRollo_Hora,
+                                Observation = pre.PreEntRollo_Observacion,
+                                Id_User = pre.Usua_Id,
+                                User_Name = pre.Usuario.Usua_Nombre
+                            },
+                            Details = new
+                            {
+                                Item = dtPre.Prod_Id,
+                                Reference = dtPre.Prod.Prod_Nombre,
+                                Quantity = dtPre.DtlPreEntRollo_Cantidad,
+                                Presentation = dtPre.UndMed_Producto,
+                                Production = dtPre.Rollo_Id,
+                                OrderProduction = dtPre.DtlPreEntRollo_OT
+                            },
                         };
             return preIn.Any() ? Ok(preIn) : NotFound();
         }

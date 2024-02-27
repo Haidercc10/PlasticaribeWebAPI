@@ -11,13 +11,6 @@ namespace PlasticaribeAPI.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "Estado_Id",
-                table: "Detalles_OrdenFacturacion",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
-
             migrationBuilder.CreateTable(
                 name: "NominaDetallada_Plasticaribe",
                 columns: table => new
@@ -227,11 +220,6 @@ namespace PlasticaribeAPI.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Detalles_OrdenFacturacion_Estado_Id",
-                table: "Detalles_OrdenFacturacion",
-                column: "Estado_Id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Incapacidades_Creador_Id",
                 table: "Incapacidades",
                 column: "Creador_Id");
@@ -285,23 +273,11 @@ namespace PlasticaribeAPI.Migrations
                 name: "IX_SalariosTrabajadores_Id_Trabajador",
                 table: "SalariosTrabajadores",
                 column: "Id_Trabajador");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Detalles_OrdenFacturacion_Estados_Estado_Id",
-                table: "Detalles_OrdenFacturacion",
-                column: "Estado_Id",
-                principalTable: "Estados",
-                principalColumn: "Estado_Id",
-                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Detalles_OrdenFacturacion_Estados_Estado_Id",
-                table: "Detalles_OrdenFacturacion");
-
             migrationBuilder.DropTable(
                 name: "Incapacidades");
 
@@ -316,14 +292,6 @@ namespace PlasticaribeAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "TipoIncapacidad");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Detalles_OrdenFacturacion_Estado_Id",
-                table: "Detalles_OrdenFacturacion");
-
-            migrationBuilder.DropColumn(
-                name: "Estado_Id",
-                table: "Detalles_OrdenFacturacion");
         }
     }
 }

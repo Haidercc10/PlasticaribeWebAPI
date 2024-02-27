@@ -310,13 +310,12 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getStockProducts_Process/{process}")]
         public ActionResult GetStockProducts_Process(string process)
         {
-            var products = from pp in _context.Set<Produccion_Procesos>() where pp.Proceso_Id == process && pp.Envio_Zeus == false && pp.Estado_Rollo == 19 select pp.Prod_Id;
-
             var stockNotAvaible = from pp in _context.Set<Produccion_Procesos>()
                                   join p in _context.Set<Producto>() on pp.Prod_Id equals p.Prod_Id
                                   where pp.Envio_Zeus == false &&
                                         pp.Estado_Rollo == 19 &&
                                         pp.Proceso_Id == process &&
+                                        pp.Proceso_Id != "WIKE" &&
                                         pp.Fecha >= Convert.ToDateTime("2024-02-04")
                                   group new { pp, p } by new
                                   {
@@ -361,6 +360,87 @@ namespace PlasticaribeAPI.Controllers
                                         from pp2 in _context.Set<Produccion_Procesos>()
                                         where pp2.Prod_Id == pp.Key.Item &&
                                               pp2.Estado_Rollo == 19 &&
+                                              pp2.Envio_Zeus == false &&
+                                              pp2.Proceso_Id == process &&
+                                              pp2.Fecha >= Convert.ToDateTime("2024-02-04") &&
+                                              !((from order in _context.Set<Detalles_OrdenFacturacion>()
+                                                 where order.Prod_Id == pp2.Prod_Id && order.OrdenFacturacion.Estado_Id != 3
+                                                 select order.Numero_Rollo).ToList()).Contains(pp2.NumeroRollo_BagPro)
+                                        select new
+                                        {
+                                            Number_BagPro = pp2.NumeroRollo_BagPro,
+                                            Number = pp2.Numero_Rollo,
+                                            Quantity = pp2.Cantidad,
+                                            Weight = pp2.Peso_Neto,
+                                            Presentation = pp2.Presentacion,
+                                            Process = pp2.Proceso.Proceso_Nombre,
+                                            Date = pp2.Fecha,
+                                            Hour = pp2.Hora,
+                                            Price = pp2.Precio,
+                                            SellPrice = pp2.PrecioVenta_Producto,
+                                            Turn = pp2.Turno,
+                                            Information = pp2.Datos_Etiqueta,
+                                            orderProduction = pp2.OT,
+                                        }
+                                      ).ToList(),
+                                      Stock_MonthByMonth = (from mm in _context.Set<Inventario_Mensual_Productos>() where mm.Prod_Id == pp.Key.Item && mm.UndMed_Id == pp.Key.Presentation select mm).ToList(),
+                                  };
+            return Ok(stockNotAvaible);
+        }
+
+        //Consulta que devolverá el inventario de los rollos que se han pesado en empaque pero no se han entregado a despacho
+        [HttpGet("getStockDelivered_NoAvaible")]
+        public ActionResult GetStockDelivered_NoAvaible()
+        {
+            var stockNotAvaible = from pp in _context.Set<Produccion_Procesos>()
+                                  join p in _context.Set<Producto>() on pp.Prod_Id equals p.Prod_Id
+                                  where pp.Envio_Zeus == false &&
+                                        pp.Estado_Rollo == 31 &&
+                                        pp.Proceso_Id != "WIKE" &&
+                                        pp.Fecha >= Convert.ToDateTime("2024-02-04")
+                                  group new { pp, p } by new
+                                  {
+                                      Item = p.Prod_Id,
+                                      Reference = p.Prod_Nombre,
+                                      Presentation = pp.Presentacion,
+                                  } into pp
+                                  select new
+                                  {
+                                      Product = new
+                                      {
+                                          pp.Key.Item,
+                                          pp.Key.Reference
+                                      },
+                                      Stock = new
+                                      {
+                                          Stock = pp.Key.Presentation == "Kg" ? pp.Sum(x => x.pp.Peso_Neto) : pp.Sum(x => x.pp.Cantidad),
+                                          Price = (from exi in _context.Set<Existencia_Productos>() where exi.Prod_Id == pp.Key.Item && exi.UndMed_Id == pp.Key.Presentation select exi.ExProd_PrecioVenta).FirstOrDefault(),
+                                          pp.Key.Presentation,
+                                          StockPrice = (from exi in _context.Set<Existencia_Productos>() where exi.Prod_Id == pp.Key.Item && exi.UndMed_Id == pp.Key.Presentation select exi.ExProd_PrecioExistencia).FirstOrDefault(),
+                                      },
+                                      Client = (
+                                        from est in _context.Set<Estados_ProcesosOT>()
+                                        join vende in _context.Set<Usuario>() on est.Usua_Id equals vende.Usua_Id
+                                        where pp.Key.Item == est.Prod_Id
+                                        orderby est.EstProcOT_OrdenTrabajo descending
+                                        select new
+                                        {
+                                            cli = new
+                                            {
+                                                Id_Client = 1,
+                                                Client = est.EstProcOT_Cliente,
+                                            },
+                                            vende = new
+                                            {
+                                                Id_Vende = vende.Usua_Id,
+                                                Name_Vende = vende.Usua_Nombre,
+                                            }
+                                        }
+                                      ).FirstOrDefault(),
+                                      Avaible_Production = (
+                                        from pp2 in _context.Set<Produccion_Procesos>()
+                                        where pp2.Prod_Id == pp.Key.Item &&
+                                              pp2.Estado_Rollo == 31 &&
                                               pp2.Envio_Zeus == false &&
                                               pp2.Fecha >= Convert.ToDateTime("2024-02-04") &&
                                               !((from order in _context.Set<Detalles_OrdenFacturacion>()
