@@ -269,7 +269,7 @@ namespace PlasticaribeAPI.Controllers
                                                 Observation = d.Observacion
                                             }).ToList(),
                           };
-            return Ok(workers);
+            return workers.Any() ? Ok(workers) : BadRequest();
         }
 
         [HttpGet("getEmployees/{data}")]

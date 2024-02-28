@@ -48,6 +48,7 @@ namespace PlasticaribeAPI.Controllers
             var data = from pp in _context.Set<Produccion_Procesos>()
                        where pp.NumeroRollo_BagPro == production &&
                              pp.Envio_Zeus == false &&
+                             pp.Estado_Rollo == 19 &&
                              (process != "TODO" ? process == "SELLA" ? (pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE") : (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP") : (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE"))
                        select new
                        {
@@ -64,7 +65,7 @@ namespace PlasticaribeAPI.Controllers
                            pp.Creador,
                            numero_RolloBagPro = 0,
                        };
-            return data.Any() ? Ok(data) : NotFound();
+            return data.Any() ? Ok(data.Take(1)) : NotFound();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
