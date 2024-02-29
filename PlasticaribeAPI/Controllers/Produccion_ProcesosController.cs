@@ -610,6 +610,35 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        [HttpPut("putEstadoEntregado_Ingresado/{entrada}")]
+        async public Task<IActionResult> PutEstadoEntregado_Ingresado(int entrada)
+        {
+            var rollos = from ent in _context.Set<DetalleEntradaRollo_Producto>()
+                         join pp in _context.Set<Produccion_Procesos>() on ent.Rollo_Id equals pp.NumeroRollo_BagPro
+                         where ent.EntRolloProd_Id == entrada && ent.Prod_Id == pp.Prod_Id
+                         select pp;
+
+            int count = 0;
+            foreach (var item in rollos)
+            {
+                item.Estado_Rollo = 19;
+                item.Envio_Zeus = true;
+                _context.Entry(item).State = EntityState.Modified;
+                _context.SaveChanges();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                count++;
+                if (count == rollos.Count()) return NoContent();
+            }
+            return NoContent();
+        }
+
         [HttpPut("putEstadoNoDisponible/{orden}")]
         async public Task<IActionResult> PutEstadoNoDisponible(int orden)
         {

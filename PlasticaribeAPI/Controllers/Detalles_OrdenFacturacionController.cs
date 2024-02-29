@@ -154,6 +154,7 @@ namespace PlasticaribeAPI.Controllers
                                                e.EntRolloProd_Id >= 28512
                                         orderby e.EntRolloProd_Id descending
                                         select e.EntRolloProd_Observacion).FirstOrDefault(),
+                           orderProduction = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo && pp.Prod_Id == dtOrder.Prod_Id select pp.OT).FirstOrDefault(),
                            datosEnvio = dataSend.Any() ? (dataSend).FirstOrDefault() : null,
                        };
             return fact.Any() ? Ok(fact) : NotFound();

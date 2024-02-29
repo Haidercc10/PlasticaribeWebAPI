@@ -216,7 +216,51 @@ namespace PlasticaribeAPI.Controllers
                                 Quantity = dtPre.DtlPreEntRollo_Cantidad,
                                 Presentation = dtPre.UndMed_Producto,
                                 Production = dtPre.Rollo_Id,
-                                OrderProduction = dtPre.DtlPreEntRollo_OT
+                                OrderProduction = dtPre.DtlPreEntRollo_OT,
+                                Process = dtPre.Proceso_Id,
+                                ProcessName = dtPre.Proceso.Proceso_Nombre,
+                                Price = (from pp in _context.Set<Produccion_Procesos>()
+                                         where pp.Prod_Id == dtPre.Prod_Id &&
+                                               pp.NumeroRollo_BagPro == dtPre.Rollo_Id &&
+                                               pp.OT == dtPre.DtlPreEntRollo_OT
+                                         select pp.PrecioVenta_Producto).FirstOrDefault(),
+                            },
+                        };
+            return preIn.Any() ? Ok(preIn) : NotFound();
+        }
+
+        [HttpGet("getInformactionAboutPreInToSendDesp_ById/{id}")]
+        public ActionResult GetInformactionAboutPreInToSendDesp_ById(int id)
+        {
+            var preIn = from pre in _context.Set<PreEntrega_RolloDespacho>()
+                        join dtPre in _context.Set<DetallePreEntrega_RolloDespacho>() on pre.PreEntRollo_Id equals dtPre.PreEntRollo_Id
+                        join pp in _context.Set<Produccion_Procesos>() on dtPre.Rollo_Id equals pp.NumeroRollo_BagPro
+                        where pre.PreEntRollo_Id == id &&
+                              pp.NumeroRollo_BagPro == dtPre.Rollo_Id &&
+                              pp.OT == dtPre.DtlPreEntRollo_OT && 
+                              pp.Estado_Rollo == 31 &&
+                              pp.Envio_Zeus == false
+                        select new
+                        {
+                            Pre = new
+                            {
+                                Pre_Id = pre.PreEntRollo_Id,
+                                Date = pre.PreEntRollo_Fecha + " " + pre.PreEntRollo_Hora,
+                                Observation = pre.PreEntRollo_Observacion,
+                                Id_User = pre.Usua_Id,
+                                User_Name = pre.Usuario.Usua_Nombre
+                            },
+                            Details = new
+                            {
+                                Item = dtPre.Prod_Id,
+                                Reference = dtPre.Prod.Prod_Nombre,
+                                Quantity = dtPre.DtlPreEntRollo_Cantidad,
+                                Presentation = dtPre.UndMed_Producto,
+                                Production = dtPre.Rollo_Id,
+                                OrderProduction = dtPre.DtlPreEntRollo_OT,
+                                Process = dtPre.Proceso_Id,
+                                ProcessName = dtPre.Proceso.Proceso_Nombre,
+                                Price = pp.PrecioVenta_Producto,
                             },
                         };
             return preIn.Any() ? Ok(preIn) : NotFound();
@@ -257,7 +301,6 @@ namespace PlasticaribeAPI.Controllers
             if (con == null) return BadRequest("No se encontraron resultados de búsqueda");
             return Ok(con);
         }
-
 
         // PUT: api/DetallePreEntrega_RolloDespacho/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
