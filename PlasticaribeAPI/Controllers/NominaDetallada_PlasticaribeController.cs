@@ -40,7 +40,7 @@ namespace PlasticaribeAPI.Controllers
 
         //Función que consultará la nomina en un rango de fechas con parametros opcionales 
         [HttpGet("getReportPayroll/{date1}/{date2}")]
-        public ActionResult getReportPayroll(DateTime date1, DateTime date2, string? id, string? name, string? area)
+        public ActionResult getReportPayroll(DateTime date1, DateTime date2, string? id = "", string? name = "", string? area = "")
         {
             var payRoll = from pr in _context.Set<NominaDetallada_Plasticaribe>()
                           from u in _context.Set<Usuario>()
@@ -61,8 +61,7 @@ namespace PlasticaribeAPI.Controllers
                               Status = pr.Estado,
                               payRollType = pr.TiposNomina,
 
-
-                              IdEmployee = u.Usua_Id,
+                              /*IdEmployee = u.Usua_Id,
                               CardEmployee = u.Usua_Cedula,
                               Employee = u.Usua_Nombre,
                               Rol = u.RolUsu_Id,
@@ -79,7 +78,7 @@ namespace PlasticaribeAPI.Controllers
                               Saving = pr.Ahorro,
                               Loan = pr.Prestamo,
                               Advance = pr.Anticipo,
-                              TotalPay = pr.Devengado - (pr.EPS + pr.AFP + pr.Ahorro + pr.Prestamo + pr.Anticipo),
+                              TotalPay = pr.Devengado - (pr.EPS + pr.AFP + pr.Ahorro + pr.Prestamo + pr.Anticipo),*/
                           };
 
             return Ok(payRoll);

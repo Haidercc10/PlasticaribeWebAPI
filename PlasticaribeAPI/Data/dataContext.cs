@@ -994,7 +994,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<NominaDetallada_Plasticaribe>().ToTable(tb => tb.HasTrigger("Auditoria_NominaDetallada_Plasticaribe"));
             modelBuilder.Entity<NominaDetallada_Plasticaribe>().HasOne(x => x.Trabajador).WithMany().HasForeignKey(y => y.Id_Trabajador).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<NominaDetallada_Plasticaribe>().HasOne(x => x.TiposNomina).WithMany().HasForeignKey(y => y.TipoNomina).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
-            modelBuilder.Entity<NominaDetallada_Plasticaribe>().HasOne(x => x.TiposNomina).WithMany().HasForeignKey(y => y.Estado_Nomina).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<NominaDetallada_Plasticaribe>().HasOne(x => x.Estado).WithMany().HasForeignKey(y => y.Estado_Nomina).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<NominaDetallada_Plasticaribe>().HasOne(x => x.Creador).WithMany().HasForeignKey(y => y.Creador_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //SalariosTrabajadores
