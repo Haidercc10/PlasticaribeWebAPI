@@ -614,7 +614,7 @@ namespace PlasticaribeAPI.Controllers
         async public Task<IActionResult> PutEstadoEntregado_Ingresado(int entrada)
         {
             var rollos = from ent in _context.Set<DetalleEntradaRollo_Producto>()
-                         join pp in _context.Set<Produccion_Procesos>() on ent.Rollo_Id equals pp.NumeroRollo_BagPro
+                         join pp in _context.Set<Produccion_Procesos>() on ent.Rollo_Id equals pp.Numero_Rollo
                          where ent.EntRolloProd_Id == entrada && ent.Prod_Id == pp.Prod_Id
                          select pp;
 
@@ -750,7 +750,6 @@ namespace PlasticaribeAPI.Controllers
             }
             return NoContent();
         }
-
 
         // POST: api/Produccion_Procesos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

@@ -257,6 +257,7 @@ namespace PlasticaribeAPI.Controllers
                                 Quantity = dtPre.DtlPreEntRollo_Cantidad,
                                 Presentation = dtPre.UndMed_Producto,
                                 Production = dtPre.Rollo_Id,
+                                ProductionPlasticaribe = pp.Numero_Rollo,
                                 OrderProduction = dtPre.DtlPreEntRollo_OT,
                                 Process = dtPre.Proceso_Id,
                                 ProcessName = dtPre.Proceso.Proceso_Nombre,
