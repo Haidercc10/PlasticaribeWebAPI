@@ -38,6 +38,23 @@ namespace PlasticaribeAPI.Controllers
             return prestamos;
         }
 
+        [HttpGet("getLoansForCardId/{id}")]
+        public ActionResult LoansForCardId(long id) 
+        {
+
+            var Loans = from p in _context.Set<Prestamos>()
+                        where p.Usua_Id == id &&
+                        p.Estado_Id == 11
+                        select new
+                        {
+                            loans = p,
+                            User = p.Usuario,
+                            Status = p.Estado,
+                        };
+
+            return Ok(Loans);
+        }
+
         // PUT: api/Prestamos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

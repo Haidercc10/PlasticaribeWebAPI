@@ -276,13 +276,12 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult getEmployees(string data)
         {
             var employees = from emp in _context.Set<Usuario>()
-                            where emp.RolUsu_Id == 59 
-                            && emp.Estado_Id == 1
-                            && (emp.Usua_Nombre.Contains(data) 
-                            || Convert.ToString(emp.Usua_Cedula) == data)
+                            where emp.Estado_Id == 1
+                            && (emp.Usua_Nombre.Contains(data) || Convert.ToString(emp.Usua_Id) == data)
                             select new { emp.Usua_Id, emp.Usua_Cedula, emp.Usua_Nombre, emp.Area_Id, emp.RolUsu_Id };
 
-            return employees.Any() ? Ok(employees) : NotFound();
+            if (employees != null) return Ok(employees);
+            else return NotFound();
         }
 
         // PUT: api/Usuarios/5
