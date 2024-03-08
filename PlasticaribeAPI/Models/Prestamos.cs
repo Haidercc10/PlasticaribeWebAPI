@@ -35,10 +35,10 @@ namespace PlasticaribeAPI.Models
         [Column(Order = 9, TypeName = "date"), Required]
         public DateTime Ptm_FechaPlazo { get; set; }
 
-        [Column(Order = 10, TypeName = "date"), Required]
+        [Column(Order = 10, TypeName = "date")]
         public DateTime? Ptm_FechaUltCuota { get; set; }
 
-        [Column(Order = 11, TypeName = "varchar(max)"), Required]
+        [Column(Order = 11, TypeName = "varchar(max)")]
         public string? Ptm_Observacion { get; set; }
 
         [Column(Order = 12), Required]
@@ -49,6 +49,15 @@ namespace PlasticaribeAPI.Models
         public DateTime Ptm_Fecha { get; set; }
 
         [Column(Order = 14, TypeName = "varchar(10)"), Required]
-        public string Ptm_Hora { get; set; }
+        public string Ptm_HoraRegistro { get; set; }
+
+        [Column(Order = 15, TypeName = "date"), Required]
+        public DateTime Ptm_FechaRegistro { get; set; }
+
+        [Column(Order = 16), Required]
+        public int Ptm_NroCuotas { get; set; }
+
+        [Column(Order = 17), Required]
+        public string Ptm_LapsoCuotas { get; set; }
     }
 }

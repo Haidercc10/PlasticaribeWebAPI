@@ -55,6 +55,24 @@ namespace PlasticaribeAPI.Controllers
             return Ok(Loans);
         }
 
+        [HttpPut("putLoanAnulled/{id}")]
+        public ActionResult putLoanAnulled(int id)
+        {
+            try
+            {
+                var loan = (from p in _context.Set<Prestamos>() where p.Ptm_Id == id && p.Estado_Id == 11 select p).FirstOrDefault();
+                loan.Estado_Id = 3;
+                _context.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PrestamosExists(id)) return NotFound();
+                else throw;
+                
+            }
+            return NoContent();
+        }
+
         // PUT: api/Prestamos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
