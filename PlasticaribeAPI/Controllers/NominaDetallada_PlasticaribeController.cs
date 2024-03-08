@@ -42,6 +42,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getReportPayroll/{date1}/{date2}")]
         public ActionResult getReportPayroll(DateTime date1, DateTime date2, string? id = "", string? name = "", string? area = "")
         {
+#pragma warning disable CS8604 // Possible null reference argument.
             var payRoll = from pr in _context.Set<NominaDetallada_Plasticaribe>()
                           from u in _context.Set<Usuario>()
                           from a in _context.Set<Area>()
@@ -80,8 +81,27 @@ namespace PlasticaribeAPI.Controllers
                               Advance = pr.Anticipo,
                               TotalPay = pr.Devengado - (pr.EPS + pr.AFP + pr.Ahorro + pr.Prestamo + pr.Anticipo),*/
                           };
+#pragma warning restore CS8604 // Possible null reference argument.
 
             return Ok(payRoll);
+        }
+
+        [HttpGet("getDebtAdviceByWorker/{worker}")]
+        public ActionResult GetDebtAdviceByWorker(long worker)
+        {
+            var advice = from ad in _context.Set<NominaDetallada_Plasticaribe>()
+                         join u in _context.Set<Usuario>() on ad.Id_Trabajador equals u.Usua_Id
+                         where ad.TipoNomina == 4 &&
+                               ad.Estado_Nomina == 11
+                         select new
+                         {
+                             Worker = u.Usua_Nombre,
+                             StartDate = ad.PeriodoInicio,
+                             EndDate = ad.PeriodoFin,
+                             ValueAdvance = ad.TotalPagar,
+                         };
+
+            return advice.Any() ? Ok(advice) : BadRequest();
         }
 
         // PUT: api/NominaDetallada_Plasticaribe/5

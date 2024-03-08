@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using StackExchange.Redis;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -211,6 +212,7 @@ namespace PlasticaribeAPI.Controllers
         {
             var operarios = from op in _context.Set<Usuario>()
                             where op.RolUsu_Id == 59 && op.Estado_Id == 1
+                            orderby op.Usua_Nombre ascending
                             select new
                             {
                                 op.Usua_Id,
@@ -240,12 +242,28 @@ namespace PlasticaribeAPI.Controllers
                               TransportAsistance = st.AuxilioTransp,
                               Eps = st.EPSMensual,
                               Afp = st.AFPMensual,
-                              Saving = st.AhorroTotal,
+                              Saving = st.AhorroMensual,
+                              DetailsMoneySave = (from pr in _context.Set<NominaDetallada_Plasticaribe>()
+                                                  where pr.Id_Trabajador == st.Id_Trabajador &&
+                                                        pr.Ahorro > 0 &&
+                                                        u.Estado_Id == 1 &&
+                                                        pr.Estado_Nomina == 13
+                                                  select new
+                                                  {
+                                                      Worker = u.Usua_Nombre,
+                                                      SubTotalSaveMoney = st.AhorroTotal,
+                                                      StartPayroll = pr.PeriodoInicio,
+                                                      EndPayroll = pr.PeriodoFin,
+                                                      TotalSaveInPayroll = pr.Ahorro
+                                                  }).ToList(),
                               Loan = (from l in _context.Set<Prestamos>()
                                       where l.Usua_Id == u.Usua_Id &&
                                             l.Estado_Id == 11
                                       select new
                                       {
+                                          IdLoan = l.Ptm_Id,
+                                          Worker = u.Usua_Nombre,
+                                          Date = l.Ptm_FechaRegistro + " " + l.Ptm_HoraRegistro,
                                           TotalLoan = l.Ptm_Valor,
                                           DebtValue = l.Ptm_ValorDeuda,
                                           TotalPay = l.Ptm_ValorCancelado,
@@ -255,19 +273,37 @@ namespace PlasticaribeAPI.Controllers
                                           LastPay = l.Ptm_FechaUltCuota,
                                       }).ToList(),
                               Disability = (from d in _context.Set<Incapacidades>()
+                                            join td in _context.Set<TipoIncapacidad>() on d.Id_TipoIncapacidad equals td.Id
                                             where ((d.FechaInicio < startDate && d.FechaFin >= startDate) || 
                                                     d.FechaInicio >= startDate && d.FechaInicio <= endDate) &&
                                                   d.Id_Trabajador == u.Usua_Id
                                             select new
                                             {
+                                                Worker = u.Usua_Nombre,
+                                                BaseSalary = st.SalarioBase,
+                                                ValueDay = st.SalarioBase / 30,
+                                                IdTypeDisability = d.Id_TipoIncapacidad,
+                                                TypeDisability = td.Nombre,
                                                 StartDate = d.FechaInicio,
                                                 EndDate = d.FechaFin,
-                                                QuantityDays = d.CantDias,
+                                                TotalDays = d.CantDias,
+                                                TotalToPayThisPayroll = 0,
+                                                TotalToPayPreviusPayrolls = 0,
+                                                TotalToPayNextPayroll = 0,
                                                 TotalToPay = d.TotalPagar,
-                                                Id_TypeDisability = d.Id_TipoIncapacidad,
-                                                TypeDisability = d.TipoIncapacidad.Nombre,
-                                                Observation = d.Observacion
+                                                Observation = d.Observacion,
                                             }).ToList(),
+                              Advance = (from dtP in _context.Set<NominaDetallada_Plasticaribe>()
+                                         where dtP.Id_Trabajador == st.Id_Trabajador &&
+                                               dtP.TipoNomina == 4 &&
+                                               dtP.Estado_Nomina == 11
+                                         select new
+                                         {
+                                             Worker = u.Usua_Nombre,
+                                             StartDate = dtP.PeriodoInicio,
+                                             EndDate = dtP.PeriodoFin,
+                                             ValueAdvance = dtP.TotalPagar,
+                                         }).ToList(),
                           };
             return workers.Any() ? Ok(workers) : BadRequest();
         }
