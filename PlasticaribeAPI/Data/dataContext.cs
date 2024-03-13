@@ -178,6 +178,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<SalariosTrabajadores> SalariosTrabajadores { get; set; }
         public DbSet<TipoIncapacidad> TipoIncapacidad { get; set; }
         public DbSet<Incapacidades> Incapacidades { get; set; }
+        public DbSet<Movimientos_Nomina> Movimientos_Nomina { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1007,6 +1008,12 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Incapacidades>().HasOne(x => x.Trabajador).WithMany().HasForeignKey(y => y.Id_Trabajador).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Incapacidades>().HasOne(x => x.TipoIncapacidad).WithMany().HasForeignKey(y => y.Id_TipoIncapacidad).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Incapacidades>().HasOne(x => x.Creador).WithMany().HasForeignKey(y => y.Creador_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Movimientos_Nomina
+            modelBuilder.Entity<Movimientos_Nomina>().ToTable(tb => tb.HasTrigger("Auditoria_Movimientos_Nomina"));
+            modelBuilder.Entity<Movimientos_Nomina>().HasOne(x => x.Trabajador).WithMany().HasForeignKey(y => y.Trabajador_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Movimientos_Nomina>().HasOne(x => x.Estado).WithMany().HasForeignKey(y => y.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Movimientos_Nomina>().HasOne(x => x.Creador).WithMany().HasForeignKey(y => y.Creador_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));

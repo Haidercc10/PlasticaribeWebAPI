@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 using ServiceReference1;
+using System.Linq;
 using System.ServiceModel;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -183,31 +185,76 @@ namespace PlasticaribeAPI.Controllers
             return production.Any() ? Ok(production) : NotFound();
         }
 
-        [HttpGet("getInformationAboutProductionByOrderProduction_Process/{orderProduction}/{process}")]
-        public ActionResult GetInformationAboutProductionByOrderProduction(long orderProduction, string process)
+        [HttpGet("getInformationAboutProductionByOrderProduction_Process/{process}/{turn}/{start}/{end}")]
+        public ActionResult GetInformationAboutProductionByOrderProduction(string process, string turn, DateTime start, DateTime end)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var notAvaible = (from dt in _context.Set<DetallePreEntrega_RolloDespacho>() where dt.PreEntRollo_Id > 2538 select dt.Rollo_Id).ToList();
+
+            Console.WriteLine(FirstProduction(start, process));
+
             var data = from pp in _context.Set<Produccion_Procesos>()
-                       where pp.OT == orderProduction &&
-                             pp.Proceso_Id == process &&
+                       where pp.Proceso_Id == process &&
+                             pp.Fecha >= start &&
+                             (turn == "DIA" ? pp.Fecha <= end : pp.Fecha <= end.AddDays(1)) &&
+                             (turn == "DIA" ? true : pp.Id >= FirstProduction(start, process)) &&
+                             (turn == "DIA" ? true : pp.Id <= LastProduction(end.AddDays(1), process)) &&
+                             pp.Turno_Id == turn &&
                              pp.Envio_Zeus == false &&
-                             pp.Estado_Rollo == 19
+                             pp.Estado_Rollo == 19 &&
+                             !notAvaible.Contains(pp.NumeroRollo_BagPro)
+                       orderby pp.Id ascending
                        select new
                        {
-                           pp,
-                           pp.Clientes,
-                           pp.Proceso,
-                           pp.Producto,
-                           pp.Turno,
-                           pp.Operario1,
-                           pp.Operario2,
-                           pp.Operario3,
-                           pp.Operario4,
-                           pp.Cono,
-                           pp.Creador,
+                           orderProduction = pp.OT,
+                           item = pp.Prod_Id,
+                           reference = pp.Producto.Prod_Nombre,
+                           numberProduction = pp.NumeroRollo_BagPro,
+                           quantity = pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad,
+                           presentation = pp.Presentacion,
+                           totalDate = pp.Fecha + " " + pp.Hora,
+                           date = pp.Fecha,
+                           hour = pp.Hora,
+                           process = pp.Proceso.Proceso_Nombre,
                        };
             return data.Any() ? Ok(data) : NotFound();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
+        private int FirstProduction(DateTime date, string process)
+        {
+            return (from pp in _context.Set<Produccion_Procesos>()
+                    where pp.Turno_Id == "NOCHE" &&
+                          pp.Fecha >= date &&
+                          pp.Proceso_Id == process &&
+                          !pp.Hora.StartsWith("00") &&
+                          !pp.Hora.StartsWith("01") &&
+                          !pp.Hora.StartsWith("02") &&
+                          !pp.Hora.StartsWith("03") &&
+                          !pp.Hora.StartsWith("04") &&
+                          !pp.Hora.StartsWith("05") &&
+                          !pp.Hora.StartsWith("06") &&
+                          !pp.Hora.StartsWith("07") &&
+                          !pp.Hora.StartsWith("08")
+                    select pp.Id).Min();
+        }
+
+        private int LastProduction(DateTime date, string process)
+        {
+            return (from pp in _context.Set<Produccion_Procesos>()
+                    where pp.Turno_Id == "NOCHE" &&
+                          pp.Fecha <= date &&
+                          pp.Proceso_Id == process &&
+                          (pp.Hora.StartsWith("00") ||
+                           pp.Hora.StartsWith("01") ||
+                           pp.Hora.StartsWith("02") ||
+                           pp.Hora.StartsWith("03") ||
+                           pp.Hora.StartsWith("04") ||
+                           pp.Hora.StartsWith("05") ||
+                           pp.Hora.StartsWith("06") ||
+                           pp.Hora.StartsWith("07") ||
+                           pp.Hora.StartsWith("08"))
+                    select pp.Id).Max();
         }
 
         [HttpGet("EnviarAjuste/{ordenTrabajo}/{articulo}/{presentacion}/{rollo}/{cantidad}/{costo}")]
@@ -767,6 +814,8 @@ namespace PlasticaribeAPI.Controllers
 
             produccion_Procesos.Numero_Rollo = numeroUltimoRollo + value + value2;
             produccion_Procesos.Estado_Rollo = 19;
+            produccion_Procesos.Fecha = DateTime.Now;
+            produccion_Procesos.Hora = DateTime.Now.ToString("hh:mm:ss");
             _context.Produccion_Procesos.Add(produccion_Procesos);
             await _context.SaveChangesAsync();
             return CreatedAtAction("GetProduccion_Procesos", new { id = produccion_Procesos.Id }, produccion_Procesos);

@@ -282,6 +282,7 @@ namespace PlasticaribeAPI.Controllers
                                                 Worker = u.Usua_Nombre,
                                                 BaseSalary = st.SalarioBase,
                                                 ValueDay = st.SalarioBase / 30,
+                                                ValueHour = (st.SalarioBase / 30) / 8,
                                                 IdTypeDisability = d.Id_TipoIncapacidad,
                                                 TypeDisability = td.Nombre,
                                                 StartDate = d.FechaInicio,

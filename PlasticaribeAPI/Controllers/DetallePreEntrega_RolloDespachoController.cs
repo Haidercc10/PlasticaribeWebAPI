@@ -229,13 +229,14 @@ namespace PlasticaribeAPI.Controllers
             return preIn.Any() ? Ok(preIn) : NotFound();
         }
 
-        [HttpGet("getInformactionAboutPreInToSendDesp_ById/{id}")]
-        public ActionResult GetInformactionAboutPreInToSendDesp_ById(int id)
+        [HttpGet("getInformactionAboutPreInToSendDesp_ById/{id}/{item}")]
+        public ActionResult GetInformactionAboutPreInToSendDesp_ById(int id, int item)
         {
             var preIn = from pre in _context.Set<PreEntrega_RolloDespacho>()
                         join dtPre in _context.Set<DetallePreEntrega_RolloDespacho>() on pre.PreEntRollo_Id equals dtPre.PreEntRollo_Id
                         join pp in _context.Set<Produccion_Procesos>() on dtPre.Rollo_Id equals pp.NumeroRollo_BagPro
                         where pre.PreEntRollo_Id == id &&
+                              dtPre.Prod_Id == item &&
                               pp.NumeroRollo_BagPro == dtPre.Rollo_Id &&
                               pp.OT == dtPre.DtlPreEntRollo_OT && 
                               pp.Estado_Rollo == 31 &&
@@ -338,6 +339,15 @@ namespace PlasticaribeAPI.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<DetallePreEntrega_RolloDespacho>> PostDetallePreEntrega_RolloDespacho(DetallePreEntrega_RolloDespacho detallePreEntrega_RolloDespacho)
+        {
+            _context.DetallesPreEntrega_RollosDespacho.Add(detallePreEntrega_RolloDespacho);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetDetallePreEntrega_RolloDespacho", new { id = detallePreEntrega_RolloDespacho.DtlPreEntRollo_Id }, detallePreEntrega_RolloDespacho);
+        }
+
+        [HttpPost("postDetailsPreIn")]
+        public async Task<ActionResult<DetallePreEntrega_RolloDespacho>> PostDetailsPreIn(DetallePreEntrega_RolloDespacho detallePreEntrega_RolloDespacho)
         {
             _context.DetallesPreEntrega_RollosDespacho.Add(detallePreEntrega_RolloDespacho);
             await _context.SaveChangesAsync();

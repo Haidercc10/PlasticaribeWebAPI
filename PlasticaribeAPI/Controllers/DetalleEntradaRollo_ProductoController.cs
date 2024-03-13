@@ -170,7 +170,7 @@ namespace PlasticaribeAPI.Controllers
         {
             var con = from dt in _context.Set<DetalleEntradaRollo_Producto>()
                       join ent in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals ent.EntRolloProd_Id
-                      from reel in _context.Set<Produccion_Procesos>()
+                      join reel in _context.Set<Produccion_Procesos>() on dt.Prod_Id equals reel.Prod_Id
                       where ent.EntRolloProd_Fecha >= startDate &&
                             ent.EntRolloProd_Fecha <= endDate &&
                             (dt.Rollo_Id == reel.Numero_Rollo || dt.Rollo_Id == reel.NumeroRollo_BagPro) &&
@@ -181,12 +181,34 @@ namespace PlasticaribeAPI.Controllers
                             reel.Envio_Zeus == true
                       select new
                       {
-                          ent,
-                          Details = dt,
-                          Product = dt.Prod,
+                          ent = new
+                          {
+                              ent.EntRolloProd_Fecha,
+                              ent.EntRolloProd_Hora,
+                              ent.EntRolloProd_Observacion,
+                          },
+                          Details = new
+                          {
+                                dt.DtEntRolloProd_OT,
+                                dt.DtEntRolloProd_Cantidad,
+                                dt.UndMed_Rollo,
+                          },
+                          Product = new
+                          {
+                              dt.Prod.Prod_Id,
+                              dt.Prod.Prod_Nombre,
+                          },
                           Process = dt.Proceso,
-                          User = ent.Usua,
-                          DetailsProduction = reel,
+                          User = new
+                          {
+                              ent.Usua.Usua_Nombre,
+                          },
+                          DetailsProduction = new
+                          {
+                              reel.NumeroRollo_BagPro,
+                              reel.Numero_Rollo,
+                              reel.PrecioVenta_Producto,
+                          },
                           State = reel.Estado, 
                           StateEntry = dt.Estado
                       };

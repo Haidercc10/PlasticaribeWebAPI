@@ -104,6 +104,39 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        [HttpPut("paymentLoan")]
+        public async Task<IActionResult> PaymentLoan(List<PaymentLoan> payments)
+        {
+            int count = 0;
+            foreach (var item in payments)
+            {
+                var loan = (from l in _context.Set<Prestamos>() where l.Ptm_Id == item.idLoan && l.Estado_Id == 11 select l).FirstOrDefault();
+                
+                if (loan != null)
+                {
+                    loan.Ptm_ValorDeuda -= item.valuePay;
+                    loan.Ptm_ValorCancelado += item.valuePay;
+                    loan.Ptm_FechaUltCuota = DateTime.Today;
+                    if (loan.Ptm_ValorCancelado == loan.Ptm_Valor && loan.Ptm_ValorDeuda == 0) loan.Estado_Id = 13;
+                    else loan.Estado_Id = 11;
+
+                    _context.Entry(loan).State = EntityState.Modified;
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!PrestamosExists(item.idLoan)) return NotFound();
+                        else throw;
+                    }
+                }
+                count++;
+                if (count == payments.Count()) return NoContent();
+            }
+            return NoContent();
+        }
+
         // POST: api/Prestamos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -135,5 +168,11 @@ namespace PlasticaribeAPI.Controllers
         {
             return _context.Prestamos.Any(e => e.Ptm_Id == id);
         }
+    }
+
+    public class PaymentLoan
+    {
+        public int idLoan { get; set; }
+        public decimal valuePay { get; set; }
     }
 }

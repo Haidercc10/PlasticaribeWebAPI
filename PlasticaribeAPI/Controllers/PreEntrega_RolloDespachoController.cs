@@ -75,6 +75,8 @@ namespace PlasticaribeAPI.Controllers
         public async Task<ActionResult<PreEntrega_RolloDespacho>> PostPreEntrega_RolloDespacho(PreEntrega_RolloDespacho preEntrega_RolloDespacho)
         {
             _context.PreEntrega_RollosDespacho.Add(preEntrega_RolloDespacho);
+            preEntrega_RolloDespacho.PreEntRollo_Fecha = DateTime.Now;
+            preEntrega_RolloDespacho.PreEntRollo_Hora = DateTime.Now.ToString("hh:mm:ss");
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetPreEntrega_RolloDespacho", new { id = preEntrega_RolloDespacho.PreEntRollo_Id }, preEntrega_RolloDespacho);

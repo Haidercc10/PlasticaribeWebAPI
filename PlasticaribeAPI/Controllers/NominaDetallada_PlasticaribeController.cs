@@ -92,7 +92,8 @@ namespace PlasticaribeAPI.Controllers
             var advice = from ad in _context.Set<NominaDetallada_Plasticaribe>()
                          join u in _context.Set<Usuario>() on ad.Id_Trabajador equals u.Usua_Id
                          where ad.TipoNomina == 4 &&
-                               ad.Estado_Nomina == 11
+                               ad.Estado_Nomina == 11 &&
+                               ad.Id_Trabajador == worker
                          select new
                          {
                              Worker = u.Usua_Nombre,
@@ -135,6 +136,28 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        [HttpPut("putChangeState")]
+        public async Task<IActionResult> PutChangeState(List<AdvancePayroll> advancePayroll)
+        {
+            int count = 0;
+            if (advancePayroll != null)
+            {
+                foreach (var item in advancePayroll)
+                {
+                    var payrolls = (from p in _context.Set<NominaDetallada_Plasticaribe>() where p.Estado_Nomina == 11 && p.Id_Trabajador == item.IdWorker select p).ToList();
+                    decimal value = 0;
+                    foreach (var payroll in payrolls)
+                    {
+                        
+                    }
+
+                    count++;
+                    if (count == advancePayroll.Count) return NoContent();
+                }
+            } else return BadRequest();
+            return NoContent();
+        }
+
         // POST: api/NominaDetallada_Plasticaribe
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -166,5 +189,11 @@ namespace PlasticaribeAPI.Controllers
         {
             return _context.NominaDetallada_Plasticaribe.Any(e => e.Id == id);
         }
+    }
+
+    public class AdvancePayroll
+    {
+        public int IdWorker { get; set; }
+        public decimal value { get; set; }
     }
 }
