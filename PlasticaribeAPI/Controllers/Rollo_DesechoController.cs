@@ -637,6 +637,48 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        //Fechas
+        [HttpGet("getRemovedRolls/{fecha1}/{fecha2}")]
+        public ActionResult RollosEliminados(DateTime fecha1, DateTime fecha2, string? ot = "", string? roll = "", string? process = "", string? item = ""  )
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var rollo_Desecho = from r in _context.Set<Rollo_Desecho>()
+                                where r.Rollo_FechaEliminacion >= fecha1 &&
+                                      r.Rollo_FechaEliminacion <= fecha2 &&
+                                      Convert.ToString(r.Rollo_OT).Contains(ot) &&
+                                      Convert.ToString(r.Rollo_Id).Contains(roll) &&
+                                      Convert.ToString(r.Proceso_Id).Contains(process) &&
+                                      Convert.ToString(r.Prod_Id).Contains(item)
+                                select new
+                                {
+                                    Rollo_OT = Convert.ToString(r.Rollo_OT),
+                                    Rollo_Id = Convert.ToString(r.Rollo_Id),
+                                    Rollo_Cliente = Convert.ToString(r.Rollo_Cliente),
+                                    Prod_Id = Convert.ToString(r.Prod_Id),
+                                    Prod_Nombre = Convert.ToString(r.Prod.Prod_Nombre),
+                                    Rollo_Ancho = Convert.ToString(r.Rollo_Ancho),
+                                    Rollo_Largo = Convert.ToString(r.Rollo_Largo),
+                                    Rollo_Fuelle = Convert.ToString(r.Rollo_Fuelle),
+                                    UndMed_Id = Convert.ToString(r.UndMed_Id),
+                                    Rollo_PesoNeto = Convert.ToString(r.Rollo_PesoNeto),
+                                    Material_Id = Convert.ToString(r.Material_Id),
+                                    Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
+                                    Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
+                                    Rollo_Operario = Convert.ToString(r.Rollo_Operario),
+                                    Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                    Turno_Id = Convert.ToString(r.Turno_Id),
+                                    Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
+                                    Proceso_Id = Convert.ToString(r.Proceso_Id),
+                                    Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre),
+                                    Falla_Id = Convert.ToString(r.Falla_Id),
+                                    Falla_Nombre = Convert.ToString(r.Falla.Falla_Nombre),
+                                    Observación = Convert.ToString(r.Rollo_Observacion),
+                                };                    
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(rollo_Desecho);
+
+        }
+
         // PUT: api/Rollo_Desecho/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -668,14 +710,15 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        //Función para actualizar 
-        [HttpPut("putFailRolls/{roll}/{fail}")]
-        public async Task<IActionResult> putFailRolls(long roll, int fail)
+        //Función para actualizar el motivo (Falla técnica) por el que se eliminó el rollo
+        [HttpPut("putFailRolls/{roll}/{fail}/{observation}")]
+        public async Task<IActionResult> putFailRolls(long roll, int fail, string observation)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var rolls = (from rd in _context.Set<Rollo_Desecho>() where rd.Rollo_Id == roll select rd).FirstOrDefault();
 
             rolls.Falla_Id = fail;
+            rolls.Rollo_Observacion = observation;
             _context.Entry(rolls).State = EntityState.Modified;
 
             try
