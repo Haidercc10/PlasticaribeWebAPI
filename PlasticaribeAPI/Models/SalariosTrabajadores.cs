@@ -27,5 +27,8 @@ namespace PlasticaribeAPI.Models
 
         [Column(Order = 7), Required, Precision(18, 2)]
         public decimal AhorroTotal { get; set; }
+
+        [Column(Order = 8), Required, Precision(18, 2)]
+        public decimal AhorroMensual { get; set; }
     }
 }

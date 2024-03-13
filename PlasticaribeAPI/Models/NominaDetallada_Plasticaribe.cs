@@ -145,7 +145,7 @@ namespace PlasticaribeAPI.Models
         [Column(Order = 46), Required, Precision(18, 2)]
         public decimal TotalPagar { get; set; }
 
-        [Column(Order = 47, TypeName = "varchar(max)"), Required]
+        [Column(Order = 47, TypeName = "varchar(max)")]
         public string Novedades { get; set; }
 
         [Column(Order = 48), Required]

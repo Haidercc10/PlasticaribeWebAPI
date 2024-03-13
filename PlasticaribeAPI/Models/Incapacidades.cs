@@ -29,7 +29,7 @@ namespace PlasticaribeAPI.Models
         public int Id_TipoIncapacidad { get; set; }
         public TipoIncapacidad? TipoIncapacidad { get; set; }
 
-        [Column(Order = 8, TypeName = "varchar(max)"), Required]
+        [Column(Order = 8, TypeName = "varchar(max)")]
         public string Observacion { get; set; }
 
         [Column(Order = 9, TypeName = "date"), Required]

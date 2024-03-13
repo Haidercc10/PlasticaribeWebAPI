@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20240306140723_AhorroMensual")]
+    partial class AhorroMensual
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5950,27 +5953,15 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("date")
                         .HasColumnOrder(9);
 
-                    b.Property<DateTime>("Ptm_FechaRegistro")
-                        .HasColumnType("date")
-                        .HasColumnOrder(15);
-
                     b.Property<DateTime?>("Ptm_FechaUltCuota")
+                        .IsRequired()
                         .HasColumnType("date")
                         .HasColumnOrder(10);
 
-                    b.Property<string>("Ptm_HoraRegistro")
+                    b.Property<string>("Ptm_Hora")
                         .IsRequired()
                         .HasColumnType("varchar(10)")
                         .HasColumnOrder(14);
-
-                    b.Property<string>("Ptm_LapsoCuotas")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnOrder(17);
-
-                    b.Property<int>("Ptm_NroCuotas")
-                        .HasColumnType("int")
-                        .HasColumnOrder(16);
 
                     b.Property<string>("Ptm_Observacion")
                         .HasColumnType("varchar(max)")
@@ -6894,9 +6885,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Estado_Id")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Falla_Id")
-                        .HasColumnType("int");
-
                     b.Property<int>("Material_Id")
                         .HasColumnType("int");
 
@@ -6949,9 +6937,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("Rollo_OT")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Rollo_Observacion")
-                        .HasColumnType("varchar(max)");
-
                     b.Property<string>("Rollo_Operario")
                         .IsRequired()
                         .HasColumnType("varchar(MAX)");
@@ -6985,8 +6970,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Cono_Id");
 
                     b.HasIndex("Estado_Id");
-
-                    b.HasIndex("Falla_Id");
 
                     b.HasIndex("Material_Id");
 
@@ -11682,11 +11665,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Falla_Tecnica", "Falla")
-                        .WithMany()
-                        .HasForeignKey("Falla_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.Material_MatPrima", "Material")
                         .WithMany()
                         .HasForeignKey("Material_Id")
@@ -11720,8 +11698,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Cono");
 
                     b.Navigation("Estado");
-
-                    b.Navigation("Falla");
 
                     b.Navigation("Material");
 
