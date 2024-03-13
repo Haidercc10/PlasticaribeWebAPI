@@ -104,5 +104,12 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(10)")]
         public string? Rollo_HoraEliminacion { get; set; }
+
+
+        [Column(TypeName = "varchar(max)")]
+        public string? Rollo_Observacion { get; set; }
+
+        public int? Falla_Id { get; set; }
+        public Falla_Tecnica? Falla { get; set; } 
     }
 }

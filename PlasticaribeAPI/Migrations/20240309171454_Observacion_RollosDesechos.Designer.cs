@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20240309171454_Observacion_RollosDesechos")]
+    partial class Observacion_RollosDesechos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6894,9 +6897,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Estado_Id")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Falla_Id")
-                        .HasColumnType("int");
-
                     b.Property<int>("Material_Id")
                         .HasColumnType("int");
 
@@ -6985,8 +6985,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Cono_Id");
 
                     b.HasIndex("Estado_Id");
-
-                    b.HasIndex("Falla_Id");
 
                     b.HasIndex("Material_Id");
 
@@ -11677,11 +11675,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Falla_Tecnica", "Falla")
-                        .WithMany()
-                        .HasForeignKey("Falla_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.Material_MatPrima", "Material")
                         .WithMany()
                         .HasForeignKey("Material_Id")
@@ -11715,8 +11708,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Cono");
 
                     b.Navigation("Estado");
-
-                    b.Navigation("Falla");
 
                     b.Navigation("Material");
 
