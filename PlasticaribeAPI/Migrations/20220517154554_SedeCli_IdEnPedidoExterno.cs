@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public partial class SedeCli_IdEnPedidoExterno : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -56,4 +57,5 @@ namespace PlasticaribeAPI.Migrations
                 onDelete: ReferentialAction.Restrict);
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

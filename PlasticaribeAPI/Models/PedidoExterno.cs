@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class PedidoExterno
     {
         [Key]
@@ -58,4 +59,5 @@ namespace PlasticaribeAPI.Models
         // public IList<PedidoProducto>? PedExtProd { get; set; }
 
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

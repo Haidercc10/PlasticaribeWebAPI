@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public partial class Adicion_TiposDocumentos : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,4 +29,5 @@ namespace PlasticaribeAPI.Migrations
                 name: "Tipos_Documentos");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

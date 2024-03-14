@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Detalle_OrdenMaquila
     {
         [Key]
@@ -24,4 +25,5 @@ namespace PlasticaribeAPI.Models
         [Precision(18, 2)]
         public decimal DtOM_PrecioUnitario { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

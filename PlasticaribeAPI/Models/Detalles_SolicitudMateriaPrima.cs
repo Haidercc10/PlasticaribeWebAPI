@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Detalles_SolicitudMateriaPrima
     {
         [Key]
@@ -23,4 +24,5 @@ namespace PlasticaribeAPI.Models
         public Estado? Estado { get; set; }
         public int Estado_Id { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

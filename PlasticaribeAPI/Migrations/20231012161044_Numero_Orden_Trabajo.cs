@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     /// <inheritdoc />
     public partial class Numero_Orden_Trabajo : Migration
     {
@@ -558,4 +559,5 @@ namespace PlasticaribeAPI.Migrations
                 .OldAnnotation("Relational:ColumnOrder", 22);
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

@@ -6,6 +6,7 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [Route("api/[controller]")]
     [ApiController, Authorize]
     public class Bopp_GenericoController : ControllerBase
@@ -124,4 +125,5 @@ namespace PlasticaribeAPI.Controllers
             return _context.Bopp_Generico.Any(e => e.BoppGen_Id == id);
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

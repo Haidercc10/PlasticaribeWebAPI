@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     /// <inheritdoc />
     public partial class CreacionConceptos_Automaticos : Migration
     {
@@ -72,4 +73,5 @@ namespace PlasticaribeAPI.Migrations
                 table: "Ordenes_Compras");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

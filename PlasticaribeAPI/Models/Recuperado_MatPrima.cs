@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     //Esta clase estará relacionada con las entradas de 
     public class Recuperado_MatPrima
     {
@@ -44,4 +45,5 @@ namespace PlasticaribeAPI.Models
         //public IList<DetalleRecuperado_MateriaPrima>? DetRecMatPri { get; set; }
 
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

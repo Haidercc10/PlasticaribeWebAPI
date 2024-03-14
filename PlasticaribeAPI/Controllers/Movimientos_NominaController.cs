@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or members
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class Movimientos_NominaController : ControllerBase
     {
         private readonly dataContext _context;
@@ -133,7 +135,7 @@ namespace PlasticaribeAPI.Controllers
                             orderby m.Id descending
                             select m).FirstOrDefault();
             movimientos_Nomina.Fecha = DateTime.Now;
-            movimientos_Nomina.Hora = DateTime.Now.ToString("hh:mm:ss");
+            movimientos_Nomina.Hora = DateTime.Now.ToString("HH:mm:ss");
             if (movement == null)
             {
                 movimientos_Nomina.ValorPagado = movimientos_Nomina.ValorAbonado;
@@ -206,4 +208,5 @@ namespace PlasticaribeAPI.Controllers
             return _context.Movimientos_Nomina.Any(e => e.Id == id);
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or members
 }

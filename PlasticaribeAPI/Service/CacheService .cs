@@ -3,6 +3,7 @@ using StackExchange.Redis;
 
 namespace PlasticaribeAPI.Service
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class CacheService : ICacheService
     {
 #pragma warning disable CS8604 // Possible null reference argument.
@@ -37,4 +38,5 @@ namespace PlasticaribeAPI.Service
 #pragma warning restore CS8603 // Possible null reference return.
 #pragma warning restore CS8604 // Possible null reference argument.
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

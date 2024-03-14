@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or members
     public partial class AdicionMateriales_MatPrima : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -29,4 +30,5 @@ namespace PlasticaribeAPI.Migrations
                 name: "Materiales_MatPrima");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or members
 }

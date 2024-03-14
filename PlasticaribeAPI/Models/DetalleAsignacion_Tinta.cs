@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class DetalleAsignacion_Tinta
     {
 
@@ -36,4 +37,5 @@ namespace PlasticaribeAPI.Models
         public long DtAsigTinta_OTImpresion { get; set; }*/
 
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

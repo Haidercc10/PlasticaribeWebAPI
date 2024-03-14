@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     /// <inheritdoc />
     public partial class CreadorDocPedidoExterno : Migration
     {
@@ -71,4 +72,5 @@ namespace PlasticaribeAPI.Migrations
                 oldType: "binary(4)");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

@@ -2,6 +2,7 @@
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Provedor_MateriaPrima
     {
         [Key]
@@ -13,4 +14,5 @@ namespace PlasticaribeAPI.Models
         public long MatPri_Id { get; set; }
         public Materia_Prima? MatPri { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

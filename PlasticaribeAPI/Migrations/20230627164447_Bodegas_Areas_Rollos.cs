@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     /// <inheritdoc />
     public partial class Bodegas_Areas_Rollos : Migration
     {
@@ -272,4 +273,5 @@ namespace PlasticaribeAPI.Migrations
                 name: "Tipo_Solicitud_Rollos_Areas");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

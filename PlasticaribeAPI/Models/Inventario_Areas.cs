@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Inventario_Areas
     {
         [Key]
@@ -49,4 +50,5 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(max)")]
         public string? InvObservacion { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

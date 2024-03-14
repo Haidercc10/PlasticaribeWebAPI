@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Proveedor
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -44,4 +45,5 @@ namespace PlasticaribeAPI.Models
         //Lista requerida para relación proveedor-materiaprima
         //public IList<Provedor_MateriaPrima>? ProvMatPri { get; set; } 
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     /// <inheritdoc />
     public partial class NumeroRolloBagPro_ProduccionProcesos : Migration
     {
@@ -26,4 +27,5 @@ namespace PlasticaribeAPI.Migrations
                 table: "Produccion_Procesos");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

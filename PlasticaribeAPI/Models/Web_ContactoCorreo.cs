@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Web_ContactoCorreo
     {
         [Key]
@@ -18,4 +19,5 @@ namespace PlasticaribeAPI.Models
         public DateTime Fecha_Envio { get; set; }
         public string Hora_Envio { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

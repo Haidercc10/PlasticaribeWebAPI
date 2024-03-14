@@ -9,6 +9,7 @@ using ConfigurationManager = PlasticaribeAPI.Service.ConfigurationManager;
 
 namespace PlasticaribeAPI.Controllers
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
@@ -48,4 +49,5 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

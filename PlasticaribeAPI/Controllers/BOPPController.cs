@@ -6,6 +6,7 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [Route("api/[controller]")]
     [ApiController, Authorize]
     public class BOPPController : ControllerBase
@@ -71,13 +72,13 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        /** Get para contar la cantidad de unidades, precio total segun existencias 
+        /* Get para contar la cantidad de unidades, precio total segun existencias 
         y cantidad en Kilos agrupados BOPP por Nombre */
         [HttpGet("getBoppStockInventario")]
         public ActionResult<BOPP> getBoppStockInventario()
         {
 
-            /** Consulta la tabla de BOPP Agrupa por descripción */
+            /* Consulta la tabla de BOPP Agrupa por descripción */
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var bOPP = _context.BOPP.Where(x => x.BOPP_Stock > 0)
                                     .GroupBy(x => new { x.CatMP_Id, x.CatMP.CatMP_Nombre })
@@ -358,4 +359,5 @@ namespace PlasticaribeAPI.Controllers
             return (_context.BOPP?.Any(e => e.BOPP_Id == id)).GetValueOrDefault();
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

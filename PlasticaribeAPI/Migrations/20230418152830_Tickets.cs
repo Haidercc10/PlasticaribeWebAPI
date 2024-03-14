@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     /// <inheritdoc />
     public partial class Tickets : Migration
     {
@@ -101,4 +102,5 @@ namespace PlasticaribeAPI.Migrations
                 name: "Tickets");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

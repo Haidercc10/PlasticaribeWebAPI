@@ -6,6 +6,7 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [Route("api/[controller]")]
     [ApiController, Authorize]
     public class DetalleAsignacion_MateriaPrimaController : ControllerBase
@@ -421,4 +422,5 @@ namespace PlasticaribeAPI.Controllers
             return (_context.DetallesAsignaciones_MateriasPrimas?.Any(e => e.Codigo == id)).GetValueOrDefault();
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Costos_Empresas_Anios
     {
         [Key]
@@ -46,4 +47,5 @@ namespace PlasticaribeAPI.Models
         [Precision(14, 2)]
         public decimal Diciembre { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

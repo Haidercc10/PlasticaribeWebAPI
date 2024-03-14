@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     /// <inheritdoc />
     public partial class CambiarLongitudCampoSedeCliCodBagPro : Migration
     {
@@ -33,4 +34,5 @@ namespace PlasticaribeAPI.Migrations
                 oldNullable: true);
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

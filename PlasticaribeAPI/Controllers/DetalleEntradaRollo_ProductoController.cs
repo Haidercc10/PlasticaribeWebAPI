@@ -7,6 +7,7 @@ using StackExchange.Redis;
 
 namespace PlasticaribeAPI.Controllers
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [Route("api/[controller]")]
     [ApiController, Authorize]
     public class DetalleEntradaRollo_ProductoController : ControllerBase
@@ -403,4 +404,5 @@ namespace PlasticaribeAPI.Controllers
             return _context.DetallesEntradasRollos_Productos.Any(e => e.Rollo_Id == roll);
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

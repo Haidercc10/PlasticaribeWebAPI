@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     /// <inheritdoc />
     public partial class Inventarios_Areas : Migration
     {
@@ -98,4 +99,5 @@ namespace PlasticaribeAPI.Migrations
                 name: "Inventarios_Areas");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

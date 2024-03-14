@@ -12,6 +12,7 @@ namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController, Authorize]
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Produccion_ProcesosController : ControllerBase
     {
         private readonly dataContext _context;
@@ -190,9 +191,6 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var notAvaible = (from dt in _context.Set<DetallePreEntrega_RolloDespacho>() where dt.PreEntRollo_Id > 2538 select dt.Rollo_Id).ToList();
-
-            Console.WriteLine(FirstProduction(start, process));
-
             var data = from pp in _context.Set<Produccion_Procesos>()
                        where pp.Proceso_Id == process &&
                              pp.Fecha >= start &&
@@ -815,7 +813,6 @@ namespace PlasticaribeAPI.Controllers
             produccion_Procesos.Numero_Rollo = numeroUltimoRollo + value + value2;
             produccion_Procesos.Estado_Rollo = 19;
             produccion_Procesos.Fecha = DateTime.Now;
-            produccion_Procesos.Hora = DateTime.Now.ToString("hh:mm:ss");
             _context.Produccion_Procesos.Add(produccion_Procesos);
             await _context.SaveChangesAsync();
             return CreatedAtAction("GetProduccion_Procesos", new { id = produccion_Procesos.Id }, produccion_Procesos);
@@ -847,4 +844,5 @@ namespace PlasticaribeAPI.Controllers
             return _context.Produccion_Procesos.Any(x => x.Numero_Rollo == numeroRollo);
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

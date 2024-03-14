@@ -7,6 +7,7 @@ using StackExchange.Redis;
 
 namespace PlasticaribeAPI.Controllers
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [Route("api/[controller]")]
     [ApiController, Authorize]
     public class Existencia_ProductosController : ControllerBase
@@ -92,7 +93,7 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        /** Compara ID Producto de PBDD con Codigo Articulo de Zeus. */
+        /* Compara ID Producto de PBDD con Codigo Articulo de Zeus. */
         [HttpGet("IdProductoPBDDXCodigoArticuloZeus/{Prod_Id}")]
         public ActionResult<Existencia_Productos> GetCompararProductos(int Prod_Id)
         {
@@ -682,4 +683,5 @@ namespace PlasticaribeAPI.Controllers
             return (_context.Existencias_Productos?.Any(e => e.Prod_Id == prod_Id && e.UndMed_Id == undMed_Id)).GetValueOrDefault();
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

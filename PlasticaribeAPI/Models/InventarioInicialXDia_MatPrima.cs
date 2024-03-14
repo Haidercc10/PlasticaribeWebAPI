@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     //Esta clase guardará el inventario con el que se inicia cada día. 
     public class InventarioInicialXDia_MatPrima
     {
@@ -57,4 +58,5 @@ namespace PlasticaribeAPI.Models
         public decimal Diciembre { get; set; }
 
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

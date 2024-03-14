@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class OT_Impresion
     {
         [Key]
@@ -36,4 +37,5 @@ namespace PlasticaribeAPI.Models
         public long Tinta8_Id { get; set; }
         public Tinta? Tinta8 { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

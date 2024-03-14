@@ -6,6 +6,7 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [Route("api/[controller]")]
     [ApiController, Authorize]
     public class Laminado_CapaController : ControllerBase
@@ -136,4 +137,5 @@ namespace PlasticaribeAPI.Controllers
             return (_context.Laminado_Capa?.Any(e => e.LamCapa_Id == id)).GetValueOrDefault();
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Facturas_Invergoal_Inversuez
     {
         [Key]
@@ -34,4 +35,5 @@ namespace PlasticaribeAPI.Models
         public string Observacion { get; set; }
         public bool Restar_DashboardCostos { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

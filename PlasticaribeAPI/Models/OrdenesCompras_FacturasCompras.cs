@@ -2,6 +2,7 @@
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class OrdenesCompras_FacturasCompras
     {
 
@@ -14,4 +15,5 @@ namespace PlasticaribeAPI.Models
         public long Facco_Id { get; set; }
         public Factura_Compra? Facco { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

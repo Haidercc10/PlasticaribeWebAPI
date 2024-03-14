@@ -12,6 +12,7 @@ namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController, Authorize]
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class UsuariosController : ControllerBase
     {
         private readonly dataContext _context;
@@ -227,11 +228,17 @@ namespace PlasticaribeAPI.Controllers
         {
             string[] areas = area.Split("|");
 
+            var notAvaibleWorkers = from p in _context.Set<NominaDetallada_Plasticaribe>()
+                                    where p.PeriodoInicio >= startDate &&
+                                          p.PeriodoFin <= endDate
+                                    select p.Id_Trabajador;
+
             var workers = from u in _context.Set<Usuario>()
                           join a in _context.Set<Area>() on u.Area_Id equals a.Area_Id
                           join st in _context.Set<SalariosTrabajadores>() on u.Usua_Id equals st.Id_Trabajador
                           where areas.Contains(Convert.ToString(u.Area_Id)) &&
-                                u.Estado_Id == 1
+                                u.Estado_Id == 1 &&
+                                !notAvaibleWorkers.Contains(u.Usua_Id)
                           select new
                           {
                               Identification = u.Usua_Id,
@@ -250,6 +257,7 @@ namespace PlasticaribeAPI.Controllers
                                                         pr.Estado_Nomina == 13
                                                   select new
                                                   {
+                                                      IdSaveMoney = st.Id,
                                                       Worker = u.Usua_Nombre,
                                                       SubTotalSaveMoney = st.AhorroTotal,
                                                       StartPayroll = pr.PeriodoInicio,
@@ -300,13 +308,14 @@ namespace PlasticaribeAPI.Controllers
                                                dtP.Estado_Nomina == 11
                                          select new
                                          {
+                                             IdAdvance = dtP.Id,
                                              Worker = u.Usua_Nombre,
                                              StartDate = dtP.PeriodoInicio,
                                              EndDate = dtP.PeriodoFin,
                                              ValueAdvance = dtP.TotalPagar,
                                          }).ToList(),
                           };
-            return workers.Any() ? Ok(workers) : BadRequest();
+            return workers.Any() ? Ok(workers) : NotFound();
         }
 
         [HttpGet("getEmployees/{data}")]
@@ -399,4 +408,5 @@ namespace PlasticaribeAPI.Controllers
         }
 
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

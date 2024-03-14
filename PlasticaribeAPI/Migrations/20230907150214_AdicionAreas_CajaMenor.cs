@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     /// <inheritdoc />
     public partial class AdicionAreas_CajaMenor : Migration
     {
@@ -47,4 +48,5 @@ namespace PlasticaribeAPI.Migrations
                 table: "CajaMenor_Plasticaribe");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

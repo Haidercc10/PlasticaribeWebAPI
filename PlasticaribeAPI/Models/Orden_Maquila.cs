@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Orden_Maquila
     {
         [Key]
@@ -30,4 +31,5 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string OM_Hora { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

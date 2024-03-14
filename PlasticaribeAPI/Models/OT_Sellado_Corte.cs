@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class OT_Sellado_Corte
     {
         [Key]
@@ -70,4 +71,5 @@ namespace PlasticaribeAPI.Models
         public decimal SelladoCorte_PrecioNoche_Wik_Mq9 { get; set; }
 
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

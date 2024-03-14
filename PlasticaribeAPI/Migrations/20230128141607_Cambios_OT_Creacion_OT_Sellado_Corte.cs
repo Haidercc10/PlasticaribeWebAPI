@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     /// <inheritdoc />
     public partial class CambiosOTCreacionOTSelladoCorte : Migration
     {
@@ -131,4 +132,5 @@ namespace PlasticaribeAPI.Migrations
                 newName: "Ot_CantidadKilos");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Usuario
     {
         /**TEMPORAL: PARA USUARIOS VENDEDORES. 
@@ -73,4 +74,5 @@ namespace PlasticaribeAPI.Models
 
         public long? Usua_Cedula { get; set; } 
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

@@ -5,6 +5,7 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [Route("api/[controller]")]
     [ApiController]
     public class Productos_MateriasPrimasController : ControllerBase
@@ -162,4 +163,5 @@ namespace PlasticaribeAPI.Controllers
             return (_context.Productos_MateriasPrimas?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

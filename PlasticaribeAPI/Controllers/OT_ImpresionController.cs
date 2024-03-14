@@ -6,6 +6,7 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or members
     [Route("api/[controller]")]
     [ApiController, Authorize]
     public class OT_ImpresionController : ControllerBase
@@ -127,4 +128,5 @@ namespace PlasticaribeAPI.Controllers
             return (_context.OT_Impresion?.Any(e => e.Impresion_Id == id)).GetValueOrDefault();
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or members
 }

@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public partial class Adicion_AsignacionBOPP2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -69,4 +70,5 @@ namespace PlasticaribeAPI.Migrations
                 name: "DetallesAsignaciones_BOPP");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

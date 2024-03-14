@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public partial class Entrada_Tintas : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -86,4 +87,5 @@ namespace PlasticaribeAPI.Migrations
                 name: "Entradas_Tintas");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

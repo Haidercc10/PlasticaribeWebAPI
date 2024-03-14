@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or membersss
     public partial class tipoID_FondoPension3 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,4 +31,5 @@ namespace PlasticaribeAPI.Migrations
                 oldType: "varchar(10)");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or membersss
 }

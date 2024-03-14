@@ -2,6 +2,7 @@
 
 namespace PlasticaribeAPI.Service
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class ConnectionHelper
     {
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
@@ -22,4 +23,5 @@ namespace PlasticaribeAPI.Service
         }
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

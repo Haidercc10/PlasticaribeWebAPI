@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Detalles_SolicitudRollos
     {
         [Key]
@@ -24,4 +25,5 @@ namespace PlasticaribeAPI.Models
         public string UndMed_Id { get; set; }
         public Unidad_Medida? Und { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

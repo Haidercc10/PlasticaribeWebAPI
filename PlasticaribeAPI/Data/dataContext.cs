@@ -4,6 +4,7 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Data
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class dataContext : DbContext
     {
         protected readonly IConfiguration Configuration;
@@ -505,14 +506,14 @@ namespace PlasticaribeAPI.Data
             //Mezclas OT
             modelBuilder.Entity<Mezcla>().ToTable(tb => tb.HasTrigger("Crear_Mezclas"));
             modelBuilder.Entity<Mezcla>().ToTable(tb => tb.HasTrigger("Auditoria_Mezclas"));
-            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MaterialMP).WithMany().HasForeignKey(mez => mez.Material_Id).OnDelete(DeleteBehavior.Restrict); /** Llave Primaria Material_MatPrima*/
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MaterialMP).WithMany().HasForeignKey(mez => mez.Material_Id).OnDelete(DeleteBehavior.Restrict); /* Llave Primaria Material_MatPrima*/
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP1C1).WithMany().HasForeignKey(mez => mez.MezMaterial_Id1xCapa1).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP1C2).WithMany().HasForeignKey(mez => mez.MezMaterial_Id1xCapa2).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP1C3).WithMany().HasForeignKey(mez => mez.MezMaterial_Id1xCapa3).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP2C1).WithMany().HasForeignKey(mez => mez.MezMaterial_Id2xCapa1).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP2C2).WithMany().HasForeignKey(mez => mez.MezMaterial_Id2xCapa2).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP2C3).WithMany().HasForeignKey(mez => mez.MezMaterial_Id2xCapa3).OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP3C1).WithMany().HasForeignKey(mez => mez.MezMaterial_Id3xCapa1).OnDelete(DeleteBehavior.Restrict); /** Llave Primaria Mezcla_Material*/
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP3C1).WithMany().HasForeignKey(mez => mez.MezMaterial_Id3xCapa1).OnDelete(DeleteBehavior.Restrict); /* Llave Primaria Mezcla_Material*/
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP3C2).WithMany().HasForeignKey(mez => mez.MezMaterial_Id3xCapa2).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP3C3).WithMany().HasForeignKey(mez => mez.MezMaterial_Id3xCapa3).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezMaterial_MP4C1).WithMany().HasForeignKey(mez => mez.MezMaterial_Id4xCapa1).OnDelete(DeleteBehavior.Restrict);
@@ -522,10 +523,10 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento1C2).WithMany().HasForeignKey(mez => mez.MezPigmto_Id1xCapa2).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento1C3).WithMany().HasForeignKey(mez => mez.MezPigmto_Id1xCapa3).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento2C1).WithMany().HasForeignKey(mez => mez.MezPigmto_Id2xCapa1).OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento2C2).WithMany().HasForeignKey(mez => mez.MezPigmto_Id2xCapa2).OnDelete(DeleteBehavior.Restrict); /** Llave Primaria Mezcla_Pigmento*/
+            modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento2C2).WithMany().HasForeignKey(mez => mez.MezPigmto_Id2xCapa2).OnDelete(DeleteBehavior.Restrict); /* Llave Primaria Mezcla_Pigmento*/
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.MezPigmento2C3).WithMany().HasForeignKey(mez => mez.MezPigmto_Id2xCapa3).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Mezcla>().HasOne(mez => mez.Usua).WithMany().HasForeignKey(mez => mez.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario 
-            /** Triggers tablas Mezclas*/
+            /* Triggers tablas Mezclas*/
             //modelBuilder.Entity<Mezcla_Pigmento>().ToTable(tb => tb.HasTrigger("Auditoria_Mezclas_Pigmentos"));
             //modelBuilder.Entity<Mezcla_Material>().ToTable(tb => tb.HasTrigger("Auditoria_Mezclas_Materiales"));
             modelBuilder.Entity<Mezcla_Material>().ToTable(tb => tb.HasTrigger("Crear_Mezclas_Materiales"));
@@ -1056,4 +1057,5 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Cono>().ToTable(tb => tb.HasTrigger("Auditoria_Conos"));*/
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

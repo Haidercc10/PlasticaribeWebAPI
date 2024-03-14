@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public partial class AddRollo_DetallesAsgRollos_Extrusion : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,4 +24,5 @@ namespace PlasticaribeAPI.Migrations
                 table: "DetallesAsgRollos_Extrusion");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

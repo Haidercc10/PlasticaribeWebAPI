@@ -16,6 +16,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("V1", new OpenApiInfo { Version = "V1", Title = "Plasticaribe WebAPI", Description = "" });
+
+    var filePath = Path.Combine(System.AppContext.BaseDirectory, "PlasticaribeAPI.xml");
+    options.IncludeXmlComments(filePath);
+
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Scheme = "Bearer",

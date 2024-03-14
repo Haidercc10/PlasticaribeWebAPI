@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public partial class EstadosProcesosOT_Fallas_TiposFallas : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -122,4 +123,5 @@ namespace PlasticaribeAPI.Migrations
                 name: "Tipos_FallasTecnicas");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

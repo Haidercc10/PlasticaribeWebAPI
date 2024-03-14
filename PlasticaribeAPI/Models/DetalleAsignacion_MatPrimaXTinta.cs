@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class DetalleAsignacion_MatPrimaXTinta
     {
         [Key]
@@ -35,4 +36,5 @@ namespace PlasticaribeAPI.Models
         public Proceso? Proceso { get; set; }   //Llave foranea de proceso
 
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

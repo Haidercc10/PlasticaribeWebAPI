@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class OT_Extrusion
     {
         [Key]
@@ -39,4 +40,5 @@ namespace PlasticaribeAPI.Models
         [Precision(14, 2)]
         public decimal Extrusion_Peso { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

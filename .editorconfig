@@ -17,3 +17,12 @@ dotnet_diagnostic.IDE0055.severity = none
 
 # CS8602: Dereference of a possibly null reference.
 dotnet_diagnostic.CS8602.severity = none
+
+# CS1591: Missing XML comment for publicly visible type or member
+dotnet_diagnostic.CS1591.severity = none
+
+# CS8604: Possible null reference argument.
+dotnet_diagnostic.CS8604.severity = none
+
+# CS0219: Variable is assigned but its value is never used
+dotnet_diagnostic.CS0219.severity = none

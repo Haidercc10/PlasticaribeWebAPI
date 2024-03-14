@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace PlasticaribeAPI.Controllers
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
@@ -30,4 +31,5 @@ namespace PlasticaribeAPI.Controllers
             .ToArray();
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

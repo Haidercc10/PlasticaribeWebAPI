@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Pistas
     {
         [Key]
@@ -14,4 +15,5 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(max)")]
         public string Pista_Descripcion { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

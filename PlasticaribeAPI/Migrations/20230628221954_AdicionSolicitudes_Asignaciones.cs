@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     /// <inheritdoc />
     public partial class AdicionSolicitudes_Asignaciones : Migration
     {
@@ -47,4 +48,5 @@ namespace PlasticaribeAPI.Migrations
                 table: "Asignaciones_MatPrima");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Pigmento
     {
         [Key]
@@ -17,4 +18,5 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(50)")]
         public string Pigmt_Hexadecimal { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

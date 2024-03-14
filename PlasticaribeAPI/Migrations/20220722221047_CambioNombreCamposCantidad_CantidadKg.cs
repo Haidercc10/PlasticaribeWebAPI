@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public partial class CambioNombreCamposCantidad_CantidadKg : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,4 +33,5 @@ namespace PlasticaribeAPI.Migrations
                 newName: "BOPP_Cantidad");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

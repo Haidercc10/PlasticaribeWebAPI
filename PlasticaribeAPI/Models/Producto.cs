@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Producto
     {
         /** Los comentarios de este tipo estan relacionados con la revisión de
@@ -116,4 +117,5 @@ namespace PlasticaribeAPI.Models
 
         public IList<DetalleDevolucion_ProductoFacturado>? DtDevProd_Fact { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

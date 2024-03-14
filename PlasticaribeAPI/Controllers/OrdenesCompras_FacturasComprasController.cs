@@ -6,6 +6,7 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [Route("api/[controller]")]
     [ApiController, Authorize]
     public class OrdenesCompras_FacturasComprasController : ControllerBase
@@ -55,17 +56,17 @@ namespace PlasticaribeAPI.Controllers
 
         }
 
-        /** Consulta facturas asociadas a OC, Luego carga las Mat. Primas que están en dichas facturas. Forma 1 */
+        /* Consulta facturas asociadas a OC, Luego carga las Mat. Primas que están en dichas facturas. Forma 1 */
         [HttpGet("FacturasAsociadasAOC/{OC}")]
         public ActionResult GetFactura(long OC)
         {
-            /** Selecciona las facturas de OrdenesCompras_FacturasCompras. */
+            /* Selecciona las facturas de OrdenesCompras_FacturasCompras. */
             var Facturas = _context.OrdenesCompras_FacturasCompras.Where(o => o.Oc_Id == OC).Select(of => of.Facco_Id);
             var Ordenes = _context.Detalles_OrdenesCompras.Where(o => o.Oc_Id == OC).Select(of => of.MatPri_Id);
             var Ordenes2 = _context.Detalles_OrdenesCompras.Where(o => o.Oc_Id == OC).Select(of => of.Tinta_Id);
             var Ordenes3 = _context.Detalles_OrdenesCompras.Where(o => o.Oc_Id == OC).Select(of => of.BOPP_Id);
 
-            /** Selecciona las mat. primas y tintas de facturas compras materias primas. */
+            /* Selecciona las mat. primas y tintas de facturas compras materias primas. */
             var FacCompras = _context.FacturasCompras_MateriaPrimas.Where(f => Facturas.Contains(f.Facco_Id) &&
                                                                           Ordenes.Contains(f.MatPri_Id) &&
                                                                           Ordenes2.Contains(f.Tinta_Id) &&
@@ -94,7 +95,7 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
-        /** Consulta facturas asociadas a OC, Luego carga las Mat. Primas que están en dichas facturas. Forma 2  */
+        /* Consulta facturas asociadas a OC, Luego carga las Mat. Primas que están en dichas facturas. Forma 2  */
         [HttpGet("FacturasComprasAsociadasAOC/{OC}")]
         public ActionResult GetFactura2(long OC)
         {
@@ -208,4 +209,5 @@ namespace PlasticaribeAPI.Controllers
             return _context.OrdenesCompras_FacturasCompras.Any(e => e.Codigo == id);
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

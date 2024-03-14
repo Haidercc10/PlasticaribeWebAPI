@@ -2,6 +2,7 @@
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class OrdenMaquila_Facturacion
     {
         [Key]
@@ -12,4 +13,5 @@ namespace PlasticaribeAPI.Models
         public long FacOM_Id { get; set; }
         public Facturacion_OrdenMaquila? FacOM { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

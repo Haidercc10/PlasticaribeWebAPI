@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     /// <inheritdoc />
     public partial class Orden_Trabajo_CamposOrdenados : Migration
     {
@@ -519,4 +520,5 @@ namespace PlasticaribeAPI.Migrations
                 .Annotation("Relational:ColumnOrder", 24);
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

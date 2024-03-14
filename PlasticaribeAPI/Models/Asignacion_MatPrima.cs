@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Asignacion_MatPrima
     {
         [Key]
@@ -43,4 +44,5 @@ namespace PlasticaribeAPI.Models
         //public IList<DetalleAsignacion_Tinta>? DetAsigTinta { get; set; }
 
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     /// <inheritdoc />
     public partial class AddFields_BoppTinta_InvAreas4 : Migration
     {
@@ -78,4 +79,5 @@ namespace PlasticaribeAPI.Migrations
                 column: "UndMed_Id");
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

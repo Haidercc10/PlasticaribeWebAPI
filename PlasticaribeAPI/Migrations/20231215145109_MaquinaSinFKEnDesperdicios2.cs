@@ -4,6 +4,7 @@
 
 namespace PlasticaribeAPI.Migrations
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     /// <inheritdoc />
     public partial class MaquinaSinFKEnDesperdicios2 : Migration
     {
@@ -46,4 +47,5 @@ namespace PlasticaribeAPI.Migrations
                 onDelete: ReferentialAction.Restrict);
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

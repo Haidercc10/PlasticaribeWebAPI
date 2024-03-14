@@ -6,8 +6,10 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
+    [Tags("NominaDetallada_Plasticaribe", "Web API para consultar y crear nuevos registros de la nomina de los trabajadores")]
     [Route("api/[controller]")]
     [ApiController, Authorize]
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class NominaDetallada_PlasticaribeController : ControllerBase
     {
         private readonly dataContext _context;
@@ -137,6 +139,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpPut("putChangeState")]
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task<IActionResult> PutChangeState(List<AdvancePayroll> advancePayroll)
         {
             int count = 0;
@@ -157,6 +160,7 @@ namespace PlasticaribeAPI.Controllers
             } else return BadRequest();
             return NoContent();
         }
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
         // POST: api/NominaDetallada_Plasticaribe
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -196,4 +200,5 @@ namespace PlasticaribeAPI.Controllers
         public int IdWorker { get; set; }
         public decimal value { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

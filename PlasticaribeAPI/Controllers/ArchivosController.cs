@@ -6,6 +6,7 @@ using System.IO.Compression;
 
 namespace PlasticaribeAPI.Controllers
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [Route("api/[controller]")]
     [ApiController]
     public class ArchivosController : ControllerBase
@@ -252,4 +253,5 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8600 // Se va a convertir un literal nulo o un posible valor nulo en un tipo que no acepta valores NULL
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

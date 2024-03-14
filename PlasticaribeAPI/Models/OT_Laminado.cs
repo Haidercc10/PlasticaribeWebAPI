@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class OT_Laminado
     {
         [Key]
@@ -34,4 +35,5 @@ namespace PlasticaribeAPI.Models
         [Precision(14, 2)]
         public double LamCapa_Cantidad3 { get; set; }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }
