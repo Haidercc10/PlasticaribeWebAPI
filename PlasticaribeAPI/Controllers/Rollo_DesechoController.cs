@@ -665,14 +665,17 @@ namespace PlasticaribeAPI.Controllers
                                     Material_Nombre = Convert.ToString(r.Material.Material_Nombre),
                                     Rollo_Calibre = Convert.ToString(r.Rollo_Calibre),
                                     Rollo_Operario = Convert.ToString(r.Rollo_Operario),
-                                    Rollo_FechaIngreso = Convert.ToString(r.Rollo_FechaIngreso),
+                                    Rollo_FechaIngreso = r.Rollo_FechaIngreso,
+                                    Rollo_HoraIngreso = Convert.ToString(r.Rollo_Hora),
+                                    Rollo_FechaEliminacion = r.Rollo_FechaEliminacion,
+                                    Rollo_HoraEliminacion = Convert.ToString(r.Rollo_HoraEliminacion),
                                     Turno_Id = Convert.ToString(r.Turno_Id),
                                     Turno_Nombre = Convert.ToString(r.Turno.Turno_Nombre),
                                     Proceso_Id = Convert.ToString(r.Proceso_Id),
                                     Proceso_Nombre = Convert.ToString(r.Proceso.Proceso_Nombre),
                                     Falla_Id = Convert.ToString(r.Falla_Id),
                                     Falla_Nombre = Convert.ToString(r.Falla.Falla_Nombre),
-                                    Observación = Convert.ToString(r.Rollo_Observacion),
+                                    Observacion = Convert.ToString(r.Rollo_Observacion),
                                 };                    
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(rollo_Desecho);
