@@ -99,7 +99,7 @@ namespace PlasticaribeAPI.Controllers
             if (ValidatePendintMovement(movimientos_Nomina)) return BadRequest($"No se pueden crear movimientos del {movimientos_Nomina.NombreMovimento} con el identificador {movimientos_Nomina.CodigoMovimento} porque el valor de la deuda es cero (0).");
 
             movimientos_Nomina = CalculateValues(movimientos_Nomina);
-            if (movimientos_Nomina.ValorFinalDeuda <= 0 && movimientos_Nomina.NombreMovimento != "AHORRO")
+            if (movimientos_Nomina.ValorFinalDeuda <= 1 && movimientos_Nomina.NombreMovimento != "AHORRO")
             {
                 await PutChangeStateMov(movimientos_Nomina.CodigoMovimento, movimientos_Nomina.NombreMovimento, movimientos_Nomina.Trabajador_Id);
                 movimientos_Nomina.Estado_Id = 13;
@@ -149,6 +149,7 @@ namespace PlasticaribeAPI.Controllers
             {
                 movimientos_Nomina.ValorDeuda = movement.ValorFinalDeuda;
                 movimientos_Nomina.ValorFinalDeuda = movement.ValorFinalDeuda - movimientos_Nomina.ValorAbonado;
+                if (movimientos_Nomina.ValorFinalDeuda < 1) movimientos_Nomina.ValorFinalDeuda = 0;
             }
             else movimientos_Nomina.Estado_Id = 13;
             return movimientos_Nomina;

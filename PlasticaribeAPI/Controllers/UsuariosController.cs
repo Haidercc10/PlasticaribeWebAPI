@@ -287,6 +287,7 @@ namespace PlasticaribeAPI.Controllers
                                                   d.Id_Trabajador == u.Usua_Id
                                             select new
                                             {
+                                                IdDisability = d.Id,
                                                 Worker = u.Usua_Nombre,
                                                 BaseSalary = st.SalarioBase,
                                                 ValueDay = st.SalarioBase / 30,
@@ -297,8 +298,18 @@ namespace PlasticaribeAPI.Controllers
                                                 EndDate = d.FechaFin,
                                                 TotalDays = d.CantDias,
                                                 TotalToPayThisPayroll = 0,
-                                                TotalToPayPreviusPayrolls = 0,
-                                                TotalToPayNextPayroll = 0,
+                                                TotalToPayPreviusPayrolls = (from m in _context.Set<Movimientos_Nomina>()
+                                                                             where m.CodigoMovimento == d.Id &&
+                                                                                   m.NombreMovimento == "INCAPACIDAD" &&
+                                                                                   m.Trabajador_Id == d.Id_Trabajador
+                                                                             orderby m.Id descending
+                                                                             select m.ValorPagado).FirstOrDefault(),
+                                                TotalToPayNextPayroll = d.TotalPagar - (from m in _context.Set<Movimientos_Nomina>()
+                                                                                        where m.CodigoMovimento == d.Id &&
+                                                                                              m.NombreMovimento == "INCAPACIDAD" &&
+                                                                                              m.Trabajador_Id == d.Id_Trabajador
+                                                                                        orderby m.Id descending
+                                                                                        select m.ValorPagado).FirstOrDefault(),
                                                 TotalToPay = d.TotalPagar,
                                                 Observation = d.Observacion,
                                             }).ToList(),
