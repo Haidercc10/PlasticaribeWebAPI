@@ -229,8 +229,9 @@ namespace PlasticaribeAPI.Controllers
             string[] areas = area.Split("|");
 
             var notAvaibleWorkers = from p in _context.Set<NominaDetallada_Plasticaribe>()
-                                    where (p.PeriodoInicio >= startDate && p.PeriodoFin <= startDate) ||
-                                          (p.PeriodoInicio >= endDate && p.PeriodoFin <= endDate)
+                                    where (p.PeriodoInicio >= startDate && p.PeriodoInicio <= endDate) ||
+                                          (p.PeriodoFin >= startDate && p.PeriodoFin <= endDate) || 
+                                          (p.PeriodoInicio < startDate && p.PeriodoFin >= startDate)
                                     select p.Id_Trabajador;
 
             var workers = from u in _context.Set<Usuario>()
