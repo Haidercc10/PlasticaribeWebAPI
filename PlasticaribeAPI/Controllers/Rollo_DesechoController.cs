@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Migrations;
 using PlasticaribeAPI.Models;
+using StackExchange.Redis;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -715,23 +716,26 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //Función para actualizar el motivo (Falla técnica) por el que se eliminó el rollo
-        [HttpPut("putFailRolls/{roll}/{fail}/{observation}")]
-        public async Task<IActionResult> putFailRolls(long roll, int fail, string observation)
+        [HttpPut("putFailRolls")]
+        public async Task<IActionResult> putFailRolls(List<rollsToUpdate> rollsToUpdate)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var rolls = (from rd in _context.Set<Rollo_Desecho>() where rd.Rollo_Id == roll select rd).FirstOrDefault();
-
-            rolls.Falla_Id = fail;
-            rolls.Rollo_Observacion = observation;
-            _context.Entry(rolls).State = EntityState.Modified;
-
-            try
+            foreach (var rolls in rollsToUpdate) 
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                return NotFound();
+                var roll = (from rd in _context.Set<Rollo_Desecho>() where rd.Rollo_Id == rolls.roll select rd).FirstOrDefault();
+
+                roll.Falla_Id = rolls.fail;
+                roll.Rollo_Observacion = rolls.observation;
+                _context.Entry(roll).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    return NotFound();
+                }
             }
             return NoContent();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -770,4 +774,10 @@ namespace PlasticaribeAPI.Controllers
         }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+}
+
+public class rollsToUpdate {
+    public long roll { get; set; }
+    public int fail { get; set; }
+    public string? observation { get; set; }
 }

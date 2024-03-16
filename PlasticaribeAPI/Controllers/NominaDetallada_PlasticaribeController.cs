@@ -46,8 +46,8 @@ namespace PlasticaribeAPI.Controllers
             var payRoll = from pr in _context.Set<NominaDetallada_Plasticaribe>()
                           from u in _context.Set<Usuario>()
                           from a in _context.Set<Area>()
-                          where pr.Fecha >= date1 &&
-                          pr.Fecha <= date2 &&
+                          where pr.PeriodoInicio >= date1 &&
+                          pr.PeriodoFin <= date2 &&
                           pr.Id_Trabajador == u.Usua_Id &&
                           u.Area_Id == a.Area_Id &&
                           Convert.ToString(pr.Id_Trabajador).Contains(id) &&
