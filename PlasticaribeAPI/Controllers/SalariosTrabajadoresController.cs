@@ -11,7 +11,6 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [Route("api/[controller]")]
     [ApiController, Authorize]
     public class SalariosTrabajadoresController : ControllerBase
@@ -97,6 +96,34 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        [HttpPut("putMoneySave")]
+        public async Task<IActionResult> PutMoneySave(List<DataMoneySave> datamoneySave)
+        {
+            int count = 0;
+
+            if (datamoneySave.Count == 0) return BadRequest();
+
+            foreach (var item in datamoneySave)
+            {
+                var salariosTrabajadores = (from st in _context.Set<SalariosTrabajadores>() where st.Id_Trabajador == item.IdWorker select st).FirstOrDefault();
+                salariosTrabajadores.AhorroTotal += item.Value;
+
+                _context.Entry(salariosTrabajadores).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!SalariosTrabajadoresExists(salariosTrabajadores.Id)) return NotFound();
+                    else throw;
+                }
+            }
+
+            return NoContent();
+        }
+
         // POST: api/SalariosTrabajadores
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -129,5 +156,10 @@ namespace PlasticaribeAPI.Controllers
             return _context.SalariosTrabajadores.Any(e => e.Id == id);
         }
     }
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+
+    public class DataMoneySave
+    {
+        public int IdWorker { get; set; }
+        public decimal Value { get; set; }
+    }
 }

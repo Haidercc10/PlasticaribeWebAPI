@@ -4,15 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 using ServiceReference1;
-using System.Linq;
 using System.ServiceModel;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController, Authorize]
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Produccion_ProcesosController : ControllerBase
     {
         private readonly dataContext _context;
@@ -844,5 +841,4 @@ namespace PlasticaribeAPI.Controllers
             return _context.Produccion_Procesos.Any(x => x.Numero_Rollo == numeroRollo);
         }
     }
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

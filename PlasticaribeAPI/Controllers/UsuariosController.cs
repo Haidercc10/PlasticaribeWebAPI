@@ -229,8 +229,8 @@ namespace PlasticaribeAPI.Controllers
             string[] areas = area.Split("|");
 
             var notAvaibleWorkers = from p in _context.Set<NominaDetallada_Plasticaribe>()
-                                    where p.PeriodoInicio >= startDate &&
-                                          p.PeriodoFin <= endDate
+                                    where (p.PeriodoInicio >= startDate && p.PeriodoFin <= startDate) ||
+                                          (p.PeriodoInicio >= endDate && p.PeriodoFin <= endDate)
                                     select p.Id_Trabajador;
 
             var workers = from u in _context.Set<Usuario>()
@@ -316,6 +316,14 @@ namespace PlasticaribeAPI.Controllers
                                          }).ToList(),
                           };
             return workers.Any() ? Ok(workers) : NotFound();
+        }
+
+        [HttpGet("getNotAvaibleWorkers/{startDate}/{endDate}")]
+        public ActionResult GetNotAvaibleWorkers(DateTime startDate, DateTime endDate)
+        {
+            return Ok(from p in _context.Set<NominaDetallada_Plasticaribe>()
+                      where (p.PeriodoInicio >= startDate && p.PeriodoFin <= endDate)
+                      select p.Id_Trabajador);
         }
 
         [HttpGet("getEmployees/{data}")]

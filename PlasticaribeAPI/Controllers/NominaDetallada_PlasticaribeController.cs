@@ -6,10 +6,8 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
-    [Tags("NominaDetallada_Plasticaribe", "Web API para consultar y crear nuevos registros de la nomina de los trabajadores")]
     [Route("api/[controller]")]
     [ApiController, Authorize]
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class NominaDetallada_PlasticaribeController : ControllerBase
     {
         private readonly dataContext _context;
@@ -139,28 +137,32 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpPut("putChangeState")]
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        public async Task<IActionResult> PutChangeState(List<AdvancePayroll> advancePayroll)
+        public async Task<IActionResult> PutChangeState(List<AdvancePayroll> advances)
         {
             int count = 0;
-            if (advancePayroll != null)
+            foreach (var advance in advances)
             {
-                foreach (var item in advancePayroll)
-                {
-                    var payrolls = (from p in _context.Set<NominaDetallada_Plasticaribe>() where p.Estado_Nomina == 11 && p.Id_Trabajador == item.IdWorker select p).ToList();
-                    decimal value = 0;
-                    foreach (var payroll in payrolls)
-                    {
-                        
-                    }
+                var payroll = (from p in _context.Set<NominaDetallada_Plasticaribe>() where p.Id == advance.Id && p.Id_Trabajador == advance.IdWorker select p).FirstOrDefault();
 
-                    count++;
-                    if (count == advancePayroll.Count) return NoContent();
+                var movement = (from m in _context.Set<Movimientos_Nomina>() where m.CodigoMovimento == advance.Id && m.NombreMovimento == "ANTICIPO" &&  m.Trabajador_Id == advance.IdWorker
+                                orderby m.Id descending
+                                select m).FirstOrDefault();
+
+                if (movement.ValorDeuda == 0 && movement.Estado_Id == 13) payroll.Estado_Nomina = 13;
+                else payroll.Estado_Nomina = 11;
+                _context.NominaDetallada_Plasticaribe.Entry(payroll).State = EntityState.Modified;
+                try
+                {
+                    await _context.SaveChangesAsync();
                 }
-            } else return BadRequest();
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+            }
+
             return NoContent();
         }
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
         // POST: api/NominaDetallada_Plasticaribe
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -197,8 +199,7 @@ namespace PlasticaribeAPI.Controllers
 
     public class AdvancePayroll
     {
+        public int Id { get; set; }
         public int IdWorker { get; set; }
-        public decimal value { get; set; }
     }
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

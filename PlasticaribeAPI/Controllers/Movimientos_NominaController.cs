@@ -6,7 +6,6 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or members
     [Route("api/[controller]")]
     [ApiController, Authorize]
     public class Movimientos_NominaController : ControllerBase
@@ -97,7 +96,6 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Movimientos_Nomina>> PostMovimientos_Nomina(Movimientos_Nomina movimientos_Nomina)
         {
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             if (ValidatePendintMovement(movimientos_Nomina)) return BadRequest($"No se pueden crear movimientos del {movimientos_Nomina.NombreMovimento} con el identificador {movimientos_Nomina.CodigoMovimento} porque el valor de la deuda es cero (0).");
 
             movimientos_Nomina = CalculateValues(movimientos_Nomina);
@@ -110,7 +108,6 @@ namespace PlasticaribeAPI.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetMovimientos_Nomina", new { id = movimientos_Nomina.Id }, movimientos_Nomina);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
         private bool ValidatePendintMovement(Movimientos_Nomina movimientos_Nomina)
@@ -208,5 +205,4 @@ namespace PlasticaribeAPI.Controllers
             return _context.Movimientos_Nomina.Any(e => e.Id == id);
         }
     }
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or members
 }

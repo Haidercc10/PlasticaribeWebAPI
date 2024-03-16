@@ -138,6 +138,29 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        [HttpPut("updateLoan")]
+        public async Task<IActionResult> UpdateLoan(int id, decimal value)
+        {
+            var loan = (from l in _context.Set<Prestamos>() where l.Ptm_Id == id select l).FirstOrDefault();
+            loan.Ptm_ValorDeuda -= value;
+            loan.Ptm_ValorCancelado += value;
+            loan.Ptm_FechaUltCuota = DateTime.Today;
+            if (loan.Ptm_ValorCancelado == loan.Ptm_Valor && loan.Ptm_ValorDeuda == 0) loan.Estado_Id = 13;
+            else loan.Estado_Id = 11;
+
+            _context.Prestamos.Entry(loan).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+
+            return NoContent();
+        }
+
         // POST: api/Prestamos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
