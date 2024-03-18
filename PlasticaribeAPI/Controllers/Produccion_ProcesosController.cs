@@ -210,7 +210,8 @@ namespace PlasticaribeAPI.Controllers
                            totalDate = pp.Fecha + " " + pp.Hora,
                            date = pp.Fecha,
                            hour = pp.Hora,
-                           process = pp.Proceso.Proceso_Nombre,
+                           process = pp.Proceso_Id,
+                           processName = pp.Proceso.Proceso_Nombre,
                        };
             return data.Any() ? Ok(data) : NotFound();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
