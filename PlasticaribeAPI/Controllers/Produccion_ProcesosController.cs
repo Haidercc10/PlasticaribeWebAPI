@@ -523,6 +523,42 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
+        //Consulta que devuelve la información de la producción disponible de empaque y sellado.
+        [HttpGet("getInfoProductionAvailable")]
+        public ActionResult getInfoProductionAvailable()
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8604 // Possible null reference argument.
+            var data = from pp in _context.Set<Produccion_Procesos>()
+                       where pp.Envio_Zeus == false &&
+                             pp.Estado_Rollo == 19 &&
+                             pp.Fecha >= Convert.ToDateTime("2024-02-04")
+                       orderby pp.NumeroRollo_BagPro
+                       select new
+                       {
+                           OT = pp.OT,
+                           Id = pp.Id,
+                           Roll = pp.Numero_Rollo,
+                           Roll_BagPro = pp.NumeroRollo_BagPro,
+                           Item = pp.Prod_Id,
+                           Reference = pp.Producto.Prod_Nombre,
+                           RealQty = pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad,
+                           Qty = pp.Cantidad,
+                           Gross_Weight = pp.Peso_Bruto,
+                           Net_Weight = pp.Peso_Neto,
+                           Presentation = pp.Presentacion,
+                           Process_Id = pp.Proceso_Id,
+                           Process = pp.Proceso.Proceso_Nombre,
+                           Date = pp.Fecha + " " + pp.Hora,
+                           Price = pp.PrecioVenta_Producto,
+                           Subtotal = (pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad) * pp.PrecioVenta_Producto,
+                           Client = pp.Clientes.Cli_Nombre,
+                       };
+            return data.Any() ? Ok(data) : NotFound();
+#pragma warning restore CS8604 // Possible null reference argument.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
         [HttpPut("putExistencia/{producto}/{presentacion}/{precio}/{cantidad}")]
         public async Task<IActionResult> PutExistencia(int producto, string presentacion, decimal precio, decimal cantidad)
         {
