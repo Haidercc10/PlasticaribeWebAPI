@@ -529,10 +529,14 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8604 // Possible null reference argument.
+            List<string> process = [ "EMP", "SELLA" ]; 
+
             var data = from pp in _context.Set<Produccion_Procesos>()
                        where pp.Envio_Zeus == false &&
                              pp.Estado_Rollo == 19 &&
-                             pp.Fecha >= Convert.ToDateTime("2024-02-04")
+                             pp.Fecha >= Convert.ToDateTime("2024-02-04") &&
+                             process.Contains(pp.Proceso_Id) &&
+                             pp.Proceso_Id != "WIKE"
                        orderby pp.NumeroRollo_BagPro
                        select new
                        {
@@ -553,6 +557,7 @@ namespace PlasticaribeAPI.Controllers
                            Price = pp.PrecioVenta_Producto,
                            Subtotal = (pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad) * pp.PrecioVenta_Producto,
                            Client = pp.Clientes.Cli_Nombre,
+
                        };
             return data.Any() ? Ok(data) : NotFound();
 #pragma warning restore CS8604 // Possible null reference argument.

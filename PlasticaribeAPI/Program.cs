@@ -73,7 +73,7 @@ builder.Services.AddCors(options =>
             "https://localhost:4200",
             "http://localhost:4200", 
             "http://192.168.0.193:5000", 
-            "http://192.168.0.137:4700"
+            "http://192.168.0.187:4700"
         ).AllowAnyMethod().AllowAnyHeader();
     });
 });
