@@ -361,7 +361,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpPut("putStatusZeus/{rollo}")]
         public async Task<IActionResult> PutStatusZeus(long rollo, string item)
         {
-            var dataProduction = (from prod in _context.Set<Produccion_Procesos>() 
+            var dataProduction = (from prod in _context.Set<Produccion_Procesos>()
                                   where prod.NumeroRollo_BagPro == rollo && prod.Prod_Id == Convert.ToInt64(item)
                                   select prod).FirstOrDefault();
             dataProduction.Envio_Zeus = true;
@@ -495,7 +495,9 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8604 // Possible null reference argument.
             var data = from pp in _context.Set<Produccion_Procesos>()
-                       where pp.Fecha >= date1 &&
+                       from epot in _context.Set<Estados_ProcesosOT>()
+                       where pp.OT == epot.EstProcOT_OrdenTrabajo &&
+                             pp.Fecha >= date1 &&
                              pp.Fecha <= date2 &&
                              Convert.ToString(pp.OT).Contains(ot) &&
                              pp.Proceso_Id.Contains(process) &&
@@ -509,7 +511,8 @@ namespace PlasticaribeAPI.Controllers
                            pp.Cli_Id,
                            pp.Clientes.Cli_Nombre,
                            pp.Prod_Id,
-                           pp.Producto.Prod_Nombre, 
+                           pp.Producto.Prod_Nombre,
+                           Cantidad_Pedida = pp.Presentacion == "Kg" ? epot.EstProcOT_CantidadPedida : epot.EstProcOT_CantidadPedidaUnd,
                            pp.Numero_Rollo,
                            pp.NumeroRollo_BagPro,
                            pp.Producto.Prod_Ancho,
@@ -531,9 +534,8 @@ namespace PlasticaribeAPI.Controllers
                            pp.Peso_Bruto,
                            pp.Peso_Neto,
                            pp.Cantidad,
-                           pp.Presentacion,                     
+                           pp.Presentacion,
                            pp.Proceso.Proceso_Nombre,
-
                        };
             return data.Any() ? Ok(data) : NotFound();
 #pragma warning restore CS8604 // Possible null reference argument.
@@ -546,7 +548,7 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8604 // Possible null reference argument.
-            List<string> process = [ "EMP", "SELLA" ]; 
+            List<string> process = ["EMP", "SELLA"];
 
             var data = from pp in _context.Set<Produccion_Procesos>()
                        where pp.Envio_Zeus == false &&
@@ -823,7 +825,7 @@ namespace PlasticaribeAPI.Controllers
                 if (count == rollos.Count()) return NoContent();
             }
             return NoContent();
-        }
+        } 
 
         //.Función que recibirá los rollos a los que se les revertirá (actualizará) el Envio Zeus a 0 y el estado del rollo en 19 (Traslado)
         [HttpPost("putReversionEnvioZeus")]
@@ -850,6 +852,30 @@ namespace PlasticaribeAPI.Controllers
                 if (count == rolls.Count()) return NoContent();
             }
             return NoContent();
+        }
+
+        //Función que cambiará el estado de los rollos a Eliminados.
+        [HttpPut("putStateDeletedRolls")]
+        public async Task<IActionResult> putStateDeletedRolls(List<rollsToDelete> rollsToDelete)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            foreach (var rolls in rollsToDelete)
+            {
+                var roll = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == rolls.roll && pp.Proceso_Id == rolls.process select pp).FirstOrDefault();
+
+                roll.Estado_Rollo = 22;
+                _context.Entry(roll).State = EntityState.Modified;
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    return NotFound();
+                }
+            }
+            return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         // POST: api/Produccion_Procesos
@@ -900,4 +926,10 @@ namespace PlasticaribeAPI.Controllers
             return _context.Produccion_Procesos.Any(x => x.Numero_Rollo == numeroRollo);
         }
     }
+}
+public class rollsToDelete
+{
+    public long roll { get; set; }
+    public string process { get; set; }
+
 }
