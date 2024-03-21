@@ -504,19 +504,36 @@ namespace PlasticaribeAPI.Controllers
                              pp.Estado_Rollo == 19
                        select new
                        {
-                           pp.OT,
                            pp.Id,
+                           pp.OT,
+                           pp.Cli_Id,
+                           pp.Clientes.Cli_Nombre,
+                           pp.Prod_Id,
+                           pp.Producto.Prod_Nombre, 
                            pp.Numero_Rollo,
                            pp.NumeroRollo_BagPro,
-                           pp.Prod_Id,
-                           pp.Producto.Prod_Nombre,
-                           pp.Cantidad,
+                           pp.Producto.Prod_Ancho,
+                           pp.Producto.Prod_Fuelle,
+                           pp.Producto.Prod_Largo,
+                           pp.Tara_Cono,
+                           pp.Cono_Id,
+                           pp.Producto.Material_Id,
+                           pp.Producto.MaterialMP.Material_Nombre,
+                           pp.Producto.Prod_Calibre,
+                           pp.Fecha,
+                           pp.Hora,
+                           pp.Maquina,
+                           pp.Operario1.Usua_Nombre,
+                           pp.Proceso_Id,
+                           pp.Turno_Id,
+                           pp.Estado_Rollo,
+                           pp.Estado.Estado_Nombre,
                            pp.Peso_Bruto,
                            pp.Peso_Neto,
-                           pp.Presentacion,
-                           pp.Proceso_Id,
+                           pp.Cantidad,
+                           pp.Presentacion,                     
                            pp.Proceso.Proceso_Nombre,
-                           pp.Fecha,
+
                        };
             return data.Any() ? Ok(data) : NotFound();
 #pragma warning restore CS8604 // Possible null reference argument.
