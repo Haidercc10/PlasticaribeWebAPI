@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 using ServiceReference1;
+using System.Runtime.Intrinsics.Arm;
 using System.ServiceModel;
 
 namespace PlasticaribeAPI.Controllers
@@ -581,6 +582,80 @@ namespace PlasticaribeAPI.Controllers
             return data.Any() ? Ok(data) : NotFound();
 #pragma warning restore CS8604 // Possible null reference argument.
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }  
+
+            //Consulta que devuelve la información de la producción disponible de empaque y sellado.
+        [HttpGet("getInfoItemsAvailables/{item}")]
+        public ActionResult getInfoItemsAvailables(int item)
+        {
+
+            List<long> rollsInPallet = (from pe in _context.Set<PreEntrega_RolloDespacho>()
+                                 from pp in _context.Set<Produccion_Procesos>()
+                                 from p in _context.Set<Producto>()
+                                 join dp in _context.Set<DetallePreEntrega_RolloDespacho>() on pp.NumeroRollo_BagPro equals dp.Rollo_Id
+                                 join de in _context.Set<DetalleEntradaRollo_Producto>() on pp.Numero_Rollo equals de.Rollo_Id
+                                 where pe.PreEntRollo_Id == dp.PreEntRollo_Id &&
+                                 p.Prod_Id == pp.Prod_Id &&
+                                 p.Prod_Id == dp.Prod_Id &&
+                                 p.Prod_Id == de.Prod_Id &&
+                                 pp.Estado_Rollo == 19 &&
+                                 pp.Envio_Zeus == true &&
+                                 pp.Prod_Id == item
+                                 select pp.NumeroRollo_BagPro).ToList();
+
+            var itemsOutPallet = from pp in _context.Set<Produccion_Procesos>()
+                                from p in _context.Set<Producto>()
+                                where pp.Prod_Id == p.Prod_Id &&
+                                pp.Estado_Rollo == 19 &&
+                                pp.Envio_Zeus == true &&
+                                pp.Prod_Id == item &&
+                                !rollsInPallet.Contains(pp.NumeroRollo_BagPro) &&
+                                (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE")
+                                select new
+                                {
+                                    Pallet = Convert.ToInt32(0),
+                                    Client_Id = pp.Cli_Id,
+                                    Client = pp.Clientes.Cli_Nombre,
+                                    Roll_BagPro = pp.NumeroRollo_BagPro,
+                                    Roll = pp.Numero_Rollo,
+                                    OT = pp.OT,
+                                    Item = pp.Prod_Id,
+                                    Reference = p.Prod_Nombre,
+                                    Qty = pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad,
+                                    Presentation = pp.Presentacion,
+                                    Process_Id = pp.Proceso_Id,
+                                    Process = pp.Proceso.Proceso_Nombre,
+                                };
+
+            var itemsInPallet = from pe in _context.Set<PreEntrega_RolloDespacho>()
+                                  from pp in _context.Set<Produccion_Procesos>()
+                                  from p in _context.Set<Producto>()
+                                  join dp in _context.Set<DetallePreEntrega_RolloDespacho>() on pp.NumeroRollo_BagPro equals dp.Rollo_Id
+                                  join de in _context.Set<DetalleEntradaRollo_Producto>() on pp.Numero_Rollo equals de.Rollo_Id
+                                  where pe.PreEntRollo_Id == dp.PreEntRollo_Id &&
+                                  p.Prod_Id == pp.Prod_Id &&
+                                  p.Prod_Id == dp.Prod_Id &&
+                                  p.Prod_Id == de.Prod_Id &&
+                                  pp.Estado_Rollo == 19 &&
+                                  pp.Envio_Zeus == true &&
+                                  pp.Prod_Id == item 
+                                  select new
+                                  {
+                                      Pallet = Convert.ToInt32(pe.PreEntRollo_Id),
+                                      Client_Id = pp.Cli_Id,
+                                      Client = pp.Clientes.Cli_Nombre,
+                                      Roll_BagPro = pp.NumeroRollo_BagPro,
+                                      Roll = pp.Numero_Rollo,
+                                      OT = pp.OT,
+                                      Item = pp.Prod_Id,
+                                      Reference = p.Prod_Nombre,
+                                      Qty = pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad,
+                                      Presentation = pp.Presentacion,
+                                      Process_Id = pp.Proceso_Id,
+                                      Process = pp.Proceso.Proceso_Nombre,
+                                  };
+
+            return itemsOutPallet.Concat(itemsInPallet).Any() ? Ok(itemsOutPallet.Concat(itemsInPallet)) : NotFound();
         }
 
         [HttpPut("putExistencia/{producto}/{presentacion}/{precio}/{cantidad}")]
