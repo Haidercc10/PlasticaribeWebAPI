@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 using ServiceReference1;
+using System.Linq;
 using System.Runtime.Intrinsics.Arm;
 using System.ServiceModel;
 
@@ -584,11 +585,10 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }  
 
-            //Consulta que devuelve la información de la producción disponible de empaque y sellado.
-        [HttpGet("getInfoItemsAvailables/{item}")]
-        public ActionResult getInfoItemsAvailables(int item)
+        //Consulta que devuelve la información de la producción disponible de empaque y sellado.
+        [HttpGet("getInfoItemsAvailablesOutPallet/{item}")]
+        public ActionResult getInfoItemsAvailablesOutPallet(int item)
         {
-
             List<long> rollsInPallet = (from pe in _context.Set<PreEntrega_RolloDespacho>()
                                  from pp in _context.Set<Produccion_Procesos>()
                                  from p in _context.Set<Producto>()
@@ -611,52 +611,125 @@ namespace PlasticaribeAPI.Controllers
                                 pp.Prod_Id == item &&
                                 !rollsInPallet.Contains(pp.NumeroRollo_BagPro) &&
                                 (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE")
+                                 group pp by new
+                                 {
+                                     pp.Prod_Id,
+                                     pp.Producto.Prod_Nombre,
+                                     pp.Cli_Id,
+                                     pp.Clientes.Cli_Nombre,
+                                     pp.Presentacion,
+                                 }
+                                 into grouped
+                                 select new
+                                 {
+                                    Pallet = Convert.ToString("FP-") + Convert.ToString(grouped.Key.Prod_Id),
+                                    Client_Id = grouped.Key.Cli_Id,
+                                    Client = grouped.Key.Cli_Nombre,
+                                    Item = grouped.Key.Prod_Id,
+                                    Reference = grouped.Key.Prod_Nombre,
+                                    Qty = grouped.Sum(x => x.Presentacion == "Kg" ? x.Peso_Neto : x.Cantidad),
+                                    Presentation = grouped.Key.Presentacion,
+                                    Rolls =
+                                    (
+                                       from pp in _context.Set<Produccion_Procesos>()
+                                       from p in _context.Set<Producto>()
+                                       where pp.Prod_Id == p.Prod_Id &&
+                                       pp.Estado_Rollo == 19 &&
+                                       pp.Envio_Zeus == true &&
+                                       pp.Prod_Id == item &&
+                                       !rollsInPallet.Contains(pp.NumeroRollo_BagPro) &&
+                                       (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE")
+                                       select new
+                                       {
+                                           Pallet = Convert.ToString("FP-") + Convert.ToString(grouped.Key.Prod_Id),
+                                           Roll_BagPro = pp.NumeroRollo_BagPro,
+                                           Roll = pp.Numero_Rollo,
+                                           Client_Id = pp.Cli_Id,
+                                           Client = pp.Clientes.Cli_Nombre,
+                                           OT = pp.OT,
+                                           Item = pp.Prod_Id,
+                                           Reference = p.Prod_Nombre,
+                                           Qty = pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad,
+                                           Presentation = pp.Presentacion,
+                                           Process_Id = pp.Proceso_Id,
+                                           Process = pp.Proceso.Proceso_Nombre,
+                                       }
+                                    ).ToList()
+                                     
+                                 };
+            return Ok(itemsOutPallet);
+        }
+
+        //Consulta que devuelve la información de la producción disponible de empaque y sellado.
+        [HttpGet("getInfoItemsAvailablesInPallet/{item}")]
+        public ActionResult getInfoItemsAvailablesInPallet(int item)
+        {
+            var itemsInPallet = from pe in _context.Set<PreEntrega_RolloDespacho>()
+                                from pp in _context.Set<Produccion_Procesos>()
+                                from p in _context.Set<Producto>()
+                                join dp in _context.Set<DetallePreEntrega_RolloDespacho>() on pp.NumeroRollo_BagPro equals dp.Rollo_Id
+                                join de in _context.Set<DetalleEntradaRollo_Producto>() on pp.Numero_Rollo equals de.Rollo_Id
+                                where pe.PreEntRollo_Id == dp.PreEntRollo_Id &&
+                                p.Prod_Id == pp.Prod_Id &&
+                                p.Prod_Id == dp.Prod_Id &&
+                                p.Prod_Id == de.Prod_Id &&
+                                pp.Estado_Rollo == 19 &&
+                                pp.Envio_Zeus == true &&
+                                pp.Prod_Id == item
+                                group pp by new
+                                {
+                                    pe.PreEntRollo_Id,
+                                    pp.Prod_Id,
+                                    pp.Producto.Prod_Nombre,
+                                    pp.Cli_Id,
+                                    pp.Clientes.Cli_Nombre,
+                                    pp.Presentacion,
+                                }
+                                  into grouped
                                 select new
                                 {
-                                    Pallet = Convert.ToInt32(0),
-                                    Client_Id = pp.Cli_Id,
-                                    Client = pp.Clientes.Cli_Nombre,
-                                    Roll_BagPro = pp.NumeroRollo_BagPro,
-                                    Roll = pp.Numero_Rollo,
-                                    OT = pp.OT,
-                                    Item = pp.Prod_Id,
-                                    Reference = p.Prod_Nombre,
-                                    Qty = pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad,
-                                    Presentation = pp.Presentacion,
-                                    Process_Id = pp.Proceso_Id,
-                                    Process = pp.Proceso.Proceso_Nombre,
+                                   Pallet = Convert.ToString("PL-") + Convert.ToString(grouped.Key.PreEntRollo_Id),
+                                   Client_Id = grouped.Key.Cli_Id,
+                                   Client = grouped.Key.Cli_Nombre,
+                                   Item = grouped.Key.Prod_Id,
+                                   Reference = grouped.Key.Prod_Nombre,
+                                   Qty = grouped.Sum(x => x.Presentacion == "Kg" ? x.Peso_Neto : x.Cantidad),
+                                   Presentation = grouped.Key.Presentacion,
+                                   Rolls =
+                                   (
+                                       from pe in _context.Set<PreEntrega_RolloDespacho>()
+                                       from pp in _context.Set<Produccion_Procesos>()
+                                       from p in _context.Set<Producto>()
+                                       join dp in _context.Set<DetallePreEntrega_RolloDespacho>() on pp.NumeroRollo_BagPro equals dp.Rollo_Id
+                                       join de in _context.Set<DetalleEntradaRollo_Producto>() on pp.Numero_Rollo equals de.Rollo_Id
+                                       where pe.PreEntRollo_Id == dp.PreEntRollo_Id &&
+                                       p.Prod_Id == pp.Prod_Id &&
+                                       p.Prod_Id == dp.Prod_Id &&
+                                       p.Prod_Id == de.Prod_Id &&
+                                       pp.Estado_Rollo == 19 &&
+                                       pp.Envio_Zeus == true &&
+                                       pp.Prod_Id == item &&
+                                       pe.PreEntRollo_Id == grouped.Key.PreEntRollo_Id
+                                       select new
+                                       {
+                                           Pallet = Convert.ToString("PL-") + Convert.ToString(grouped.Key.PreEntRollo_Id),
+                                           Roll_BagPro = pp.NumeroRollo_BagPro,
+                                           Roll = pp.Numero_Rollo,
+                                           OT = pp.OT,
+                                           Client_Id = pp.Cli_Id,
+                                           Client = pp.Clientes.Cli_Nombre,
+                                           Item = pp.Prod_Id,
+                                           Reference = p.Prod_Nombre,
+                                           Qty = pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad,
+                                           Presentation = pp.Presentacion,
+                                           Process_Id = pp.Proceso_Id,
+                                           Process = pp.Proceso.Proceso_Nombre,
+                                       }
+                                   ).ToList()
                                 };
-
-            var itemsInPallet = from pe in _context.Set<PreEntrega_RolloDespacho>()
-                                  from pp in _context.Set<Produccion_Procesos>()
-                                  from p in _context.Set<Producto>()
-                                  join dp in _context.Set<DetallePreEntrega_RolloDespacho>() on pp.NumeroRollo_BagPro equals dp.Rollo_Id
-                                  join de in _context.Set<DetalleEntradaRollo_Producto>() on pp.Numero_Rollo equals de.Rollo_Id
-                                  where pe.PreEntRollo_Id == dp.PreEntRollo_Id &&
-                                  p.Prod_Id == pp.Prod_Id &&
-                                  p.Prod_Id == dp.Prod_Id &&
-                                  p.Prod_Id == de.Prod_Id &&
-                                  pp.Estado_Rollo == 19 &&
-                                  pp.Envio_Zeus == true &&
-                                  pp.Prod_Id == item 
-                                  select new
-                                  {
-                                      Pallet = Convert.ToInt32(pe.PreEntRollo_Id),
-                                      Client_Id = pp.Cli_Id,
-                                      Client = pp.Clientes.Cli_Nombre,
-                                      Roll_BagPro = pp.NumeroRollo_BagPro,
-                                      Roll = pp.Numero_Rollo,
-                                      OT = pp.OT,
-                                      Item = pp.Prod_Id,
-                                      Reference = p.Prod_Nombre,
-                                      Qty = pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad,
-                                      Presentation = pp.Presentacion,
-                                      Process_Id = pp.Proceso_Id,
-                                      Process = pp.Proceso.Proceso_Nombre,
-                                  };
-
-            return itemsOutPallet.Concat(itemsInPallet).Any() ? Ok(itemsOutPallet.Concat(itemsInPallet)) : NotFound();
+            return Ok(itemsInPallet);
         }
+
 
         [HttpPut("putExistencia/{producto}/{presentacion}/{precio}/{cantidad}")]
         public async Task<IActionResult> PutExistencia(int producto, string presentacion, decimal precio, decimal cantidad)
