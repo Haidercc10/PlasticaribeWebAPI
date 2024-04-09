@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
@@ -89,6 +90,13 @@ namespace PlasticaribeAPI.Controllers
                                                e.EntRolloProd_Id >= 28512
                                         orderby e.EntRolloProd_Id descending
                                         select e.EntRolloProd_Observacion).FirstOrDefault(),
+                           Pallet = (from pre in _context.Set<PreEntrega_RolloDespacho>()
+                                     from ent in _context.Set<DetallePreEntrega_RolloDespacho>()
+                                     where pre.PreEntRollo_Id == ent.PreEntRollo_Id &&
+                                     ent.Rollo_Id == dtOrder.Numero_Rollo &&
+                                     ent.Prod_Id == dtOrder.Prod_Id &&
+                                     ent.UndMed_Producto == dtOrder.Presentacion
+                                     select ent.PreEntRollo_Id).FirstOrDefault(),
                        };
             return fact.Any() ? Ok(fact) : NotFound();
         }
@@ -157,6 +165,13 @@ namespace PlasticaribeAPI.Controllers
                                         select e.EntRolloProd_Observacion).FirstOrDefault(),
                            orderProduction = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo && pp.Prod_Id == dtOrder.Prod_Id select pp.OT).FirstOrDefault(),
                            datosEnvio = dataSend.Any() ? (dataSend).FirstOrDefault() : null,
+                           Pallet = (from pre in _context.Set<PreEntrega_RolloDespacho>()
+                                     from ent in _context.Set<DetallePreEntrega_RolloDespacho>()
+                                     where pre.PreEntRollo_Id == ent.PreEntRollo_Id &&
+                                     ent.Rollo_Id == dtOrder.Numero_Rollo && 
+                                     ent.Prod_Id == dtOrder.Prod_Id && 
+                                     ent.UndMed_Producto == dtOrder.Presentacion
+                                     select ent.PreEntRollo_Id).FirstOrDefault(),
                        };
             return fact.Any() ? Ok(fact) : NotFound();
         }

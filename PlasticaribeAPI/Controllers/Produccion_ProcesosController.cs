@@ -629,6 +629,8 @@ namespace PlasticaribeAPI.Controllers
                                     Reference = grouped.Key.Prod_Nombre,
                                     Qty = grouped.Sum(x => x.Presentacion == "Kg" ? x.Peso_Neto : x.Cantidad),
                                     Presentation = grouped.Key.Presentacion,
+                                    SaleOrder = 0,
+                                    QtyRolls = grouped.Count(),
                                     Rolls =
                                     (
                                        from pp in _context.Set<Produccion_Procesos>()
@@ -653,6 +655,7 @@ namespace PlasticaribeAPI.Controllers
                                            Presentation = pp.Presentacion,
                                            Process_Id = pp.Proceso_Id,
                                            Process = pp.Proceso.Proceso_Nombre,
+                                           SaleOrder = 0,
                                        }
                                     ).ToList()
                                      
@@ -695,6 +698,8 @@ namespace PlasticaribeAPI.Controllers
                                    Reference = grouped.Key.Prod_Nombre,
                                    Qty = grouped.Sum(x => x.Presentacion == "Kg" ? x.Peso_Neto : x.Cantidad),
                                    Presentation = grouped.Key.Presentacion,
+                                   SaleOrder = 0,
+                                   QtyRolls = grouped.Count(),
                                    Rolls =
                                    (
                                        from pe in _context.Set<PreEntrega_RolloDespacho>()
@@ -724,6 +729,7 @@ namespace PlasticaribeAPI.Controllers
                                            Presentation = pp.Presentacion,
                                            Process_Id = pp.Proceso_Id,
                                            Process = pp.Proceso.Proceso_Nombre,
+                                           SaleOrder = 0,
                                        }
                                    ).ToList()
                                 };
