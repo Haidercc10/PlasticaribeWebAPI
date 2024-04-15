@@ -7,6 +7,7 @@ using ServiceReference1;
 using System.Linq;
 using System.Runtime.Intrinsics.Arm;
 using System.ServiceModel;
+using System.Text.RegularExpressions;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -589,19 +590,20 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getInfoItemsAvailablesOutPallet/{item}")]
         public ActionResult getInfoItemsAvailablesOutPallet(int item)
         {
-            List<long> rollsInPallet = (from pe in _context.Set<PreEntrega_RolloDespacho>()
-                                 from pp in _context.Set<Produccion_Procesos>()
-                                 from p in _context.Set<Producto>()
-                                 join dp in _context.Set<DetallePreEntrega_RolloDespacho>() on pp.NumeroRollo_BagPro equals dp.Rollo_Id
-                                 join de in _context.Set<DetalleEntradaRollo_Producto>() on pp.Numero_Rollo equals de.Rollo_Id
-                                 where pe.PreEntRollo_Id == dp.PreEntRollo_Id &&
-                                 p.Prod_Id == pp.Prod_Id &&
-                                 p.Prod_Id == dp.Prod_Id &&
-                                 p.Prod_Id == de.Prod_Id &&
-                                 pp.Estado_Rollo == 19 &&
-                                 pp.Envio_Zeus == true &&
-                                 pp.Prod_Id == item
-                                 select pp.NumeroRollo_BagPro).ToList();
+            List<long> rollsInPallet = (from ent in _context.Set<EntradaRollo_Producto>()
+                                        from pp in _context.Set<Produccion_Procesos>()
+                                        from p in _context.Set<Producto>()
+                                        join de in _context.Set<DetalleEntradaRollo_Producto>() on pp.Numero_Rollo equals de.Rollo_Id
+                                        where ent.EntRolloProd_Id == de.EntRolloProd_Id &&
+                                        ent.Pallet_Id == de.Pallet_Id &&
+                                        ent.Pallet_Id != null &&
+                                        de.Pallet_Id != null &&
+                                        p.Prod_Id == pp.Prod_Id &&
+                                        p.Prod_Id == de.Prod_Id &&
+                                        pp.Estado_Rollo == 19 &&
+                                        pp.Envio_Zeus == true &&
+                                        pp.Prod_Id == item
+                                        select pp.NumeroRollo_BagPro).ToList();
 
             var itemsOutPallet = from pp in _context.Set<Produccion_Procesos>()
                                 from p in _context.Set<Producto>()
@@ -631,6 +633,7 @@ namespace PlasticaribeAPI.Controllers
                                     Presentation = grouped.Key.Presentacion,
                                     SaleOrder = 0,
                                     QtyRolls = grouped.Count(),
+                                    Status = Convert.ToString("FUERA PALLET"),
                                     Rolls =
                                     (
                                        from pp in _context.Set<Produccion_Procesos>()
@@ -658,7 +661,6 @@ namespace PlasticaribeAPI.Controllers
                                            SaleOrder = 0,
                                        }
                                     ).ToList()
-                                     
                                  };
             return Ok(itemsOutPallet);
         }
@@ -667,21 +669,22 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getInfoItemsAvailablesInPallet/{item}")]
         public ActionResult getInfoItemsAvailablesInPallet(int item)
         {
-            var itemsInPallet = from pe in _context.Set<PreEntrega_RolloDespacho>()
+            var itemsInPallet = from ent in _context.Set<EntradaRollo_Producto>()
                                 from pp in _context.Set<Produccion_Procesos>()
                                 from p in _context.Set<Producto>()
-                                join dp in _context.Set<DetallePreEntrega_RolloDespacho>() on pp.NumeroRollo_BagPro equals dp.Rollo_Id
                                 join de in _context.Set<DetalleEntradaRollo_Producto>() on pp.Numero_Rollo equals de.Rollo_Id
-                                where pe.PreEntRollo_Id == dp.PreEntRollo_Id &&
+                                where ent.EntRolloProd_Id == de.EntRolloProd_Id &&
+                                ent.Pallet_Id == de.Pallet_Id &&
+                                ent.Pallet_Id != null &&
+                                de.Pallet_Id != null &&
                                 p.Prod_Id == pp.Prod_Id &&
-                                p.Prod_Id == dp.Prod_Id &&
                                 p.Prod_Id == de.Prod_Id &&
                                 pp.Estado_Rollo == 19 &&
                                 pp.Envio_Zeus == true &&
                                 pp.Prod_Id == item
                                 group pp by new
                                 {
-                                    pe.PreEntRollo_Id,
+                                    ent.Pallet_Id,
                                     pp.Prod_Id,
                                     pp.Producto.Prod_Nombre,
                                     pp.Cli_Id,
@@ -691,33 +694,42 @@ namespace PlasticaribeAPI.Controllers
                                   into grouped
                                 select new
                                 {
-                                   Pallet = Convert.ToString("PL-") + Convert.ToString(grouped.Key.PreEntRollo_Id),
-                                   Client_Id = grouped.Key.Cli_Id,
-                                   Client = grouped.Key.Cli_Nombre,
-                                   Item = grouped.Key.Prod_Id,
-                                   Reference = grouped.Key.Prod_Nombre,
-                                   Qty = grouped.Sum(x => x.Presentacion == "Kg" ? x.Peso_Neto : x.Cantidad),
-                                   Presentation = grouped.Key.Presentacion,
-                                   SaleOrder = 0,
-                                   QtyRolls = grouped.Count(),
-                                   Rolls =
+                                    Pallet = Convert.ToString("PL-") + Convert.ToString(grouped.Key.Pallet_Id),
+                                    Client_Id = grouped.Key.Cli_Id,
+                                    Client = grouped.Key.Cli_Nombre,
+                                    Item = grouped.Key.Prod_Id,
+                                    Reference = grouped.Key.Prod_Nombre,
+                                    Qty = grouped.Sum(x => x.Presentacion == "Kg" ? x.Peso_Neto : x.Cantidad),
+                                    Presentation = grouped.Key.Presentacion,
+                                    SaleOrder = 0,
+                                    QtyRolls = grouped.Count(),
+                                    Status =  grouped.Count() == (from det in _context.Set<DetalleEntradaRollo_Producto>()
+                                                                  from entry in _context.Set<EntradaRollo_Producto>()
+                                                                  where det.Prod_Id == item &&
+                                                                  det.EntRolloProd_Id == entry.EntRolloProd_Id &&
+                                                                  det.Pallet_Id == grouped.Key.Pallet_Id &&
+                                                                  entry.Pallet_Id != null &&
+                                                                  det.Pallet_Id != null
+                                                                  select det).Count() ? Convert.ToString("PALLET CERRADO") : Convert.ToString("PALLET ABIERTO"),
+                                    Rolls =
                                    (
-                                       from pe in _context.Set<PreEntrega_RolloDespacho>()
+                                       from ent in _context.Set<EntradaRollo_Producto>()
                                        from pp in _context.Set<Produccion_Procesos>()
                                        from p in _context.Set<Producto>()
-                                       join dp in _context.Set<DetallePreEntrega_RolloDespacho>() on pp.NumeroRollo_BagPro equals dp.Rollo_Id
                                        join de in _context.Set<DetalleEntradaRollo_Producto>() on pp.Numero_Rollo equals de.Rollo_Id
-                                       where pe.PreEntRollo_Id == dp.PreEntRollo_Id &&
+                                       where ent.EntRolloProd_Id == de.EntRolloProd_Id &&
+                                       ent.Pallet_Id == de.Pallet_Id &&
+                                       ent.Pallet_Id != null &&
+                                       de.Pallet_Id != null &&
                                        p.Prod_Id == pp.Prod_Id &&
-                                       p.Prod_Id == dp.Prod_Id &&
                                        p.Prod_Id == de.Prod_Id &&
                                        pp.Estado_Rollo == 19 &&
                                        pp.Envio_Zeus == true &&
                                        pp.Prod_Id == item &&
-                                       pe.PreEntRollo_Id == grouped.Key.PreEntRollo_Id
+                                       ent.Pallet_Id == grouped.Key.Pallet_Id
                                        select new
                                        {
-                                           Pallet = Convert.ToString("PL-") + Convert.ToString(grouped.Key.PreEntRollo_Id),
+                                           Pallet = Convert.ToString("PL-") + Convert.ToString(grouped.Key.Pallet_Id),
                                            Roll_BagPro = pp.NumeroRollo_BagPro,
                                            Roll = pp.Numero_Rollo,
                                            OT = pp.OT,

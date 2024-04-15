@@ -52,6 +52,8 @@ namespace PlasticaribeAPI.Models
 
         public string? Proceso_Id { get; set; }
         public Proceso? Proceso { get; set; }
+
+        public long? Pallet_Id { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

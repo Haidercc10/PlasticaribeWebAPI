@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20240412150259_PalletId_InEntryAndOF")]
+    partial class PalletId_InEntryAndOF
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -428,9 +431,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("CatMP_Id")
                         .HasColumnType("int");
 
-                    b.Property<long>("Prov_Id")
-                        .HasColumnType("bigint");
-
                     b.Property<int>("TpBod_Id")
                         .HasColumnType("int");
 
@@ -450,8 +450,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("BoppGen_Id");
 
                     b.HasIndex("CatMP_Id");
-
-                    b.HasIndex("Prov_Id");
 
                     b.HasIndex("TpBod_Id");
 
@@ -8623,12 +8621,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Proveedor", "Proveedor")
-                        .WithMany()
-                        .HasForeignKey("Prov_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.Tipo_Bodega", "TpBod")
                         .WithMany()
                         .HasForeignKey("TpBod_Id")
@@ -8654,8 +8646,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("CatMP");
-
-                    b.Navigation("Proveedor");
 
                     b.Navigation("TpBod");
 

@@ -155,7 +155,6 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
-
         [HttpGet("getDescripcion")]
         public ActionResult GetNombresRepetitivos()
         {
@@ -264,6 +263,46 @@ namespace PlasticaribeAPI.Controllers
             if (con != null) return Ok(con);
             else return BadRequest("No se encontraron BOPPs asociados");
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+        }
+
+        [HttpGet("getEntryBOPP/{fecha1}/{fecha2}/{hora}")]
+        public ActionResult getEntryBOPP(DateTime fecha1, DateTime fecha2, string hora)
+        {
+            //Entrada de BOPP
+            var conEntradaBOPP = from ent in _context.Set<BOPP>()
+                                 join bg in _context.Set<Bopp_Generico>() on ent.BoppGen_Id equals bg.BoppGen_Id
+                                 join p in _context.Set<Proveedor>() on ent.Prov_Id equals p.Prov_Id
+                                 where ent.BOPP_FechaIngreso >= fecha1
+                                       && ent.BOPP_FechaIngreso <= fecha2
+                                       && ent.BOPP_Hora == hora
+                                 select new
+                                 {
+                                     Id = Convert.ToInt64(ent.BOPP_Id),
+                                     Codigo = Convert.ToString(ent.BOPP_CodigoDoc) == null ? Convert.ToString("") : Convert.ToString(ent.BOPP_CodigoDoc),
+                                     TipoDoc = Convert.ToString(ent.BOPP_TipoDoc) == null ? Convert.ToString("") : (from tdoc in _context.Set<Tipo_Documento>() where tdoc.TpDoc_Id == Convert.ToString(ent.BOPP_TipoDoc) select tdoc.TpDoc_Nombre).FirstOrDefault(),
+                                     Movimiento = Convert.ToString("ENTBIO"),
+                                     Tipo_Movimiento = Convert.ToString("Entrada de Biorientado"),
+                                     Fecha = ent.BOPP_FechaIngreso,
+                                     Hora = ent.BOPP_Hora,
+                                     Usuario = ent.Usua.Usua_Nombre,
+                                     Bopp_Id = Convert.ToInt64(ent.BOPP_Serial),
+                                     Bopp = Convert.ToString(ent.BOPP_Nombre),
+                                     BoppGenerico_Id = Convert.ToInt32(bg.BoppGen_Id),
+                                     BoppGenerico = Convert.ToString(bg.BoppGen_Nombre),
+                                     Descripcion = Convert.ToString(ent.BOPP_Descripcion),
+                                     Cantidad = Convert.ToDecimal(ent.BOPP_Stock),
+                                     Unidad_Medida = ent.UndMed_Kg,
+                                     CantidadInicial = Convert.ToDecimal(ent.BOPP_CantidadInicialKg),
+                                     Ancho = Convert.ToDecimal(ent.BOPP_Ancho),
+                                     Micras = Convert.ToDecimal(ent.BOPP_CantidadMicras),
+                                     Serial = Convert.ToString(ent.BOPP_Serial),
+                                     Precio = Convert.ToDecimal(ent.BOPP_Precio),
+                                     Id_Proveedor = Convert.ToString(ent.Prov_Id),
+                                     Proveedor = Convert.ToString(p.Prov_Nombre),
+                                     Telefono_Proveedor = Convert.ToString(p.Prov_Telefono) == null ? Convert.ToString("") : Convert.ToString(p.Prov_Telefono),
+                                 };
+
+            return Ok(conEntradaBOPP);
         }
 
         // PUT: api/BOPP/5

@@ -79,6 +79,8 @@ namespace PlasticaribeAPI.Models
         public long BoppGen_Id { get; set; }
         public Bopp_Generico? boppGenerico { get; set; }
 
+        public long Prov_Id { get; set; }
+        public Proveedor? Proveedor { get; set; }
 
         //Lista requerida para relacion con BOPP en detalles asignaciones bopp
         public IList<DetalleAsignacion_BOPP>? DetAsigBOPP { get; set; }
