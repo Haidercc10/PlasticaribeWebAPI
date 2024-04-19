@@ -158,7 +158,10 @@ namespace PlasticaribeAPI.Controllers
             var con = from inv in _context.Set<Inventario_Mensual_Productos>()
                       join exi in _context.Set<Existencia_Productos>()
                       on inv.Prod_Id equals exi.Prod_Id
-                      where inv.Prod_Id != 1
+                      where inv.Prod_Id != 1 &&
+                      inv.Prod_Id == exi.Prod_Id &&
+                      exi.UndMed_Id == inv.UndMed_Id &&
+                      exi.ExProd_PrecioVenta > 0
                       && fechaFin.Month == 1 ? inv.Enero >= 1 :
                          fechaFin.Month == 2 ? inv.Febrero >= 1 :
                          fechaFin.Month == 3 ? inv.Marzo >= 1 :
@@ -170,7 +173,7 @@ namespace PlasticaribeAPI.Controllers
                          fechaFin.Month == 9 ? inv.Septiembre >= 1 :
                          fechaFin.Month == 10 ? inv.Octubre >= 1 :
                          fechaFin.Month == 11 ? inv.Noviembre >= 1 :
-                         fechaFin.Month == 13 ? inv.Diciembre >= 1 : inv.Enero >= 1
+                         fechaFin.Month == 12 ? inv.Diciembre >= 1 : inv.Enero >= 1
                       select new {
                           Fecha_Inventario = new DateTime(fechaFin.Year, fechaFin.Month, 1),
                           Ot = "",
@@ -187,7 +190,7 @@ namespace PlasticaribeAPI.Controllers
                                   fechaFin.Month == 9 ? inv.Septiembre :
                                   fechaFin.Month == 10 ? inv.Octubre :
                                   fechaFin.Month == 11 ? inv.Noviembre :
-                                  fechaFin.Month == 13 ? inv.Diciembre : inv.Enero,
+                                  fechaFin.Month == 12 ? inv.Diciembre : inv.Enero,
                           Precio = exi.ExProd_PrecioVenta,
                           Subtotal = (fechaFin.Month == 1 ? inv.Enero :
                                       fechaFin.Month == 2 ? inv.Febrero :
@@ -200,7 +203,7 @@ namespace PlasticaribeAPI.Controllers
                                       fechaFin.Month == 9 ? inv.Septiembre :
                                       fechaFin.Month == 10 ? inv.Octubre :
                                       fechaFin.Month == 11 ? inv.Noviembre :
-                                      fechaFin.Month == 13 ? inv.Diciembre : inv.Enero) * exi.ExProd_PrecioVenta,
+                                      fechaFin.Month == 12 ? inv.Diciembre : inv.Enero) * exi.ExProd_PrecioVenta,
                       };
             if (con == null) return BadRequest("No se encontraron Productos en la fecha consultada");
             else return Ok(con);

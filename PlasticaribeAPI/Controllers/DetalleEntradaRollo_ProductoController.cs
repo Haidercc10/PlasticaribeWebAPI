@@ -288,6 +288,7 @@ namespace PlasticaribeAPI.Controllers
                 var dataEntry = (from ent in _context.Set<EntradaRollo_Producto>()
                                  from det in _context.Set<DetalleEntradaRollo_Producto>()
                                  where ent.EntRolloProd_Id == det.EntRolloProd_Id &&
+                                 ent.EntRolloProd_Fecha >= Convert.ToDateTime("2024-02-04") &&
                                  det.Rollo_Id == roll
                                  select ent).FirstOrDefault();
 

@@ -384,7 +384,7 @@ namespace PlasticaribeAPI.Controllers
                                   fechaFin.Month == 10 ? i.Octubre :
                                   fechaFin.Month == 11 ? i.Noviembre :
                                   fechaFin.Month == 12 ? i.Diciembre : i.Enero),
-                           Precio = b.BOPP_Precio, 
+                           //Precio = b.BOPP_Precio, 
                            Categoria = b.CatMP_Id
                        }
                        into g
@@ -395,8 +395,8 @@ namespace PlasticaribeAPI.Controllers
                             Item = Convert.ToString(g.Key.Id),
                             Referencia = g.Key.Nombre,
                             Stock = g.Key.Mes,
-                            Precio = g.Key.Precio,
-                            Subtotal = (g.Key.Mes * g.Key.Precio),
+                            Precio = (from bio in _context.Set<BOPP>() orderby bio.BOPP_Id descending where bio.BoppGen_Id == g.Key.Id select bio.BOPP_Precio).FirstOrDefault(),
+                            Subtotal = (g.Key.Mes * (from bio in _context.Set<BOPP>() orderby bio.BOPP_Id descending where bio.BoppGen_Id == g.Key.Id select bio.BOPP_Precio).FirstOrDefault()),
                             IdCategoria = g.Key.Categoria,
                        };
             if (mp == null && tinta == null && bopp == null) return BadRequest("No se encontraron Materias Primas/Reciclados en las fechas consultadas");

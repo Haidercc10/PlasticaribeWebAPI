@@ -1015,10 +1015,17 @@ namespace PlasticaribeAPI.Controllers
         {
             //Facturas de Materia Prima
             var conFacturas = from fac in _context.Set<FacturaCompra_MateriaPrima>()
+                              from doc in _context.Set<Detalle_OrdenCompra>()
                               from emp in _context.Set<Empresa>()
+                              join of in _context.Set<OrdenesCompras_FacturasCompras>() on fac.Facco_Id equals of.Facco_Id
+                              join oc in _context.Set<Orden_Compra>() on of.Oc_Id equals oc.Oc_Id
                               where Convert.ToString(fac.Facco.Facco_Id).Contains(codigo)
                                     && fac.Facco.TpDoc_Id.Contains(tipoMov)
-                                    && emp.Empresa_Id == 800188732
+                                    && emp.Empresa_Id == 800188732 
+                                    && fac.MatPri_Id == doc.MatPri_Id
+                                    && fac.Tinta_Id == doc.Tinta_Id
+                                    && fac.Bopp_Id == doc.BOPP_Id
+                                    && doc.Oc_Id == oc.Oc_Id
                               select new
                               {
                                   Id = fac.Facco_Id,
@@ -1053,14 +1060,30 @@ namespace PlasticaribeAPI.Controllers
                                   Telefono_Proveedor = fac.Facco.Prov.Prov_Telefono,
                                   Ciudad_Proveedor = fac.Facco.Prov.Prov_Ciudad,
                                   Correo_Proveedor = fac.Facco.Prov.Prov_Email,
+                                  //Iva y Retenciones
+                                  Orden_Compra = oc.Oc_Id,
+                                  Valor_Total = Convert.ToDecimal(fac.Facco.Facco_ValorTotal),
+                                  Peso_Total = Convert.ToDecimal(fac.FaccoMatPri_Cantidad),
+                                  Iva = oc.IVA,
+                                  ReteIva = oc.ReteIVA,
+                                  ReteFuente = oc.ReteFuente,
+                                  ReteIca = oc.ReteICA,
+                                  Base = oc.Proveedor.CA_ReteICA.Base,
                               };
 
             //Remisiones de Materia Prima
             var conRemisiones = from rem in _context.Set<Remision_MateriaPrima>()
+                                from doc in _context.Set<Detalle_OrdenCompra>()
                                 from emp in _context.Set<Empresa>()
+                                join ro in _context.Set<Remision_OrdenCompra>() on rem.Rem_Id equals ro.Rem_Id
+                                join oc in _context.Set<Orden_Compra>() on ro.Oc_Id equals oc.Oc_Id
                                 where Convert.ToString(rem.Rem.Rem_Id).Contains(codigo)
                                       && rem.Rem.TpDoc_Id.Contains(tipoMov)
                                       && emp.Empresa_Id == 800188732
+                                      && rem.MatPri_Id == doc.MatPri_Id
+                                      && rem.Tinta_Id == doc.Tinta_Id
+                                      && rem.Bopp_Id == doc.BOPP_Id
+                                      && doc.Oc_Id == oc.Oc_Id
                                 select new
                                 {
                                     Id = Convert.ToInt64(rem.Rem_Id),
@@ -1079,9 +1102,9 @@ namespace PlasticaribeAPI.Controllers
                                     Cantidad = Convert.ToDecimal(rem.RemiMatPri_Cantidad),
                                     Unidad_Medida = rem.UndMed_Id,
                                     Precio = 0,
-                                    SubTotal = 0,
+                                    SubTotal =  0,
                                     Observacion = rem.Rem.Rem_Observacion,
-                                    emp.Empresa_Id,
+                                    emp.Empresa_Id, 
                                     emp.Empresa_Ciudad,
                                     emp.Empresa_COdigoPostal,
                                     emp.Empresa_Correo,
@@ -1095,6 +1118,15 @@ namespace PlasticaribeAPI.Controllers
                                     Telefono_Proveedor = rem.Rem.Prov.Prov_Telefono,
                                     Ciudad_Proveedor = rem.Rem.Prov.Prov_Ciudad,
                                     Correo_Proveedor = rem.Rem.Prov.Prov_Email,
+                                    //Iva y Retenciones
+                                    Orden_Compra = oc.Oc_Id,
+                                    Valor_Total = Convert.ToDecimal(rem.Rem.Rem_PrecioEstimado.Value),
+                                    Peso_Total = Convert.ToDecimal(rem.RemiMatPri_Cantidad),
+                                    Iva = oc.IVA,
+                                    ReteIva = oc.ReteIVA,
+                                    ReteFuente = oc.ReteFuente,
+                                    ReteIca = oc.ReteICA,
+                                    Base = oc.Proveedor.CA_ReteICA.Base,
                                 };
             return Ok(conFacturas.Concat(conRemisiones));
         }

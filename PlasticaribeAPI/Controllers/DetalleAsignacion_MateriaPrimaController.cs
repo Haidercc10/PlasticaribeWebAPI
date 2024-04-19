@@ -273,11 +273,13 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var asig = (from asg in _context.Set<DetalleAsignacion_MateriaPrima>()
-                        where asg.AsigMp.AsigMP_OrdenTrabajo == ot
+                        where asg.AsigMp.AsigMP_OrdenTrabajo == ot &&
+                        asg.MatPri.CatMP_Id != 18
                         select asg.DtAsigMp_Cantidad).Sum();
 
             var devol = (from dev in _context.Set<DetalleDevolucion_MateriaPrima>()
                          where dev.DevMatPri.DevMatPri_OrdenTrabajo == ot &&
+                               dev.MatPri.CatMP_Id != 18 &&
                                dev.Tinta_Id == 2001 &&
                                dev.BOPP_Id == 449
                          select dev.DtDevMatPri_CantidadDevuelta).Sum();
