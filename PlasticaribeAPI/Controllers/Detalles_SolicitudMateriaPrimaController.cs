@@ -77,6 +77,18 @@ namespace PlasticaribeAPI.Controllers
                           Empresa_Telefono = Emp.Empresa_Telefono,
                           Empresa = Emp.Empresa_Nombre,
 
+                          Id = dtSol.MatPri_Id != 84 && dtSol.Tinta_Id == 2001 && dtSol.Bopp_Id == 1 ? dtSol.MatPri_Id :
+                               dtSol.MatPri_Id == 84 && dtSol.Tinta_Id != 2001 && dtSol.Bopp_Id == 1 ? dtSol.Tinta_Id :
+                               dtSol.MatPri_Id == 84 && dtSol.Tinta_Id != 2001 && dtSol.Bopp_Id != 1 ? dtSol.Bopp_Id : 84, 
+                          Material = dtSol.MatPri_Id != 84 && dtSol.Tinta_Id == 2001 && dtSol.Bopp_Id == 1 ? dtSol.Materia_Prima.MatPri_Nombre :
+                                     dtSol.MatPri_Id == 84 && dtSol.Tinta_Id != 2001 && dtSol.Bopp_Id == 1 ? dtSol.Tinta.Tinta_Nombre :
+                                     dtSol.MatPri_Id == 84 && dtSol.Tinta_Id == 2001 && dtSol.Bopp_Id != 1 ? dtSol.Bopp.BoppGen_Nombre : "NO APLICA MATERIAL",
+                          Precio = dtSol.MatPri_Id != 84 && dtSol.Tinta_Id == 2001 && dtSol.Bopp_Id == 1 ? Convert.ToDecimal(dtSol.Materia_Prima.MatPri_Precio) :
+                                   dtSol.MatPri_Id == 84 && dtSol.Tinta_Id != 2001 && dtSol.Bopp_Id == 1 ? Convert.ToDecimal(dtSol.Tinta.Tinta_Precio) :
+                                   dtSol.MatPri_Id == 84 && dtSol.Tinta_Id == 2001 && dtSol.Bopp_Id != 1 ? Convert.ToDecimal(0) : Convert.ToDecimal(0),
+                          SubTotal = (dtSol.MatPri_Id != 84 && dtSol.Tinta_Id == 2001 && dtSol.Bopp_Id == 1 && dtSol.Materia_Prima.CatMP_Id != 18 ? Convert.ToDecimal(dtSol.DtSolicitud_Cantidad) * Convert.ToDecimal(dtSol.Materia_Prima.MatPri_Precio) :
+                                      dtSol.MatPri_Id != 84 && dtSol.Tinta_Id == 2001 && dtSol.Bopp_Id == 1 && dtSol.Materia_Prima.CatMP_Id == 18 ? dtSol.Materia_Prima.MatPri_Nombre.Contains("CONO") ? dtSol.DtSolicitud_Cantidad * (Convert.ToDecimal(dtSol.Materia_Prima.MatPri_Nombre.Replace("CONO ", "").Replace(" CMS", "").Split(new string[] { "-" }, StringSplitOptions.RemoveEmptyEntries)[0]) + Convert.ToDecimal(dtSol.Materia_Prima.MatPri_Nombre.Replace("CONO ", "").Replace(" CMS", "").Split(new string[] { "-" }, StringSplitOptions.RemoveEmptyEntries)[1])) / 2 * dtSol.Materia_Prima.MatPri_Precio : Convert.ToDecimal(dtSol.DtSolicitud_Cantidad) * Convert.ToDecimal(dtSol.Materia_Prima.MatPri_Precio) :
+                                      dtSol.MatPri_Id == 84 && dtSol.Tinta_Id != 2001 && dtSol.Bopp_Id == 1 ? Convert.ToDecimal(dtSol.DtSolicitud_Cantidad) * Convert.ToDecimal(dtSol.Tinta.Tinta_Precio) : Convert.ToDecimal(0)),
                           MP_Id = dtSol.MatPri_Id,
                           MP = dtSol.Materia_Prima.MatPri_Nombre,
                           Precio_MP = dtSol.Materia_Prima.MatPri_Precio,
@@ -90,7 +102,8 @@ namespace PlasticaribeAPI.Controllers
                           Unidad_Medida = dtSol.UndMed_Id,
                           Estado_MP_Id = dtSol.Estado_Id,
                           Estado_MP = dtSol.Estado.Estado_Nombre,
-
+                          Categoria = dtSol.MatPri_Id != 84 && dtSol.Tinta_Id == 2001 && dtSol.Bopp_Id == 1 ? dtSol.Materia_Prima.CatMP_Id :
+                                      dtSol.MatPri_Id == 84 && dtSol.Tinta_Id != 2001 && dtSol.Bopp_Id == 1 ? dtSol.Tinta.CatMP_Id : 6
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 

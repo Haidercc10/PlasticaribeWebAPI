@@ -72,6 +72,18 @@ namespace PlasticaribeAPI.Controllers
                           Empresa_Telefono = Emp.Empresa_Telefono,
                           Empresa = Emp.Empresa_Nombre,
 
+                          Id = dt.MatPri_Id != 84 && dt.Tinta_Id == 2001 && dt.BOPP_Id == 1 ? dt.MatPri_Id :
+                               dt.MatPri_Id == 84 && dt.Tinta_Id != 2001 && dt.BOPP_Id == 1 ? dt.Tinta_Id :
+                               dt.MatPri_Id == 84 && dt.Tinta_Id == 2001 && dt.BOPP_Id != 1 ? dt.BOPP_Id : 84,
+                          Material = dt.MatPri_Id != 84 && dt.Tinta_Id == 2001 && dt.BOPP_Id == 1 ? dt.MatPrima.MatPri_Nombre :
+                                     dt.MatPri_Id == 84 && dt.Tinta_Id != 2001 && dt.BOPP_Id == 1 ? dt.Tinta.Tinta_Nombre :
+                                     dt.MatPri_Id == 84 && dt.Tinta_Id == 2001 && dt.BOPP_Id != 1 ? dt.BOPP.BoppGen_Nombre : "NO APLICA MATERIAL",
+                          Precio = dt.MatPri_Id != 84 && dt.Tinta_Id == 2001 && dt.BOPP_Id == 1 ? Convert.ToDecimal(dt.MatPrima.MatPri_Precio) :
+                                   dt.MatPri_Id == 84 && dt.Tinta_Id != 2001 && dt.BOPP_Id == 1 ? Convert.ToDecimal(dt.Tinta.Tinta_Precio) :
+                                   dt.MatPri_Id == 84 && dt.Tinta_Id == 2001 && dt.BOPP_Id != 1 ? Convert.ToDecimal(0) : Convert.ToDecimal(0),
+                          SubTotal = (dt.MatPri_Id != 84 && dt.Tinta_Id == 2001 && dt.BOPP_Id == 1 && dt.MatPrima.CatMP_Id != 18 ? Convert.ToDecimal(dt.Doc_CantidadPedida) * Convert.ToDecimal(dt.MatPrima.MatPri_Precio) :
+                                      dt.MatPri_Id != 84 && dt.Tinta_Id == 2001 && dt.BOPP_Id == 1 && dt.MatPrima.CatMP_Id == 18 ? dt.MatPrima.MatPri_Nombre.Contains("CONO") ? dt.Doc_CantidadPedida * (Convert.ToDecimal(dt.MatPrima.MatPri_Nombre.Replace("CONO ", "").Replace(" CMS", "").Split(new string[] { "-" }, StringSplitOptions.RemoveEmptyEntries)[0]) + Convert.ToDecimal(dt.MatPrima.MatPri_Nombre.Replace("CONO ", "").Replace(" CMS", "").Split(new string[] { "-" }, StringSplitOptions.RemoveEmptyEntries)[1])) / 2 * dt.MatPrima.MatPri_Precio : Convert.ToDecimal(dt.Doc_CantidadPedida) * Convert.ToDecimal(dt.MatPrima.MatPri_Precio) :
+                                      dt.MatPri_Id == 84 && dt.Tinta_Id != 2001 && dt.BOPP_Id == 1 ? Convert.ToDecimal(dt.Doc_CantidadPedida) * Convert.ToDecimal(dt.Tinta.Tinta_Precio) : Convert.ToDecimal(0)),
                           MP_Id = dt.MatPri_Id,
                           MP = dt.MatPrima.MatPri_Nombre,
                           Tinta_Id = dt.Tinta_Id,
@@ -129,6 +141,18 @@ namespace PlasticaribeAPI.Controllers
                           Empresa_Telefono = Emp.Empresa_Telefono,
                           Empresa = Emp.Empresa_Nombre,
 
+                          Id = oc.MatPri_Id != 84 && oc.Tinta_Id == 2001 && oc.BOPP_Id == 1 ? oc.MatPri_Id :
+                               oc.MatPri_Id == 84 && oc.Tinta_Id != 2001 && oc.BOPP_Id == 1 ? oc.Tinta_Id :
+                               oc.MatPri_Id == 84 && oc.Tinta_Id == 2001 && oc.BOPP_Id != 1 ? oc.BOPP_Id : 84,
+                          Material = oc.MatPri_Id != 84 && oc.Tinta_Id == 2001 && oc.BOPP_Id == 1 ? oc.MatPrima.MatPri_Nombre :
+                                     oc.MatPri_Id == 84 && oc.Tinta_Id != 2001 && oc.BOPP_Id == 1 ? oc.Tinta.Tinta_Nombre :
+                                     oc.MatPri_Id == 84 && oc.Tinta_Id == 2001 && oc.BOPP_Id != 1 ? oc.BOPP.BoppGen_Nombre : "NO APLICA MATERIAL",
+                          Precio = oc.MatPri_Id != 84 && oc.Tinta_Id == 2001 && oc.BOPP_Id == 1 ? Convert.ToDecimal(oc.MatPrima.MatPri_Precio) :
+                                   oc.MatPri_Id == 84 && oc.Tinta_Id != 2001 && oc.BOPP_Id == 1 ? Convert.ToDecimal(oc.Tinta.Tinta_Precio) :
+                                   oc.MatPri_Id == 84 && oc.Tinta_Id == 2001 && oc.BOPP_Id != 1 ? Convert.ToDecimal(0) : Convert.ToDecimal(0),
+                          SubTotal = (oc.MatPri_Id != 84 && oc.Tinta_Id == 2001 && oc.BOPP_Id == 1 && oc.MatPrima.CatMP_Id != 18 ? Convert.ToDecimal(oc.Doc_CantidadPedida) * Convert.ToDecimal(oc.MatPrima.MatPri_Precio) :
+                                      oc.MatPri_Id != 84 && oc.Tinta_Id == 2001 && oc.BOPP_Id == 1 && oc.MatPrima.CatMP_Id == 18 ? oc.MatPrima.MatPri_Nombre.Contains("CONO") ? oc.Doc_CantidadPedida * (Convert.ToDecimal(oc.MatPrima.MatPri_Nombre.Replace("CONO ", "").Replace(" CMS", "").Split(new string[] { "-" }, StringSplitOptions.RemoveEmptyEntries)[0]) + Convert.ToDecimal(oc.MatPrima.MatPri_Nombre.Replace("CONO ", "").Replace(" CMS", "").Split(new string[] { "-" }, StringSplitOptions.RemoveEmptyEntries)[1])) / 2 * oc.MatPrima.MatPri_Precio : Convert.ToDecimal(oc.Doc_CantidadPedida) * Convert.ToDecimal(oc.MatPrima.MatPri_Precio) :
+                                      oc.MatPri_Id == 84 && oc.Tinta_Id != 2001 && oc.BOPP_Id == 1 ? Convert.ToDecimal(oc.Doc_CantidadPedida) * Convert.ToDecimal(oc.Tinta.Tinta_Precio) : Convert.ToDecimal(0)),
                           MP_Id = oc.MatPri_Id,
                           MP = oc.MatPrima.MatPri_Nombre,
                           Tinta_Id = oc.Tinta_Id,

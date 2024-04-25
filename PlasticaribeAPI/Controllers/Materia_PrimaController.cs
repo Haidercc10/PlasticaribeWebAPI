@@ -1043,8 +1043,12 @@ namespace PlasticaribeAPI.Controllers
                                   Bopp = Convert.ToString(fac.Bopp_Generico.BoppGen_Nombre),
                                   Cantidad = Convert.ToDecimal(fac.FaccoMatPri_Cantidad),
                                   Unidad_Medida = fac.UndMed_Id,
+                                  Categoria = fac.MatPri_Id != 84 && fac.Tinta_Id == 2001 && fac.Bopp_Id == 1 ? fac.MatPri.CatMP_Id:
+                                              fac.MatPri_Id == 84 && fac.Tinta_Id != 2001 && fac.Bopp_Id == 1 ? fac.Tinta.CatMP_Id : 6,
                                   Precio = 0,
-                                  SubTotal = 0,
+                                  SubTotal = 0, /*fac.MatPri_Id != 84 && fac.Tinta_Id == 2001 && fac.Bopp_Id == 1 && fac.MatPri.CatMP_Id != 18 ? Convert.ToDecimal(fac.FaccoMatPri_Cantidad) * Convert.ToDecimal(fac.MatPri.MatPri_Precio) :
+                                              fac.MatPri_Id != 84 && fac.Tinta_Id == 2001 && fac.Bopp_Id == 1 && fac.MatPri.CatMP_Id == 18 ? Convert.ToString(fac.MatPri.MatPri_Nombre).Contains("CONO") ? Convert.ToDecimal(fac.FaccoMatPri_Cantidad) * (Convert.ToDecimal(fac.MatPri.MatPri_Nombre.Replace("CONO ", "").Replace(" CMS", "").Split(new string[] { "-" }, StringSplitOptions.RemoveEmptyEntries)[0]) + Convert.ToDecimal(fac.MatPri.MatPri_Nombre.Replace("CONO ", "").Replace(" CMS", "").Split(new string[] { "-" }, StringSplitOptions.RemoveEmptyEntries)[1])) / 2 * Convert.ToDecimal(fac.MatPri.MatPri_Precio) : Convert.ToDecimal(fac.FaccoMatPri_Cantidad) * Convert.ToDecimal(fac.MatPri.MatPri_Precio) :
+                                              fac.MatPri_Id == 84 && fac.Tinta_Id != 2001 && fac.Bopp_Id == 1 ? Convert.ToDecimal(fac.FaccoMatPri_Cantidad) * Convert.ToDecimal(fac.Tinta.Tinta_Precio) : Convert.ToDecimal(0),*/
                                   Observacion = fac.Facco.Facco_Observacion,
                                   emp.Empresa_Id,
                                   emp.Empresa_Ciudad,
@@ -1101,8 +1105,12 @@ namespace PlasticaribeAPI.Controllers
                                     Bopp = Convert.ToString(rem.Bopp.BoppGen_Nombre),
                                     Cantidad = Convert.ToDecimal(rem.RemiMatPri_Cantidad),
                                     Unidad_Medida = rem.UndMed_Id,
+                                    Categoria = rem.MatPri_Id != 84 && rem.Tinta_Id == 2001 && rem.Bopp_Id == 1 ? rem.MatPri.CatMP_Id :
+                                                rem.MatPri_Id == 84 && rem.Tinta_Id != 2001 && rem.Bopp_Id == 1 ? rem.Tinta.CatMP_Id : 6,
                                     Precio = 0,
-                                    SubTotal =  0,
+                                    SubTotal = 0, /*rem.MatPri_Id != 84 && rem.Tinta_Id == 2001 && rem.Bopp_Id == 1 && rem.MatPri.CatMP_Id != 18 ? Convert.ToDecimal(rem.RemiMatPri_Cantidad) * Convert.ToDecimal(rem.MatPri.MatPri_Precio) :
+                                                rem.MatPri_Id != 84 && rem.Tinta_Id == 2001 && rem.Bopp_Id == 1 && rem.MatPri.CatMP_Id == 18 ? Convert.ToString(rem.MatPri.MatPri_Nombre).Contains("CONO") ? Convert.ToDecimal(rem.RemiMatPri_Cantidad) * (Convert.ToDecimal(rem.MatPri.MatPri_Nombre.Replace("CONO ", "").Replace(" CMS", "").Split(new string[] { "-" }, StringSplitOptions.RemoveEmptyEntries)[0]) + Convert.ToDecimal(rem.MatPri.MatPri_Nombre.Replace("CONO ", "").Replace(" CMS", "").Split(new string[] { "-" }, StringSplitOptions.RemoveEmptyEntries)[1])) / 2 * Convert.ToDecimal(rem.MatPri.MatPri_Precio) : Convert.ToDecimal(rem.RemiMatPri_Cantidad) * Convert.ToDecimal(rem.MatPri.MatPri_Precio) :
+                                                rem.MatPri_Id == 84 && rem.Tinta_Id != 2001 && rem.Bopp_Id == 1 ? Convert.ToDecimal(rem.RemiMatPri_Cantidad) * Convert.ToDecimal(rem.Tinta.Tinta_Precio) : Convert.ToDecimal(0),*/
                                     Observacion = rem.Rem.Rem_Observacion,
                                     emp.Empresa_Id, 
                                     emp.Empresa_Ciudad,

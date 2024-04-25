@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 using ServiceReference1;
+using System.Dynamic;
 using System.Linq;
 using System.Runtime.Intrinsics.Arm;
 using System.ServiceModel;
@@ -181,7 +182,15 @@ namespace PlasticaribeAPI.Controllers
                              {
                                  pp,
                                  prod,
-                                 pp.Clientes
+                                 pp.Clientes, 
+                                 Ubication = (from dt in _context.Set<DetalleEntradaRollo_Producto>()
+                                              join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
+                                              where (dt.Rollo_Id == pp.Numero_Rollo) &&
+                                                    dt.Estado_Id == 19 &&
+                                                    e.EntRolloProd_Id >= 28512 &&
+                                                    e.EntRolloProd_Fecha >= Convert.ToDateTime("2024-02-04")
+                                              orderby e.EntRolloProd_Id descending
+                                              select e.EntRolloProd_Observacion).FirstOrDefault(),
                              };
             return production.Any() ? Ok(production) : NotFound();
         }
