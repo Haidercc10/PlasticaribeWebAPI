@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -248,6 +249,93 @@ namespace PlasticaribeAPI.Controllers
             return Ok(from of in _context.Set<Detalles_OrdenFacturacion>() select of.Numero_Rollo);
         }
 
+        //Consulta para obtener el valor de la producción consolidada facturada según el año y mes 
+        [HttpGet("getProductionSentMonthDetailed/{year}")]
+        public ActionResult getProductionSentMonthDetailed(int year)
+        {
+
+            //List<SalidasDespacho> listaSalidas = new List<SalidasDespacho>();
+            List<int> meses = [1,2,3,4,5,6,7,8,9,10,11,12];
+
+            //for (int i = 1; i <= 12; i++)
+            //{
+            var production = from o in _context.Set<OrdenFacturacion>()
+                                 from d in _context.Set<Detalles_OrdenFacturacion>()
+                                 join pp in _context.Set<Produccion_Procesos>() on d.Numero_Rollo equals pp.NumeroRollo_BagPro
+                                 join p in _context.Set<Producto>() on d.Prod_Id equals p.Prod_Id
+                                 where 
+                                 meses.Contains(o.Fecha.Value.Month) &&
+                                 o.Fecha.Value.Year == year &&
+                                 o.Estado_Id == 21 &&
+                                 d.Id_OrdenFacturacion == o.Id &&
+                                 d.Prod_Id == pp.Prod_Id &&
+                                 pp.Prod_Id == p.Prod_Id &&
+                                 p.Prod_Id == d.Prod_Id
+                             orderby 
+                                     o.Fecha.Value.Year ascending, 
+                                     o.Fecha.Value.Month ascending
+                             group pp by new
+                                 {
+                                     Mes = o.Fecha.Value.Month == 1 ? "ENERO" :
+                                         o.Fecha.Value.Month == 2 ? "FEBRERO" :
+                                         o.Fecha.Value.Month == 3 ? "MARZO" :
+                                         o.Fecha.Value.Month == 4 ? "ABRIL" :
+                                         o.Fecha.Value.Month == 5 ? "MAYO" :
+                                         o.Fecha.Value.Month == 6 ? "JUNIO" :
+                                         o.Fecha.Value.Month == 7 ? "JULIO" :
+                                         o.Fecha.Value.Month == 8 ? "AGOSTO" :
+                                         o.Fecha.Value.Month == 9 ? "SEPTIEMBRE" :
+                                         o.Fecha.Value.Month == 10 ? "OCTUBRE" :
+                                         o.Fecha.Value.Month == 11 ? "NOVIEMBRE" :
+                                         o.Fecha.Value.Month == 12 ? "DICIEMBRE" : "",
+                                     Anio = o.Fecha.Value.Year,
+                                     Item = d.Prod_Id,
+                                     Referencia = p.Prod_Nombre,
+                                     Presentacion = Convert.ToString("Kg"),
+                                     Numero_Mes = o.Fecha.Value.Month,
+                                 }
+                                 into g 
+                                 select new //SalidasDespacho
+                                 {
+                                     Item = g.Key.Item,
+                                     Referencia = g.Key.Referencia,
+                                     Mes = g.Key.Mes,
+                                     Anio = g.Key.Anio,
+                                     Peso_Neto = g.Sum(x => x.Peso_Neto),
+                                     Presentacion = g.Key.Presentacion,
+                                     Numero_Mes = g.Key.Numero_Mes
+                                 };
+
+                //listaSalidas.AddRange(production);
+                //if (i == 12) return Ok(listaSalidas);
+            //}
+            return Ok(production);
+        }
+
+        [HttpGet("getProductionSentMonthConsolidate/{year}")]
+        public ActionResult getProductionSentMonthConsolidate(int year)
+        {
+            List<decimal> weightNet = new List<decimal>();
+
+            for (int i = 1; i <= 12; i++) 
+            {
+                var production = (from o in _context.Set<OrdenFacturacion>()
+                                  from d in _context.Set<Detalles_OrdenFacturacion>()
+                                  join pp in _context.Set<Produccion_Procesos>() on d.Numero_Rollo equals pp.NumeroRollo_BagPro
+                                  join p in _context.Set<Producto>() on d.Prod_Id equals p.Prod_Id
+                                  where pp.Prod_Id == p.Prod_Id &&
+                                  o.Fecha.Value.Month == i &&
+                                  o.Fecha.Value.Year == year &&
+                                  o.Estado_Id == 21 &&
+                                  d.Id_OrdenFacturacion == o.Id
+                                  select pp.Peso_Neto).Sum();
+
+                weightNet.Add(production);
+                if (i == 12) return Ok(weightNet);
+            }
+            return Ok(weightNet);
+        }
+
         // PUT: api/Detalles_OrdenFacturacion/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -334,6 +422,27 @@ namespace PlasticaribeAPI.Controllers
         {
             return _context.Detalles_OrdenFacturacion.Any(e => e.Id == id);
         }
+    }
+
+    public class SalidasDespacho 
+    { 
+        public int Anio { get; set; }
+
+        [Column(TypeName = "varchar(50)")]
+        public string Mes { get; set; }
+
+        public long Item { get; set; }
+
+        [Column(TypeName = "varchar(MAX)")]
+        public string Referencia {  get; set; }
+
+        [Precision(18,2)]
+        public decimal Peso_Neto { get; set; }
+
+        [Column(TypeName = "varchar(50)")]
+        public string Presentacion { get; set; }
+
+        public int Numero_Mes { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

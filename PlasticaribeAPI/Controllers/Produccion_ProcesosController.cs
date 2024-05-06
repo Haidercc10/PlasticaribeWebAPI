@@ -757,7 +757,6 @@ namespace PlasticaribeAPI.Controllers
             return Ok(itemsInPallet);
         }
 
-
         [HttpPut("putExistencia/{producto}/{presentacion}/{precio}/{cantidad}")]
         public async Task<IActionResult> PutExistencia(int producto, string presentacion, decimal precio, decimal cantidad)
         {

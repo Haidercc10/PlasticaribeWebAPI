@@ -111,7 +111,13 @@ namespace PlasticaribeAPI.Models
         public string? Rollo_Observacion { get; set; }
 
         public int? Falla_Id { get; set; }
-        public Falla_Tecnica? Falla { get; set; } 
+        public Falla_Tecnica? Falla { get; set; }
+
+        /*public long? UsuaElimina_Id { get; set; }
+        public Usuario? Usua_Elimina { get; set; }
+
+        public long? UsuaAutoriza_Id { get; set; }
+        public Usuario? UsuaAutoriza { get; set; }*/
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }
