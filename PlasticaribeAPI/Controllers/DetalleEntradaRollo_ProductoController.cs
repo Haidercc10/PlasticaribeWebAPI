@@ -290,6 +290,7 @@ namespace PlasticaribeAPI.Controllers
                                  where ent.EntRolloProd_Id == det.EntRolloProd_Id &&
                                  ent.EntRolloProd_Fecha >= Convert.ToDateTime("2024-02-04") &&
                                  det.Rollo_Id == roll
+                                 orderby det.Codigo descending
                                  select ent).FirstOrDefault();
 
                 dataEntry.EntRolloProd_Observacion = ubication;

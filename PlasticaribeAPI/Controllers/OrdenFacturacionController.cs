@@ -44,6 +44,13 @@ namespace PlasticaribeAPI.Controllers
             return ordenFacturacion;
         }
 
+        //Obtener el último id de la orden de facturación
+        [HttpGet("getLastOrder")]
+        public ActionResult getLastOrder() 
+        {
+            return Ok((from o in _context.Set<OrdenFacturacion>() orderby o.Id descending select o.Id).FirstOrDefault()); 
+        }
+
         [HttpPut("putStatusOrder/{order}")]
         public async Task<IActionResult> PutStatusOrder(int order)
         {

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 using ServiceReference1;
+using StackExchange.Redis;
 using System.Dynamic;
 using System.Linq;
 using System.Runtime.Intrinsics.Arm;
@@ -168,7 +169,7 @@ namespace PlasticaribeAPI.Controllers
             var avaibleProduction = from dev in _context.Set<DetalleDevolucion_ProductoFacturado>() where dev.Prod_Id == item select dev.Rollo_Id;
 
             var notAvaibleProduccion = from order in _context.Set<Detalles_OrdenFacturacion>()
-                                       where !avaibleProduction.Contains(order.Numero_Rollo) && order.Prod_Id == item && order.OrdenFacturacion.Estado_Id != 3
+                                       where !avaibleProduction.Contains(order.Numero_Rollo) && order.Prod_Id == item && order.OrdenFacturacion.Estado_Id != 3 && order.Estado_Id == 20
                                        select order.Numero_Rollo;
 
             var production = from pp in _context.Set<Produccion_Procesos>()
@@ -806,24 +807,29 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
-        [HttpPut("putCambiarEstadoRollo/{rollo}")]
-        public async Task<IActionResult> PutcambiarEstadoRollo(long rollo)
+        [HttpPut("putCambiarEstadoRollo/{item}/{status}/{newStatus}")]
+        public async Task<IActionResult> PutcambiarEstadoRollo([FromBody] List<long> rolls, long item, int status, int newStatus)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.Numero_Rollo == rollo select prod).FirstOrDefault();
-            dataProduction.Estado_Rollo = 23;
-            _context.Entry(dataProduction).State = EntityState.Modified;
-            _context.SaveChanges();
-            try
+            int count = 0;
+            foreach (var roll in rolls)
             {
-                await _context.SaveChangesAsync();
+                var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.NumeroRollo_BagPro == roll && prod.Prod_Id == item && prod.Estado_Rollo == status select prod).FirstOrDefault();
+                dataProduction.Estado_Rollo = newStatus;
+                _context.Entry(dataProduction).State = EntityState.Modified;
+                _context.SaveChanges();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!RolloExists(roll)) return NotFound();
+                    else throw;
+                }
+                count++;
+                if (count == rolls.Count()) return NoContent();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RolloExists(rollo)) return NotFound();
-                else throw;
-            }
-
             return NoContent();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }

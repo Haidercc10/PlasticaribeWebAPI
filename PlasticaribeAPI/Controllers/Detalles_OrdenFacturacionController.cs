@@ -123,6 +123,7 @@ namespace PlasticaribeAPI.Controllers
                                order.Fecha,
                                order.Hora,
                                order.Observacion,
+                               order.Estado_Id,
                            },
                            Clientes = new
                            {
@@ -139,6 +140,7 @@ namespace PlasticaribeAPI.Controllers
                            },
                            dtOrder = new
                            {
+                               dtOrder.Id,
                                dtOrder.Cantidad,
                                dtOrder.Presentacion,
                                dtOrder.Numero_Rollo,

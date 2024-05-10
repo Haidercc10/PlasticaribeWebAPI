@@ -277,7 +277,7 @@ namespace PlasticaribeAPI.Controllers
                                       pp.Estado_Rollo == 19 &&
                                       pp.Envio_Zeus == true &&
                                       !((from order in _context.Set<Detalles_OrdenFacturacion>()
-                                         where order.Prod_Id == pp.Prod_Id && order.OrdenFacturacion.Estado_Id != 3
+                                         where order.Prod_Id == pp.Prod_Id && order.OrdenFacturacion.Estado_Id != 3 && order.Estado_Id == 20
                                          select order.Numero_Rollo).ToList()).Contains(pp.NumeroRollo_BagPro)
                                 select new
                                 {
@@ -365,7 +365,7 @@ namespace PlasticaribeAPI.Controllers
                                               pp2.Proceso_Id == process &&
                                               pp2.Fecha >= Convert.ToDateTime("2024-02-04") &&
                                               !((from order in _context.Set<Detalles_OrdenFacturacion>()
-                                                 where order.Prod_Id == pp2.Prod_Id && order.OrdenFacturacion.Estado_Id != 3
+                                                 where order.Prod_Id == pp2.Prod_Id && order.OrdenFacturacion.Estado_Id != 3 && order.Estado_Id == 20
                                                  select order.Numero_Rollo).ToList()).Contains(pp2.NumeroRollo_BagPro)
                                         select new
                                         {
@@ -445,7 +445,7 @@ namespace PlasticaribeAPI.Controllers
                                               pp2.Envio_Zeus == false &&
                                               pp2.Fecha >= Convert.ToDateTime("2024-02-04") &&
                                               !((from order in _context.Set<Detalles_OrdenFacturacion>()
-                                                 where order.Prod_Id == pp2.Prod_Id && order.OrdenFacturacion.Estado_Id != 3
+                                                 where order.Prod_Id == pp2.Prod_Id && order.OrdenFacturacion.Estado_Id != 3 && order.Estado_Id == 20
                                                  select order.Numero_Rollo).ToList()).Contains(pp2.NumeroRollo_BagPro)
                                         select new
                                         {
