@@ -252,7 +252,9 @@ namespace PlasticaribeAPI.Controllers
                                 Presentation = exi.UndMed_Id,
                                 StockPrice = exi.ExProd_PrecioExistencia,
                             },
-                            Client = (
+                            Client = (from est in _context.Set<Estados_ProcesosOT>() where est.Prod_Id == exi.Prod_Id orderby est.EstProcOT_Id descending select est.EstProcOT_Cliente).FirstOrDefault(),
+                            Seller = (from est in _context.Set<Estados_ProcesosOT>() where exi.Prod_Id == est.Prod_Id orderby est.EstProcOT_Id descending select est.Usuario.Usua_Nombre).FirstOrDefault(),
+                            /*Client = (
                                 from est in _context.Set<Estados_ProcesosOT>()
                                 join vende in _context.Set<Usuario>() on est.Usua_Id equals vende.Usua_Id
                                 where prod.Prod_Id == est.Prod_Id
@@ -270,8 +272,8 @@ namespace PlasticaribeAPI.Controllers
                                         Name_Vende = vende.Usua_Nombre,
                                     }
                                 }
-                            ).FirstOrDefault(),
-                            Avaible_Production = (
+                            ).FirstOrDefault(),*/
+                            /*Avaible_Production = (
                                 from pp in _context.Set<Produccion_Procesos>()
                                 where pp.Prod_Id == prod.Prod_Id &&
                                       pp.Estado_Rollo == 19 &&
@@ -301,7 +303,7 @@ namespace PlasticaribeAPI.Controllers
                                                    select e.EntRolloProd_Observacion).FirstOrDefault(),
                                     orderProduction = pp.OT,
                                 }
-                            ).ToList(),
+                            ).ToList(),*/
                             Stock_MonthByMonth = (from mm in _context.Set<Inventario_Mensual_Productos>() where mm.Prod_Id == prod.Prod_Id && mm.UndMed_Id == exi.UndMed_Id select mm).ToList(),
                         };
             return Ok(stock);
@@ -338,7 +340,9 @@ namespace PlasticaribeAPI.Controllers
                                           pp.Key.Presentation,
                                           StockPrice = (from exi in _context.Set<Existencia_Productos>() where exi.Prod_Id == pp.Key.Item && exi.UndMed_Id == pp.Key.Presentation select exi.ExProd_PrecioExistencia).FirstOrDefault(),
                                       },
-                                      Client = (
+                                      Client = (from est in _context.Set<Estados_ProcesosOT>() where est.Prod_Id == pp.Key.Item orderby est.EstProcOT_Id descending select est.EstProcOT_Cliente).FirstOrDefault(),
+                                      Seller = (from est in _context.Set<Estados_ProcesosOT>() where pp.Key.Item == est.Prod_Id orderby est.EstProcOT_Id descending select est.Usuario.Usua_Nombre).FirstOrDefault(),
+                                      /*Client = (
                                         from est in _context.Set<Estados_ProcesosOT>()
                                         join vende in _context.Set<Usuario>() on est.Usua_Id equals vende.Usua_Id
                                         where pp.Key.Item == est.Prod_Id
@@ -356,8 +360,8 @@ namespace PlasticaribeAPI.Controllers
                                                 Name_Vende = vende.Usua_Nombre,
                                             }
                                         }
-                                      ).FirstOrDefault(),
-                                      Avaible_Production = (
+                                      ).FirstOrDefault(),*/
+                                      /*Avaible_Production = (
                                         from pp2 in _context.Set<Produccion_Procesos>()
                                         where pp2.Prod_Id == pp.Key.Item &&
                                               pp2.Estado_Rollo == 19 &&
@@ -383,7 +387,7 @@ namespace PlasticaribeAPI.Controllers
                                             Information = pp2.Datos_Etiqueta,
                                             orderProduction = pp2.OT,
                                         }
-                                      ).ToList(),
+                                      ).ToList(),*/
                                       Stock_MonthByMonth = (from mm in _context.Set<Inventario_Mensual_Productos>() where mm.Prod_Id == pp.Key.Item && mm.UndMed_Id == pp.Key.Presentation select mm).ToList(),
                                   };
             return Ok(stockNotAvaible);
@@ -419,7 +423,9 @@ namespace PlasticaribeAPI.Controllers
                                           pp.Key.Presentation,
                                           StockPrice = (from exi in _context.Set<Existencia_Productos>() where exi.Prod_Id == pp.Key.Item && exi.UndMed_Id == pp.Key.Presentation select exi.ExProd_PrecioExistencia).FirstOrDefault(),
                                       },
-                                      Client = (
+                                      Client = (from est in _context.Set<Estados_ProcesosOT>() where est.Prod_Id == pp.Key.Item orderby est.EstProcOT_Id descending select est.EstProcOT_Cliente).FirstOrDefault(),
+                                      Seller = (from est in _context.Set<Estados_ProcesosOT>() where pp.Key.Item == est.Prod_Id orderby est.EstProcOT_Id descending select est.Usuario.Usua_Nombre).FirstOrDefault(),
+                                      /*Client = (
                                         from est in _context.Set<Estados_ProcesosOT>()
                                         join vende in _context.Set<Usuario>() on est.Usua_Id equals vende.Usua_Id
                                         where pp.Key.Item == est.Prod_Id
@@ -437,11 +443,11 @@ namespace PlasticaribeAPI.Controllers
                                                 Name_Vende = vende.Usua_Nombre,
                                             }
                                         }
-                                      ).FirstOrDefault(),
-                                      Avaible_Production = (
+                                      ).FirstOrDefault(),*/
+                                      /*Avaible_Production = (
                                         from pp2 in _context.Set<Produccion_Procesos>()
-                                        where pp2.Prod_Id == pp.Key.Item &&
-                                              pp2.Estado_Rollo == 31 &&
+                                            where pp2.Prod_Id == pp.Key.Item &&
+                                                  pp2.Estado_Rollo == 31 &&
                                               pp2.Envio_Zeus == false &&
                                               pp2.Fecha >= Convert.ToDateTime("2024-02-04") &&
                                               !((from order in _context.Set<Detalles_OrdenFacturacion>()
@@ -463,7 +469,7 @@ namespace PlasticaribeAPI.Controllers
                                             Information = pp2.Datos_Etiqueta,
                                             orderProduction = pp2.OT,
                                         }
-                                      ).ToList(),
+                                      ).ToList(),*/
                                       Stock_MonthByMonth = (from mm in _context.Set<Inventario_Mensual_Productos>() where mm.Prod_Id == pp.Key.Item && mm.UndMed_Id == pp.Key.Presentation select mm).ToList(),
                                   };
             return Ok(stockNotAvaible);

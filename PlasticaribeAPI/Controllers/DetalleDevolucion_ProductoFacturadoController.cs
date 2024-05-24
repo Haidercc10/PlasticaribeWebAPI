@@ -109,7 +109,9 @@ namespace PlasticaribeAPI.Controllers
                                   dtDev.Prod_Id,
                                   Numero_Rollo = dtDev.Rollo_Id,
                                   Cantidad = dtDev.DtDevProdFact_Cantidad,
-                                  Presentacion = dtDev.UndMed_Id
+                                  Presentacion = dtDev.UndMed_Id, 
+                                  Falla_Id = dtDev.Falla_Id,
+                                  Falla = dtDev.Fallas.Falla_Nombre,
                               },
                               Prod = new
                               {
@@ -140,6 +142,7 @@ namespace PlasticaribeAPI.Controllers
                               },
                               Clientes = dev.Cliente,
                               Usuario = dev.Usua,
+                              FechaHora = dev.DevProdFact_Fecha + " " + dev.DevProdFact_Hora,
                               Type = "Devolucion"
                           };
             return infoDev.Any() ? Ok(infoDev) : NotFound();

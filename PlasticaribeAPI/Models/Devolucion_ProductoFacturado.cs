@@ -37,6 +37,9 @@ namespace PlasticaribeAPI.Models
         public long Usua_Id { get; set; }
         public Usuario? Usua { get; set; }
 
+        public int? Id_OrdenFact { get; set; }
+        public OrdenFacturacion? Orden_Fact { get; set; }
+
         //[Column(TypeName = "varchar(10)")]
         //public string DevProd_Hora { get; set; }
     }

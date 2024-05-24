@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -120,32 +121,33 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetCantidadMes_Producto(long prod, string und)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var con = from inv in _context.Set<Inventario_Mensual_Productos>()
-                      from exi in _context.Set<Existencia_Productos>()
-                      where inv.Prod_Id == prod
-                            && inv.UndMed_Id == und
-                            && inv.Prod_Id == exi.Prod_Id
-                            && inv.UndMed_Id == exi.UndMed_Id
-                      select new
-                      {
-                          Id = exi.Prod_Id,
-                          Nombre = exi.Prod.Prod_Nombre,
-                          Stock = exi.ExProd_Cantidad,
-                          Und = exi.UndMed_Id,
-                          Cant_Minima = exi.ExProd_CantMinima,
-                          Enero = inv.Enero,
-                          Febrero = inv.Febrero,
-                          Marzo = inv.Marzo,
-                          Abril = inv.Abril,
-                          Mayo = inv.Mayo,
-                          Junio = inv.Junio,
-                          Julio = inv.Julio,
-                          Agosto = inv.Agosto,
-                          Septiembre = inv.Septiembre,
-                          Octubre = inv.Octubre,
-                          Noviembre = inv.Noviembre,
-                          Diciembre = inv.Diciembre,
-                      };
+                var con = //from inv in _context.Set<Inventario_Mensual_Productos>()
+                          from exi in _context.Set<Existencia_Productos>()
+                          where //inv.Prod_Id == prod
+                                //&& inv.UndMed_Id == und
+                                exi.Prod_Id == prod
+                                && exi.UndMed_Id == und
+                                //&& inv.Prod_Id == exi.Prod_Id
+                                //&& inv.UndMed_Id == exi.UndMed_Id
+                          select new
+                          {
+                              Id = exi.Prod_Id,
+                              Stock = exi.ExProd_Cantidad,
+                              Und = exi.UndMed_Id,
+                              Cant_Minima = exi.ExProd_CantMinima,
+                              /*Enero = inv.Enero,
+                              Febrero = inv.Febrero,
+                              Marzo = inv.Marzo,
+                              Abril = inv.Abril,
+                              Mayo = inv.Mayo,
+                              Junio = inv.Junio,
+                              Julio = inv.Julio,
+                              Agosto = inv.Agosto,
+                              Septiembre = inv.Septiembre,
+                              Octubre = inv.Octubre,
+                              Noviembre = inv.Noviembre,
+                              Diciembre = inv.Diciembre,*/
+                          };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
         }
@@ -281,4 +283,10 @@ namespace PlasticaribeAPI.Controllers
         }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+}
+
+public class References { 
+
+    public int item { get; set; } 
+    public string presentation { get; set; }
 }

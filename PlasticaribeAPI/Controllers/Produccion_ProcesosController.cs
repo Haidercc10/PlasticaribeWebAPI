@@ -5,6 +5,7 @@ using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 using ServiceReference1;
 using StackExchange.Redis;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Runtime.Intrinsics.Arm;
@@ -758,6 +759,107 @@ namespace PlasticaribeAPI.Controllers
             return Ok(itemsInPallet);
         }
 
+        //Consulta que devuelve la información de los rollos disponibles en despacho por item
+        [HttpGet("getRollsAvailablesForItem/{item}")]
+        public ActionResult getRollsAvailablesForItem(int item)
+        {
+            var rollsAvailables = from pp in _context.Set<Produccion_Procesos>()
+                                  where pp.Prod_Id == item &&
+                                        pp.Estado_Rollo == 19 &&
+                                        pp.Envio_Zeus == true &&
+                                        !((from order in _context.Set<Detalles_OrdenFacturacion>()
+                                           where order.Prod_Id == pp.Prod_Id && order.OrdenFacturacion.Estado_Id != 3 && order.Estado_Id == 20
+                                           select order.Numero_Rollo).ToList()).Contains(pp.NumeroRollo_BagPro)
+                                  select new
+                                  {
+                                      Number_BagPro = pp.NumeroRollo_BagPro,
+                                      Number = pp.Numero_Rollo,
+                                      Quantity = pp.Cantidad,
+                                      Weight = pp.Peso_Neto,
+                                      Presentation = pp.Presentacion,
+                                      Process = pp.Proceso.Proceso_Nombre,
+                                      Date = pp.Fecha,
+                                      Hour = pp.Hora,
+                                      Price = pp.Precio,
+                                      SellPrice = pp.PrecioVenta_Producto,
+                                      Turn = pp.Turno,
+                                      Information = (from dt in _context.Set<DetalleEntradaRollo_Producto>()
+                                                     join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
+                                                     where (dt.Rollo_Id == pp.Numero_Rollo) &&
+                                                            e.EntRolloProd_Fecha >= Convert.ToDateTime("2024-02-04") &&
+                                                            dt.Prod_Id == pp.Prod_Id
+                                                     orderby e.EntRolloProd_Id descending
+                                                     select e.EntRolloProd_Observacion).FirstOrDefault(),
+                                      orderProduction = pp.OT,
+                                  };  
+
+            return Ok(rollsAvailables);
+        }
+
+        //Consulta que devuelve la información de los rollos disponibles en area por item
+        [HttpGet("getRollsInAreaForItem/{item}/{process}")]
+        public ActionResult getRollsInAreaForItem(int item, string process)
+        {
+            var rollsInArea = from pp2 in _context.Set<Produccion_Procesos>()
+                              where pp2.Prod_Id == item &&
+                                    pp2.Estado_Rollo == 19 &&
+                                    pp2.Envio_Zeus == false &&
+                                    pp2.Proceso_Id == process &&
+                                    pp2.Fecha >= Convert.ToDateTime("2024-02-04") &&
+                                    !((from order in _context.Set<Detalles_OrdenFacturacion>()
+                                       where order.Prod_Id == pp2.Prod_Id && order.OrdenFacturacion.Estado_Id != 3 && order.Estado_Id == 20
+                                       select order.Numero_Rollo).ToList()).Contains(pp2.NumeroRollo_BagPro)
+                              select new
+                              {
+                                  Number_BagPro = pp2.NumeroRollo_BagPro,
+                                  Number = pp2.Numero_Rollo,
+                                  Quantity = pp2.Cantidad,
+                                  Weight = pp2.Peso_Neto,
+                                  Presentation = pp2.Presentacion,
+                                  Process = pp2.Proceso.Proceso_Nombre,
+                                  Date = pp2.Fecha,
+                                  Hour = pp2.Hora,
+                                  Price = pp2.Precio,
+                                  SellPrice = pp2.PrecioVenta_Producto,
+                                  Turn = pp2.Turno,
+                                  Information = pp2.Datos_Etiqueta,
+                                  orderProduction = pp2.OT,
+                              };
+
+            return Ok(rollsInArea);
+        }
+
+        [HttpGet("getRollsPreDeliveredForItem/{item}")]
+        public ActionResult getRollsPreDeliveredForItem(int item)
+        {
+            var rollsPredelivered = from pp2 in _context.Set<Produccion_Procesos>()
+                                    where pp2.Prod_Id == item &&
+                                          pp2.Estado_Rollo == 31 &&
+                                          pp2.Envio_Zeus == false &&
+                                          pp2.Fecha >= Convert.ToDateTime("2024-02-04") &&
+                                          !((from order in _context.Set<Detalles_OrdenFacturacion>()
+                                             where order.Prod_Id == pp2.Prod_Id && order.OrdenFacturacion.Estado_Id != 3 && order.Estado_Id == 20
+                                             select order.Numero_Rollo).ToList()).Contains(pp2.NumeroRollo_BagPro)
+                                    select new
+                                    {
+                                        Number_BagPro = pp2.NumeroRollo_BagPro,
+                                        Number = pp2.Numero_Rollo,
+                                        Quantity = pp2.Cantidad,
+                                        Weight = pp2.Peso_Neto,
+                                        Presentation = pp2.Presentacion,
+                                        Process = pp2.Proceso.Proceso_Nombre,
+                                        Date = pp2.Fecha,
+                                        Hour = pp2.Hora,
+                                        Price = pp2.Precio,
+                                        SellPrice = pp2.PrecioVenta_Producto,
+                                        Turn = pp2.Turno,
+                                        Information = pp2.Datos_Etiqueta,
+                                        orderProduction = pp2.OT,
+                                    };
+
+            return Ok(rollsPredelivered);
+        }
+
         [HttpPut("putExistencia/{producto}/{presentacion}/{precio}/{cantidad}")]
         public async Task<IActionResult> PutExistencia(int producto, string presentacion, decimal precio, decimal cantidad)
         {
@@ -807,28 +909,23 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
-        [HttpPut("putCambiarEstadoRollo/{item}/{status}/{newStatus}")]
-        public async Task<IActionResult> PutcambiarEstadoRollo([FromBody] List<long> rolls, long item, int status, int newStatus)
+        [HttpPut("putCambiarEstadoRollo/{status}/{newStatus}")]
+        public async Task<IActionResult> PutcambiarEstadoRollo(List<rollsReturned> rollsReturned, int status, int newStatus)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            int count = 0;
-            foreach (var roll in rolls)
+            foreach (var roll in rollsReturned)
             {
-                var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.NumeroRollo_BagPro == roll && prod.Prod_Id == item && prod.Estado_Rollo == status select prod).FirstOrDefault();
+                var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.NumeroRollo_BagPro == roll.roll && prod.Prod_Id == roll.item && prod.Estado_Rollo == status select prod).FirstOrDefault();
                 dataProduction.Estado_Rollo = newStatus;
                 _context.Entry(dataProduction).State = EntityState.Modified;
-                _context.SaveChanges();
                 try
                 {
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RolloExists(roll)) return NotFound();
-                    else throw;
+                    return NotFound();
                 }
-                count++;
-                if (count == rolls.Count()) return NoContent();
             }
             return NoContent();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -955,7 +1052,7 @@ namespace PlasticaribeAPI.Controllers
         {
             var rollos = from of in _context.Set<Detalles_OrdenFacturacion>()
                          join pp in _context.Set<Produccion_Procesos>() on of.Numero_Rollo equals pp.NumeroRollo_BagPro
-                         where of.Id_OrdenFacturacion == orden && of.Prod_Id == pp.Prod_Id
+                         where of.Id_OrdenFacturacion == orden && of.Prod_Id == pp.Prod_Id //&& pp.Estado_Rollo != 20
                          select pp;
 
             int count = 0;
@@ -1111,5 +1208,12 @@ public class rollsToDelete
 {
     public long roll { get; set; }
     public string process { get; set; }
+
+}
+
+public class rollsReturned
+{
+    public long roll { get; set; }
+    public int item { get; set; }
 
 }
