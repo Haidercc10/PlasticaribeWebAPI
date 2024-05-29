@@ -86,6 +86,7 @@ namespace PlasticaribeAPI.Controllers
             var infoDev = from dev in _context.Set<Devolucion_ProductoFacturado>()
                           join dtDev in _context.Set<DetalleDevolucion_ProductoFacturado>() on dev.DevProdFact_Id equals dtDev.DevProdFact_Id
                           where dev.DevProdFact_Id == id
+                          && dev.Estado_Id != 18 
                           select new
                           {
                               dev,
@@ -132,18 +133,23 @@ namespace PlasticaribeAPI.Controllers
                                 (order != "" ? Convert.ToString(dev.DevProdFact_Id) == order : true)
                           select new
                           {
-                              or = new {
+                              or = new
+                              {
                                   Id = dev.DevProdFact_Id,
                                   Factura = dev.FacturaVta_Id,
                                   Fecha = dev.DevProdFact_Fecha,
                                   Hora = dev.DevProdFact_Hora,
                                   dev.Cli_Id,
-                                  Observacion = dev.DevProdFact_Observacion
+                                  Observacion = dev.DevProdFact_Observacion,
+                                  Reposicion = dev.DevProdFact_Reposicion,
+                                  Estado_Id = dev.Estado_Id,
                               },
                               Clientes = dev.Cliente,
                               Usuario = dev.Usua,
                               FechaHora = dev.DevProdFact_Fecha + " " + dev.DevProdFact_Hora,
-                              Type = "Devolucion"
+                              Type = "Devolucion",
+                              Estado = dev.Estado_Id == 11 ? "PENDIENTE" : dev.Estado_Id == 29 ? "EN REVISIÓN" : dev.Estado_Id == 35 ? "POR REPONER" : "CERRADA",
+                              
                           };
             return infoDev.Any() ? Ok(infoDev) : NotFound();
         }

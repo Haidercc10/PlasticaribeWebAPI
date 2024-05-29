@@ -1112,8 +1112,8 @@ namespace PlasticaribeAPI.Controllers
             foreach (var roll in rolls)
             {
                 var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.Numero_Rollo == roll select prod).FirstOrDefault();
-                dataProduction.Estado_Rollo = 19;
-                dataProduction.Envio_Zeus = false;
+                dataProduction.Estado_Rollo = 23;
+                dataProduction.Envio_Zeus = true;
                 _context.Entry(dataProduction).State = EntityState.Modified;
                 _context.SaveChanges();
                 try
