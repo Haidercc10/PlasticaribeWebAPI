@@ -590,6 +590,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Devolucion_ProductoFacturado>().HasOne(x => x.Usua).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Devolucion_ProductoFacturado>().HasOne(x => x.Orden_Fact).WithMany().HasForeignKey(x => x.Id_OrdenFact).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Devolucion_ProductoFacturado>().HasOne(x => x.Estados).WithMany().HasForeignKey(x => x.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Devolucion_ProductoFacturado>().HasOne(x => x.UsuaModificaDv).WithMany().HasForeignKey(x => x.UsuaModifica_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Relaciones DetalleDevolucion_ProductoFacturado
             //modelBuilder.Entity<DetalleDevolucion_ProductoFacturado>().ToTable(tb => tb.HasTrigger("Auditoria_DetallesDevoluciones_ProductosFacturados"));

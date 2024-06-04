@@ -909,14 +909,14 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
-        [HttpPut("putCambiarEstadoRollo/{status}/{newStatus}")]
-        public async Task<IActionResult> PutcambiarEstadoRollo(List<rollsReturned> rollsReturned, int status, int newStatus)
+        [HttpPut("putCambiarEstadoRollo")]
+        public async Task<IActionResult> PutcambiarEstadoRollo(List<rollsReturned> rollsReturned)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             foreach (var roll in rollsReturned)
             {
-                var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.NumeroRollo_BagPro == roll.roll && prod.Prod_Id == roll.item && prod.Estado_Rollo == status select prod).FirstOrDefault();
-                dataProduction.Estado_Rollo = newStatus;
+                var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.NumeroRollo_BagPro == roll.roll && prod.Prod_Id == roll.item && prod.Estado_Rollo == roll.currentStatus select prod).FirstOrDefault();
+                dataProduction.Estado_Rollo = roll.newStatus;
                 _context.Entry(dataProduction).State = EntityState.Modified;
                 try
                 {
@@ -1215,5 +1215,9 @@ public class rollsReturned
 {
     public long roll { get; set; }
     public int item { get; set; }
+
+    public int currentStatus { get; set; }
+
+    public int newStatus { get; set; }
 
 }

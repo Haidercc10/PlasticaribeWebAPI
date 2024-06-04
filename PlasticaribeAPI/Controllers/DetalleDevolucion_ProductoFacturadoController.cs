@@ -86,7 +86,7 @@ namespace PlasticaribeAPI.Controllers
             var infoDev = from dev in _context.Set<Devolucion_ProductoFacturado>()
                           join dtDev in _context.Set<DetalleDevolucion_ProductoFacturado>() on dev.DevProdFact_Id equals dtDev.DevProdFact_Id
                           where dev.DevProdFact_Id == id
-                          && dev.Estado_Id != 18 
+                          //&& dev.Estado_Id != 18 
                           select new
                           {
                               dev,
@@ -101,7 +101,9 @@ namespace PlasticaribeAPI.Controllers
                               Usua = new
                               {
                                   dev.Usua_Id,
-                                  dev.Usua.Usua_Nombre
+                                  dev.Usua.Usua_Nombre, 
+                                  dev.UsuaModifica_Id, 
+                                  Usua_Modifica = dev.UsuaModificaDv.Usua_Nombre,
                               },
                               dtDev = new
                               {
@@ -118,7 +120,12 @@ namespace PlasticaribeAPI.Controllers
                               {
                                   dtDev.Prod_Id,
                                   dtDev.Prod.Prod_Nombre
-                              }
+                              },
+                              EstadoDv = new { 
+                                   dev.Estado_Id,
+                                   dev.Estados.Estado_Nombre,
+                              },
+                              EstadoOF = (from dof in _context.Set<Detalles_OrdenFacturacion>() where dof.Id_OrdenFacturacion == dev.Id_OrdenFact && dof.Numero_Rollo == dtDev.Rollo_Id select dof.Estados.Estado_Nombre).FirstOrDefault(),
                           };
             return infoDev.Any() ? Ok(infoDev) : NotFound();
         }
@@ -148,7 +155,7 @@ namespace PlasticaribeAPI.Controllers
                               Usuario = dev.Usua,
                               FechaHora = dev.DevProdFact_Fecha + " " + dev.DevProdFact_Hora,
                               Type = "Devolucion",
-                              Estado = dev.Estado_Id == 11 ? "PENDIENTE" : dev.Estado_Id == 29 ? "EN REVISIÓN" : dev.Estado_Id == 35 ? "POR REPONER" : "CERRADA",
+                              Estado = dev.Estado_Id == 11 ? "PENDIENTE" : dev.Estado_Id == 29 ? "EN REVISIÓN" : dev.Estado_Id == 38 ? "POR REPONER" : dev.Estado_Id == 39 ? "EN REPOSICION" : dev.Estado_Id == 18 ? "CERRADA" : "",
                               
                           };
             return infoDev.Any() ? Ok(infoDev) : NotFound();

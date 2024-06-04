@@ -45,6 +45,25 @@ namespace PlasticaribeAPI.Models
 
         public bool? DevProdFact_Reposicion { get; set; }
 
+
+        [Column(TypeName = "date")]
+        public DateTime? DevProdFact_FechaModificado { get; set; }
+
+
+        [Column(TypeName = "varchar(10)")]
+        public string? DevProdFact_HoraModificado { get; set; }
+
+
+        [Column(TypeName = "date")]
+        public DateTime? DevProdFact_FechaFinalizado { get; set; }
+
+
+        [Column(TypeName = "varchar(10)")]
+        public string? DevProdFact_HoraFinalizado { get; set; }
+
+        public long UsuaModifica_Id { get; set; }
+        public Usuario? UsuaModificaDv { get; set; }
+
         //[Column(TypeName = "varchar(10)")]
         //public string DevProd_Hora { get; set; }
     }

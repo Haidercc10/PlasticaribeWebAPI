@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -68,6 +69,41 @@ namespace PlasticaribeAPI.Controllers
             }
 
             return NoContent();
+        }
+
+        //Consulta que actualiza el estado de la devolucion
+        [HttpPut("PutStatusDevolution/{id}/{status}/{date}/{hour}/{user}")]
+        public async Task<IActionResult> PutStatusDevolution(long id, int status, DateTime date, string hour, long user)
+        {
+            int[] statesQuality = { 29, 38 };
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var dataDevolution = (from dv in _context.Set<Devolucion_ProductoFacturado>() where dv.DevProdFact_Id == id && dv.Estado_Id != 18 select dv).FirstOrDefault();
+            dataDevolution.Estado_Id = status;
+            if (status == 18)
+            {
+                dataDevolution.DevProdFact_FechaFinalizado = date;
+                dataDevolution.DevProdFact_HoraFinalizado = hour;
+            }
+            else if (statesQuality.Contains(status))
+            {
+                dataDevolution.DevProdFact_FechaModificado = date;
+                dataDevolution.DevProdFact_HoraModificado = hour;
+                dataDevolution.UsuaModifica_Id = user;
+            }
+
+            _context.Entry(dataDevolution).State = EntityState.Modified;
+            _context.SaveChanges();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!Devolucion_ProductoFacturadoExists(id)) return NotFound();
+                else throw;
+            }
+            return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         // POST: api/Devolucion_ProductoFacturado

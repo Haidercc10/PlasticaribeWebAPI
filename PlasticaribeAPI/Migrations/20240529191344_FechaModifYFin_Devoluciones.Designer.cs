@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20240529191344_FechaModifYFin_Devoluciones")]
+    partial class FechaModifYFin_Devoluciones
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2869,9 +2872,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("TipoDevProdFact_Id")
                         .HasColumnType("int");
 
-                    b.Property<long>("UsuaModifica_Id")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("Usua_Id")
                         .HasColumnType("bigint");
 
@@ -2884,8 +2884,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Id_OrdenFact");
 
                     b.HasIndex("TipoDevProdFact_Id");
-
-                    b.HasIndex("UsuaModifica_Id");
 
                     b.HasIndex("Usua_Id");
 
@@ -10005,12 +10003,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "UsuaModificaDv")
-                        .WithMany()
-                        .HasForeignKey("UsuaModifica_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "Usua")
                         .WithMany()
                         .HasForeignKey("Usua_Id")
@@ -10026,8 +10018,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("TipoDevolucionPF");
 
                     b.Navigation("Usua");
-
-                    b.Navigation("UsuaModificaDv");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.EPS", b =>

@@ -190,6 +190,25 @@ namespace PlasticaribeAPI.Controllers
             return data.Any() ? Ok(data) : NotFound();
         }
 
+        //Consulta que devolverá el encabezado de la OF.
+        [HttpGet("getInformationOrderFactByFilters")]
+        public ActionResult getInformationOrderFactByFilters(string? of = "", string? fact = "", string? roll = "")
+        {
+
+            var data = (from order in _context.Set<OrdenFacturacion>()
+                        from dtOrder in _context.Set<Detalles_OrdenFacturacion>()
+                        orderby order.Id descending
+                        where order.Id == dtOrder.Id_OrdenFacturacion &&
+                              (of != "" ? Convert.ToString(order.Id) == of : Convert.ToString(order.Id).Contains(of)) &&
+                              (fact != "" ? Convert.ToString(order.Factura) == $"0000{fact}" : Convert.ToString(order.Factura).Contains(fact)) &&
+                              (roll != "" ? Convert.ToString(dtOrder.Numero_Rollo) == roll : Convert.ToString(dtOrder.Numero_Rollo).Contains(roll)) &&
+                              order.Estado_Id == 21
+                        select order).FirstOrDefault();
+
+            if (data != null) return Ok(data);
+            else return NotFound();
+        }
+
         [HttpGet("getOrders/{startDate}/{endDate}")]
         public ActionResult GetOrderd(DateTime startDate, DateTime endDate, string? order = "")
         {
@@ -392,6 +411,28 @@ namespace PlasticaribeAPI.Controllers
                 if (count == dataOrder.Count()) return NoContent();
             }
             return NoContent();
+        }
+
+        [HttpPut("putStatusRollInOrderFact/{order}")]
+        public async Task<IActionResult> putStatusRollInOrderFact(List<rollsReturned> rollsReturned, int order)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            foreach (var roll in rollsReturned)
+            {
+                var dataProduction = (from dof in _context.Set<Detalles_OrdenFacturacion>() where dof.Numero_Rollo == roll.roll && dof.Prod_Id == roll.item && dof.Estado_Id == roll.currentStatus && dof.Id_OrdenFacturacion == order select dof).FirstOrDefault();
+                dataProduction.Estado_Id = roll.newStatus;
+                _context.Entry(dataProduction).State = EntityState.Modified;
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    return NotFound();
+                }
+            }
+            return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         // POST: api/Detalles_OrdenFacturacion
