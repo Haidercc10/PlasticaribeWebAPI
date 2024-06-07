@@ -167,10 +167,11 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getAvaibleProduction/{item}")]
         public ActionResult GetAvaibleProduction(int item)
         {
-            var avaibleProduction = from dev in _context.Set<DetalleDevolucion_ProductoFacturado>() where dev.Prod_Id == item select dev.Rollo_Id;
+            //var avaibleProduction = from dev in _context.Set<DetalleDevolucion_ProductoFacturado>() where dev.Prod_Id == item select dev.Rollo_Id;
+            int[] statuses = { 20, 24, 36 };
 
             var notAvaibleProduccion = from order in _context.Set<Detalles_OrdenFacturacion>()
-                                       where !avaibleProduction.Contains(order.Numero_Rollo) && order.Prod_Id == item && order.OrdenFacturacion.Estado_Id != 3 && order.Estado_Id == 20
+                                       where /*!avaibleProduction.Contains(order.Numero_Rollo) &&*/ order.Prod_Id == item && order.OrdenFacturacion.Estado_Id != 3 && statuses.Contains(order.Estado_Id)
                                        select order.Numero_Rollo;
 
             var production = from pp in _context.Set<Produccion_Procesos>()
@@ -763,12 +764,14 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getRollsAvailablesForItem/{item}")]
         public ActionResult getRollsAvailablesForItem(int item)
         {
+            int[] statuses = { 20, 24, 36 };
+
             var rollsAvailables = from pp in _context.Set<Produccion_Procesos>()
                                   where pp.Prod_Id == item &&
                                         pp.Estado_Rollo == 19 &&
                                         pp.Envio_Zeus == true &&
                                         !((from order in _context.Set<Detalles_OrdenFacturacion>()
-                                           where order.Prod_Id == pp.Prod_Id && order.OrdenFacturacion.Estado_Id != 3 && order.Estado_Id == 20
+                                           where order.Prod_Id == pp.Prod_Id && order.OrdenFacturacion.Estado_Id != 3 && statuses.Contains(order.Estado_Id)
                                            select order.Numero_Rollo).ToList()).Contains(pp.NumeroRollo_BagPro)
                                   select new
                                   {
@@ -800,6 +803,8 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getRollsInAreaForItem/{item}/{process}")]
         public ActionResult getRollsInAreaForItem(int item, string process)
         {
+            int[] statuses = { 20, 24, 36 };
+
             var rollsInArea = from pp2 in _context.Set<Produccion_Procesos>()
                               where pp2.Prod_Id == item &&
                                     pp2.Estado_Rollo == 19 &&
@@ -807,7 +812,7 @@ namespace PlasticaribeAPI.Controllers
                                     pp2.Proceso_Id == process &&
                                     pp2.Fecha >= Convert.ToDateTime("2024-02-04") &&
                                     !((from order in _context.Set<Detalles_OrdenFacturacion>()
-                                       where order.Prod_Id == pp2.Prod_Id && order.OrdenFacturacion.Estado_Id != 3 && order.Estado_Id == 20
+                                       where order.Prod_Id == pp2.Prod_Id && order.OrdenFacturacion.Estado_Id != 3 && statuses.Contains(order.Estado_Id)
                                        select order.Numero_Rollo).ToList()).Contains(pp2.NumeroRollo_BagPro)
                               select new
                               {
@@ -832,13 +837,15 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getRollsPreDeliveredForItem/{item}")]
         public ActionResult getRollsPreDeliveredForItem(int item)
         {
+            int[] statuses = { 20, 24, 36 };
+
             var rollsPredelivered = from pp2 in _context.Set<Produccion_Procesos>()
                                     where pp2.Prod_Id == item &&
                                           pp2.Estado_Rollo == 31 &&
                                           pp2.Envio_Zeus == false &&
                                           pp2.Fecha >= Convert.ToDateTime("2024-02-04") &&
                                           !((from order in _context.Set<Detalles_OrdenFacturacion>()
-                                             where order.Prod_Id == pp2.Prod_Id && order.OrdenFacturacion.Estado_Id != 3 && order.Estado_Id == 20
+                                             where order.Prod_Id == pp2.Prod_Id && order.OrdenFacturacion.Estado_Id != 3 && statuses.Contains(order.Estado_Id)
                                              select order.Numero_Rollo).ToList()).Contains(pp2.NumeroRollo_BagPro)
                                     select new
                                     {
@@ -917,6 +924,7 @@ namespace PlasticaribeAPI.Controllers
             {
                 var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.NumeroRollo_BagPro == roll.roll && prod.Prod_Id == roll.item && prod.Estado_Rollo == roll.currentStatus select prod).FirstOrDefault();
                 dataProduction.Estado_Rollo = roll.newStatus;
+                dataProduction.Envio_Zeus = roll.envioZeus;
                 _context.Entry(dataProduction).State = EntityState.Modified;
                 try
                 {
@@ -1217,7 +1225,8 @@ public class rollsReturned
     public int item { get; set; }
 
     public int currentStatus { get; set; }
-
     public int newStatus { get; set; }
+
+    public bool envioZeus { get; set; }
 
 }

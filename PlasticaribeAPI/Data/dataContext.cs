@@ -1021,6 +1021,18 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Movimientos_Nomina>().HasOne(x => x.Estado).WithMany().HasForeignKey(y => y.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Movimientos_Nomina>().HasOne(x => x.Creador).WithMany().HasForeignKey(y => y.Creador_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            //Ingreso Peletizado
+            modelBuilder.Entity<Ingreso_Peletizado>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Ingreso_Peletizado>().HasOne(x => x.MatPrima).WithMany().HasForeignKey(x => x.MatPri_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Ingreso_Peletizado>().HasOne(x => x.Estados).WithMany().HasForeignKey(x => x.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Ingreso_Peletizado>().HasOne(x => x.Materiales).WithMany().HasForeignKey(x => x.Material_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Ingreso_Peletizado>().HasOne(x => x.Fallas).WithMany().HasForeignKey(x => x.Falla_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Ingreso_Peletizado>().HasOne(x => x.Proceso).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Ingreso_Peletizado>().HasOne(x => x.UndMedida).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Ingreso_Peletizado>().HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Ingreso_Peletizado>().HasOne(x => x.Usuario2).WithMany().HasForeignKey(x => x.Usua_Modifica).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Ingreso_Peletizado>().HasOne(x => x.Tipo_Recuperado).WithMany().HasForeignKey(x => x.TpRecu_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
             modelBuilder.Entity<Tipo_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Usuarios"));

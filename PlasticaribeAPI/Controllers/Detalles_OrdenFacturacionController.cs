@@ -226,7 +226,8 @@ namespace PlasticaribeAPI.Controllers
                            Type = "Orden",
                            FechaHora = or.Fecha + " " + or.Hora,
                            FechaDespacho = (from asg in _context.Set<AsignacionProducto_FacturaVenta>() where asg.NotaCredito_Id == "Orden de Facturación #" + or.Id select asg.AsigProdFV_Fecha).FirstOrDefault(),
-                           Estado = or.Estado_Id == 19 ? "PENDIENTE" : or.Estado_Id == 21 ? "DESPACHADO" : "ANULADO"
+                           Estado = or.Estado_Id == 19 ? "PENDIENTE" : or.Estado_Id == 21 ? "DESPACHADO" : "ANULADO",
+                           Of = (from dof in _context.Set<Detalles_OrdenFacturacion>() where dof.Id_OrdenFacturacion == or.Id orderby dof.Id descending select dof.Id_OrdenFacturacion).FirstOrDefault(),
                        };
             return fact.Any() ? Ok(fact) : NotFound();
 #pragma warning restore CS8604 // Possible null reference argument.
