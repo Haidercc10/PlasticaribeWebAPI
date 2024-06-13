@@ -180,6 +180,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<TipoIncapacidad> TipoIncapacidad { get; set; }
         public DbSet<Incapacidades> Incapacidades { get; set; }
         public DbSet<Movimientos_Nomina> Movimientos_Nomina { get; set; }
+        public DbSet<Ingreso_Peletizado> Ingreso_Peletizado { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
