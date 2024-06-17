@@ -64,6 +64,11 @@ namespace PlasticaribeAPI.Models
         public long UsuaModifica_Id { get; set; }
         public Usuario? UsuaModificaDv { get; set; }
 
+        public bool? DevProdFact_NotaCredito { get; set; }
+
+        [Column(TypeName = "varchar(max)")]
+        public string? DevProdFact_ObservacionGestion { get; set; }
+
         //[Column(TypeName = "varchar(10)")]
         //public string DevProd_Hora { get; set; }
     }

@@ -73,12 +73,13 @@ namespace PlasticaribeAPI.Controllers
 
         //Consulta que actualiza el estado de la devolucion
         [HttpPut("PutStatusDevolution/{id}/{status}/{date}/{hour}/{user}")]
-        public async Task<IActionResult> PutStatusDevolution(long id, int status, DateTime date, string hour, long user)
+        public async Task<IActionResult> PutStatusDevolution(long id, int status, DateTime date, string hour, long user, string? observation)
         {
             int[] statesQuality = { 29, 38 };
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var dataDevolution = (from dv in _context.Set<Devolucion_ProductoFacturado>() where dv.DevProdFact_Id == id && dv.Estado_Id != 18 select dv).FirstOrDefault();
             dataDevolution.Estado_Id = status;
+            dataDevolution.DevProdFact_ObservacionGestion = observation;
             if (status == 18)
             {
                 dataDevolution.DevProdFact_FechaFinalizado = date;

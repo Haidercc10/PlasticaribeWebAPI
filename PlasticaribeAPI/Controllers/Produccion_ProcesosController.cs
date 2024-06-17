@@ -168,7 +168,7 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetAvaibleProduction(int item)
         {
             //var avaibleProduction = from dev in _context.Set<DetalleDevolucion_ProductoFacturado>() where dev.Prod_Id == item select dev.Rollo_Id;
-            int[] statuses = { 20, 24, 36 };
+            int[] statuses = { 20, 24, 36, 44, 45 };
 
             var notAvaibleProduccion = from order in _context.Set<Detalles_OrdenFacturacion>()
                                        where /*!avaibleProduction.Contains(order.Numero_Rollo) &&*/ order.Prod_Id == item && order.OrdenFacturacion.Estado_Id != 3 && statuses.Contains(order.Estado_Id)
@@ -764,7 +764,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getRollsAvailablesForItem/{item}")]
         public ActionResult getRollsAvailablesForItem(int item)
         {
-            int[] statuses = { 20, 24, 36 };
+            int[] statuses = { 20, 24, 36, 44, 45 };
 
             var rollsAvailables = from pp in _context.Set<Produccion_Procesos>()
                                   where pp.Prod_Id == item &&
@@ -803,7 +803,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getRollsInAreaForItem/{item}/{process}")]
         public ActionResult getRollsInAreaForItem(int item, string process)
         {
-            int[] statuses = { 20, 24, 36 };
+            int[] statuses = { 20, 24, 36, 44, 45 };
 
             var rollsInArea = from pp2 in _context.Set<Produccion_Procesos>()
                               where pp2.Prod_Id == item &&
@@ -837,7 +837,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getRollsPreDeliveredForItem/{item}")]
         public ActionResult getRollsPreDeliveredForItem(int item)
         {
-            int[] statuses = { 20, 24, 36 };
+            int[] statuses = { 20, 24, 36, 44, 45 };
 
             var rollsPredelivered = from pp2 in _context.Set<Produccion_Procesos>()
                                     where pp2.Prod_Id == item &&
