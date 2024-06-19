@@ -101,8 +101,8 @@ namespace PlasticaribeAPI.Controllers
                               Usua = new
                               {
                                   dev.Usua_Id,
-                                  dev.Usua.Usua_Nombre, 
-                                  dev.UsuaModifica_Id, 
+                                  dev.Usua.Usua_Nombre,
+                                  dev.UsuaModifica_Id,
                                   Usua_Modifica = dev.UsuaModificaDv.Usua_Nombre,
                               },
                               dtDev = new
@@ -112,7 +112,7 @@ namespace PlasticaribeAPI.Controllers
                                   dtDev.Prod_Id,
                                   Numero_Rollo = dtDev.Rollo_Id,
                                   Cantidad = dtDev.DtDevProdFact_Cantidad,
-                                  Presentacion = dtDev.UndMed_Id, 
+                                  Presentacion = dtDev.UndMed_Id,
                                   Falla_Id = dtDev.Falla_Id,
                                   Falla = dtDev.Fallas.Falla_Nombre,
                               },
@@ -121,11 +121,13 @@ namespace PlasticaribeAPI.Controllers
                                   dtDev.Prod_Id,
                                   dtDev.Prod.Prod_Nombre
                               },
-                              EstadoDv = new { 
-                                   dev.Estado_Id,
-                                   dev.Estados.Estado_Nombre,
+                              EstadoDv = new {
+                                  dev.Estado_Id,
+                                  dev.Estados.Estado_Nombre,
                               },
                               EstadoOF = (from dof in _context.Set<Detalles_OrdenFacturacion>() where dof.Id_OrdenFacturacion == dev.Id_OrdenFact && dof.Numero_Rollo == dtDev.Rollo_Id select dof.Estados.Estado_Nombre).FirstOrDefault(),
+                              Ot = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.OT).FirstOrDefault(),
+                              Estado_Produccion = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.Estado_Rollo).FirstOrDefault()
                           };
             return infoDev.Any() ? Ok(infoDev) : NotFound();
         }

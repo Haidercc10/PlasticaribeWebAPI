@@ -916,6 +916,30 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
+        [HttpPut("putAsociateRoll/{roll1}/{roll2}/{item}")]
+        public async Task<IActionResult> putAsociateRoll(long roll1, long roll2, int item)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var dataProduction = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == roll1 && pp.Prod_Id == item select pp).FirstOrDefault();
+            var dataProduction2 = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == roll2 && pp.Prod_Id == item select pp).FirstOrDefault();
+            dataProduction.Rollo_Asociado = roll2;
+            dataProduction.Estado_Rollo = 46;
+            dataProduction2.Envio_Zeus = true;
+            _context.Entry(dataProduction).State = EntityState.Modified;
+            _context.SaveChanges();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!RolloExists(roll1)) return NotFound();
+                else throw;
+            }
+            return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
         [HttpPut("putCambiarEstadoRollo")]
         public async Task<IActionResult> PutcambiarEstadoRollo(List<rollsReturned> rollsReturned)
         {

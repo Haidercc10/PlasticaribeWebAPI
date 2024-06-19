@@ -76,6 +76,11 @@ namespace PlasticaribeAPI.Models
         public int Estado_Rollo { get; set; }
         public Estado? Estado { get; set; }
         public long NumeroRollo_BagPro { get; set; }
+
+        public long? Rollo_Asociado { get; set; }
+
+        [Column(TypeName = "varchar(max)")]
+        public string? Observacion { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }
