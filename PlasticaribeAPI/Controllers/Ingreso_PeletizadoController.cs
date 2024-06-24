@@ -100,16 +100,15 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //Consulta que devolverá la entrada de peletizado que se realizó en el sistema en la fecha y hora que se le pasen por parametros.
-        [HttpGet("getMovementsPeletizado/{date1}/{date2}/{hour}")]
-        public ActionResult getMovementsPeletizado(DateTime date1, DateTime date2, string? mp = "", string? item = "", string ot = "", string? roll = "")
+        [HttpGet("getMovementsPeletizado/{date1}/{date2}")]
+        public ActionResult getMovementsPeletizado(DateTime date1, DateTime date2, string? mp = "", string? ot = "", string? roll = "")
         {
             var entry = from ing in _context.Set<Ingreso_Peletizado>()
                         where ing.IngPel_FechaIngreso >= date1 &&
                         ing.IngPel_FechaIngreso <= date2 && 
-                        mp != "" ? (Convert.ToString(ing.MatPri_Id) == mp) : (Convert.ToString(ing.MatPri_Id).Contains(mp)) &
-                        item != "" ? (Convert.ToString(ing.Prod_Id) == item) : (Convert.ToString(ing.Prod_Id).Contains(item)) &
-                        ot != "" ? (Convert.ToString(ing.OT) == ot) : (Convert.ToString(ing.OT).Contains(ot)) &
-                        roll != "" ? (Convert.ToString(ing.Rollo_Id) == roll) : (Convert.ToString(ing.Rollo_Id).Contains(roll))
+                        (mp != "" ? ing.MatPri_Id == Convert.ToInt64(mp) : ing.MatPri_Id.ToString().Contains(mp)) &&
+                        (ot != "" ? ing.OT == Convert.ToInt64(ot) : ing.OT.ToString().Contains(ot)) &&
+                        (roll != "" ? ing.Rollo_Id == Convert.ToInt64(roll) : ing.Rollo_Id.ToString().Contains(roll))
                         select new
                         {
                             Entries = ing,
@@ -158,7 +157,8 @@ namespace PlasticaribeAPI.Controllers
                             }
                         };
 
-            if (entry.Count() > 0) return Ok(entry);
+            if (entry != null) return Ok(entry);
+            else if (entry == null) return NotFound();
             else return BadRequest();
         }
 

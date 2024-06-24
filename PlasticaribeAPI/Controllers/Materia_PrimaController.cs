@@ -1214,6 +1214,29 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8604 // Possible null reference argument.
         }
 
+        //Consulta que traerá las materias primas através de una sentencia tipo like
+        [HttpGet("getPeletizados")]
+        public ActionResult getPeletizados()
+        {
+            int[] categories = { 10, 4 };
+#pragma warning disable CS8604 // Possible null reference argument.
+            var peletizado = from mp in _context.Set<Materia_Prima>()
+                               where mp.MatPri_Id != 84
+                               && categories.Contains(mp.CatMP_Id)
+                               select new
+                               {
+                                   Id = mp.MatPri_Id,
+                                   MatPrima = mp.MatPri_Nombre,
+                                   CategoryId = mp.CatMP_Id, 
+                                   Category = mp.CatMP.CatMP_Nombre, 
+                                   Stock = mp.MatPri_Stock, 
+                                   Presentation = mp.UndMed_Id,
+                                   Price = mp.MatPri_Precio,
+                                   Subtotal = (mp.MatPri_Stock * mp.MatPri_Precio)
+                               };
+            return Ok(peletizado);
+        }
+
         // PUT: api/Materia_Prima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
