@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
@@ -28,6 +29,14 @@ namespace PlasticaribeAPI.Models
         public bool DtBgRollo_Sellado { get; set; }
         public bool DtBgRollo_Corte { get; set; }
         public bool DtBgRollo_Despacho { get; set; }
+        public int? Estado_Id { get; set; }
+        public Estado? Estados { get; set; }
+
+        [Column(TypeName = "varchar(max)")]
+        public string? DtBgRollo_Ubicacion { get; set; }
+
+        public string? BgRollo_BodegaInicial { get; set; }
+        public Proceso? Bodega_Inicial { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

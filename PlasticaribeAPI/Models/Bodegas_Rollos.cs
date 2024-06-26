@@ -21,6 +21,9 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string BgRollo_HoraModifica { get; set; }
         public string BgRollo_Observacion { get; set; }
+
+        public long Usua_Id { get; set; }
+        public Usuario? Usuario { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

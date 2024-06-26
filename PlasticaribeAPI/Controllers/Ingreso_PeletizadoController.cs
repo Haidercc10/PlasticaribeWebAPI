@@ -108,7 +108,7 @@ namespace PlasticaribeAPI.Controllers
                         ing.IngPel_FechaIngreso <= date2 && 
                         (mp != "" ? ing.MatPri_Id == Convert.ToInt64(mp) : ing.MatPri_Id.ToString().Contains(mp)) &&
                         (ot != "" ? ing.OT == Convert.ToInt64(ot) : ing.OT.ToString().Contains(ot)) &&
-                        (roll != "" ? ing.Rollo_Id == Convert.ToInt64(roll) : ing.Rollo_Id.ToString().Contains(roll))
+                        (roll != "" ? ing.Rollo_Id == Convert.ToInt64(roll) : ing.Rollo_Id.ToString().Contains(roll) || ing.Rollo_Id == null)
                         select new
                         {
                             Entries = ing,

@@ -68,6 +68,17 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //Consulta que validará que un rollo existe en una bodega y devolverá toda su información
+        [HttpGet("getRollo/{rollo}/{bodega}")]
+        public ActionResult getRollo(long rollo, string bodega)
+        {
+            var con = from bg in _context.Set<Detalles_BodegasRollos>()
+                      where bg.DtBgRollo_Rollo == rollo &&
+                            bg.BgRollo_BodegaInicial == bodega
+                      select bg;
+            return Ok(con);
+        }
+
+        //Consulta que validará que un rollo existe en una bodega y devolverá toda su información
         [HttpGet("getIdRollo/{rollo}")]
         public ActionResult GetIdRollo(long rollo)
         {
@@ -176,6 +187,7 @@ namespace PlasticaribeAPI.Controllers
                           Fecha = bg.Bodegas_Rollos.BgRollo_FechaEntrada,
                           Hora = bg.Bodegas_Rollos.BgRollo_HoraEntrada,
                           Observacion = bg.Bodegas_Rollos.BgRollo_Observacion,
+                          Usuario = bg.Bodegas_Rollos.Usuario.Usua_Nombre,
 
                           Empresa_Id = Emp.Empresa_Id,
                           Empresa_Ciudad = Emp.Empresa_Ciudad,
@@ -191,6 +203,8 @@ namespace PlasticaribeAPI.Controllers
                           Rollo = bg.DtBgRollo_Rollo,
                           Cantidad = bg.DtBgRollo_Cantidad,
                           Presentacion = bg.UndMed_Id,
+                          Ubicacion = bg.DtBgRollo_Ubicacion,
+                          Bodega_Inicial = bg.BgRollo_BodegaInicial
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return con.Any() ? Ok(con) : BadRequest();

@@ -835,6 +835,8 @@ namespace PlasticaribeAPI.Data
 
             //Bodegas Rollo
             modelBuilder.Entity<Bodegas_Rollos>().ToTable(tb => tb.HasTrigger("Auditoria_Bodegas_Rollos"));
+            modelBuilder.Entity<Bodegas_Rollos>().HasOne(x => x.Usuario).WithMany().HasForeignKey(y => y.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
 
             //Detalles Bodegas Rollo
             modelBuilder.Entity<Detalles_BodegasRollos>().ToTable(tb => tb.HasTrigger("Auditoria_Detalles_BodegasRollos"));
@@ -842,6 +844,8 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Detalles_BodegasRollos>().HasOne(x => x.Und).WithMany().HasForeignKey(y => y.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalles_BodegasRollos>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalles_BodegasRollos>().HasOne(x => x.Bodega_Actual).WithMany().HasForeignKey(y => y.BgRollo_BodegaActual).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_BodegasRollos>().HasOne(x => x.Estados).WithMany().HasForeignKey(y => y.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_BodegasRollos>().HasOne(x => x.Bodega_Inicial).WithMany().HasForeignKey(y => y.BgRollo_BodegaInicial).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Vistas Permisos
             modelBuilder.Entity<Vistas_Permisos>().ToTable(x => x.HasTrigger("Auditoria_Vistas_Permisos"));
