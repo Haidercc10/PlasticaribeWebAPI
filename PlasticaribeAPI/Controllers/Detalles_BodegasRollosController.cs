@@ -98,6 +98,7 @@ namespace PlasticaribeAPI.Controllers
                       where bg.BgRollo_BodegaActual == bodega
                             && bg.BgRollo_OrdenTrabajo == ot
                             && Convert.ToString(bg.DtBgRollo_Rollo).Contains(rollo)
+                            && bg.Estado_Id == 19
                       select new
                       {
                           Ot = bg.BgRollo_OrdenTrabajo,
@@ -111,7 +112,7 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
             if (con.Count() > 0) return Ok(con);
-            else return BadRequest("No hay rollos disponobles en la bodega solicitada");
+            else return BadRequest("No hay rollos disponIbles en la bodega solicitada");
         }
 
         //Consulta que devolverá la información del inventario de cada una de las bodegas de rollos
@@ -120,6 +121,7 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from bg in _context.Set<Detalles_BodegasRollos>()
+                      where bg.Estado_Id == 19
                       group bg by new
                       {
                           bg.BgRollo_OrdenTrabajo,
@@ -151,7 +153,8 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from bg in _context.Set<Detalles_BodegasRollos>()
                       where bg.BgRollo_OrdenTrabajo == orden &&
-                            bg.BgRollo_BodegaActual == bodega
+                            bg.BgRollo_BodegaActual == bodega &&
+                            bg.Estado_Id == 19
                       select new
                       {
                           bg.DtBgRollo_Rollo,
@@ -208,6 +211,38 @@ namespace PlasticaribeAPI.Controllers
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return con.Any() ? Ok(con) : BadRequest();
+        }
+
+        //Consulta que actualiza el estado de rollos de la bodega
+        [HttpPut("putRollsStore/{status}/{process}")]
+        public async Task<IActionResult> putRollsStore(int status, string process, List<rollsStore> rollsStore)
+        {
+            string[] asociatedProcess = { "EMP", "CORTE" }; 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            foreach (var roll in rollsStore)
+            {
+                var dataStore = (from dbr in _context.Set<Detalles_BodegasRollos>() where dbr.DtBgRollo_Rollo == roll.Rollo && dbr.BgRollo_OrdenTrabajo == roll.OT select dbr).FirstOrDefault();
+                dataStore.Estado_Id = status;
+                dataStore.BgRollo_BodegaActual = process;
+                if (process == "EXT") dataStore.DtBgRollo_Extrusion = true;
+                else if (process == "IMP") dataStore.DtBgRollo_Impresion = true;
+                else if (process == "ROT") dataStore.DtBgRollo_Rotograbado = true;
+                else if (process == "SELLA") dataStore.DtBgRollo_Sellado = true;
+                else if (process == "DESP") dataStore.DtBgRollo_Despacho = true;
+                else if (asociatedProcess.Contains(process)) dataStore.DtBgRollo_Corte = true;
+                _context.Entry(dataStore).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    return NotFound();
+                }
+            }
+            return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         // PUT: api/Detalles_BodegasRollos/5
@@ -282,4 +317,10 @@ namespace PlasticaribeAPI.Controllers
         }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+}
+
+public class rollsStore
+{
+    public long Rollo { get; set; }
+    public int OT { get; set; }
 }
