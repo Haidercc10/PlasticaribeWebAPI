@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using System.Dynamic;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -121,7 +122,8 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from bg in _context.Set<Detalles_BodegasRollos>()
-                      where bg.Estado_Id == 19
+                      where bg.Estado_Id == 19 &&
+                      bg.BgRollo_BodegaActual == Convert.ToString("BGPI")
                       group bg by new
                       {
                           bg.BgRollo_OrdenTrabajo,
@@ -211,6 +213,69 @@ namespace PlasticaribeAPI.Controllers
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return con.Any() ? Ok(con) : BadRequest();
+        }
+
+        [HttpGet("getMovementsStore/{date1}/{date2}")]
+        public ActionResult getMovementsStore(DateTime date1, DateTime date2, string? ot = "", string? roll = "", string? item = "", string? typeMov = "")
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var entries = from bg in _context.Set<Detalles_BodegasRollos>()
+                      from b in _context.Set<Bodegas_Rollos>()
+                      where
+                      b.BgRollo_FechaEntrada >= date1 &&
+                      b.BgRollo_FechaEntrada <= date2 &&
+                      b.BgRollo_Id == bg.BgRollo_Id &&
+                      (item != "" ? bg.Prod_Id == Convert.ToInt64(item) : bg.Prod_Id.ToString().Contains(item)) &&
+                      (ot != "" ? bg.BgRollo_OrdenTrabajo == Convert.ToInt64(ot) : bg.BgRollo_OrdenTrabajo.ToString().Contains(ot)) &&
+                      (roll != "" ? bg.DtBgRollo_Rollo == Convert.ToInt64(roll) : bg.DtBgRollo_Rollo.ToString().Contains(roll)) &&
+                      ("ENTRADA".Contains(typeMov) ? true : false)
+                      select new
+                      {
+                          Movement = bg.BgRollo_Id,
+                          Date = b.BgRollo_FechaEntrada,
+                          Hour = b.BgRollo_HoraEntrada,
+                          Observation = b.BgRollo_Observacion,
+                          User = b.Usuario.Usua_Nombre,
+
+                          OT = bg.BgRollo_OrdenTrabajo,
+                          Item = bg.Prod_Id,
+                          Reference = bg.Producto.Prod_Nombre,
+                          Roll = bg.DtBgRollo_Rollo,
+                          Quantity = bg.DtBgRollo_Cantidad,
+                          Presentation = bg.UndMed_Id,
+                          typeMov = Convert.ToString("ENTRADA"),
+                          Status = bg.Estados.Estado_Nombre
+                      };
+
+            var outputs = from s in _context.Set<Solicitud_Rollos_Areas>()
+                      from d in _context.Set<Detalles_SolicitudRollos>()
+                      where
+                      s.SolRollo_FechaSolicitud >= date1 &&
+                      s.SolRollo_FechaSolicitud <= date2 &&
+                      s.SolRollo_Id == d.SolRollo_Id &&
+                      (item != "" ? d.Prod_Id == Convert.ToInt64(item) : d.Prod_Id.ToString().Contains(item)) &&
+                      (ot != "" ? d.DtSolRollo_OrdenTrabajo == Convert.ToInt64(ot) : d.DtSolRollo_OrdenTrabajo.ToString().Contains(ot)) &&
+                      (roll != "" ? d.DtSolRollo_Rollo == Convert.ToInt64(roll) : d.DtSolRollo_Rollo.ToString().Contains(roll)) &&
+                      ("SALIDA".Contains(typeMov) ? true : false)
+                      select new
+                      {
+                          Movement = s.SolRollo_Id,
+                          Date = s.SolRollo_FechaSolicitud,
+                          Hour = s.SolRollo_HoraSolicitud,
+                          Observation = s.SolRollo_Observacion,
+                          User = s.Usuario.Usua_Nombre,
+
+                          OT = d.DtSolRollo_OrdenTrabajo,
+                          Item = d.Prod_Id,
+                          Reference = d.Producto.Prod_Nombre,
+                          Roll = d.DtSolRollo_Rollo,
+                          Quantity = d.DtSolRollo_Cantidad,
+                          Presentation = d.UndMed_Id,
+                          typeMov = Convert.ToString("SALIDA"),
+                          Status = s.Estado.Estado_Nombre
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(entries.Concat(outputs));
         }
 
         //Consulta que actualiza el estado de rollos de la bodega
