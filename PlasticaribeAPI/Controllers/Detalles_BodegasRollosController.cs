@@ -178,6 +178,18 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        //Consulta para obtener todos los rollos de una OT consultada.
+        [HttpGet("getRollsForOT/{order}")]
+        public ActionResult getRollsForOT(long order)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from bg in _context.Set<Detalles_BodegasRollos>()
+                      where bg.BgRollo_OrdenTrabajo == order
+                      select bg.DtBgRollo_Rollo;
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
         //
         [HttpGet("getInformacionIngreso/{id}")]
         public ActionResult GetInformacionIngreso(long id)
@@ -215,6 +227,7 @@ namespace PlasticaribeAPI.Controllers
             return con.Any() ? Ok(con) : BadRequest();
         }
 
+        //Consulta para obtener los movimientos de entrada y salida de la bodega.
         [HttpGet("getMovementsStore/{date1}/{date2}")]
         public ActionResult getMovementsStore(DateTime date1, DateTime date2, string? ot = "", string? roll = "", string? item = "", string? typeMov = "")
         {
