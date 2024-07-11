@@ -182,6 +182,9 @@ namespace PlasticaribeAPI.Data
         public DbSet<Movimientos_Nomina> Movimientos_Nomina { get; set; }
         public DbSet<Ingreso_Peletizado> Ingreso_Peletizado { get; set; }
         public DbSet<MatPrima_Material_Pigmento> MatPrimas_Materiales_Pigmentos { get; set; }
+        public DbSet<Ubicaciones_BodegaRollos> Ubicaciones_BodegaRollos { get; set; }
+        public DbSet<Salidas_Peletizado> Salidas_Peletizado { get; set; }
+        public DbSet<Detalles_SalidasPeletizado> Detalles_SalidasPeletizado { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1039,10 +1042,23 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Ingreso_Peletizado>().HasOne(x => x.Usuario2).WithMany().HasForeignKey(x => x.Usua_Modifica).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Ingreso_Peletizado>().HasOne(x => x.Tipo_Recuperado).WithMany().HasForeignKey(x => x.TpRecu_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            //MatPrima Material Pigmento
             modelBuilder.Entity<MatPrima_Material_Pigmento>().HasOne(x => x.MatPrima).WithMany().HasForeignKey(x => x.MatPri_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<MatPrima_Material_Pigmento>().HasOne(x => x.Material).WithMany().HasForeignKey(x => x.Material_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<MatPrima_Material_Pigmento>().HasOne(x => x.Pigmento).WithMany().HasForeignKey(x => x.Pigmt_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            //Salidas_Peletizado
+            modelBuilder.Entity<Salidas_Peletizado>().HasOne(x => x.MatPrima).WithMany().HasForeignKey(x => x.MatPri_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Salidas_Peletizado>().HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Salidas_Peletizado>().HasOne(x => x.Estados).WithMany().HasForeignKey(x => x.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Salidas_Peletizado>().HasOne(x => x.Usuario2).WithMany().HasForeignKey(x => x.Usua_Aprueba).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Salidas_Peletizado>().HasOne(x => x.Und).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Detalles Salidas Peletizado 
+            modelBuilder.Entity<Detalles_SalidasPeletizado>().HasOne(x => x.Salidas_Pele).WithMany().HasForeignKey(x => x.SalPel_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_SalidasPeletizado>().HasOne(x => x.Ing_Pele).WithMany().HasForeignKey(x => x.IngPel_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_SalidasPeletizado>().HasOne(x => x.Tipo_Recuperado).WithMany().HasForeignKey(x => x.TpRecu_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_SalidasPeletizado>().HasOne(x => x.Und).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));

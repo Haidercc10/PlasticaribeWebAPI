@@ -867,6 +867,218 @@ namespace PlasticaribeAPI.Controllers
             return Ok(rollsPredelivered);
         }
 
+        //Consulta para traer la información de un bulto. 
+        [HttpGet("getRolls/{date1}/{date2}")]
+        public ActionResult getMovementsRolls(DateTime date1, DateTime date2, string? item = "", string? ot = "", string? roll = "")
+        {
+            var mov = from pp in _context.Set<Produccion_Procesos>()
+                      from p in _context.Set<Producto>()
+                      where pp.Prod_Id == p.Prod_Id &&
+                      pp.Fecha >= date1 &&
+                      pp.Fecha <= date2 &&
+                      (item != "" ? pp.Prod_Id == Convert.ToInt64(item) : pp.Prod_Id.ToString().Contains(item)) &&
+                      (ot != "" ? pp.OT == Convert.ToInt64(ot) : pp.OT.ToString().Contains(ot)) &&
+                      (roll != "" ? pp.NumeroRollo_BagPro == Convert.ToInt64(roll) : pp.NumeroRollo_BagPro.ToString().Contains(roll))
+                      select new
+                      {
+                          Id = pp.Id,
+                          RollBagPro = pp.NumeroRollo_BagPro,
+                          NumberRoll = pp.Numero_Rollo,
+                          Item = pp.Prod_Id,
+                          Reference = p.Prod_Nombre,
+                          Qty = pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad,
+                          Presentation = pp.Presentacion,
+                          UserName = pp.Operario1.Usua_Nombre,
+                          Process = pp.Proceso.Proceso_Nombre,
+                          PrecioVenta = pp.PrecioVenta_Producto,
+                          Observation = pp.Observacion == null ? "" : pp.Observacion.ToString().ToUpper(),
+                          Fecha = pp.Fecha.ToString("dd-MM-yyyy") + " - " + pp.Hora,
+                          Status_Id = pp.Estado_Rollo,
+                          Status = pp.Estado.Estado_Nombre,
+                          Turn = pp.Turno_Id,
+                          Client = pp.Clientes.Cli_Nombre,
+                          Envio_Zeus = pp.Envio_Zeus,
+                          Asociated_Roll = pp.Envio_Zeus,
+                      };
+
+            return Ok(mov);
+        }
+
+        //Consulta para traer la información de un bulto. 
+        [HttpGet("getMovementsRolls/{rollBagPro}/{item}/{rollPl}")]
+        public ActionResult getMovementsRolls(long rollBagPro, int item, long rollPl)
+        {
+            var production = from pp in _context.Set<Produccion_Procesos>()
+                      from p in _context.Set<Producto>()
+                      where pp.Prod_Id == p.Prod_Id
+                      && pp.Prod_Id == item
+                      && pp.NumeroRollo_BagPro == rollBagPro
+                      select new
+                      {
+                          Id = Convert.ToInt32(pp.Id),
+                          RollBagPro = Convert.ToInt32(pp.NumeroRollo_BagPro),
+                          NumberRoll = Convert.ToInt32(pp.Numero_Rollo),
+                          Item = Convert.ToInt32(pp.Prod_Id),
+                          Reference = Convert.ToString(p.Prod_Nombre),
+                          Qty = pp.Presentacion == "Kg" ? Convert.ToDecimal(pp.Peso_Neto) : Convert.ToDecimal(pp.Cantidad),
+                          Presentation = Convert.ToString(pp.Presentacion),
+                          UserName = Convert.ToString(pp.Operario1.Usua_Nombre),
+                          Observation = Convert.ToString(pp.Observacion),
+                          Date = Convert.ToString(pp.Fecha),
+                          Hour = Convert.ToString(pp.Hora),
+                          //Status_Id = Convert.ToInt32(pp.Estado_Rollo),
+                          Status = Convert.ToString(pp.Estado.Estado_Nombre),
+                          Client = Convert.ToString(pp.Clientes.Cli_Nombre),
+                          Type = Convert.ToString("PRODUCCIÓN"),
+                      };
+
+            var wareHouseRolls = from d in _context.Set<Detalles_BodegasRollos>()
+                                 from p in _context.Set<Producto>()
+                                 where d.Prod_Id == p.Prod_Id
+                                 && d.Prod_Id == item
+                                 && d.DtBgRollo_Rollo == rollBagPro
+                                 select new
+                                 {
+                                     Id = Convert.ToInt32(d.BgRollo_Id),
+                                     RollBagPro = Convert.ToInt32(d.DtBgRollo_Rollo),
+                                     NumberRoll = Convert.ToInt32(rollPl),
+                                     Item = Convert.ToInt32(d.Prod_Id),
+                                     Reference = Convert.ToString(p.Prod_Nombre),
+                                     Qty = Convert.ToDecimal(d.DtBgRollo_Cantidad),
+                                     Presentation = Convert.ToString(d.UndMed_Id),
+                                     UserName = Convert.ToString(d.Bodegas_Rollos.Usuario.Usua_Nombre),
+                                     Observation = Convert.ToString(d.Bodegas_Rollos.BgRollo_Observacion + " Bodega Inicial: " + d.BgRollo_BodegaInicial + " Bodega Actual: " + d.BgRollo_BodegaActual),
+                                     Date = Convert.ToString(d.Bodegas_Rollos.BgRollo_FechaEntrada),
+                                     Hour = Convert.ToString(d.Bodegas_Rollos.BgRollo_HoraEntrada),
+                                     //Status_Id = Convert.ToInt32(pp.Estado_Rollo),
+                                     Status = Convert.ToString(d.Estados.Estado_Nombre),
+                                     Client = Convert.ToString(""),
+                                     Type = Convert.ToString("BODEGA ROLLOS"),
+                                 };
+
+            var requestedRolls = from d in _context.Set<Detalles_SolicitudRollos>()
+                                 from p in _context.Set<Producto>()
+                                 where d.Prod_Id == p.Prod_Id
+                                 && d.Prod_Id == item
+                                 && d.DtSolRollo_Rollo == rollBagPro
+                                 select new
+                                 {
+                                     Id = Convert.ToInt32(d.SolRollo_Id),
+                                     RollBagPro = Convert.ToInt32(d.DtSolRollo_Rollo),
+                                     NumberRoll = Convert.ToInt32(rollPl),
+                                     Item = Convert.ToInt32(d.Prod_Id),
+                                     Reference = Convert.ToString(p.Prod_Nombre),
+                                     Qty = Convert.ToDecimal(d.DtSolRollo_Cantidad),
+                                     Presentation = Convert.ToString(d.UndMed_Id),
+                                     UserName = Convert.ToString(d.SolicitudRollos.Usuario.Usua_Nombre),
+                                     Observation = Convert.ToString(d.SolicitudRollos.SolRollo_Observacion),
+                                     Date = Convert.ToString(d.SolicitudRollos.SolRollo_FechaSolicitud),
+                                     Hour = Convert.ToString(d.SolicitudRollos.SolRollo_HoraSolicitud),
+                                     //Status_Id = Convert.ToInt32(pp.Estado_Rollo),
+                                     Status = Convert.ToString(d.SolicitudRollos.Estado.Estado_Nombre),
+                                     Client = Convert.ToString(""),
+                                     Type = Convert.ToString("SOLICITUD ROLLOS"),
+                                 };
+
+            var wareHouseDeparture = from dt in _context.Set<DetalleEntradaRollo_Producto>()
+                                     from p in _context.Set<Producto>()
+                                     where dt.Prod_Id == p.Prod_Id
+                                     && dt.Prod_Id == item
+                                     && dt.Rollo_Id == rollPl
+                                     select new
+                                     {
+                                         Id = Convert.ToInt32(dt.EntRolloProd_Id),
+                                         RollBagPro = Convert.ToInt32(rollBagPro),
+                                         NumberRoll = Convert.ToInt32(dt.Rollo_Id),
+                                         Item = Convert.ToInt32(dt.Prod_Id),
+                                         Reference = Convert.ToString(p.Prod_Nombre),
+                                         Qty = Convert.ToDecimal(dt.DtEntRolloProd_Cantidad),
+                                         Presentation = Convert.ToString(dt.UndMed_Prod),
+                                         UserName = Convert.ToString(dt.EntRollo_Producto.Usua.Usua_Nombre),
+                                         Observation = Convert.ToString(dt.EntRollo_Producto.EntRolloProd_Observacion),
+                                         Date = Convert.ToString(dt.EntRollo_Producto.EntRolloProd_Fecha),
+                                         Hour = dt.EntRollo_Producto.EntRolloProd_Hora,
+                                         //Status_Id = Convert.ToInt32(dt.Estado_Id),
+                                         Status = Convert.ToString("INGRESADO"),
+                                         Client = Convert.ToString(""),
+                                         Type = Convert.ToString("INGRESO DESPACHO"),
+                                     };
+
+            var billingOrder = from dt in _context.Set<Detalles_OrdenFacturacion>()
+                               from p in _context.Set<Producto>()
+                               where dt.Prod_Id == p.Prod_Id
+                               && dt.Prod_Id == item
+                               && dt.Numero_Rollo == rollBagPro
+                               select new
+                               {
+                                   Id = Convert.ToInt32(dt.Id_OrdenFacturacion),
+                                   RollBagPro = Convert.ToInt32(dt.Numero_Rollo),
+                                   NumberRoll = Convert.ToInt32(rollPl),
+                                   Item = Convert.ToInt32(dt.Prod_Id),
+                                   Reference = Convert.ToString(p.Prod_Nombre),
+                                   Qty = Convert.ToDecimal(dt.Cantidad),
+                                   Presentation = Convert.ToString(dt.Presentacion),
+                                   UserName = Convert.ToString(dt.OrdenFacturacion.Usuario.Usua_Nombre),
+                                   Observation = Convert.ToString(dt.OrdenFacturacion.Factura),
+                                   Date = Convert.ToString(dt.OrdenFacturacion.Fecha.Value),
+                                   Hour = Convert.ToString(dt.OrdenFacturacion.Hora),
+                                   //Status_Id = Convert.ToInt32(dt.Estado_Id),
+                                   Status = Convert.ToString(dt.Estados.Estado_Nombre),
+                                   Client = Convert.ToString(dt.OrdenFacturacion.Clientes.Cli_Nombre),
+                                   Type = Convert.ToString("ORDEN FACTURACIÓN"),
+                               };
+
+            var dispatch = from dt in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
+                               from p in _context.Set<Producto>()
+                               where dt.Prod_Id == p.Prod_Id
+                               && dt.Prod_Id == item
+                               && dt.Rollo_Id == rollPl
+                               select new
+                               {
+                                   Id = Convert.ToInt32("0000" + dt.AsigProducto_FV.FacturaVta_Id),
+                                   RollBagPro = Convert.ToInt32(rollBagPro),
+                                   NumberRoll = Convert.ToInt32(dt.Rollo_Id),
+                                   Item = Convert.ToInt32(dt.Prod_Id),
+                                   Reference = Convert.ToString(p.Prod_Nombre),
+                                   Qty = Convert.ToDecimal(dt.DtAsigProdFV_Cantidad),
+                                   Presentation = Convert.ToString(dt.UndMed_Id),
+                                   UserName = Convert.ToString(dt.AsigProducto_FV.Usua.Usua_Nombre),
+                                   Observation = Convert.ToString(dt.AsigProducto_FV.NotaCredito_Id),
+                                   Date = Convert.ToString(dt.AsigProducto_FV.AsigProdFV_FechaEnvio), 
+                                   Hour = Convert.ToString(dt.AsigProducto_FV.AsigProdFV_Hora),
+                                   //Status_Id = Convert.ToInt32(21),
+                                   Status = Convert.ToString("ENVIADO"),
+                                   Client = Convert.ToString(dt.AsigProducto_FV.Cliente.Cli_Nombre),
+                                   Type = Convert.ToString("SALIDA DESPACHO"),
+                               };
+
+            var devolution = from dt in _context.Set<DetalleDevolucion_ProductoFacturado>()
+                           from p in _context.Set<Producto>()
+                           where dt.Prod_Id == p.Prod_Id
+                           && dt.Prod_Id == item
+                           && dt.Rollo_Id == rollBagPro
+                             select new
+                           {
+                               Id = Convert.ToInt32(dt.DevProdFact_Id),
+                               RollBagPro = Convert.ToInt32(dt.Rollo_Id),
+                               NumberRoll = Convert.ToInt32(rollPl),
+                               Item = Convert.ToInt32(dt.Prod_Id),
+                               Reference = Convert.ToString(p.Prod_Nombre),
+                               Qty = Convert.ToDecimal(dt.DtDevProdFact_Cantidad),
+                               Presentation = Convert.ToString(dt.UndMed_Id),
+                               UserName = Convert.ToString(dt.DevolucionProdFact.Usua.Usua_Nombre),
+                               Observation = Convert.ToString(dt.DevolucionProdFact.DevProdFact_Observacion),
+                               Date = Convert.ToString(dt.DevolucionProdFact.DevProdFact_Fecha),
+                               Hour = Convert.ToString(dt.DevolucionProdFact.DevProdFact_Hora),
+                                 //Status_Id = Convert.ToInt32(dt.DevolucionProdFact.Estado_Id),
+                               Status = Convert.ToString(dt.DevolucionProdFact.Estados.Estado_Nombre),
+                               Client = Convert.ToString(dt.DevolucionProdFact.Cliente.Cli_Nombre),
+                               Type = Convert.ToString("DEVOLUCIÓN"),
+                             };
+
+            return Ok(production.Concat(wareHouseDeparture.Concat(billingOrder.Concat(dispatch.Concat(devolution)))));
+        }
+
         [HttpPut("putExistencia/{producto}/{presentacion}/{precio}/{cantidad}")]
         public async Task<IActionResult> PutExistencia(int producto, string presentacion, decimal precio, decimal cantidad)
         {

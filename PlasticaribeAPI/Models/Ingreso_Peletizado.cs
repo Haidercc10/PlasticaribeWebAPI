@@ -79,5 +79,6 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string? IngPel_HoraModifica { get; set; }
 
+        public long IngPel_Codigo { get; set; }
     }
 }

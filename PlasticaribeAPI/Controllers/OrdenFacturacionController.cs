@@ -111,6 +111,58 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
+        //Consulta para traer la información de un bulto. 
+        [HttpGet("getMovementsInvoices/{fact}")]
+        public ActionResult getMovementsInvoices(string fact)
+        {
+            var billingOrder = from o in _context.Set<OrdenFacturacion>()
+                               where o.Factura == fact
+                               select new
+                               {
+                                   Id = Convert.ToInt32(o.Id),
+                                   UserName = Convert.ToString(o.Usuario.Usua_Nombre),
+                                   Observation = Convert.ToString(o.Factura),
+                                   Date = Convert.ToString(o.Fecha.Value),
+                                   Hour = Convert.ToString(o.Hora),
+                                   //Status_Id = Convert.ToInt32(dt.Estado_Id),
+                                   Status = Convert.ToString(o.Estado.Estado_Nombre),
+                                   Client = Convert.ToString(o.Clientes.Cli_Nombre),
+                                   Type = Convert.ToString("ORDEN FACTURACIÓN"),
+                               };
+
+            var dispatch = from a in _context.Set<AsignacionProducto_FacturaVenta>()
+                           where a.FacturaVta_Id == fact
+                           select new
+                           {
+                               Id = Convert.ToInt32("0000" + a.FacturaVta_Id),
+                               UserName = Convert.ToString(a.Usua.Usua_Nombre),
+                               Observation = Convert.ToString(a.NotaCredito_Id),
+                               Date = Convert.ToString(a.AsigProdFV_FechaEnvio),
+                               Hour = Convert.ToString(a.AsigProdFV_Hora),
+                               //Status_Id = Convert.ToInt32(21),
+                               Status = Convert.ToString("ENVIADO"),
+                               Client = Convert.ToString(a.Cliente.Cli_Nombre),
+                               Type = Convert.ToString("SALIDA DESPACHO"),
+                           };
+
+            var devolution = from d in _context.Set<Devolucion_ProductoFacturado>()
+                             where d.FacturaVta_Id == fact
+                             select new
+                             {
+                                 Id = Convert.ToInt32(d.DevProdFact_Id),
+                                 UserName = Convert.ToString(d.Usua.Usua_Nombre),
+                                 Observation = Convert.ToString(d.DevProdFact_Observacion),
+                                 Date = Convert.ToString(d.DevProdFact_Fecha),
+                                 Hour = Convert.ToString(d.DevProdFact_Hora),
+                                 //Status_Id = Convert.ToInt32(dt.DevolucionProdFact.Estado_Id),
+                                 Status = Convert.ToString(d.Estados.Estado_Nombre),
+                                 Client = Convert.ToString(d.Cliente.Cli_Nombre),
+                                 Type = Convert.ToString("DEVOLUCIÓN"),
+                             };
+
+            return Ok(billingOrder.Concat(dispatch.Concat(devolution)));
+        }
+
         // PUT: api/OrdenFacturacion/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

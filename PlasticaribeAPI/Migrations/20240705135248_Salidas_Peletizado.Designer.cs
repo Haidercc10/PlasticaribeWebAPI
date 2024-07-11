@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20240705135248_Salidas_Peletizado")]
+    partial class Salidas_Peletizado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3943,9 +3946,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<long>("IngPel_Codigo")
-                        .HasColumnType("bigint");
-
                     b.Property<DateTime?>("IngPel_FechaIngreso")
                         .HasColumnType("Date");
 
@@ -7428,13 +7428,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("UndMed_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<long>("Usua_Aprueba")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("Usua_Id")
                         .HasColumnType("bigint");
 
@@ -7443,10 +7436,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Estado_Id");
 
                     b.HasIndex("MatPri_Id");
-
-                    b.HasIndex("UndMed_Id");
-
-                    b.HasIndex("Usua_Aprueba");
 
                     b.HasIndex("Usua_Id");
 
@@ -12422,18 +12411,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "Und")
-                        .WithMany()
-                        .HasForeignKey("UndMed_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario2")
-                        .WithMany()
-                        .HasForeignKey("Usua_Aprueba")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("Usua_Id")
@@ -12444,11 +12421,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Navigation("MatPrima");
 
-                    b.Navigation("Und");
-
                     b.Navigation("Usuario");
-
-                    b.Navigation("Usuario2");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.SedesClientes", b =>
