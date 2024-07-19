@@ -37,6 +37,9 @@ namespace PlasticaribeAPI.Models
 
         public string? BgRollo_BodegaInicial { get; set; }
         public Proceso? Bodega_Inicial { get; set; }
+
+        [Column(TypeName = "varchar(max)")]
+        public string? DtBgRollo_Observacion { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

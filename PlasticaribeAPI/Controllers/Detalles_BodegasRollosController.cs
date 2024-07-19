@@ -89,6 +89,28 @@ namespace PlasticaribeAPI.Controllers
             return con.Any() ? Ok(con) : NotFound();
         }
 
+        //Consulta que obtendrá el rollo solicitado si se encuentra en estado disponible.
+        [HttpGet("getRollForOut/{roll}")]
+        public ActionResult getRollForOut(long roll)
+        {
+            var con = from bg in _context.Set<Detalles_BodegasRollos>()
+                      where bg.DtBgRollo_Rollo == roll &&
+                      bg.Estado_Id == 19 
+                      select new
+                      {
+                          Ot = bg.BgRollo_OrdenTrabajo,
+                          Rollo = bg.DtBgRollo_Rollo,
+                          Item = bg.Prod_Id,
+                          Referencia = bg.Producto.Prod_Nombre,
+                          Cantidad = bg.DtBgRollo_Cantidad,
+                          Presentacion = bg.UndMed_Id,
+                          Ubicacion = bg.DtBgRollo_Ubicacion,
+                          Bodega = bg.Bodega_Actual.Proceso_Nombre
+                      };
+
+            return Ok(con);
+        }
+
         //
         [HttpGet("getRollosDisponibles/{bodega}/{ot}")]
         public ActionResult GetRollosDisponibles(string bodega, long ot, string? rollo = "")
@@ -108,6 +130,7 @@ namespace PlasticaribeAPI.Controllers
                           Referencia = bg.Producto.Prod_Nombre,
                           Cantidad = bg.DtBgRollo_Cantidad,
                           Presentacion = bg.UndMed_Id,
+                          Ubicacion = bg.DtBgRollo_Ubicacion,
                           Bodega = bg.Bodega_Actual.Proceso_Nombre
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -173,6 +196,33 @@ namespace PlasticaribeAPI.Controllers
                           bg.DtBgRollo_Rotograbado,
                           bg.DtBgRollo_Sellado,
                           bg.DtBgRollo_Despacho,
+                          bg.DtBgRollo_Ubicacion,
+                      };
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            return Ok(con);
+        }
+
+        //Consulta que devolverá todos los rollos disponibles
+        [HttpGet("getInventoryAvailable")]
+        public ActionResult getInventoryAvailable()
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = from bg in _context.Set<Detalles_BodegasRollos>()
+                      where bg.Estado_Id == 19 && 
+                      bg.BgRollo_BodegaActual == Convert.ToString("BGPI")
+                      select new
+                      {
+                          Roll = bg.DtBgRollo_Rollo,
+                          OT = bg.BgRollo_OrdenTrabajo,
+                          Item = bg.Prod_Id,
+                          Reference = bg.Producto.Prod_Nombre,
+                          Qty = bg.DtBgRollo_Cantidad,
+                          Presentation = bg.UndMed_Id,
+                          DateIn = bg.Bodegas_Rollos.BgRollo_FechaEntrada,
+                          HourIn = bg.Bodegas_Rollos.BgRollo_HoraEntrada,
+                          Ubication = bg.DtBgRollo_Ubicacion,
+                          InitialWarehouse = bg.Bodega_Inicial.Proceso_Nombre,
+                          ActualWarehouse = bg.Bodega_Actual.Proceso_Nombre,
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
@@ -318,6 +368,32 @@ namespace PlasticaribeAPI.Controllers
                 {
                     return NotFound();
                 }
+            }
+            return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
+        //Consulta que actualiza el estado de rollos de la bodega
+        [HttpPut("putUbicationRoll/{ubication}/{observation}")]
+        public async Task<IActionResult> putUbicationRoll(string ubication, string observation, [FromBody] List<int> rolls)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            int count = 0;
+            foreach (var roll in rolls)
+            {
+                var dataStore = (from dbr in _context.Set<Detalles_BodegasRollos>() where dbr.DtBgRollo_Rollo == roll select dbr).FirstOrDefault();
+                dataStore.DtBgRollo_Ubicacion = ubication;
+                dataStore.DtBgRollo_Observacion = observation;
+                _context.Entry(dataStore).State = EntityState.Modified;
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    return NotFound();
+                }
+                if (count == rolls.Count()) return NoContent();
             }
             return NoContent();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
