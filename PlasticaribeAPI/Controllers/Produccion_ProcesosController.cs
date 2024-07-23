@@ -1421,6 +1421,31 @@ namespace PlasticaribeAPI.Controllers
             return CreatedAtAction("GetProduccion_Procesos", new { id = produccion_Procesos.Id }, produccion_Procesos);
         }
 
+        //.Función que creará la inserción de la información de rollos de la bodega (de rollos PL) basada en el array que recibe por parametro. 
+        [HttpPost("massiveInsertFromStoreRolls")]
+        async public Task<IActionResult> massiveInsertFromStoreRolls([FromBody] List<Produccion_Procesos> produccion_Procesos)
+        {
+            int count = 0;
+            foreach (var pp in produccion_Procesos)
+            {
+                var lastNumberRoll = (from prod in _context.Set<Produccion_Procesos>() orderby prod.Id descending select prod.Numero_Rollo).FirstOrDefault();
+
+                var seed = Environment.TickCount;
+                var random = new Random(seed);
+                var value = random.Next(1, 15);
+                var value2 = random.Next(1, 10);
+
+                pp.Numero_Rollo = lastNumberRoll + value + value2;
+                pp.Estado_Rollo = 19;
+
+                _context.Produccion_Procesos.Add(pp);
+                await _context.SaveChangesAsync();
+                count++;
+                if (count == produccion_Procesos.Count()) return CreatedAtAction("GetProduccion_Procesos", new { id = pp.Id }, pp);
+            }
+            return Ok(produccion_Procesos);
+        }
+
         // DELETE: api/Produccion_Procesos/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduccion_Procesos(int id)
