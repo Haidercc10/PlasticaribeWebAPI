@@ -141,12 +141,14 @@ namespace PlasticaribeAPI.Controllers
 
         //Consulta que devolverá la información del inventario de cada una de las bodegas de rollos
         [HttpGet("getInventarioRollos")]
-        public ActionResult GetInventarioRollos()
+        public ActionResult GetInventarioRollos(string? wareHouse = "")
         {
+            //string[] wareHouses = { "BGPI", "ROT" }; 
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from bg in _context.Set<Detalles_BodegasRollos>()
                       where bg.Estado_Id == 19 &&
-                      bg.BgRollo_BodegaActual == Convert.ToString("BGPI")
+                      //wareHouses.Contains(bg.BgRollo_BodegaActual) &&
+                      bg.BgRollo_BodegaActual.Contains(wareHouse)
                       group bg by new
                       {
                           bg.BgRollo_OrdenTrabajo,
@@ -204,12 +206,14 @@ namespace PlasticaribeAPI.Controllers
 
         //Consulta que devolverá todos los rollos disponibles
         [HttpGet("getInventoryAvailable")]
-        public ActionResult getInventoryAvailable()
+        public ActionResult getInventoryAvailable(string? process = "")
         {
+            //string[] wareHouses = { "BGPI", "ROT" };
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from bg in _context.Set<Detalles_BodegasRollos>()
                       where bg.Estado_Id == 19 && 
-                      bg.BgRollo_BodegaActual == Convert.ToString("BGPI")
+                      bg.BgRollo_BodegaActual.Contains(process)
+                      //wareHouses.Contains(bg.BgRollo_BodegaActual)
                       select new
                       {
                           Roll = bg.DtBgRollo_Rollo,

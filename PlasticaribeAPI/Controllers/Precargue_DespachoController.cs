@@ -1,0 +1,102 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PlasticaribeAPI.Data;
+using PlasticaribeAPI.Models;
+
+namespace PlasticaribeAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class Precargue_DespachoController : ControllerBase
+    {
+        private readonly dataContext _context;
+
+        public Precargue_DespachoController(dataContext context)
+        {
+            _context = context;
+        }
+        //
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Precargue_Despacho>>> GetPrecargue_Despacho()
+        {
+            return await _context.Precargue_Despacho.ToListAsync();
+        }
+
+        //
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Precargue_Despacho>> GetPrecargue_Despacho(long id)
+        {
+            var Precargue_Despacho = await _context.Precargue_Despacho.FindAsync(id);
+
+            if (Precargue_Despacho == null)
+            {
+                return NotFound();
+            }
+
+            return Precargue_Despacho;
+        }
+
+        //
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutPrecargue_Despacho(long id, Precargue_Despacho Precargue_Despacho)
+        {
+            if (id != Precargue_Despacho.Pcd_Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(Precargue_Despacho).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!Precargue_DespachoExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return NoContent();
+        }
+
+        //
+        [HttpPost]
+        public async Task<ActionResult<Precargue_Despacho>> PostPrecargue_Despacho(Precargue_Despacho Precargue_Despacho)
+        {
+            _context.Precargue_Despacho.Add(Precargue_Despacho);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetPrecargue_Despacho", new { id = Precargue_Despacho.Pcd_Id }, Precargue_Despacho);
+        }
+
+        //
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePrecargue_Despacho(long id)
+        {
+            var Precargue_Despacho = await _context.Precargue_Despacho.FindAsync(id);
+            if (Precargue_Despacho == null)
+            {
+                return NotFound();
+            }
+
+            _context.Precargue_Despacho.Remove(Precargue_Despacho);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        //
+        private bool Precargue_DespachoExists(long id)
+        {
+            return _context.Precargue_Despacho.Any(e => e.Pcd_Id == id);
+        }
+
+    }
+}

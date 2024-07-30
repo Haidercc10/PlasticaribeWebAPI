@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20240724215911_CantInicial_IngPeletizado")]
+    partial class CantInicial_IngPeletizado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2698,42 +2701,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Prod_Id");
 
                     b.ToTable("Detalles_OrdenFacturacion");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Detalles_PrecargueDespacho", b =>
-                {
-                    b.Property<long>("DtlPcd_Codigo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("DtlPcd_Codigo"));
-
-                    b.Property<decimal>("DtlPcd_Cantidad")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<long>("DtlPcd_Rollo")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Pcd_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Prod_Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UndMed_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.HasKey("DtlPcd_Codigo");
-
-                    b.HasIndex("Pcd_Id");
-
-                    b.HasIndex("Prod_Id");
-
-                    b.HasIndex("UndMed_Id");
-
-                    b.ToTable("Detalles_PrecargueDespacho");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Detalles_SalidasPeletizado", b =>
@@ -6292,63 +6259,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Usua_Id");
 
                     b.ToTable("PreEntrega_RollosDespacho");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Precargue_Despacho", b =>
-                {
-                    b.Property<long>("Pcd_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Pcd_Id"));
-
-                    b.Property<long>("Cli_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Estado_Id")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("OF_Id")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Pcd_FechaCrea")
-                        .HasColumnType("date");
-
-                    b.Property<DateTime?>("Pcd_FechaModifica")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Pcd_HoraCrea")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("Pcd_HoraModifica")
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("Pcd_Observacion")
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<string>("Pcd_ObservacionModifica")
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<long>("Usua_Crea")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Usua_Modifica")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Pcd_Id");
-
-                    b.HasIndex("Cli_Id");
-
-                    b.HasIndex("Estado_Id");
-
-                    b.HasIndex("OF_Id");
-
-                    b.HasIndex("Usua_Crea");
-
-                    b.HasIndex("Usua_Modifica");
-
-                    b.ToTable("Precargue_Despacho");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Prestamos", b =>
@@ -10297,33 +10207,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Und");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Detalles_PrecargueDespacho", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Precargue_Despacho", "Precargue")
-                        .WithMany()
-                        .HasForeignKey("Pcd_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Producto", "Producto")
-                        .WithMany()
-                        .HasForeignKey("Prod_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "Und")
-                        .WithMany()
-                        .HasForeignKey("UndMed_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Precargue");
-
-                    b.Navigation("Producto");
-
-                    b.Navigation("Und");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Detalles_SalidasPeletizado", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.Ingreso_Peletizado", "Ing_Pele")
@@ -11977,48 +11860,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Precargue_Despacho", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Clientes", "Cliente")
-                        .WithMany()
-                        .HasForeignKey("Cli_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Estado", "Estados")
-                        .WithMany()
-                        .HasForeignKey("Estado_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.OrdenFacturacion", "OrdenFact")
-                        .WithMany()
-                        .HasForeignKey("OF_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario1")
-                        .WithMany()
-                        .HasForeignKey("Usua_Crea")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario2")
-                        .WithMany()
-                        .HasForeignKey("Usua_Modifica")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Cliente");
-
-                    b.Navigation("Estados");
-
-                    b.Navigation("OrdenFact");
-
-                    b.Navigation("Usuario1");
-
-                    b.Navigation("Usuario2");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Prestamos", b =>

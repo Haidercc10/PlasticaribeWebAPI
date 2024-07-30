@@ -186,6 +186,9 @@ namespace PlasticaribeAPI.Data
         public DbSet<Salidas_Peletizado> Salidas_Peletizado { get; set; }
         public DbSet<Detalles_SalidasPeletizado> Detalles_SalidasPeletizado { get; set; }
 
+        public DbSet<Precargue_Despacho> Precargue_Despacho { get; set; }
+        public DbSet<Detalles_PrecargueDespacho> Detalles_PrecargueDespacho { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Relaciones de productos
@@ -1059,6 +1062,18 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Detalles_SalidasPeletizado>().HasOne(x => x.Ing_Pele).WithMany().HasForeignKey(x => x.IngPel_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalles_SalidasPeletizado>().HasOne(x => x.Tipo_Recuperado).WithMany().HasForeignKey(x => x.TpRecu_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalles_SalidasPeletizado>().HasOne(x => x.Und).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Precargue Despacho
+            modelBuilder.Entity<Precargue_Despacho>().HasOne(x => x.Cliente).WithMany().HasForeignKey(x => x.Cli_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Precargue_Despacho>().HasOne(x => x.Usuario1).WithMany().HasForeignKey(x => x.Usua_Crea).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Precargue_Despacho>().HasOne(x => x.Usuario2).WithMany().HasForeignKey(x => x.Usua_Modifica).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Precargue_Despacho>().HasOne(x => x.OrdenFact).WithMany().HasForeignKey(x => x.OF_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Precargue_Despacho>().HasOne(x => x.Estados).WithMany().HasForeignKey(x => x.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Detalles Precargue Despacho
+            modelBuilder.Entity<Detalles_PrecargueDespacho>().HasOne(x => x.Precargue).WithMany().HasForeignKey(x => x.Pcd_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_PrecargueDespacho>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_PrecargueDespacho>().HasOne(x => x.Und).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));

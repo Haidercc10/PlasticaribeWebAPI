@@ -132,6 +132,40 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // Consulta que devolverá la información de la producción pesada dependiendo del numero de rollo de bagpro
+        [HttpGet("getInformationDispatch/{production}/{item}")]
+        public ActionResult getInformationDispatch(long production, long item)
+        {
+            string[] process = { "SELLA", "EMP", "EXT" }; 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var data = from pp in _context.Set<Produccion_Procesos>()
+                       from p in _context.Set<Producto>()
+                       where pp.NumeroRollo_BagPro == production &&
+                             pp.Estado_Rollo == 19 &&
+                             pp.Envio_Zeus == true &&
+                             process.Contains(pp.Proceso_Id) && 
+                             pp.Prod_Id == item &&
+                             p.Prod_Id == pp.Prod_Id
+                       orderby pp.Id descending
+                       select new
+                       {
+                           Roll = pp.NumeroRollo_BagPro, 
+                           RollPl = pp.Numero_Rollo,
+                           Item = pp.Prod_Id, 
+                           Reference = p.Prod_Nombre, 
+                           IdClient = pp.Cli_Id,
+                           Client = pp.Clientes.Cli_Nombre, 
+                           Qty = pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad,
+                           Weight = pp.Peso_Bruto, 
+                           Unit = pp.Presentacion, 
+                           OT = pp.OT, 
+                           ProcessId = pp.Proceso_Id,
+                           Process = pp.Proceso.Proceso_Nombre,
+                       };
+            return data.Any() ? Ok(data.Take(1)) : NotFound();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
+        // Consulta que devolverá la información de la producción pesada dependiendo del numero de rollo de bagpro
         [HttpGet("getInformationAboutProductionToSend/{production}/{orderFact}")]
         public ActionResult GetInformationAboutProductionToSend(long production, int orderFact)
         {
@@ -1443,7 +1477,7 @@ namespace PlasticaribeAPI.Controllers
                 count++;
                 if (count == produccion_Procesos.Count()) return CreatedAtAction("GetProduccion_Procesos", new { id = pp.Id }, pp);
             }
-            return Ok(produccion_Procesos);
+            return Ok("Registro de rollos en Producción creados exitosamente!");
         }
 
         // DELETE: api/Produccion_Procesos/5

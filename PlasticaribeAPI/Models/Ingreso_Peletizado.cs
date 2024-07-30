@@ -80,5 +80,8 @@ namespace PlasticaribeAPI.Models
         public string? IngPel_HoraModifica { get; set; }
 
         public long IngPel_Codigo { get; set; }
+
+        [Precision(18, 2)]
+        public decimal IngPel_CantInicial { get; set; }
     }
 }

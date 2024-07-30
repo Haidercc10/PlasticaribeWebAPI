@@ -104,7 +104,7 @@ namespace PlasticaribeAPI.Controllers
             output.Usua_Aprueba = user;
             output.Estado_Id = 26;
             output.SalPel_FechaAprobado = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
-            output.SalPel_Hora = Convert.ToString(DateTime.Now.ToString("HH:mm:ss"));
+            output.SalPel_HoraAprobado = Convert.ToString(DateTime.Now.ToString("HH:mm:ss"));
             _context.Entry(output).State = EntityState.Modified;
             _context.SaveChanges();
             try

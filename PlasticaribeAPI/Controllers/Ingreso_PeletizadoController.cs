@@ -130,6 +130,7 @@ namespace PlasticaribeAPI.Controllers
                                   Observation = ing.IngPel_Observacion,
                                   Status_Id = ing.Estado_Id,
                                   Qty = ing.IngPel_Cantidad, 
+                                  InitialQty = ing.IngPel_CantInicial,
                                   Recovery_Id = ing.TpRecu_Id, 
                                   Presentation = ing.Tipo_Recuperado.TpRecu_Nombre,
                               },
@@ -162,6 +163,7 @@ namespace PlasticaribeAPI.Controllers
                                 Observation = s.SalPel_Observacion,
                                 Status_Id = s.Estado_Id,
                                 Qty = s.SalPel_Peso,
+                                InitialQty = s.SalPel_Peso,
                                 Recovery_Id = Convert.ToString(""),
                                 Presentation = Convert.ToString(""),
                             },
@@ -185,11 +187,13 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getStockPele_Grouped")]
         public ActionResult getStockPele_Group()
         {
+            int[] statusAvailables = { 19, 42 };
+
             var inventory = from ing in _context.Set<Ingreso_Peletizado>()
                         from mp in _context.Set<Materia_Prima>()
                         where
                         ing.MatPri_Id == mp.MatPri_Id &&
-                        ing.Estado_Id == 19
+                        statusAvailables.Contains(ing.Estado_Id)
                         group ing by new {
                             Id = ing.MatPri_Id,
                             MatPrima = mp.MatPri_Nombre,
@@ -218,11 +222,13 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getStockPele_Details/{matPrima}")]
         public ActionResult getStockPele_Details(int matPrima)
         {
+            int[] statusAvailables = { 19, 42 };
+
             var inventory = from ing in _context.Set<Ingreso_Peletizado>()
                             from mp in _context.Set<Materia_Prima>()
                             where
                             ing.MatPri_Id == mp.MatPri_Id &&
-                            ing.Estado_Id == 19 &&
+                            statusAvailables.Contains(ing.Estado_Id) &&
                             ing.MatPri_Id == matPrima
                             select new
                             {
@@ -269,23 +275,63 @@ namespace PlasticaribeAPI.Controllers
                                 {
                                     Item = ing.Prod_Id,
                                     Reference = ing.Producto.Prod_Nombre,
-                                }
+                                },
+                                Weight = ing.IngPel_Cantidad,
+                                Weight2 = ing.IngPel_Cantidad,
                             };
 
             if (inventory.Count() > 0) return Ok(inventory);
             else return BadRequest();
         }
 
-        //Consulta que actualiza el estado del ingreso de recuperado a salida parcial para que no aparezca en Inventario. 
+        //Consulta que devolverá el inventario de peletizado agrupado por recuperado.
+        [HttpGet("getStockForRecovery/{mat}")]
+        public ActionResult getStockGrouped(int mat)
+        {
+            int[] statusAvailables = { 19, 42 };
+
+            var inventory = from ing in _context.Set<Ingreso_Peletizado>()
+                            from mp in _context.Set<Materia_Prima>()
+                            where
+                            ing.MatPri_Id == mp.MatPri_Id &&
+                            statusAvailables.Contains(ing.Estado_Id) &&
+                            ing.MatPri_Id == mat
+                            group ing by new
+                            {
+                                Id = ing.MatPri_Id,
+                                MatPrima = mp.MatPri_Nombre,
+                                Presentation = mp.UndMed_Id,
+                                Price = mp.MatPri_Precio,
+                                Category_Id = mp.CatMP_Id,
+                                Category = mp.CatMP.CatMP_Nombre
+                            } into ing
+                            select new
+                            {
+                                Id_MatPrima = ing.Key.Id,
+                                MatPrima = ing.Key.MatPrima,
+                                Stock = ing.Sum(x => x.IngPel_Cantidad),
+                                Stock2 = ing.Sum(x => x.IngPel_Cantidad),
+                                Price = ing.Key.Price,
+                                Subtotal = ing.Sum(x => x.IngPel_Cantidad) * ing.Key.Price,
+                                Presentation = ing.Key.Presentation,
+                                Category_Id = ing.Key.Category_Id,
+                                Category = ing.Key.Category,
+                            };
+
+            if (inventory.Count() > 0) return Ok(inventory);
+            else return BadRequest();
+        }
+
         [HttpPut("putEntryPeletizado")]
-        async public Task<IActionResult> putEntryPeletizado([FromBody] List<long> pelets)
+        async public Task<IActionResult> putEntryPeletizado([FromBody] List<Peletizado> pelets)
         {
             int count = 0;
 
             foreach (var item in pelets)
             {
-                var entry = (from ing in _context.Set<Ingreso_Peletizado>() where ing.IngPel_Id == item select ing).FirstOrDefault();
-                entry.Estado_Id = 49;           
+                var entry = (from ing in _context.Set<Ingreso_Peletizado>() where ing.IngPel_Id == item.code select ing).FirstOrDefault();
+                entry.IngPel_Cantidad -= item.quantity;
+                entry.Estado_Id = entry.IngPel_Cantidad == Convert.ToDecimal(0) ? 23 : 42;
                 _context.Entry(entry).State = EntityState.Modified;
                 _context.SaveChanges();
                 try
@@ -294,11 +340,11 @@ namespace PlasticaribeAPI.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!Ingreso_PeletizadoExists(item)) return NotFound();
+                    if (!Ingreso_PeletizadoExists(item.code)) return NotFound();
                     else throw;
                 }
                 count++;
-                if(pelets.Count() == count) return NoContent();
+                if (pelets.Count() == count) return NoContent();
             }
             return NoContent();
         }
@@ -365,6 +411,18 @@ namespace PlasticaribeAPI.Controllers
         {
             return _context.Ingreso_Peletizado.Any(e => e.IngPel_Id == id);
         }
+    }
+
+    public class Peletizado
+    { 
+        public long code { get; set; }
+
+        [Precision(18, 2)]
+        public decimal quantity { get; set; }
+
+        public string typeRecovery { get; set; }
+
+        public string unit { get; set; }
     }
 
 }
