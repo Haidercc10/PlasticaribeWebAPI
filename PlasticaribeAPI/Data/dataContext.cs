@@ -838,6 +838,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Detalles_SolicitudRollos>().HasOne(x => x.Bodega_Solicitada).WithMany().HasForeignKey(y => y.DtSolRollo_BodegaSolicitada).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalles_SolicitudRollos>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalles_SolicitudRollos>().HasOne(x => x.Und).WithMany().HasForeignKey(y => y.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_SolicitudRollos>().HasOne(x => x.Fallas).WithMany().HasForeignKey(y => y.Falla_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Bodegas Rollo
             modelBuilder.Entity<Bodegas_Rollos>().ToTable(tb => tb.HasTrigger("Auditoria_Bodegas_Rollos"));
@@ -852,6 +853,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Detalles_BodegasRollos>().HasOne(x => x.Bodega_Actual).WithMany().HasForeignKey(y => y.BgRollo_BodegaActual).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalles_BodegasRollos>().HasOne(x => x.Estados).WithMany().HasForeignKey(y => y.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalles_BodegasRollos>().HasOne(x => x.Bodega_Inicial).WithMany().HasForeignKey(y => y.BgRollo_BodegaInicial).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_BodegasRollos>().HasOne(x => x.Bodega_Ingreso).WithMany().HasForeignKey(y => y.BgRollo_BodegaIngreso).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Vistas Permisos
             modelBuilder.Entity<Vistas_Permisos>().ToTable(x => x.HasTrigger("Auditoria_Vistas_Permisos"));
@@ -1074,6 +1076,8 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Detalles_PrecargueDespacho>().HasOne(x => x.Precargue).WithMany().HasForeignKey(x => x.Pcd_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalles_PrecargueDespacho>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalles_PrecargueDespacho>().HasOne(x => x.Und).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Ubicaciones_BodegaRollos>().HasOne(x => x.Procesos).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));

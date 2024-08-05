@@ -25,5 +25,10 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(max)")]
         public string UBR_Nomenclatura { get; set; }
+
+
+        [Column(TypeName="varchar(10)")]
+        public string Proceso_Id { get; set; } 
+        public Proceso? Procesos { get; set; }
     }
 }

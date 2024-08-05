@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20240730145520_ProcesoEnUbicacionesRollos2")]
+    partial class ProcesoEnUbicacionesRollos2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2545,9 +2548,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(10)");
 
-                    b.Property<string>("BgRollo_BodegaIngreso")
-                        .HasColumnType("varchar(10)");
-
                     b.Property<string>("BgRollo_BodegaInicial")
                         .HasColumnType("varchar(10)");
 
@@ -2556,9 +2556,6 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Property<long>("BgRollo_OrdenTrabajo")
                         .HasColumnType("bigint");
-
-                    b.Property<bool>("DtBgRollo_Calidad")
-                        .HasColumnType("bit");
 
                     b.Property<decimal>("DtBgRollo_Cantidad")
                         .HasPrecision(14, 2)
@@ -2607,8 +2604,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("Codigo");
 
                     b.HasIndex("BgRollo_BodegaActual");
-
-                    b.HasIndex("BgRollo_BodegaIngreso");
 
                     b.HasIndex("BgRollo_BodegaInicial");
 
@@ -2865,9 +2860,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("DtSolRollo_Rollo")
                         .HasColumnType("bigint");
 
-                    b.Property<int?>("Falla_Id")
-                        .HasColumnType("int");
-
                     b.Property<int>("Prod_Id")
                         .HasColumnType("int");
 
@@ -2883,8 +2875,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("DtSolRollo_BodegaSolicitada");
 
                     b.HasIndex("DtSolRollo_BodegaSolicitante");
-
-                    b.HasIndex("Falla_Id");
 
                     b.HasIndex("Prod_Id");
 
@@ -10213,11 +10203,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Proceso", "Bodega_Ingreso")
-                        .WithMany()
-                        .HasForeignKey("BgRollo_BodegaIngreso")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.Proceso", "Bodega_Inicial")
                         .WithMany()
                         .HasForeignKey("BgRollo_BodegaInicial")
@@ -10247,8 +10232,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Bodega_Actual");
-
-                    b.Navigation("Bodega_Ingreso");
 
                     b.Navigation("Bodega_Inicial");
 
@@ -10450,11 +10433,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Falla_Tecnica", "Fallas")
-                        .WithMany()
-                        .HasForeignKey("Falla_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.Producto", "Producto")
                         .WithMany()
                         .HasForeignKey("Prod_Id")
@@ -10476,8 +10454,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Bodega_Solicitada");
 
                     b.Navigation("Bodega_Solicitante");
-
-                    b.Navigation("Fallas");
 
                     b.Navigation("Producto");
 

@@ -82,6 +82,8 @@ namespace PlasticaribeAPI.Controllers
                           Rollo = sol.DtSolRollo_Rollo,
                           Cantidad = sol.DtSolRollo_Cantidad,
                           Presentacion = sol.UndMed_Id,
+                          Falla_Id = sol.Falla_Id,
+                          Falla = sol.Fallas.Falla_Nombre,
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 

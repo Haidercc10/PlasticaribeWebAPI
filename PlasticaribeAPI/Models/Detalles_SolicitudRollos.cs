@@ -24,6 +24,9 @@ namespace PlasticaribeAPI.Models
         public decimal DtSolRollo_Cantidad { get; set; }
         public string UndMed_Id { get; set; }
         public Unidad_Medida? Und { get; set; }
+
+        public int? Falla_Id { get; set; }
+        public Falla_Tecnica? Fallas { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

@@ -40,6 +40,13 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(max)")]
         public string? DtBgRollo_Observacion { get; set; }
+
+
+        [Column(TypeName = "varchar(10)")]
+        public string? BgRollo_BodegaIngreso { get; set; }
+        public Proceso? Bodega_Ingreso { get; set; }
+
+        public bool DtBgRollo_Calidad { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

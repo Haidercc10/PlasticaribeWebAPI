@@ -37,6 +37,18 @@ namespace PlasticaribeAPI.Controllers
             return ubr;
         }
 
+        //Obtener ubicaciones por procesos
+        [HttpGet("getUbicationsForProcess/{process}")]
+        public ActionResult getUbicationsForProcess(string process)
+        {
+            var ubr = from u in _context.Set<Ubicaciones_BodegaRollos>()
+                      where u.Proceso_Id == process
+                      select u;  
+
+            if (ubr == null) return NotFound();
+            return Ok(ubr);
+        }
+
         //
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUbicaciones_BodegaRollos(long id, Ubicaciones_BodegaRollos ubicaciones_BodegaRollos)

@@ -90,12 +90,13 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //Consulta que obtendrá el rollo solicitado si se encuentra en estado disponible.
-        [HttpGet("getRollForOut/{roll}")]
-        public ActionResult getRollForOut(long roll)
+        [HttpGet("getRollForOut/{roll}/{process}")]
+        public ActionResult getRollForOut(long roll, string process)
         {
             var con = from bg in _context.Set<Detalles_BodegasRollos>()
                       where bg.DtBgRollo_Rollo == roll &&
-                      bg.Estado_Id == 19 
+                      bg.Estado_Id == 19 && 
+                      bg.BgRollo_BodegaActual == process
                       select new
                       {
                           Ot = bg.BgRollo_OrdenTrabajo,
@@ -198,6 +199,7 @@ namespace PlasticaribeAPI.Controllers
                           bg.DtBgRollo_Rotograbado,
                           bg.DtBgRollo_Sellado,
                           bg.DtBgRollo_Despacho,
+                          bg.DtBgRollo_Calidad,
                           bg.DtBgRollo_Ubicacion,
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -275,7 +277,8 @@ namespace PlasticaribeAPI.Controllers
                           Cantidad = bg.DtBgRollo_Cantidad,
                           Presentacion = bg.UndMed_Id,
                           Ubicacion = bg.DtBgRollo_Ubicacion,
-                          Bodega_Inicial = bg.BgRollo_BodegaInicial
+                          Bodega_Inicial = bg.BgRollo_BodegaInicial, 
+                          Bodega_Ingreso = bg.BgRollo_BodegaIngreso,
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return con.Any() ? Ok(con) : BadRequest();
@@ -283,7 +286,7 @@ namespace PlasticaribeAPI.Controllers
 
         //Consulta para obtener los movimientos de entrada y salida de la bodega.
         [HttpGet("getMovementsStore/{date1}/{date2}")]
-        public ActionResult getMovementsStore(DateTime date1, DateTime date2, string? ot = "", string? roll = "", string? item = "", string? typeMov = "")
+        public ActionResult getMovementsStore(DateTime date1, DateTime date2, string? ot = "", string? roll = "", string? item = "", string? typeMov = "", string? process = "")
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var entries = from bg in _context.Set<Detalles_BodegasRollos>()
@@ -295,7 +298,12 @@ namespace PlasticaribeAPI.Controllers
                       (item != "" ? bg.Prod_Id == Convert.ToInt64(item) : bg.Prod_Id.ToString().Contains(item)) &&
                       (ot != "" ? bg.BgRollo_OrdenTrabajo == Convert.ToInt64(ot) : bg.BgRollo_OrdenTrabajo.ToString().Contains(ot)) &&
                       (roll != "" ? bg.DtBgRollo_Rollo == Convert.ToInt64(roll) : bg.DtBgRollo_Rollo.ToString().Contains(roll)) &&
-                      ("ENTRADA".Contains(typeMov) ? true : false)
+                      ("ENTRADA".Contains(typeMov) ? true : false) &&
+                      (process != "" ? process == "BGPI" ? bg.DtBgRollo_ProdIntermedio == true :
+                                       process == "ROT" ? bg.DtBgRollo_Rotograbado == true :
+                                       process == "IMP" ? bg.DtBgRollo_Impresion == true :
+                                       process == "SELLA" ? bg.DtBgRollo_Sellado == true :
+                                       process == "CALIDAD" ? bg.DtBgRollo_Calidad == true : true : true)
                       select new
                       {
                           Movement = bg.BgRollo_Id,
@@ -311,7 +319,8 @@ namespace PlasticaribeAPI.Controllers
                           Quantity = bg.DtBgRollo_Cantidad,
                           Presentation = bg.UndMed_Id,
                           typeMov = Convert.ToString("ENTRADA"),
-                          Status = bg.Estados.Estado_Nombre
+                          Status = bg.Estados.Estado_Nombre, 
+                          TypeSol = Convert.ToString("ENTRADA")
                       };
 
             var outputs = from s in _context.Set<Solicitud_Rollos_Areas>()
@@ -320,10 +329,13 @@ namespace PlasticaribeAPI.Controllers
                       s.SolRollo_FechaSolicitud >= date1 &&
                       s.SolRollo_FechaSolicitud <= date2 &&
                       s.SolRollo_Id == d.SolRollo_Id &&
+                      s.TpSol_Id == 1 &&
                       (item != "" ? d.Prod_Id == Convert.ToInt64(item) : d.Prod_Id.ToString().Contains(item)) &&
                       (ot != "" ? d.DtSolRollo_OrdenTrabajo == Convert.ToInt64(ot) : d.DtSolRollo_OrdenTrabajo.ToString().Contains(ot)) &&
                       (roll != "" ? d.DtSolRollo_Rollo == Convert.ToInt64(roll) : d.DtSolRollo_Rollo.ToString().Contains(roll)) &&
-                      ("SALIDA".Contains(typeMov) ? true : false)
+                      ("SALIDA".Contains(typeMov) ? true : false) &&
+                      (process != "" ? (d.DtSolRollo_BodegaSolicitada == process || d.DtSolRollo_BodegaSolicitante == process) : 
+                                       (d.DtSolRollo_BodegaSolicitada.Contains(process) || d.DtSolRollo_BodegaSolicitante.Contains(process)))
                       select new
                       {
                           Movement = s.SolRollo_Id,
@@ -339,8 +351,10 @@ namespace PlasticaribeAPI.Controllers
                           Quantity = d.DtSolRollo_Cantidad,
                           Presentation = d.UndMed_Id,
                           typeMov = Convert.ToString("SALIDA"),
-                          Status = s.Estado.Estado_Nombre
+                          Status = s.Estado.Estado_Nombre, 
+                          TypeSol = Convert.ToString(s.Tipo_solicitud.TpSol_Nombre), 
                       };
+
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(entries.Concat(outputs));
         }
@@ -356,6 +370,7 @@ namespace PlasticaribeAPI.Controllers
                 var dataStore = (from dbr in _context.Set<Detalles_BodegasRollos>() where dbr.DtBgRollo_Rollo == roll.Rollo && dbr.BgRollo_OrdenTrabajo == roll.OT select dbr).FirstOrDefault();
                 dataStore.Estado_Id = status;
                 dataStore.BgRollo_BodegaActual = process;
+                dataStore.DtBgRollo_Ubicacion = roll.Ubicacion;
                 if (process == "EXT") dataStore.DtBgRollo_Extrusion = true;
                 else if (process == "IMP") dataStore.DtBgRollo_Impresion = true;
                 else if (process == "ROT") dataStore.DtBgRollo_Rotograbado = true;
@@ -481,4 +496,5 @@ public class rollsStore
 {
     public long Rollo { get; set; }
     public int OT { get; set; }
+    public string Ubicacion { get; set; }
 }
