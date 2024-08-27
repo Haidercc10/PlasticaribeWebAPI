@@ -189,6 +189,9 @@ namespace PlasticaribeAPI.Data
         public DbSet<Precargue_Despacho> Precargue_Despacho { get; set; }
         public DbSet<Detalles_PrecargueDespacho> Detalles_PrecargueDespacho { get; set; }
 
+        public DbSet<Asignacion_RollosOT> Asignacion_RollosOT { get; set; }
+        public DbSet<Detalles_AsignacionRollosOT> Detalles_AsignacionRollosOT { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Relaciones de productos
@@ -1077,7 +1080,17 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Detalles_PrecargueDespacho>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalles_PrecargueDespacho>().HasOne(x => x.Und).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            //Ubicaciones bodega rollos
             modelBuilder.Entity<Ubicaciones_BodegaRollos>().HasOne(x => x.Procesos).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Asignacion Rollos OT
+            modelBuilder.Entity<Asignacion_RollosOT>().HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Asignacion Rollos OT
+            modelBuilder.Entity<Detalles_AsignacionRollosOT>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_AsignacionRollosOT>().HasOne(x => x.AsgRollosOT).WithMany().HasForeignKey(x => x.AsgRll_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_AsignacionRollosOT>().HasOne(x => x.Proceso).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_AsignacionRollosOT>().HasOne(x => x.Unidad_Medida).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));

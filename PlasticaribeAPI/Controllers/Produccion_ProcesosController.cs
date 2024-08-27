@@ -132,8 +132,8 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // Consulta que devolverá la información de la producción pesada dependiendo del numero de rollo de bagpro
-        [HttpGet("getInformationDispatch/{production}/{item}")]
-        public ActionResult getInformationDispatch(long production, long item)
+        [HttpGet("getInformationDispatch/{production}/{client}")]
+        public ActionResult getInformationDispatch(long production, int client)
         {
             string[] process = { "SELLA", "EMP", "EXT" }; 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
@@ -143,8 +143,8 @@ namespace PlasticaribeAPI.Controllers
                              pp.Estado_Rollo == 19 &&
                              pp.Envio_Zeus == true &&
                              process.Contains(pp.Proceso_Id) && 
-                             pp.Prod_Id == item &&
-                             p.Prod_Id == pp.Prod_Id
+                             p.Prod_Id == pp.Prod_Id && 
+                             pp.Cli_Id == client
                        orderby pp.Id descending
                        select new
                        {
@@ -161,7 +161,7 @@ namespace PlasticaribeAPI.Controllers
                            ProcessId = pp.Proceso_Id,
                            Process = pp.Proceso.Proceso_Nombre,
                        };
-            return data.Any() ? Ok(data.Take(1)) : NotFound();
+            return data.Any() ? Ok(data) : NotFound();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
@@ -194,6 +194,43 @@ namespace PlasticaribeAPI.Controllers
                            numero_RolloBagPro = 0,
                        };
             return data.Any() ? Ok(data.Take(1)) : NotFound();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
+        // Consulta que devolverá la información de la producción pesada dependiendo del numero de rollo de bagpro
+        [HttpGet("getOrderFactForPreload/{orderFact}")]
+        public ActionResult getOrderFactForPreload(int orderFact)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            string[] process = { "EXT", "EMP", "SELLA", "WIKE" }; 
+
+            var data = from pp in _context.Set<Produccion_Procesos>()
+                       from dt in _context.Set<Detalles_OrdenFacturacion>()
+                       where pp.NumeroRollo_BagPro == dt.Numero_Rollo &&
+                       pp.Prod_Id == dt.Prod_Id &&
+                       pp.Estado_Rollo == 20 &&
+                       dt.Id_OrdenFacturacion == orderFact && 
+                       process.Contains(pp.Proceso_Id)
+                       orderby pp.Prod_Id descending
+                       select new
+                       {
+                           pp,
+                           pp.Clientes,
+                           pp.Proceso,
+                           pp.Producto,
+                           pp.Turno,
+                           pp.Operario1,
+                           pp.Operario2,
+                           pp.Operario3,
+                           pp.Operario4,
+                           pp.Cono,
+                           pp.Creador,
+                           dataExtrusion = new {
+                               numero_RolloBagPro = pp.NumeroRollo_BagPro, 
+                           },
+                           Position = 0,
+                       };
+            return data.Any() ? Ok(data) : NotFound();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
@@ -1383,8 +1420,8 @@ namespace PlasticaribeAPI.Controllers
         } 
 
         //.Función que recibirá los rollos a los que se les revertirá (actualizará) el Envio Zeus a 0 y el estado del rollo en 19 (Traslado)
-        [HttpPost("putReversionEnvioZeus")]
-        async public Task<IActionResult> putReversionEnvioZeus([FromBody] List<long> rolls)
+        [HttpPost("putReversionEnvioZeus/{observation}")]
+        async public Task<IActionResult> putReversionEnvioZeus(string observation, [FromBody] List<long> rolls)
         {
             int count = 0;
             foreach (var roll in rolls)
@@ -1392,6 +1429,7 @@ namespace PlasticaribeAPI.Controllers
                 var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.Numero_Rollo == roll select prod).FirstOrDefault();
                 dataProduction.Estado_Rollo = 23;
                 dataProduction.Envio_Zeus = true;
+                dataProduction.Observacion = observation;
                 _context.Entry(dataProduction).State = EntityState.Modified;
                 _context.SaveChanges();
                 try

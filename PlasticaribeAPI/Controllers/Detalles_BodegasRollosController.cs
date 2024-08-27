@@ -113,8 +113,8 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //
-        [HttpGet("getRollosDisponibles/{bodega}/{ot}")]
-        public ActionResult GetRollosDisponibles(string bodega, long ot, string? rollo = "")
+        [HttpGet("getRollosDisponibles/{bodega}/{ot}/{status}")]
+        public ActionResult GetRollosDisponibles(string bodega, long ot, int status, string? rollo = "", string? bodegaIngreso = "")
         {
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -122,7 +122,8 @@ namespace PlasticaribeAPI.Controllers
                       where bg.BgRollo_BodegaActual == bodega
                             && bg.BgRollo_OrdenTrabajo == ot
                             && Convert.ToString(bg.DtBgRollo_Rollo).Contains(rollo)
-                            && bg.Estado_Id == 19
+                            && bg.Estado_Id == status 
+                            && !Convert.ToString(bg.BgRollo_BodegaIngreso).Contains(bodegaIngreso)
                       select new
                       {
                           Ot = bg.BgRollo_OrdenTrabajo,
@@ -192,6 +193,7 @@ namespace PlasticaribeAPI.Controllers
                           bg.DtBgRollo_Cantidad,
                           bg.UndMed_Id,
                           bg.BgRollo_BodegaActual,
+                          bg.Bodega_Actual.Proceso_Nombre,
                           bg.Bodegas_Rollos.BgRollo_FechaEntrada,
                           bg.DtBgRollo_Extrusion,
                           bg.DtBgRollo_ProdIntermedio,
@@ -298,7 +300,7 @@ namespace PlasticaribeAPI.Controllers
                       (item != "" ? bg.Prod_Id == Convert.ToInt64(item) : bg.Prod_Id.ToString().Contains(item)) &&
                       (ot != "" ? bg.BgRollo_OrdenTrabajo == Convert.ToInt64(ot) : bg.BgRollo_OrdenTrabajo.ToString().Contains(ot)) &&
                       (roll != "" ? bg.DtBgRollo_Rollo == Convert.ToInt64(roll) : bg.DtBgRollo_Rollo.ToString().Contains(roll)) &&
-                      ("ENTRADA".Contains(typeMov) ? true : false) &&
+                      (typeMov != "" ? "ENTRADA".Contains(typeMov) ? true : false : true) &&
                       (process != "" ? process == "BGPI" ? bg.DtBgRollo_ProdIntermedio == true :
                                        process == "ROT" ? bg.DtBgRollo_Rotograbado == true :
                                        process == "IMP" ? bg.DtBgRollo_Impresion == true :
@@ -333,7 +335,7 @@ namespace PlasticaribeAPI.Controllers
                       (item != "" ? d.Prod_Id == Convert.ToInt64(item) : d.Prod_Id.ToString().Contains(item)) &&
                       (ot != "" ? d.DtSolRollo_OrdenTrabajo == Convert.ToInt64(ot) : d.DtSolRollo_OrdenTrabajo.ToString().Contains(ot)) &&
                       (roll != "" ? d.DtSolRollo_Rollo == Convert.ToInt64(roll) : d.DtSolRollo_Rollo.ToString().Contains(roll)) &&
-                      ("SALIDA".Contains(typeMov) ? true : false) &&
+                      (typeMov != "" ? "SALIDA".Contains(typeMov) ? true : false : true) &&
                       (process != "" ? (d.DtSolRollo_BodegaSolicitada == process || d.DtSolRollo_BodegaSolicitante == process) : 
                                        (d.DtSolRollo_BodegaSolicitada.Contains(process) || d.DtSolRollo_BodegaSolicitante.Contains(process)))
                       select new
@@ -355,8 +357,137 @@ namespace PlasticaribeAPI.Controllers
                           TypeSol = Convert.ToString(s.Tipo_solicitud.TpSol_Nombre), 
                       };
 
+            var devolutions = from s in _context.Set<Solicitud_Rollos_Areas>()
+                          from d in _context.Set<Detalles_SolicitudRollos>()
+                          where
+                          s.SolRollo_FechaSolicitud >= date1 &&
+                          s.SolRollo_FechaSolicitud <= date2 &&
+                          s.SolRollo_Id == d.SolRollo_Id &&
+                          s.TpSol_Id == 2 &&
+                          (item != "" ? d.Prod_Id == Convert.ToInt64(item) : d.Prod_Id.ToString().Contains(item)) &&
+                          (ot != "" ? d.DtSolRollo_OrdenTrabajo == Convert.ToInt64(ot) : d.DtSolRollo_OrdenTrabajo.ToString().Contains(ot)) &&
+                          (roll != "" ? d.DtSolRollo_Rollo == Convert.ToInt64(roll) : d.DtSolRollo_Rollo.ToString().Contains(roll)) &&
+                          (typeMov != "" ? "DEVOLUCION".Contains(typeMov) ? true : false : true) &&
+                          (process != "" ? (d.DtSolRollo_BodegaSolicitada == process || d.DtSolRollo_BodegaSolicitante == process) :
+                                           (d.DtSolRollo_BodegaSolicitada.Contains(process) || d.DtSolRollo_BodegaSolicitante.Contains(process)))
+                          select new
+                          {
+                              Movement = s.SolRollo_Id,
+                              Date = s.SolRollo_FechaSolicitud,
+                              Hour = s.SolRollo_HoraSolicitud,
+                              Observation = s.SolRollo_Observacion,
+                              User = s.Usuario.Usua_Nombre,
+
+                              OT = d.DtSolRollo_OrdenTrabajo,
+                              Item = d.Prod_Id,
+                              Reference = d.Producto.Prod_Nombre,
+                              Roll = d.DtSolRollo_Rollo,
+                              Quantity = d.DtSolRollo_Cantidad,
+                              Presentation = d.UndMed_Id,
+                              typeMov = Convert.ToString("DEVOLUCION"),
+                              Status = s.Estado.Estado_Nombre,
+                              TypeSol = Convert.ToString(s.Tipo_solicitud.TpSol_Nombre),
+                          };
+
+            /*var production = from pp in _context.Set<Produccion_Procesos>()
+                              from p in _context.Set<Producto>()
+                              where
+                              pp.Fecha >= date1 &&
+                              pp.Fecha <= date2 &&
+                              pp.Prod_Id == p.Prod_Id &&
+                              pp.Estado_Rollo != 22 &&
+                              pp.Envio_Zeus == false &&
+                              pp.Fecha >= Convert.ToDateTime("2024-02-04") &&
+                              (item != "" ? pp.Prod_Id == Convert.ToInt64(item) : pp.Prod_Id.ToString().Contains(item)) &&
+                              (ot != "" ? pp.OT == Convert.ToInt64(ot) : pp.OT.ToString().Contains(ot)) &&
+                              (roll != "" ? pp.NumeroRollo_BagPro == Convert.ToInt64(roll) : pp.NumeroRollo_BagPro.ToString().Contains(roll)) &&
+                              (typeMov != "" ? "PRODUCCION".Contains(typeMov) ? true : false : true) &&
+                              (process != "" ? pp.Proceso_Id == "SELLA" ? true : false : false)
+                              select new
+                              {
+                                  Movement = pp.Id,
+                                  Date = pp.Fecha,
+                                  Hour = pp.Hora,
+                                  Observation = pp.Observacion,
+                                  User = pp.Creador_Id,
+
+                                  OT = pp.OT,
+                                  Item = pp.Prod_Id,
+                                  Reference = pp.Producto.Prod_Nombre,
+                                  Roll = pp.NumeroRollo_BagPro,
+                                  Quantity = pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad,
+                                  Presentation = pp.Presentacion,
+                                  typeMov = Convert.ToString("PRODUCCION"),
+                                  Status = pp.Estado.Estado_Nombre,
+                                  TypeSol = Convert.ToString("PRODUCCION"),
+                              };
+
+            var dispatch = from pp in _context.Set<Produccion_Procesos>()
+                             from p in _context.Set<Producto>()
+                             where
+                             pp.Fecha >= date1 &&
+                             pp.Fecha <= date2 &&
+                             pp.Prod_Id == p.Prod_Id &&
+                             pp.Estado_Rollo != 22 &&
+                             pp.Envio_Zeus == true &&
+                             pp.Fecha >= Convert.ToDateTime("2024-02-04") &&
+                             (item != "" ? pp.Prod_Id == Convert.ToInt64(item) : pp.Prod_Id.ToString().Contains(item)) &&
+                             (ot != "" ? pp.OT == Convert.ToInt64(ot) : pp.OT.ToString().Contains(ot)) &&
+                             (roll != "" ? pp.NumeroRollo_BagPro == Convert.ToInt64(roll) : pp.NumeroRollo_BagPro.ToString().Contains(roll)) &&
+                             (typeMov != "" ? "DESPACHO".Contains(typeMov) ? true : false : true) &&
+                             (process != "" ? pp.Proceso_Id == "SELLA" ? true : false : false)
+                             select new
+                             {
+                                 Movement = pp.Id,
+                                 Date = pp.Fecha,
+                                 Hour = pp.Hora,
+                                 Observation = pp.Observacion,
+                                 User = pp.Creador_Id,
+
+                                 OT = pp.OT,
+                                 Item = pp.Prod_Id,
+                                 Reference = pp.Producto.Prod_Nombre,
+                                 Roll = pp.NumeroRollo_BagPro,
+                                 Quantity = pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad,
+                                 Presentation = pp.Presentacion,
+                                 typeMov = Convert.ToString("DESPACHO"),
+                                 Status = pp.Estado.Estado_Nombre,
+                                 TypeSol = Convert.ToString("DESPACHO"),
+                             };*/
+
+            /*var assignations = from a in _context.Set<Asignacion_RollosOT>()
+                               from d in _context.Set<Detalles_AsignacionRollosOT>()
+                               where a.AsgRll_Id == d.AsgRll_Id
+                               && a.AsgRll_Fecha >= date1 
+                               && a.AsgRll_Fecha <= date2 
+                               && (item != "" ? d.Prod_Id == Convert.ToInt64(item) : d.Prod_Id.ToString().Contains(item))
+                               && (ot != "" ? d.DtAsgRll_OT == Convert.ToInt64(ot) : d.DtAsgRll_OT.ToString().Contains(ot))
+                               && (roll != "" ? d.Rollo_Id == Convert.ToInt64(roll) : d.Rollo_Id.ToString().Contains(roll))
+                               && (process != "" ? d.Proceso_Id == process : d.Proceso_Id.Contains(process))
+                               && ("ASIGNACIÓN".Contains(typeMov) ? true : false) 
+                               select new
+                               {
+                                   //Header
+                                   Movement = d.AsgRll_Id,
+                                   Date = a.AsgRll_Fecha,
+                                   Hour = a.AsgRll_Hora,
+                                   Observation = a.Usua_Id,
+                                   User = a.Usuario.Usua_Nombre,
+
+                                   //Details
+                                   OT = d.DtAsgRll_OT,
+                                   Item = d.Prod_Id,
+                                   Reference = d.Producto.Prod_Nombre,
+                                   Roll = d.Rollo_Id,
+                                   Quantity = d.DtAsgRll_Cantidad,
+                                   Presentation = d.UndMed_Id,
+                                   TypeMov = Convert.ToString("ASIGNACIÓN"),
+                                   Status = Convert.ToString("ASIGNADO"),
+                                   typeSol = Convert.ToString("ASIGNACIÓN"),
+                               };*/
+
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(entries.Concat(outputs));
+            return Ok(entries.Concat(outputs).Concat(devolutions));
         }
 
         //Consulta que actualiza el estado de rollos de la bodega
@@ -367,15 +498,20 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             foreach (var roll in rollsStore)
             {
+                
                 var dataStore = (from dbr in _context.Set<Detalles_BodegasRollos>() where dbr.DtBgRollo_Rollo == roll.Rollo && dbr.BgRollo_OrdenTrabajo == roll.OT select dbr).FirstOrDefault();
                 dataStore.Estado_Id = status;
                 dataStore.BgRollo_BodegaActual = process;
                 dataStore.DtBgRollo_Ubicacion = roll.Ubicacion;
+                var dataHeader = (from br in _context.Set<Bodegas_Rollos>() where br.BgRollo_Id == dataStore.BgRollo_Id select br).FirstOrDefault();
+                dataHeader.BgRollo_FechaModifica = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
+                dataHeader.BgRollo_HoraModifica = Convert.ToString(DateTime.Now.ToString("HH:mm:ss")); ;
                 if (process == "EXT") dataStore.DtBgRollo_Extrusion = true;
                 else if (process == "IMP") dataStore.DtBgRollo_Impresion = true;
                 else if (process == "ROT") dataStore.DtBgRollo_Rotograbado = true;
                 else if (process == "SELLA") dataStore.DtBgRollo_Sellado = true;
                 else if (process == "DESP") dataStore.DtBgRollo_Despacho = true;
+                else if (process == "CALIDAD") dataStore.DtBgRollo_Calidad = true;
                 else if (asociatedProcess.Contains(process)) dataStore.DtBgRollo_Corte = true;
                 _context.Entry(dataStore).State = EntityState.Modified;
 

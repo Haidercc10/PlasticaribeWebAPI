@@ -102,6 +102,19 @@ namespace PlasticaribeAPI.Controllers
             return con.Any() ? Ok(con) : NotFound();
         }
 
+        //Función que devolverá los operarios activos de corte/empaque
+        [HttpGet("getOperatorsCourt")]
+        public ActionResult getOperatorsCourt()
+        {
+            var con = from usua in _context.Set<Usuario>()
+                      where usua.RolUsu_Id == 59 &&
+                      usua.Estado_Id == 1 &&
+                      usua.Area_Id == 11
+                      select usua.Usua_Nombre;
+                     
+            return con.Any() ? Ok(con) : NotFound();
+        }
+
         [HttpGet("UsuariosxId/{ID}")]
         public ActionResult<Usuario> GetUsuariosxId(long ID)
         {

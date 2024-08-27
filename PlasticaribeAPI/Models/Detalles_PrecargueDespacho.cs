@@ -17,6 +17,7 @@ namespace PlasticaribeAPI.Models
 
         public long DtlPcd_Rollo { get; set; }
 
+
         [Precision(18,2)]
         public decimal DtlPcd_Cantidad { get; set; }
 
