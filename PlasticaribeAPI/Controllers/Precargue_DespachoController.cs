@@ -40,7 +40,7 @@ namespace PlasticaribeAPI.Controllers
 
         [HttpGet("GetIdPrecargue_Despacho/{id}")]
         public ActionResult GetIdPrecargue_Despacho(long id)
-        {
+        {   
             var Precargue_Despacho = (from pre in _context.Set<Precargue_Despacho>()
                                       where pre.Estado_Id == 26
                                       && pre.Pcd_Id == id
