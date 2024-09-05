@@ -71,7 +71,7 @@ namespace PlasticaribeAPI.Controllers
 
         //
         [HttpPost]
-        public async Task<ActionResult<Servicios_Produccion>> PostActivos(Servicios_Produccion Servicios_Produccion)
+        public async Task<ActionResult<Servicios_Produccion>> PostServicios_Produccion(Servicios_Produccion Servicios_Produccion)
         {
             _context.Servicios_Produccion.Add(Servicios_Produccion);
             await _context.SaveChangesAsync();

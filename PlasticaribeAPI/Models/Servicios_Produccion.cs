@@ -19,11 +19,15 @@ namespace PlasticaribeAPI.Models
         [Precision(18,2)]
         public decimal SvcProd_Valor { get; set; }
 
-        public long Area_Realiza { get; set; }
-        public Area? Areas_Solicitadas { get; set; }
 
-        public long Area_Solicita { get; set; }
-        public Area? Areas_Solicitantes { get; set; }
+        [Column(TypeName = "varchar(10)")]
+        public string Proceso_Crea { get; set; }
+        public Proceso? Proceso1 { get; set; }
+
+
+        [Column(TypeName = "varchar(10)")]
+        public string Proceso_Solicita { get; set; }
+        public Proceso? Proceso2 { get; set; }
 
     }
 }

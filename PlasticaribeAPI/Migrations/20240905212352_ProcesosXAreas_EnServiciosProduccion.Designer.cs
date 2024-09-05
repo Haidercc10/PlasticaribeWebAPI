@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20240905212352_ProcesosXAreas_EnServiciosProduccion")]
+    partial class ProcesosXAreas_EnServiciosProduccion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4578,9 +4581,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Estado_Id")
                         .HasColumnType("int");
 
-                    b.Property<int>("MaqInt_Codigo")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("MaqInt_Fecha")
                         .HasColumnType("date");
 
@@ -4596,9 +4596,6 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Property<int>("MaqInt_OT")
                         .HasColumnType("int");
-
-                    b.Property<string>("MaqInt_Observacion")
-                        .HasColumnType("varchar(max)");
 
                     b.Property<int>("Maquina")
                         .HasColumnType("int");

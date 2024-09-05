@@ -81,5 +81,10 @@ namespace PlasticaribeAPI.Models
         public long Creador_Id { get; set; }
         public Usuario? Creador { get; set; }
 
+        public int MaqInt_Codigo { get; set; }
+
+        [Column(TypeName = "varchar(max)")]
+        public string? MaqInt_Observacion { get; set; }
+
     }
 }

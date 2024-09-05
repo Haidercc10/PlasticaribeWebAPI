@@ -38,6 +38,43 @@ namespace PlasticaribeAPI.Controllers
             return Maquilas_Internas;
         }
 
+        //Consulta que devolverá el ultimo codigo de entrada de peletizado.
+        [HttpGet("getLastCodeMaquila")]
+        public ActionResult getLastCodeMaquila()
+        {
+            var lastCode = (from m in _context.Set<Models.Maquilas_Internas>() orderby m.MaqInt_Codigo descending select m.MaqInt_Codigo == 0 ? 0 : m.MaqInt_Codigo).FirstOrDefault();
+            return Ok(lastCode);
+        }
+
+        //Consulta que devolverá el ultimo codigo de entrada de peletizado.
+        [HttpGet("getInternalsMaquilasForCode/{code}")]
+        public ActionResult getInternalsMaquilasForCode(int code)
+        {
+            var maquila = from m in _context.Set<Models.Maquilas_Internas>()
+                          where m.MaqInt_Codigo == code
+                          select new
+                          {
+                              Code = m.MaqInt_Codigo,
+                              Id = m.MaqInt_Id,
+                              OT = m.MaqInt_OT,
+                              Item = m.Prod_Id,
+                              Reference = m.Producto.Prod_Nombre,
+                              Weight = m.Peso_Bruto,
+                              NetWeight = m.Peso_Neto,
+                              ServiceId = m.SvcProd_Id,
+                              Service = m.Servicio_Produccion.SvcProd_Nombre,
+                              Value = m.Servicio_Produccion.SvcProd_Valor,
+                              RequestedBy = m.Servicio_Produccion.Proceso_Solicita,
+                              OperatorId = m.Operario_Id,
+                              Operator = m.Operario.Usua_Nombre,
+                              DateService = m.MaqInt_Fecha,
+                              DateSave = m.MaqInt_FechaRegistro,
+                              HourSave = m.MaqInt_HoraRegistro,
+                              Observation = m.MaqInt_Observacion,
+                          };
+            return Ok(maquila);
+        }
+
         //
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMaquilas_Internas(long id, Maquilas_Internas Maquilas_Internas)
@@ -70,7 +107,7 @@ namespace PlasticaribeAPI.Controllers
 
         //
         [HttpPost]
-        public async Task<ActionResult<Maquilas_Internas>> PostActivos(Maquilas_Internas Maquilas_Internas)
+        public async Task<ActionResult<Maquilas_Internas>> PostMaquilas_Internas(Maquilas_Internas Maquilas_Internas)
         {
             _context.Maquilas_Internas.Add(Maquilas_Internas);
             await _context.SaveChangesAsync();
