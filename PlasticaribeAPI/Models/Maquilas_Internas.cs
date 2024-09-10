@@ -58,6 +58,10 @@ namespace PlasticaribeAPI.Models
 
 
         [Column(TypeName = "varchar(10)")]
+        public string MaqInt_Hora { get; set; }
+
+
+        [Column(TypeName = "varchar(10)")]
         public string Proceso_Id { get; set; }
         public Proceso? Procesos { get; set; }
 
@@ -85,6 +89,20 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(max)")]
         public string? MaqInt_Observacion { get; set; }
+
+        
+        [Column(TypeName = "varchar(50)")]
+        public string Turno_Id { get; set; }
+        public Turno? Turnos { get; set; }
+
+        public int Material_Id { get; set; }
+        public Material_MatPrima? Materiales { get; set; }
+
+        public bool Impreso { get; set; }
+
+
+        [Precision(18, 2)]
+        public decimal MaqInt_ValorPago { get; set; }
 
     }
 }

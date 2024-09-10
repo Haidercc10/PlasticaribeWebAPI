@@ -16,8 +16,14 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(max)")]
         public string? SvcProd_Descripcion { get; set; }
 
-        [Precision(18,2)]
-        public decimal SvcProd_Valor { get; set; }
+        [Precision(18, 2)]
+        public decimal SvcProd_ValorDia { get; set; }
+
+        [Precision(18, 2)]
+        public decimal SvcProd_ValorNoche { get; set; }
+
+        [Precision(18, 2)]
+        public decimal SvcProd_ValorDomFest { get; set; }
 
 
         [Column(TypeName = "varchar(10)")]
@@ -28,6 +34,11 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string Proceso_Solicita { get; set; }
         public Proceso? Proceso2 { get; set; }
+
+        public int Material_Id { get; set; }
+        public Material_MatPrima? Materiales { get; set; }
+
+        public bool Impreso { get; set; }
 
     }
 }

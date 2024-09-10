@@ -61,9 +61,10 @@ namespace PlasticaribeAPI.Controllers
                               Reference = m.Producto.Prod_Nombre,
                               Weight = m.Peso_Bruto,
                               NetWeight = m.Peso_Neto,
+                              Unit = m.Presentacion,
                               ServiceId = m.SvcProd_Id,
                               Service = m.Servicio_Produccion.SvcProd_Nombre,
-                              Value = m.Servicio_Produccion.SvcProd_Valor,
+                              Value = m.MaqInt_ValorPago,
                               RequestedBy = m.Servicio_Produccion.Proceso_Solicita,
                               OperatorId = m.Operario_Id,
                               Operator = m.Operario.Usua_Nombre,
@@ -71,6 +72,49 @@ namespace PlasticaribeAPI.Controllers
                               DateSave = m.MaqInt_FechaRegistro,
                               HourSave = m.MaqInt_HoraRegistro,
                               Observation = m.MaqInt_Observacion,
+                              CreatorId = m.Creador_Id,
+                              Creator = m.Creador.Usua_Nombre,
+                              Turno = m.Turno_Id,
+                          };
+            return Ok(maquila);
+        }
+
+        //Consulta que devolverá el ultimo codigo de entrada de peletizado.
+        [HttpGet("getMovMaquilas/{date1}/{date2}")]
+        public ActionResult getMovMaquilas(DateTime date1, DateTime date2, string? service = "", string? operative = "", string? ot = "")
+        {
+            var maquila = from m in _context.Set<Models.Maquilas_Internas>()
+                          
+                          where m.MaqInt_Fecha >= date1 &&
+                          m.MaqInt_Fecha <= date2 &&
+                          (service != "" ? m.SvcProd_Id == Convert.ToInt64(service) : m.SvcProd_Id.ToString().Contains(service)) &&
+                          (ot != "" ? m.MaqInt_OT == Convert.ToInt64(ot) : m.MaqInt_OT.ToString().Contains(ot)) &&
+                          (operative != "" ? m.Operario_Id == Convert.ToInt64(operative) : m.Operario_Id.ToString().Contains(operative)) 
+                          select new
+                          {
+                              Roll = m.MaqInt_Id,
+                              Item = m.SvcProd_Id,
+                              Reference = m.Servicio_Produccion.SvcProd_Nombre,
+                              OT = m.MaqInt_OT,
+                              Weight = m.Peso_Neto,
+                              Operator = m.Operario.Usua_Nombre,
+                              Date = m.MaqInt_Fecha,
+                              Hour = m.MaqInt_HoraRegistro,
+                              Turn = "DIA",
+                              Value_Production = m.MaqInt_ValorPago,
+                              Value_Pay = m.MaqInt_ValorPago * m.Peso_Neto,
+                              Value_Day = m.Servicio_Produccion.SvcProd_ValorDia,
+                              Value_Night = m.Servicio_Produccion.SvcProd_ValorNoche,
+                              Value_Sunday = m.Servicio_Produccion.SvcProd_ValorDomFest,
+                              Value_Rewinding = m.MaqInt_ValorPago,
+                              Position_Job = "Operario Corte",
+                              Machine = m.Maquina,
+                              Send_Zeus = "0",
+                              Material = m.Materiales.Material_Nombre,
+                              Printed = m.Impreso == true ? "SI" : "NO",
+                              Laminate = "NO APLICA",
+                              Rewinding = m.Servicio_Produccion.SvcProd_Id == 15 ? "SI" : "NO",
+                              Concept = "MAQUILA"
                           };
             return Ok(maquila);
         }

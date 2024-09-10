@@ -1104,6 +1104,7 @@ namespace PlasticaribeAPI.Data
             //Servicios Produccion
             modelBuilder.Entity<Servicios_Produccion>().HasOne(x => x.Proceso1).WithMany().HasForeignKey(x => x.Proceso_Crea).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Servicios_Produccion>().HasOne(x => x.Proceso2).WithMany().HasForeignKey(x => x.Proceso_Solicita).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Servicios_Produccion>().HasOne(x => x.Materiales).WithMany().HasForeignKey(x => x.Material_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Maquilas Internas
             modelBuilder.Entity<Maquilas_Internas>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
@@ -1114,6 +1115,8 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Maquilas_Internas>().HasOne(x => x.Estados).WithMany().HasForeignKey(x => x.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Maquilas_Internas>().HasOne(x => x.Servicio_Produccion).WithMany().HasForeignKey(x => x.SvcProd_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Maquilas_Internas>().HasOne(x => x.Creador).WithMany().HasForeignKey(x => x.Creador_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Maquilas_Internas>().HasOne(x => x.Materiales).WithMany().HasForeignKey(x => x.Material_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Maquilas_Internas>().HasOne(x => x.Turnos).WithMany().HasForeignKey(x => x.Turno_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));

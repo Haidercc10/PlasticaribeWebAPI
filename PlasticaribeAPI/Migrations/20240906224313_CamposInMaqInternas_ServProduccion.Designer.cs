@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20240906224313_CamposInMaqInternas_ServProduccion")]
+    partial class CamposInMaqInternas_ServProduccion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4607,10 +4610,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<string>("MaqInt_Observacion")
                         .HasColumnType("varchar(max)");
 
-                    b.Property<decimal>("MaqInt_ValorPago")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int>("Maquina")
                         .HasColumnType("int");
 
@@ -7814,12 +7813,6 @@ namespace PlasticaribeAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SvcProd_Id"));
 
-                    b.Property<bool>("Impreso")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Material_Id")
-                        .HasColumnType("int");
-
                     b.Property<string>("Proceso_Crea")
                         .IsRequired()
                         .HasColumnType("varchar(10)");
@@ -7848,8 +7841,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("SvcProd_Id");
-
-                    b.HasIndex("Material_Id");
 
                     b.HasIndex("Proceso_Crea");
 
@@ -13046,12 +13037,6 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Servicios_Produccion", b =>
                 {
-                    b.HasOne("PlasticaribeAPI.Models.Material_MatPrima", "Materiales")
-                        .WithMany()
-                        .HasForeignKey("Material_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.Proceso", "Proceso1")
                         .WithMany()
                         .HasForeignKey("Proceso_Crea")
@@ -13063,8 +13048,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("Proceso_Solicita")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Materiales");
 
                     b.Navigation("Proceso1");
 
