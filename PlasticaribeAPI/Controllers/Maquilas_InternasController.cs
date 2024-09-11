@@ -81,7 +81,7 @@ namespace PlasticaribeAPI.Controllers
 
         //Consulta que devolverá el ultimo codigo de entrada de peletizado.
         [HttpGet("getMovMaquilas/{date1}/{date2}")]
-        public ActionResult getMovMaquilas(DateTime date1, DateTime date2, string? service = "", string? operative = "", string? ot = "")
+        public ActionResult getMovMaquilas(DateTime date1, DateTime date2, string? service = "", string? operative = "", string? ot = "", string? code = "")
         {
             var maquila = from m in _context.Set<Models.Maquilas_Internas>()
                           
@@ -89,10 +89,11 @@ namespace PlasticaribeAPI.Controllers
                           m.MaqInt_Fecha <= date2 &&
                           (service != "" ? m.SvcProd_Id == Convert.ToInt64(service) : m.SvcProd_Id.ToString().Contains(service)) &&
                           (ot != "" ? m.MaqInt_OT == Convert.ToInt64(ot) : m.MaqInt_OT.ToString().Contains(ot)) &&
-                          (operative != "" ? m.Operario_Id == Convert.ToInt64(operative) : m.Operario_Id.ToString().Contains(operative)) 
+                          (operative != "" ? m.Operario_Id == Convert.ToInt64(operative) : m.Operario_Id.ToString().Contains(operative)) &&
+                          (code != "" ? m.MaqInt_Codigo == Convert.ToInt64(code) : m.MaqInt_Codigo.ToString().Contains(code))
                           select new
                           {
-                              Roll = m.MaqInt_Id,
+                              Roll = m.MaqInt_Codigo,
                               Item = m.SvcProd_Id,
                               Reference = m.Servicio_Produccion.SvcProd_Nombre,
                               OT = m.MaqInt_OT,
@@ -100,7 +101,7 @@ namespace PlasticaribeAPI.Controllers
                               Operator = m.Operario.Usua_Nombre,
                               Date = m.MaqInt_Fecha,
                               Hour = m.MaqInt_HoraRegistro,
-                              Turn = "DIA",
+                              Turn = m.Turno_Id,
                               Value_Production = m.MaqInt_ValorPago,
                               Value_Pay = m.MaqInt_ValorPago * m.Peso_Neto,
                               Value_Day = m.Servicio_Produccion.SvcProd_ValorDia,
