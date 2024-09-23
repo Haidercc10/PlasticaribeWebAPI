@@ -79,6 +79,38 @@ namespace PlasticaribeAPI.Controllers
             return Ok(maquila);
         }
 
+        [HttpGet("getInternalsMaquilasForOT/{ot}")]
+        public ActionResult getInternalsMaquilasForOT(int ot)
+        {
+            var maquila = from m in _context.Set<Models.Maquilas_Internas>()
+                          where m.MaqInt_OT == ot
+                          select new
+                          {
+                              Code = m.MaqInt_Codigo,
+                              Id = m.MaqInt_Id,
+                              OT = m.MaqInt_OT,
+                              Item = m.Prod_Id,
+                              Reference = m.Producto.Prod_Nombre,
+                              Weight = m.Peso_Bruto,
+                              NetWeight = m.Peso_Neto,
+                              Unit = m.Presentacion,
+                              ServiceId = m.SvcProd_Id,
+                              Service = m.Servicio_Produccion.SvcProd_Nombre,
+                              Value = m.MaqInt_ValorPago,
+                              RequestedBy = m.Servicio_Produccion.Proceso_Solicita,
+                              OperatorId = m.Operario_Id,
+                              Operator = m.Operario.Usua_Nombre,
+                              DateService = m.MaqInt_Fecha,
+                              DateSave = m.MaqInt_FechaRegistro,
+                              HourSave = m.MaqInt_HoraRegistro,
+                              Observation = m.MaqInt_Observacion,
+                              CreatorId = m.Creador_Id,
+                              Creator = m.Creador.Usua_Nombre,
+                              Turno = m.Turno_Id,
+                          };
+            return Ok(maquila);
+        }
+
         //Consulta que devolverá el ultimo codigo de entrada de peletizado.
         [HttpGet("getMovMaquilas/{date1}/{date2}")]
         public ActionResult getMovMaquilas(DateTime date1, DateTime date2, string? service = "", string? operative = "", string? ot = "", string? code = "")
