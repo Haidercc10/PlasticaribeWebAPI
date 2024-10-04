@@ -164,9 +164,46 @@ namespace PlasticaribeAPI.Controllers
             return infoDev.Any() ? Ok(infoDev) : NotFound();
         }
 
-        // PUT: api/DetalleDevolucion_ProductoFacturado/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        // Consulta que devolverá la información de una devolución por ID y cargará los rollos que fueron enviados a peletizado desde la gestión.
+        [HttpGet("getInfoDvForPeletizadoById/{id}")]
+        public ActionResult getInfoDvForPeletizadoById(long id)
+        {
+
+            var dv = from d in _context.Set<Devolucion_ProductoFacturado>()
+                     from dd in _context.Set<DetalleDevolucion_ProductoFacturado>()
+                     join pp in _context.Set<Produccion_Procesos>() on dd.Rollo_Id equals pp.NumeroRollo_BagPro
+                     join p in _context.Set<Producto>() on dd.Prod_Id equals p.Prod_Id
+                     join f in _context.Set<Falla_Tecnica>() on dd.Falla_Id equals f.Falla_Id
+                     where d.DevProdFact_Id == dd.DevProdFact_Id
+                     && d.DevProdFact_Id == id
+                     && pp.Estado_Rollo == 44
+                     select new
+                     {
+                         Dv = d.DevProdFact_Id,
+                         Type_Recovery = "PELETIZADO", 
+                         OT = pp.OT, 
+                         Roll = pp.NumeroRollo_BagPro,
+                         Item = dd.Prod_Id,
+                         Reference = p.Prod_Nombre,
+                         Material_Id = p.Material_Id, 
+                         Material = p.MaterialMP.Material_Nombre,
+                         Pigment_Id = p.Pigmt_Id,
+                         Pigment = p.Pigmt.Pigmt_Nombre,
+                         MatPrima_Id = 0, 
+                         MatPrima = "", 
+                         Process_Id = "DESP",
+                         Process = "DESPACHO",
+                         Weight = dd.DtDevProdFact_Cantidad,
+                         Unit = dd.UndMed_Id,
+                         Fail_Id = dd.Fallas.Falla_Nombre,
+                     };
+
+            return Ok(dv);
+        }
+
+            // PUT: api/DetalleDevolucion_ProductoFacturado/5
+            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+            [HttpPut("{id}")]
         public async Task<IActionResult> PutDetalleDevolucion_ProductoFacturado(long id, DetalleDevolucion_ProductoFacturado detalleDevolucion_ProductoFacturado)
         {
             if (id != detalleDevolucion_ProductoFacturado.DevProdFact_Id)

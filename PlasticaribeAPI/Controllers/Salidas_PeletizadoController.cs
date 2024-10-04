@@ -91,31 +91,35 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("putStatusOutput/{id}/{user}")]
-        public async Task<IActionResult> putStatusOutput(long id, long user)
+        [HttpPut("putStatusOutput/{user}")]
+        public async Task<IActionResult> putStatusOutput(long user, [FromBody] List<int> outputs)
         {
-            var output = (from s in _context.Set<Salidas_Peletizado>()
-                       join d in _context.Set<Detalles_SalidasPeletizado>() on s.SalPel_Id equals d.SalPel_Id
-                       where s.SalPel_Id == d.SalPel_Id
-                       && d.SalPel_Id == id
-                       && s.Estado_Id == 11
-                       select s).FirstOrDefault();
+            foreach (var item in outputs)
+            {
+                var output = (from s in _context.Set<Salidas_Peletizado>()
+                              join d in _context.Set<Detalles_SalidasPeletizado>() on s.SalPel_Id equals d.SalPel_Id
+                              where s.SalPel_Id == d.SalPel_Id
+                              && d.SalPel_Id == item
+                              && s.Estado_Id == 11
+                              select s).FirstOrDefault();
 
-            output.Usua_Aprueba = user;
-            output.Estado_Id = 26;
-            output.SalPel_FechaAprobado = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
-            output.SalPel_HoraAprobado = Convert.ToString(DateTime.Now.ToString("HH:mm:ss"));
-            _context.Entry(output).State = EntityState.Modified;
-            _context.SaveChanges();
-            try
-            {
-                await _context.SaveChangesAsync();
+                output.Usua_Aprueba = user;
+                output.Estado_Id = 26;
+                output.SalPel_FechaAprobado = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
+                output.SalPel_HoraAprobado = Convert.ToString(DateTime.Now.ToString("HH:mm:ss"));
+                _context.Entry(output).State = EntityState.Modified;
+                _context.SaveChanges();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!Salidas_PeletizadoExists(item)) return NotFound();
+                    else throw;
+                }
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!Salidas_PeletizadoExists(id)) return NotFound();
-                else throw;
-            }
+            
             return NoContent();
         }
 
