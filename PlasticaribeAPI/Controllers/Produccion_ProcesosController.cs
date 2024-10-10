@@ -1150,6 +1150,19 @@ namespace PlasticaribeAPI.Controllers
             return Ok(production.Concat(wareHouseDeparture.Concat(billingOrder.Concat(dispatch.Concat(devolution)))));
         }
 
+        //Consulta que devuelve la información de los rollos disponibles en despacho por item
+        [HttpGet("getOtSentToPeletizado/{ot}")]
+        public ActionResult getOtSentToPeletizado(int ot)
+        {
+            var peletizados = (from pp in _context.Set<Produccion_Procesos>()
+                              where pp.OT == ot &&
+                                    pp.Estado_Rollo == 44 &&
+                                    pp.Envio_Zeus == true 
+                              select pp);
+
+            return Ok(peletizados);
+        }
+
         [HttpPut("putExistencia/{producto}/{presentacion}/{precio}/{cantidad}")]
         public async Task<IActionResult> PutExistencia(int producto, string presentacion, decimal precio, decimal cantidad)
         {
@@ -1420,14 +1433,14 @@ namespace PlasticaribeAPI.Controllers
         } 
 
         //.Función que recibirá los rollos a los que se les revertirá (actualizará) el Envio Zeus a 0 y el estado del rollo en 19 (Traslado)
-        [HttpPost("putReversionEnvioZeus/{observation}")]
-        async public Task<IActionResult> putReversionEnvioZeus(string observation, [FromBody] List<long> rolls)
+        [HttpPost("putReversionEnvioZeus/{fail}/{observation}")]
+        async public Task<IActionResult> putReversionEnvioZeus(int fail, string observation, [FromBody] List<long> rolls)
         {
             int count = 0;
             foreach (var roll in rolls)
             {
                 var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.Numero_Rollo == roll select prod).FirstOrDefault();
-                dataProduction.Estado_Rollo = 23;
+                dataProduction.Estado_Rollo = fail == 102 ? 44 : 23;
                 dataProduction.Envio_Zeus = true;
                 dataProduction.Observacion = observation;
                 _context.Entry(dataProduction).State = EntityState.Modified;

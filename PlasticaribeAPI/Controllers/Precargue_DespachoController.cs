@@ -79,10 +79,11 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("putPreloadDispatch/{id}/")]
+        [HttpPut("putPreloadDispatch/{id}")]
         public async Task<IActionResult> putPreloadDispatch(long id, List<Preload> Preload)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
+            int count = 0;
             var preload = (from pre in _context.Set<Precargue_Despacho>() where pre.Pcd_Id == id select pre).FirstOrDefault();
 
             foreach (var load in Preload)
@@ -95,6 +96,7 @@ namespace PlasticaribeAPI.Controllers
                 preload.Usua_Crea = load.user;
             
                 _context.Entry(preload).State = EntityState.Modified;
+                _context.SaveChanges();
 
                 try
                 {
@@ -102,8 +104,10 @@ namespace PlasticaribeAPI.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    return NotFound();
+                    throw;
                 }
+                count++;
+                if (count == Preload.Count) return NoContent();
             }
             return NoContent();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.

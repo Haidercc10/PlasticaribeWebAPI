@@ -185,20 +185,31 @@ namespace PlasticaribeAPI.Controllers
                          Roll = pp.NumeroRollo_BagPro,
                          Item = dd.Prod_Id,
                          Reference = p.Prod_Nombre,
-                         Material_Id = p.Material_Id, 
+                         Id_Material = p.Material_Id, 
                          Material = p.MaterialMP.Material_Nombre,
-                         Pigment_Id = p.Pigmt_Id,
+                         id_Pigmento_Extrusion = p.Pigmt_Id,
                          Pigment = p.Pigmt.Pigmt_Nombre,
-                         MatPrima_Id = 0, 
-                         MatPrima = "", 
+                         MatPrima_Id = (from mmp in _context.Set<MatPrima_Material_Pigmento>()
+                                        where mmp.Pigmt_Id == p.Pigmt_Id && 
+                                        mmp.Material_Id == p.Material_Id
+                                        select mmp.MatPri_Id).FirstOrDefault(), 
+                         MatPrima = (from mmp in _context.Set<MatPrima_Material_Pigmento>()
+                                     where mmp.Pigmt_Id == p.Pigmt_Id &&
+                                     mmp.Material_Id == p.Material_Id
+                                     select mmp.MatPrima.MatPri_Nombre).FirstOrDefault(),
                          Process_Id = "DESP",
                          Process = "DESPACHO",
-                         Weight = dd.DtDevProdFact_Cantidad,
+                         Weight = pp.Peso_Neto,
+                         Weight2 = pp.Peso_Neto,
+                         Weight3 = pp.Peso_Neto,
                          Unit = dd.UndMed_Id,
-                         Fail_Id = dd.Fallas.Falla_Nombre,
+                         Fail_Id = dd.Falla_Id,
+                         Fail = dd.Fallas.Falla_Nombre,
                      };
 
-            return Ok(dv);
+            if (dv.Any()) return Ok(dv);
+            else if (dv == null) return NotFound();
+            else return BadRequest();
         }
 
             // PUT: api/DetalleDevolucion_ProductoFacturado/5
