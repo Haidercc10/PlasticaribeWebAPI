@@ -198,6 +198,9 @@ namespace PlasticaribeAPI.Data
 
         public DbSet<Maquilas_Internas> Maquilas_Internas { get; set; }
 
+        public DbSet<Reposiciones> Reposiciones { get; set; }
+        public DbSet<Detalles_Reposiciones> Detalles_Reposiciones { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Relaciones de productos
@@ -1117,6 +1120,17 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Maquilas_Internas>().HasOne(x => x.Creador).WithMany().HasForeignKey(x => x.Creador_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Maquilas_Internas>().HasOne(x => x.Materiales).WithMany().HasForeignKey(x => x.Material_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Maquilas_Internas>().HasOne(x => x.Turnos).WithMany().HasForeignKey(x => x.Turno_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Reposiciones
+            modelBuilder.Entity<Reposiciones>().HasOne(x => x.Cliente).WithMany().HasForeignKey(x => x.Cli_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Reposiciones>().HasOne(x => x.Usuario1).WithMany().HasForeignKey(x => x.Usua_Crea).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Reposiciones>().HasOne(x => x.Usuario2).WithMany().HasForeignKey(x => x.Usua_Salida).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Reposiciones>().HasOne(x => x.Estados).WithMany().HasForeignKey(x => x.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Detalles Reposiciones
+            modelBuilder.Entity<Detalles_Reposiciones>().HasOne(x => x.Repo).WithMany().HasForeignKey(x => x.Rep_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_Reposiciones>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Detalles_Reposiciones>().HasOne(x => x.Und).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));

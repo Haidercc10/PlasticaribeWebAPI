@@ -45,7 +45,8 @@ namespace PlasticaribeAPI.Controllers
             var preload = from p in _context.Set<Precargue_Despacho>()
                           from d in _context.Set<Detalles_PrecargueDespacho>()
                           where p.Pcd_Id == d.Pcd_Id &&
-                          p.Pcd_Id == id
+                          p.Pcd_Id == id && 
+                          p.Estado_Id == 11
                           select new
                           {
                               //Header

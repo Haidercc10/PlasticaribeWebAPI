@@ -160,6 +160,7 @@ namespace PlasticaribeAPI.Controllers
                            OT = pp.OT, 
                            ProcessId = pp.Proceso_Id,
                            Process = pp.Proceso.Proceso_Nombre,
+                           Price = pp.PrecioVenta_Producto,
                        };
             return data.Any() ? Ok(data) : NotFound();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
