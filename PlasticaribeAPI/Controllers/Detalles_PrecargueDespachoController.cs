@@ -68,7 +68,6 @@ namespace PlasticaribeAPI.Controllers
                               Client = p.Cliente.Cli_Nombre,
 
                               //Details
-
                               Roll = d.DtlPcd_Rollo,
                               Item = d.Prod_Id,
                               Reference = d.Producto.Prod_Nombre,

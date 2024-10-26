@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
+using PlasticaribeAPI.Interfaces;
 using PlasticaribeAPI.Models;
 using ServiceReference1;
 using StackExchange.Redis;
@@ -18,10 +19,13 @@ namespace PlasticaribeAPI.Controllers
     [ApiController, Authorize]
     public class Produccion_ProcesosController : ControllerBase
     {
+        private readonly IReposiciones _reposiciones;
         private readonly dataContext _context;
+        private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
-        public Produccion_ProcesosController(dataContext context)
+        public Produccion_ProcesosController(dataContext context, IReposiciones reposiciones)
         {
+            _reposiciones = reposiciones;
             _context = context;
         }
 
@@ -343,105 +347,115 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("EnviarAjuste/{ordenTrabajo}/{articulo}/{presentacion}/{rollo}/{cantidad}/{costo}")]
         public async Task<ActionResult> EnviarAjuste(string ordenTrabajo, string articulo, string presentacion, long rollo, string cantidad, string costo)
         {
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            string today = DateTime.Today.ToString("yyyy-MM-dd");
-            SoapRequestAction request = new SoapRequestAction();
-            request.User = "wsZeusInvProd";
-            request.Password = "wsZeusInvProd";
-            request.Body = $"<Ajuste>" +
-                                $"<Op>I</Op>" +
-                                $"<Cabecera>" +
-                                    $"<Detalle>{ordenTrabajo}</Detalle>" +
-                                    "<Concepto>001</Concepto>" +
-                                    "<Consecutivo>0</Consecutivo>" +
-                                    $"<Fecha>{today}</Fecha>" +
-                                    "<Estado></Estado>" +
-                                    "<Solicitante>7200000</Solicitante>" +
-                                    "<Aprueba></Aprueba>" +
-                                    "<Fuente>MA</Fuente>" +
-                                    "<Serie>00</Serie>" +
-                                    "<Usuario>zeussystem</Usuario>" +
-                                    "<Documento></Documento>" +
-                                    "<Documentorevertido></Documentorevertido>" +
-                                    "<Bodega>003</Bodega>" +
-                                    "<Grupo></Grupo>" +
-                                    "<Origen>I</Origen>" +
-                                    "<ConsecutivoRecosteo>0</ConsecutivoRecosteo>" +
-                                    "<TipoDocumentoExterno></TipoDocumentoExterno>" +
-                                    "<ConsecutivoExterno></ConsecutivoExterno>" +
-                                    "<EsAjustePorDistribucion></EsAjustePorDistribucion>" +
-                                    "<ItemsBodegaVirtual></ItemsBodegaVirtual>" +
-                                    "<Clasificaciones></Clasificaciones>" +
-                                    "<Propiedad1></Propiedad1>" +
-                                    "<Propiedad2></Propiedad2>" +
-                                    "<Propiedad3></Propiedad3>" +
-                                    "<Propiedad4></Propiedad4>" +
-                                    "<Propiedad5></Propiedad5>" +
-                                    "<EsInicioNIIF></EsInicioNIIF>" +
-                                    "<UtilizarZmlSpId></UtilizarZmlSpId>" +
-                                    "<DatoExterno1></DatoExterno1>" +
-                                    "<DatoExterno2></DatoExterno2>" +
-                                    "<DatoExterno3></DatoExterno3>" +
-                                    "<Moneda></Moneda>" +
-                                    "<TasaCambio>1</TasaCambio>" +
-                                    "<BU>Local</BU>" +
-                                "</Cabecera>" +
-                                "<Productos>" +
-                                    $"<CodigoArticulo>{articulo}</CodigoArticulo>" +
-                                    $"<Presentacion>{presentacion}</Presentacion>" +
-                                    "<CodigoLote>0</CodigoLote>" +
-                                    "<CodigoBodega>003</CodigoBodega>" +
-                                    "<CodigoUbicacion></CodigoUbicacion>" +
-                                    "<CodigoClasificacion>0</CodigoClasificacion>" +
-                                    "<CodigoReferencia></CodigoReferencia>" +
-                                    "<Serial>0</Serial>" +
-                                    $"<Detalle>{rollo}</Detalle>" +
-                                    $"<Cantidad>{cantidad}</Cantidad>" +
-                                    $"<PrecioUnidad>{costo}</PrecioUnidad>" +
-                                    $"<PrecioUnidad2>{costo}</PrecioUnidad2>" +
-                                    "<Concepto_Codigo></Concepto_Codigo>" +
-                                    "<TemporalItems_ValorAjuste></TemporalItems_ValorAjuste>" +
-                                    "<Servicios>" +
-                                    "<CodigoServicios>001</CodigoServicios>" +
-                                    "<Referencia></Referencia>" +
-                                    "<Detalle></Detalle>" +
-                                    "<AuxiliarAbierto></AuxiliarAbierto>" +
-                                    "<CentroCosto>0202</CentroCosto>" +
-                                    "<Tercero>800188732</Tercero>" +
-                                    "<Proveedor></Proveedor>" +
-                                    "<TipoDocumentoCartera></TipoDocumentoCartera>" +
-                                    "<DocumentoCartera></DocumentoCartera>" +
-                                    "<Vencimiento></Vencimiento>" +
-                                    "<Cliente></Cliente>" +
-                                    "<Vendedor></Vendedor>" +
-                                    "<ItemsContable></ItemsContable>" +
-                                    "<Propiedad1></Propiedad1>" +
-                                    "<Propiedad2></Propiedad2>" +
-                                    "<Propiedad3></Propiedad3>" +
-                                    "<Propiedad4></Propiedad4>" +
-                                    "<Propiedad5></Propiedad5>" +
-                                    "<CuentaMovimiento></CuentaMovimiento>" +
-                                    "<Moneda></Moneda>" +
-                                    "<Moneda></Moneda>" +
-                                    "</Servicios>" +
-                                "</Productos>" +
-                            "</Ajuste>";
-            request.DynamicProperty = "4";
-            request.Action = "Inventario";
-            request.TypeSQL = "true";
+            await _semaphore.WaitAsync();
 
-            var binding = new BasicHttpBinding()
+            try
             {
-                Name = "BasicHttpBinding_IFakeService",
-                MaxBufferSize = 2147483647,
-                MaxReceivedMessageSize = 2147483647
-            };
+                string today = DateTime.Today.ToString("yyyy-MM-dd");
+                SoapRequestAction request = new SoapRequestAction();
+                request.User = "wsZeusInvProd";
+                request.Password = "wsZeusInvProd";
+                request.Body = $"<Ajuste>" +
+                                    $"<Op>I</Op>" +
+                                    $"<Cabecera>" +
+                                        $"<Detalle>{ordenTrabajo}</Detalle>" +
+                                        "<Concepto>001</Concepto>" +
+                                        "<Consecutivo>0</Consecutivo>" +
+                                        $"<Fecha>{today}</Fecha>" +
+                                        "<Estado></Estado>" +
+                                        "<Solicitante>7200000</Solicitante>" +
+                                        "<Aprueba></Aprueba>" +
+                                        "<Fuente>MA</Fuente>" +
+                                        "<Serie>00</Serie>" +
+                                        "<Usuario>zeussystem</Usuario>" +
+                                        "<Documento></Documento>" +
+                                        "<Documentorevertido></Documentorevertido>" +
+                                        "<Bodega>003</Bodega>" +
+                                        "<Grupo></Grupo>" +
+                                        "<Origen>I</Origen>" +
+                                        "<ConsecutivoRecosteo>0</ConsecutivoRecosteo>" +
+                                        "<TipoDocumentoExterno></TipoDocumentoExterno>" +
+                                        "<ConsecutivoExterno></ConsecutivoExterno>" +
+                                        "<EsAjustePorDistribucion></EsAjustePorDistribucion>" +
+                                        "<ItemsBodegaVirtual></ItemsBodegaVirtual>" +
+                                        "<Clasificaciones></Clasificaciones>" +
+                                        "<Propiedad1></Propiedad1>" +
+                                        "<Propiedad2></Propiedad2>" +
+                                        "<Propiedad3></Propiedad3>" +
+                                        "<Propiedad4></Propiedad4>" +
+                                        "<Propiedad5></Propiedad5>" +
+                                        "<EsInicioNIIF></EsInicioNIIF>" +
+                                        "<UtilizarZmlSpId></UtilizarZmlSpId>" +
+                                        "<DatoExterno1></DatoExterno1>" +
+                                        "<DatoExterno2></DatoExterno2>" +
+                                        "<DatoExterno3></DatoExterno3>" +
+                                        "<Moneda></Moneda>" +
+                                        "<TasaCambio>1</TasaCambio>" +
+                                        "<BU>Local</BU>" +
+                                    "</Cabecera>" +
+                                    "<Productos>" +
+                                        $"<CodigoArticulo>{articulo}</CodigoArticulo>" +
+                                        $"<Presentacion>{presentacion}</Presentacion>" +
+                                        "<CodigoLote>0</CodigoLote>" +
+                                        "<CodigoBodega>003</CodigoBodega>" +
+                                        "<CodigoUbicacion></CodigoUbicacion>" +
+                                        "<CodigoClasificacion>0</CodigoClasificacion>" +
+                                        "<CodigoReferencia></CodigoReferencia>" +
+                                        "<Serial>0</Serial>" +
+                                        $"<Detalle>{rollo}</Detalle>" +
+                                        $"<Cantidad>{cantidad}</Cantidad>" +
+                                        $"<PrecioUnidad>{costo}</PrecioUnidad>" +
+                                        $"<PrecioUnidad2>{costo}</PrecioUnidad2>" +
+                                        "<Concepto_Codigo></Concepto_Codigo>" +
+                                        "<TemporalItems_ValorAjuste></TemporalItems_ValorAjuste>" +
+                                        "<Servicios>" +
+                                        "<CodigoServicios>001</CodigoServicios>" +
+                                        "<Referencia></Referencia>" +
+                                        "<Detalle></Detalle>" +
+                                        "<AuxiliarAbierto></AuxiliarAbierto>" +
+                                        "<CentroCosto>0202</CentroCosto>" +
+                                        "<Tercero>800188732</Tercero>" +
+                                        "<Proveedor></Proveedor>" +
+                                        "<TipoDocumentoCartera></TipoDocumentoCartera>" +
+                                        "<DocumentoCartera></DocumentoCartera>" +
+                                        "<Vencimiento></Vencimiento>" +
+                                        "<Cliente></Cliente>" +
+                                        "<Vendedor></Vendedor>" +
+                                        "<ItemsContable></ItemsContable>" +
+                                        "<Propiedad1></Propiedad1>" +
+                                        "<Propiedad2></Propiedad2>" +
+                                        "<Propiedad3></Propiedad3>" +
+                                        "<Propiedad4></Propiedad4>" +
+                                        "<Propiedad5></Propiedad5>" +
+                                        "<CuentaMovimiento></CuentaMovimiento>" +
+                                        "<Moneda></Moneda>" +
+                                        "<Moneda></Moneda>" +
+                                        "</Servicios>" +
+                                    "</Productos>" +
+                                "</Ajuste>";
+                request.DynamicProperty = "4";
+                request.Action = "Inventario";
+                request.TypeSQL = "true";
 
-            var endpoint = new EndpointAddress("http://192.168.0.85/wsGenericoZeus/ServiceWS.asmx");
-            WebservicesGenericoZeusSoapClient client = new WebservicesGenericoZeusSoapClient(binding, endpoint);
-            SoapResponse response = await client.ExecuteActionSOAPAsync(request);
-            if (Convert.ToString(response.Status) == "SUCCESS") PutStatusZeus(rollo, articulo);
-            return Convert.ToString(response.Status) == "SUCCESS" ? Ok(response) : BadRequest(response);
+                var binding = new BasicHttpBinding()
+                {
+                    Name = "BasicHttpBinding_IFakeService",
+                    MaxBufferSize = 2147483647,
+                    MaxReceivedMessageSize = 2147483647
+                };
+
+                var endpoint = new EndpointAddress("http://192.168.0.85/wsGenericoZeus/ServiceWS.asmx");
+                WebservicesGenericoZeusSoapClient client = new WebservicesGenericoZeusSoapClient(binding, endpoint);
+                SoapResponse response = await client.ExecuteActionSOAPAsync(request);
+                if (Convert.ToString(response.Status) == "SUCCESS") PutStatusZeus(rollo, articulo);
+                return Convert.ToString(response.Status) == "SUCCESS" ? Ok(response) : BadRequest(response);
+            }
+            finally 
+            {
+                _semaphore.Release();
+            }
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
@@ -1241,20 +1255,31 @@ namespace PlasticaribeAPI.Controllers
         public async Task<IActionResult> PutcambiarEstadoRollo(List<rollsReturned> rollsReturned)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
+            int count = 0;
             foreach (var roll in rollsReturned)
             {
                 var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.NumeroRollo_BagPro == roll.roll && prod.Prod_Id == roll.item && prod.Estado_Rollo == roll.currentStatus select prod).FirstOrDefault();
-                dataProduction.Estado_Rollo = roll.newStatus;
-                dataProduction.Envio_Zeus = roll.envioZeus;
-                _context.Entry(dataProduction).State = EntityState.Modified;
-                try
+                if (dataProduction == null)
                 {
-                    await _context.SaveChangesAsync();
+                    continue;
                 }
-                catch (DbUpdateConcurrencyException)
+                else 
                 {
-                    return NotFound();
+                    dataProduction.Estado_Rollo = roll.newStatus;
+                    dataProduction.Envio_Zeus = roll.envioZeus;
+                    _context.Entry(dataProduction).State = EntityState.Modified;
+                    _context.SaveChanges();
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        return NotFound();
+                    }
                 }
+                count++;
+                if (count == rollsReturned.Count()) return NoContent();
             }
             return NoContent();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -1483,6 +1508,37 @@ namespace PlasticaribeAPI.Controllers
             }
             return NoContent();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
+        [HttpPut("putAvailableFromReposition/{repo}")]
+        async public Task<IActionResult> putAvailableFromReposition(int repo)
+        {
+            var rolls = from dr in _context.Set<Detalles_Reposiciones>()
+                         join pp in _context.Set<Produccion_Procesos>() on dr.DtlRep_Rollo equals pp.NumeroRollo_BagPro
+                         where dr.Rep_Id == repo && dr.Prod_Id == pp.Prod_Id //&& pp.Estado_Rollo != 20
+                         select pp;
+
+            int count = 0;
+            foreach (var item in rolls)
+            {
+                item.Estado_Rollo = 19;
+                _context.Entry(item).State = EntityState.Modified;
+                _context.SaveChanges();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                count++;
+                if (count == rolls.Count()) {
+                    await _reposiciones.putRepositionAnulled(repo);
+                    return NoContent();
+                } 
+            }
+            return NoContent();
         }
 
         // POST: api/Produccion_Procesos

@@ -46,7 +46,7 @@ namespace PlasticaribeAPI.Controllers
                           from d in _context.Set<Detalles_Reposiciones>()
                           where p.Rep_Id == d.Rep_Id &&
                           p.Rep_Id == id &&
-                          p.Estado_Id == 11
+                          p.Estado_Id != 3
                           select new
                           {
                               //Header
@@ -64,10 +64,10 @@ namespace PlasticaribeAPI.Controllers
                               StatusId = p.Estado_Id,
                               Status = p.Estados.Estado_Nombre,
                               IdClient = p.Cli_Id,
-                              Client = p.Cliente.Cli_Nombre,
+                              Client = p.Cliente.Cli_Nombre,    
 
                               //Details
-
+                              CodeDetail = d.DtlRep_Codigo,
                               Roll = d.DtlRep_Rollo,
                               Item = d.Prod_Id,
                               Reference = d.Producto.Prod_Nombre,
@@ -84,6 +84,9 @@ namespace PlasticaribeAPI.Controllers
                                                   e.EntRolloProd_Id >= 28512
                                            orderby e.EntRolloProd_Id descending
                                            select e.EntRolloProd_Observacion).FirstOrDefault(),
+                              ProcessId = (from pp in _context.Set<Produccion_Procesos>() where pp.Prod_Id == d.Prod_Id && pp.NumeroRollo_BagPro == d.DtlRep_Rollo select pp.Proceso_Id).FirstOrDefault(),
+                              Process = (from pp in _context.Set<Produccion_Procesos>() where pp.Prod_Id == d.Prod_Id && pp.NumeroRollo_BagPro == d.DtlRep_Rollo select pp.Proceso.Proceso_Nombre).FirstOrDefault(),
+                              Price = (from pp in _context.Set<Produccion_Procesos>() where pp.Prod_Id == d.Prod_Id && pp.NumeroRollo_BagPro == d.DtlRep_Rollo select pp.PrecioVenta_Producto).FirstOrDefault(),
                           };
 
             if (Reposition == null) return NotFound();

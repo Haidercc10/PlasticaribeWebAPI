@@ -2,7 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using PlasticaribeAPI.Controllers;
 using PlasticaribeAPI.Data;
+using PlasticaribeAPI.Interfaces;
+using PlasticaribeAPI.Models;
 using PlasticaribeAPI.Service;
 using System.Text;
 using ConfigurationManager = PlasticaribeAPI.Service.ConfigurationManager;
@@ -36,12 +39,12 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-
+builder.Services.AddScoped<IReposiciones, ReposicionesController>();
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddDbContext<dataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlServerOptionsAction: SqlOptions => { SqlOptions.EnableRetryOnFailure(); });
-});
+}, ServiceLifetime.Scoped);
 
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
 builder.Services.AddAuthentication(opt =>

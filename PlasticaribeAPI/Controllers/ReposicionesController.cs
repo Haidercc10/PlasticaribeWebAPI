@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
+using PlasticaribeAPI.Interfaces;
 using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController, Authorize]
-    public class ReposicionesController : ControllerBase
+    public class ReposicionesController : ControllerBase, IReposiciones
     {
 
         private readonly dataContext _context;
@@ -80,8 +81,8 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("putPreloadDispatch/{id}")]
-        public async Task<IActionResult> putPreloadDispatch(long id, List<Preload> Preload)
+        [HttpPut("putReposition/{id}")]
+        public async Task<IActionResult> putReposition(long id, List<Preload> Preload)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             int count = 0;
@@ -97,7 +98,6 @@ namespace PlasticaribeAPI.Controllers
 
                 _context.Entry(preload).State = EntityState.Modified;
                 _context.SaveChanges();
-
                 try
                 {
                     await _context.SaveChangesAsync();
@@ -109,6 +109,29 @@ namespace PlasticaribeAPI.Controllers
                 count++;
                 if (count == Preload.Count) return NoContent();
             }
+            return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
+        [HttpPut("putRepositionAnulled/{id}")]
+        public async Task<IActionResult> putRepositionAnulled(long id)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var repo = (from pre in _context.Set<Reposiciones>() where pre.Rep_Id == id select pre).FirstOrDefault();
+
+            repo.Estado_Id = 3;
+            _context.Entry(repo).State = EntityState.Modified;
+            _context.SaveChanges();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ReposicionesExists(id)) return NotFound();
+                else throw;
+            }
+            
             return NoContent();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
@@ -144,7 +167,6 @@ namespace PlasticaribeAPI.Controllers
         {
             return _context.Reposiciones.Any(e => e.Rep_Id == id);
         }
-
     }
 
 }
