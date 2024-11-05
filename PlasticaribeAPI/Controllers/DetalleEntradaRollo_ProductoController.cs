@@ -209,6 +209,8 @@ namespace PlasticaribeAPI.Controllers
                               reel.NumeroRollo_BagPro,
                               reel.Numero_Rollo,
                               reel.PrecioVenta_Producto,
+                              reel.Peso_Bruto,
+                              reel.Peso_Neto,
                           },
                           State = reel.Estado, 
                           StateEntry = dt.Estado

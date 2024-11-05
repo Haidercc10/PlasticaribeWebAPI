@@ -45,8 +45,7 @@ namespace PlasticaribeAPI.Controllers
             var Reposition = from p in _context.Set<Reposiciones>()
                           from d in _context.Set<Detalles_Reposiciones>()
                           where p.Rep_Id == d.Rep_Id &&
-                          p.Rep_Id == id &&
-                          p.Estado_Id != 3
+                          p.Rep_Id == id
                           select new
                           {
                               //Header

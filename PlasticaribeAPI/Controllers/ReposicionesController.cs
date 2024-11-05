@@ -40,6 +40,14 @@ namespace PlasticaribeAPI.Controllers
             return Reposiciones;
         }
 
+        //
+        [HttpGet("getLastReposition")]
+        public async Task<ActionResult<Reposiciones>> GetLastReposition(long id)
+        {
+            var lastReposition = (from r in _context.Set<Reposiciones>() select r.Rep_Id == null ? 0 : r.Rep_Id).Max() + 1;
+            return Ok(lastReposition);
+        }
+
         [HttpGet("GetIdReposiciones/{id}")]
         public ActionResult GetIdReposiciones(long id)
         {
@@ -82,21 +90,20 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpPut("putReposition/{id}")]
-        public async Task<IActionResult> putReposition(long id, List<Preload> Preload)
+        public async Task<IActionResult> putReposition(long id, List<Repo> Repo)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             int count = 0;
-            var preload = (from pre in _context.Set<Reposiciones>() where pre.Rep_Id == id select pre).FirstOrDefault();
+            var reposition = (from pre in _context.Set<Reposiciones>() where pre.Rep_Id == id select pre).FirstOrDefault();
 
-            foreach (var load in Preload)
+            foreach (var rp in Repo)
             {
-                preload.Estado_Id = load.status;
-                preload.Rep_FechaSalida = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
-                preload.Rep_HoraSalida = Convert.ToString(DateTime.Now.ToString("HH:mm:ss"));
-                preload.Rep_Observacion = load.observation;
-                preload.Usua_Salida = load.user;
+                reposition.Estado_Id = rp.status;
+                reposition.Rep_FechaSalida = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
+                reposition.Rep_HoraSalida = Convert.ToString(DateTime.Now.ToString("HH:mm:ss"));
+                reposition.Usua_Salida = rp.user;
 
-                _context.Entry(preload).State = EntityState.Modified;
+                _context.Entry(reposition).State = EntityState.Modified;
                 _context.SaveChanges();
                 try
                 {
@@ -107,7 +114,7 @@ namespace PlasticaribeAPI.Controllers
                     throw;
                 }
                 count++;
-                if (count == Preload.Count) return NoContent();
+                if (count == Repo.Count) return NoContent();
             }
             return NoContent();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -174,6 +181,5 @@ namespace PlasticaribeAPI.Controllers
 public class Repo
 {
     public int user { get; set; }
-    public string observation { get; set; }
     public int status { get; set; }
 }

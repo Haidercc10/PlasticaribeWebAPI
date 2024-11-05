@@ -19,14 +19,15 @@ namespace PlasticaribeAPI.Controllers
     [ApiController, Authorize]
     public class Produccion_ProcesosController : ControllerBase
     {
-        private readonly IReposiciones _reposiciones;
+        
         private readonly dataContext _context;
+        private readonly IReposiciones _reposiciones;
         private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
         public Produccion_ProcesosController(dataContext context, IReposiciones reposiciones)
         {
-            _reposiciones = reposiciones;
             _context = context;
+            _reposiciones = reposiciones;
         }
 
         // GET: api/Produccion_Procesos
@@ -1012,10 +1013,11 @@ namespace PlasticaribeAPI.Controllers
                           Observation = Convert.ToString(pp.Observacion),
                           Date = Convert.ToString(pp.Fecha),
                           Hour = Convert.ToString(pp.Hora),
-                          //Status_Id = Convert.ToInt32(pp.Estado_Rollo),
-                          Status = Convert.ToString(pp.Estado.Estado_Nombre),
+                          State = Convert.ToString(pp.Estado.Estado_Nombre),
+                          Status = Convert.ToString("PRODUCIDO"),
                           Client = Convert.ToString(pp.Clientes.Cli_Nombre),
                           Type = Convert.ToString("PRODUCCIÓN"),
+                          
                       };
 
             var wareHouseRolls = from d in _context.Set<Detalles_BodegasRollos>()
@@ -1036,11 +1038,35 @@ namespace PlasticaribeAPI.Controllers
                                      Observation = Convert.ToString(d.Bodegas_Rollos.BgRollo_Observacion + " Bodega Inicial: " + d.BgRollo_BodegaInicial + " Bodega Actual: " + d.BgRollo_BodegaActual),
                                      Date = Convert.ToString(d.Bodegas_Rollos.BgRollo_FechaEntrada),
                                      Hour = Convert.ToString(d.Bodegas_Rollos.BgRollo_HoraEntrada),
-                                     //Status_Id = Convert.ToInt32(pp.Estado_Rollo),
+                                     State = Convert.ToString(d.Estados.Estado_Nombre),
                                      Status = Convert.ToString(d.Estados.Estado_Nombre),
                                      Client = Convert.ToString(""),
                                      Type = Convert.ToString("BODEGA ROLLOS"),
                                  };
+
+            var repositions = from rp in _context.Set<Detalles_Reposiciones>()
+                              from p in _context.Set<Producto>()
+                              where rp.Prod_Id == p.Prod_Id
+                              && rp.Prod_Id == item
+                              && rp.DtlRep_Rollo == rollBagPro
+                              select new
+                              {
+                                  Id = Convert.ToInt32(rp.Rep_Id),
+                                  RollBagPro = Convert.ToInt32(rp.DtlRep_Rollo),
+                                  NumberRoll = Convert.ToInt32(rp.DtlRep_Rollo),
+                                  Item = Convert.ToInt32(rp.Prod_Id),
+                                  Reference = Convert.ToString(p.Prod_Nombre),
+                                  Qty = Convert.ToDecimal(rp.DtlRep_Cantidad),
+                                  Presentation = Convert.ToString(rp.UndMed_Id),
+                                  UserName = Convert.ToString(rp.Repo.Usuario1.Usua_Nombre),
+                                  Observation = Convert.ToString(rp.Repo.Rep_Observacion),
+                                  Date = Convert.ToString(rp.Repo.Rep_FechaCrea),
+                                  Hour = Convert.ToString(rp.Repo.Rep_HoraCrea),
+                                  State = Convert.ToString("REPUESTO"),
+                                  Status = Convert.ToString("REPUESTO"),
+                                  Client = Convert.ToString(rp.Repo.Cliente.Cli_Nombre),
+                                  Type = Convert.ToString("REPOSICIÓN"),
+                              };   
 
             var requestedRolls = from d in _context.Set<Detalles_SolicitudRollos>()
                                  from p in _context.Set<Producto>()
@@ -1060,7 +1086,7 @@ namespace PlasticaribeAPI.Controllers
                                      Observation = Convert.ToString(d.SolicitudRollos.SolRollo_Observacion),
                                      Date = Convert.ToString(d.SolicitudRollos.SolRollo_FechaSolicitud),
                                      Hour = Convert.ToString(d.SolicitudRollos.SolRollo_HoraSolicitud),
-                                     //Status_Id = Convert.ToInt32(pp.Estado_Rollo),
+                                     State = Convert.ToString(d.SolicitudRollos.Estado.Estado_Nombre),
                                      Status = Convert.ToString(d.SolicitudRollos.Estado.Estado_Nombre),
                                      Client = Convert.ToString(""),
                                      Type = Convert.ToString("SOLICITUD ROLLOS"),
@@ -1084,7 +1110,7 @@ namespace PlasticaribeAPI.Controllers
                                          Observation = Convert.ToString(dt.EntRollo_Producto.EntRolloProd_Observacion),
                                          Date = Convert.ToString(dt.EntRollo_Producto.EntRolloProd_Fecha),
                                          Hour = dt.EntRollo_Producto.EntRolloProd_Hora,
-                                         //Status_Id = Convert.ToInt32(dt.Estado_Id),
+                                         State = Convert.ToString("INGRESADO"),
                                          Status = Convert.ToString("INGRESADO"),
                                          Client = Convert.ToString(""),
                                          Type = Convert.ToString("INGRESO DESPACHO"),
@@ -1108,7 +1134,7 @@ namespace PlasticaribeAPI.Controllers
                                    Observation = Convert.ToString(dt.OrdenFacturacion.Factura),
                                    Date = Convert.ToString(dt.OrdenFacturacion.Fecha.Value),
                                    Hour = Convert.ToString(dt.OrdenFacturacion.Hora),
-                                   //Status_Id = Convert.ToInt32(dt.Estado_Id),
+                                   State = Convert.ToString(dt.Estados.Estado_Nombre),
                                    Status = Convert.ToString(dt.Estados.Estado_Nombre),
                                    Client = Convert.ToString(dt.OrdenFacturacion.Clientes.Cli_Nombre),
                                    Type = Convert.ToString("ORDEN FACTURACIÓN"),
@@ -1132,7 +1158,7 @@ namespace PlasticaribeAPI.Controllers
                                    Observation = Convert.ToString(dt.AsigProducto_FV.NotaCredito_Id),
                                    Date = Convert.ToString(dt.AsigProducto_FV.AsigProdFV_FechaEnvio), 
                                    Hour = Convert.ToString(dt.AsigProducto_FV.AsigProdFV_Hora),
-                                   //Status_Id = Convert.ToInt32(21),
+                                   State = Convert.ToString("ENVIADO"),
                                    Status = Convert.ToString("ENVIADO"),
                                    Client = Convert.ToString(dt.AsigProducto_FV.Cliente.Cli_Nombre),
                                    Type = Convert.ToString("SALIDA DESPACHO"),
@@ -1156,13 +1182,13 @@ namespace PlasticaribeAPI.Controllers
                                Observation = Convert.ToString(dt.DevolucionProdFact.DevProdFact_Observacion),
                                Date = Convert.ToString(dt.DevolucionProdFact.DevProdFact_Fecha),
                                Hour = Convert.ToString(dt.DevolucionProdFact.DevProdFact_Hora),
-                                 //Status_Id = Convert.ToInt32(dt.DevolucionProdFact.Estado_Id),
+                               State = Convert.ToString(dt.DevolucionProdFact.Estados.Estado_Nombre),
                                Status = Convert.ToString(dt.DevolucionProdFact.Estados.Estado_Nombre),
                                Client = Convert.ToString(dt.DevolucionProdFact.Cliente.Cli_Nombre),
                                Type = Convert.ToString("DEVOLUCIÓN"),
                              };
 
-            return Ok(production.Concat(wareHouseDeparture.Concat(billingOrder.Concat(dispatch.Concat(devolution)))));
+            return Ok(production.Concat(wareHouseDeparture.Concat(repositions.Concat(billingOrder.Concat(dispatch.Concat(devolution))))));
         }
 
         //Consulta que devuelve la información de los rollos disponibles en despacho por item

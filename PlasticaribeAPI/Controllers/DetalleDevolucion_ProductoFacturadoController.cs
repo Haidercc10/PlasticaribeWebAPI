@@ -214,16 +214,14 @@ namespace PlasticaribeAPI.Controllers
 
             // PUT: api/DetalleDevolucion_ProductoFacturado/5
             // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-            [HttpPut("{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutDetalleDevolucion_ProductoFacturado(long id, DetalleDevolucion_ProductoFacturado detalleDevolucion_ProductoFacturado)
         {
             if (id != detalleDevolucion_ProductoFacturado.DevProdFact_Id)
             {
                 return BadRequest();
             }
-
             _context.Entry(detalleDevolucion_ProductoFacturado).State = EntityState.Modified;
-
             try
             {
                 await _context.SaveChangesAsync();
@@ -240,6 +238,45 @@ namespace PlasticaribeAPI.Controllers
                 }
             }
 
+            return NoContent();
+        }
+
+        [HttpPut("updateStatusRollsFromPele/{id}")]
+        public async Task<IActionResult> updateStatusRollsFromPele(long id)
+        {
+            var dv = (from pp in _context.Set<Produccion_Procesos>()
+                        from d in _context.Set<DetalleDevolucion_ProductoFacturado>()
+                        where d.DevProdFact_Id == id
+                        && d.Rollo_Id == pp.NumeroRollo_BagPro
+                        && pp.Estado_Rollo == 44
+                        select pp);
+
+            if (dv == null) return NotFound();
+            else
+            {
+                int count = 0;
+
+                foreach (var d in dv)
+                {
+                    d.Estado_Rollo = 51;
+                    if (d.Observacion == null) d.Observacion = Convert.ToString("Bulto enviado de despacho a peletizado");
+                    else d.Observacion += Convert.ToString(" Bulto enviado de despacho a peletizado");
+                    _context.Entry(d).State = EntityState.Modified;
+                    _context.SaveChanges();
+
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!DetalleDevolucion_ProductoFacturadoExists(id)) return NotFound();
+                        else throw;
+                    }
+                    count++;
+                    if (count == dv.Count()) return NoContent();
+                }
+            }
             return NoContent();
         }
 
