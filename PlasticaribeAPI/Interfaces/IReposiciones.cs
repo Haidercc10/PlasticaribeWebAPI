@@ -6,6 +6,6 @@ namespace PlasticaribeAPI.Interfaces
 {
     public interface IReposiciones
     {
-        Task<IActionResult> putRepositionAnulled(long id);
+        Task<IActionResult> putRepositionAnulled(long id, long user);
     }
 }

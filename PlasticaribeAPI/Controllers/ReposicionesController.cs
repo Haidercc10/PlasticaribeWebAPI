@@ -120,13 +120,17 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
-        [HttpPut("putRepositionAnulled/{id}")]
-        public async Task<IActionResult> putRepositionAnulled(long id)
+        [HttpPut("putRepositionAnulled/{id}/{user}")]
+        public async Task<IActionResult> putRepositionAnulled(long id, long user)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var repo = (from pre in _context.Set<Reposiciones>() where pre.Rep_Id == id select pre).FirstOrDefault();
 
             repo.Estado_Id = 3;
+            repo.Rep_FechaSalida = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
+            repo.Rep_HoraSalida = Convert.ToString(DateTime.Now.ToString("HH:mm:ss"));
+            repo.Usua_Salida = user;
+
             _context.Entry(repo).State = EntityState.Modified;
             _context.SaveChanges();
             try

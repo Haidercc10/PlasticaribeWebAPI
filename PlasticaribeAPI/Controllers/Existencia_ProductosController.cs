@@ -475,6 +475,44 @@ namespace PlasticaribeAPI.Controllers
             return Ok(stockNotAvaible);
         }
 
+        [HttpPost("getInventoryProducts")]
+        public ActionResult getInventoryProducts([FromBody] List<Article> items) 
+        {
+            int count = 0;
+            List<Product> newStock = new List<Product>();
+
+            foreach (var item in items)
+            {
+                //string product = item.Split("-")[0];
+                //string presentation = item.Split("-")[1];
+                string presentation = "";
+                if (item.presentation == "KLS") presentation = "Kg";
+                if (item.presentation == "UND") presentation = "Und";
+                if (item.presentation == "PAQ") presentation = "Paquete";
+
+                var stock = (from e in _context.Set<Existencia_Productos>()
+                            join p in _context.Set<Producto>() on e.Prod_Id equals p.Prod_Id 
+                            where //e.ExProd_Cantidad >= 1 &&
+                            e.Prod_Id == Convert.ToInt64(item.item) &&
+                            e.UndMed_Id == presentation
+                            select new Product { 
+                              Item = e.Prod_Id,  
+                              Reference = p.Prod_Nombre,
+                              QtyPL = e.ExProd_Cantidad,
+                              PresentationPL = e.UndMed_Id,
+                              QtyZeus = item.qty,
+                              PresentationZeus = item.presentation,
+                              Price = e.ExProd_PrecioVenta.Value,
+                              Subtotal = (e.ExProd_PrecioVenta.Value * e.ExProd_Cantidad)
+                            }).FirstOrDefault();
+
+                count++;
+                newStock.Add(stock);
+                if(count == items.Count()) return Ok(newStock);
+            }
+            return Ok(newStock);
+        }
+
         // PUT: api/Existencia_Productos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -690,4 +728,45 @@ namespace PlasticaribeAPI.Controllers
         }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+}
+
+public class Product
+{
+    public int Item { get; set; }
+    public string Reference { get; set; }
+
+    [Precision(18,2)]
+    public decimal QtyPL { get; set; }
+
+    public string PresentationPL { get; set; }
+
+    [Precision(18, 2)]
+    public decimal QtyZeus { get; set; }
+
+    public string PresentationZeus { get; set; }
+
+    [Precision(18, 2)]
+    public decimal Price { get; set; }
+
+    [Precision(18, 2)]
+    public decimal Subtotal { get; set; }
+
+}
+
+public class Article
+{
+    public string item { get; set; }
+    public string reference { get; set; }
+
+    [Precision(18, 2)]
+    public decimal qty { get; set; }
+
+    public string presentation { get; set; }
+
+    [Precision(18, 2)]
+    public decimal price { get; set; }
+
+    [Precision(18, 2)]
+    public decimal subtotal { get; set; }
+
 }

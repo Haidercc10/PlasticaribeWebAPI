@@ -1536,8 +1536,8 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
-        [HttpPut("putAvailableFromReposition/{repo}")]
-        async public Task<IActionResult> putAvailableFromReposition(int repo)
+        [HttpPut("putAvailableFromReposition/{repo}/{user}")]
+        async public Task<IActionResult> putAvailableFromReposition(int repo, long user)
         {
             var rolls = from dr in _context.Set<Detalles_Reposiciones>()
                          join pp in _context.Set<Produccion_Procesos>() on dr.DtlRep_Rollo equals pp.NumeroRollo_BagPro
@@ -1560,7 +1560,7 @@ namespace PlasticaribeAPI.Controllers
                 }
                 count++;
                 if (count == rolls.Count()) {
-                    await _reposiciones.putRepositionAnulled(repo);
+                    await _reposiciones.putRepositionAnulled(repo, user);
                     return NoContent();
                 } 
             }
