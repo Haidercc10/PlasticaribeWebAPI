@@ -360,6 +360,47 @@ namespace PlasticaribeAPI.Controllers
             return Ok(weightNet);
         }
 
+        [HttpGet("getDetailsForItem/{item}")]
+        public ActionResult getDetailsForItem(int item) 
+        {
+            var details = from d in _context.Set<Detalles_OrdenFacturacion>()
+                          join o in _context.Set<OrdenFacturacion>() on d.Id_OrdenFacturacion equals o.Id
+                          join c in _context.Set<Clientes>() on o.Cli_Id equals c.Cli_Id
+                          join p in _context.Set<Producto>() on d.Prod_Id equals p.Prod_Id
+                          where d.Prod_Id == item
+                          group new { o, d, p, c } by new
+                          {
+                              Doc = o.Id,
+                              Date = o.Fecha,
+                              Fact = o.Factura,
+                              Client_Id = o.Cli_Id,
+                              Client = c.Cli_Nombre,
+                              Status = o.Estado.Estado_Nombre,
+                              SaleOrder = d.Consecutivo_Pedido,
+                              Item = d.Prod_Id,
+                              Reference = p.Prod_Nombre,
+                              Presentation = d.Presentacion
+                          } into d
+                          select new
+                          {
+                              Doc = d.Key.Doc,
+                              Date = d.Key.Date,
+                              Fact = d.Key.Fact,
+                              Client_Id = d.Key.Client_Id,
+                              Client = d.Key.Client,
+                              Status = d.Key.Status,
+                              SaleOrder = d.Key.SaleOrder,
+                              Item = d.Key.Item,
+                              Reference = d.Key.Reference,
+                              Qty = d.Sum(x => x.d.Cantidad),
+                              Presentation = d.Key.Presentation
+                          };
+
+            if (details == null) return NotFound();
+            return Ok(details);
+        }
+
+
         // PUT: api/Detalles_OrdenFacturacion/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

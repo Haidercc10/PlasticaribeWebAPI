@@ -492,18 +492,21 @@ namespace PlasticaribeAPI.Controllers
 
                 var stock = (from e in _context.Set<Existencia_Productos>()
                             join p in _context.Set<Producto>() on e.Prod_Id equals p.Prod_Id 
-                            where //e.ExProd_Cantidad >= 1 &&
+                            where e.ExProd_Cantidad != item.qty &&
                             e.Prod_Id == Convert.ToInt64(item.item) &&
                             e.UndMed_Id == presentation
                             select new Product { 
+                              Code = count + 1,   
                               Item = e.Prod_Id,  
                               Reference = p.Prod_Nombre,
                               QtyPL = e.ExProd_Cantidad,
                               PresentationPL = e.UndMed_Id,
                               QtyZeus = item.qty,
                               PresentationZeus = item.presentation,
+                              Difference = (item.qty - e.ExProd_Cantidad),
                               Price = e.ExProd_PrecioVenta.Value,
-                              Subtotal = (e.ExProd_PrecioVenta.Value * e.ExProd_Cantidad)
+                              Subtotal = (e.ExProd_PrecioVenta.Value * e.ExProd_Cantidad),
+                              GenericQty = (from pp in _context.Set<Produccion_Procesos>() where pp.Prod_Id == p.Prod_Id select pp.Presentacion == "Kg" ? pp.Peso_Teorico == null ? 0 : pp.Peso_Teorico : pp.Cantidad == null ? 0 : pp.Cantidad).FirstOrDefault()
                             }).FirstOrDefault();
 
                 count++;
@@ -732,7 +735,10 @@ namespace PlasticaribeAPI.Controllers
 
 public class Product
 {
+    public int Code { get; set; }
+
     public int Item { get; set; }
+
     public string Reference { get; set; }
 
     [Precision(18,2)]
@@ -746,11 +752,16 @@ public class Product
     public string PresentationZeus { get; set; }
 
     [Precision(18, 2)]
+    public decimal Difference { get; set; }
+
+    [Precision(18, 2)]
     public decimal Price { get; set; }
 
     [Precision(18, 2)]
     public decimal Subtotal { get; set; }
 
+    [Precision(18, 2)]
+    public decimal GenericQty { get; set; }
 }
 
 public class Article
