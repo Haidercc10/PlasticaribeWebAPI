@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -379,12 +380,14 @@ namespace PlasticaribeAPI.Controllers
                               SaleOrder = d.Consecutivo_Pedido,
                               Item = d.Prod_Id,
                               Reference = p.Prod_Nombre,
-                              Presentation = d.Presentacion
+                              Presentation = d.Presentacion, 
+                              Observation = o.Observacion,
+                              Type = "OF"
                           } into d
                           select new
                           {
                               Doc = d.Key.Doc,
-                              Date = d.Key.Date,
+                              Date = d.Key.Date.Value,
                               Fact = d.Key.Fact,
                               Client_Id = d.Key.Client_Id,
                               Client = d.Key.Client,
@@ -393,11 +396,50 @@ namespace PlasticaribeAPI.Controllers
                               Item = d.Key.Item,
                               Reference = d.Key.Reference,
                               Qty = d.Sum(x => x.d.Cantidad),
-                              Presentation = d.Key.Presentation
+                              Presentation = d.Key.Presentation, 
+                              Observation = d.Key.Observation,
+                              Type = d.Key.Type
                           };
 
-            if (details == null) return NotFound();
-            return Ok(details);
+            var repositions = from r in _context.Set<Reposiciones>()
+                              join d in _context.Set<Detalles_Reposiciones>() on r.Rep_Id equals d.Rep_Id
+                              join c in _context.Set<Clientes>() on r.Cli_Id equals c.Cli_Id
+                              join p in _context.Set<Producto>() on d.Prod_Id equals p.Prod_Id
+                              where d.Prod_Id == item
+                              group new { r, d, p, c } by new
+                              {
+                                  Doc = Convert.ToInt32(r.Rep_Id),
+                                  Date = r.Rep_FechaCrea,
+                                  Fact = Convert.ToString("0"),
+                                  Client_Id = r.Cli_Id,
+                                  Client = c.Cli_Nombre,
+                                  Status = r.Estados.Estado_Nombre,
+                                  SaleOrder = Convert.ToString("0"),
+                                  Item = d.Prod_Id,
+                                  Reference = p.Prod_Nombre,
+                                  Presentation = d.UndMed_Id, 
+                                  Observation = r.Rep_Observacion,
+                                  Type = "REPO"
+                              } into d
+                              select new
+                              {
+                                  Doc = d.Key.Doc,
+                                  Date = d.Key.Date,
+                                  Fact = d.Key.Fact,
+                                  Client_Id = d.Key.Client_Id,
+                                  Client = d.Key.Client,
+                                  Status = d.Key.Status,
+                                  SaleOrder = d.Key.SaleOrder,
+                                  Item = d.Key.Item,
+                                  Reference = d.Key.Reference,
+                                  Qty = d.Sum(x => x.d.DtlRep_Cantidad),
+                                  Presentation = d.Key.Presentation, 
+                                  Observation = d.Key.Observation,
+                                  Type = d.Key.Type
+                              };
+
+            if (details.Concat(repositions) == null) return NotFound();
+            return Ok(details.Concat(repositions));
         }
 
 
