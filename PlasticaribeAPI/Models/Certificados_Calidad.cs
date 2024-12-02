@@ -125,6 +125,12 @@ namespace PlasticaribeAPI.Models
         public string Hora_Registro { get; set; }
         public Usuario? Usuario { get; set; }
         public long Usua_Id { get; set; }
+
+        [Column(TypeName = ("date"))]
+        public DateTime? Fecha_Inicio_Produccion { get; set; }
+
+        [Column(TypeName = ("date"))]
+        public DateTime? Fecha_Fin_Produccion { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

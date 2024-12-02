@@ -505,7 +505,7 @@ namespace PlasticaribeAPI.Controllers
                               PresentationZeus = item.presentation,
                               Difference = (item.qty - e.ExProd_Cantidad),
                               Price = e.ExProd_PrecioVenta.Value,
-                              Subtotal = (e.ExProd_PrecioVenta.Value * e.ExProd_Cantidad),
+                              Subtotal = (e.ExProd_PrecioVenta.Value * (item.qty - e.ExProd_Cantidad)),
                               GenericQty = (from pp in _context.Set<Produccion_Procesos>() where pp.Prod_Id == p.Prod_Id select pp.Presentacion == "Kg" ? pp.Peso_Teorico == null ? 0 : pp.Peso_Teorico : pp.Cantidad == null ? 0 : pp.Cantidad).FirstOrDefault()
                             }).FirstOrDefault();
 

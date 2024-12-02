@@ -84,6 +84,8 @@ namespace PlasticaribeAPI.Controllers
                                                   e.EntRolloProd_Id >= 28512
                                            orderby e.EntRolloProd_Id descending
                                            select e.EntRolloProd_Observacion).FirstOrDefault(),
+                             ProcessId = (from pp in _context.Set<Produccion_Procesos>() where pp.Prod_Id == d.Prod_Id && pp.NumeroRollo_BagPro == d.DtlPcd_Rollo select pp.Proceso_Id).FirstOrDefault(),
+                             Process = (from pp in _context.Set<Produccion_Procesos>() where pp.Prod_Id == d.Prod_Id && pp.NumeroRollo_BagPro == d.DtlPcd_Rollo select pp.Proceso.Proceso_Nombre).FirstOrDefault(),
                           };
 
             if (preload == null) return NotFound();

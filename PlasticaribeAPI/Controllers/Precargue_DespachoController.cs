@@ -50,6 +50,13 @@ namespace PlasticaribeAPI.Controllers
             return Ok(Precargue_Despacho);
         }
 
+        [HttpGet("getLastPreload")]
+        public async Task<ActionResult<Precargue_Despacho>> GetLastPreload(long id)
+        {
+            var lastReposition = (from p in _context.Set<Precargue_Despacho>() select p.Pcd_Id == null ? 0 : p.Pcd_Id).Max() + 1;
+            return Ok(lastReposition);
+        }
+
         //
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPrecargue_Despacho(long id, Precargue_Despacho Precargue_Despacho)
