@@ -355,6 +355,45 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
         }
 
+        [HttpPost("getOtsForSalesOrder")]
+        public ActionResult getOtsForSalesOrder([FromBody] List<CustomerOrders> CustomerOrders) 
+        {
+            List<Object> orders = new List<Object>();
+            int counter = 0;
+            foreach (var item in CustomerOrders)
+            {
+                var ordersProduction = (from e in _context.Set<Estados_ProcesosOT>()
+                                        where e.EstProcOT_FechaCreacion >= item.date1 &&
+                                              e.EstProcOT_FechaCreacion <= item.date2 &&
+                                              e.Prod_Id == item.item //&&
+                                                                     //cl.PtPresentacionNom == item.presentation //&&
+                                                                     //cl.Cliente == Convert.ToInt32(codBagpro)
+                                        select new
+                                        {
+                                            OT = e.EstProcOT_OrdenTrabajo,  
+                                            Consecutivo = item.consecutivo,
+                                            Item = e.Prod_Id, 
+                                            Status = e.Estado_Id,
+                                            Extrusion = e.EstProcOT_ExtrusionKg,
+                                            Impresión = e.EstProcOT_ImpresionKg,
+                                            Rotograbado = e.EstProcOT_RotograbadoKg,
+                                            Laminado = e.EstProcOT_LaminadoKg,
+                                            Corte = e.EstProcOT_CorteKg,
+                                            Doblado = e.EstProcOT_DobladoKg,
+                                            Empaque = e.EstProcOT_EmpaqueKg,
+                                            SelladoUnd = e.EstProcOT_SelladoUnd,
+                                            SelladoKg = e.EstProcOT_SelladoKg,
+                                            WiketiadoUnd = e.EstProcOT_WiketiadoUnd,
+                                            WiketiadoKg = e.EstProcOT_WiketiadoKg,
+                                        }).FirstOrDefault();
+
+                counter++;
+                orders.Add(ordersProduction);
+                if (CustomerOrders.Count() == counter) return Ok(orders);
+            }
+            return Ok(orders);
+        }
+
         [HttpPut("putEstadoOrden/{ot}")]
         public IActionResult PutEstadoOrden(long ot, int estadoOt)
         {
@@ -474,3 +513,15 @@ namespace PlasticaribeAPI.Controllers
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }
+
+public class CustomerOrders
+{
+    public DateTime date1 { get; set; }
+
+    public DateTime date2 { get; set; }
+
+    public int item { get; set; }
+
+    public string consecutivo { get; set; }
+}
+
