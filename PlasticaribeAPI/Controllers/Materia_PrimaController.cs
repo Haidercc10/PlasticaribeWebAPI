@@ -617,7 +617,6 @@ namespace PlasticaribeAPI.Controllers
                              Movimiento = Convert.ToString("ASIGMP"),
                              Tipo_Movimiento = Convert.ToString("Asignación de Materia Prima"),
                              Fecha = asg.AsigMp.AsigMp_FechaEntrega,
-                             Hora = asg.AsigMp.AsigMp_Hora,
                              Usuario = asg.AsigMp.Usua.Usua_Nombre,
                              Materia_Prima_Id = Convert.ToInt16(asg.MatPri_Id),
                              Materia_Prima = Convert.ToString(asg.MatPri.MatPri_Nombre),
@@ -627,6 +626,8 @@ namespace PlasticaribeAPI.Controllers
                              Bopp = Convert.ToString(""),
                              Cantidad = Convert.ToDecimal(asg.DtAsigMp_Cantidad),
                              Unidad_Medida = asg.UndMed_Id,
+                             Precio = Convert.ToDecimal(asg.MatPri.MatPri_Precio),
+                             Proveedor = Convert.ToString("PLASTICARIBE SAS")
                          };
 
             //Asignacion de Materia Prima para la creacion de Tintas
@@ -644,7 +645,6 @@ namespace PlasticaribeAPI.Controllers
                                              Movimiento = Convert.ToString("CRTINTAS"),
                                              Tipo_Movimiento = Convert.ToString("Creación de Tintas"),
                                              Fecha = cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega,
-                                             Hora = cr.AsigMPxTinta.AsigMPxTinta_Hora,
                                              Usuario = cr.AsigMPxTinta.Usua.Usua_Nombre,
                                              Materia_Prima_Id = Convert.ToInt16(cr.MatPri_Id),
                                              Materia_Prima = Convert.ToString(cr.MatPri.MatPri_Nombre),
@@ -654,6 +654,8 @@ namespace PlasticaribeAPI.Controllers
                                              Bopp = Convert.ToString(""),
                                              Cantidad = Convert.ToDecimal(cr.DetAsigMPxTinta_Cantidad),
                                              Unidad_Medida = cr.UndMed_Id,
+                                             Precio = Convert.ToDecimal(cr.TintasDAMPxT.Tinta_Precio),
+                                             Proveedor = Convert.ToString("PLASTICARIBE SAS")
                                          };
 
             //Devoluciones de Materia Prima
@@ -671,7 +673,6 @@ namespace PlasticaribeAPI.Controllers
                                       Movimiento = Convert.ToString("DEVMP"),
                                       Tipo_Movimiento = Convert.ToString("Devolución de Materia Prima"),
                                       Fecha = dev.DevMatPri.DevMatPri_Fecha,
-                                      Hora = dev.DevMatPri.DevMatPri_Hora,
                                       Usuario = dev.DevMatPri.Usua.Usua_Nombre,
                                       Materia_Prima_Id = Convert.ToInt16(dev.MatPri_Id),
                                       Materia_Prima = Convert.ToString(dev.MatPri.MatPri_Nombre),
@@ -681,6 +682,8 @@ namespace PlasticaribeAPI.Controllers
                                       Bopp = Convert.ToString(dev.Bopp.BOPP_Nombre),
                                       Cantidad = Convert.ToDecimal(dev.DtDevMatPri_CantidadDevuelta),
                                       Unidad_Medida = dev.UndMed_Id,
+                                      Precio = dev.Tinta.Tinta_Id > 2001 ? Convert.ToDecimal(dev.Tinta.Tinta_Precio) : Convert.ToDecimal(dev.MatPri.MatPri_Precio),
+                                      Proveedor = Convert.ToString("PLASTICARIBE")
                                   };
 
             //Facturas de Materia Prima
@@ -698,7 +701,6 @@ namespace PlasticaribeAPI.Controllers
                                   Movimiento = Convert.ToString(fac.Facco.TpDoc.TpDoc_Id),
                                   Tipo_Movimiento = Convert.ToString(fac.Facco.TpDoc.TpDoc_Nombre),
                                   Fecha = fac.Facco.Facco_FechaFactura,
-                                  Hora = fac.Facco.Facco_Hora,
                                   Usuario = fac.Facco.Usua.Usua_Nombre,
                                   Materia_Prima_Id = Convert.ToInt16(fac.MatPri_Id),
                                   Materia_Prima = Convert.ToString(fac.MatPri.MatPri_Nombre),
@@ -708,6 +710,8 @@ namespace PlasticaribeAPI.Controllers
                                   Bopp = Convert.ToString(fac.Bopp_Generico.BoppGen_Nombre),
                                   Cantidad = Convert.ToDecimal(fac.FaccoMatPri_Cantidad),
                                   Unidad_Medida = fac.UndMed_Id,
+                                  Precio = Convert.ToDecimal(fac.FaccoMatPri_ValorUnitario),
+                                  Proveedor = Convert.ToString(fac.Facco.Prov.Prov_Nombre)
                               };
 
             //Remisiones de Materia Prima
@@ -725,7 +729,6 @@ namespace PlasticaribeAPI.Controllers
                                     Movimiento = Convert.ToString(rem.Rem.TpDoc.TpDoc_Id),
                                     Tipo_Movimiento = Convert.ToString(rem.Rem.TpDoc.TpDoc_Nombre),
                                     Fecha = rem.Rem.Rem_Fecha,
-                                    Hora = rem.Rem.Rem_Hora,
                                     Usuario = rem.Rem.Usua.Usua_Nombre,
                                     Materia_Prima_Id = Convert.ToInt16(rem.MatPri_Id),
                                     Materia_Prima = Convert.ToString(rem.MatPri.MatPri_Nombre),
@@ -735,6 +738,8 @@ namespace PlasticaribeAPI.Controllers
                                     Bopp = Convert.ToString(rem.Bopp.BoppGen_Nombre),
                                     Cantidad = Convert.ToDecimal(rem.RemiMatPri_Cantidad),
                                     Unidad_Medida = rem.UndMed_Id,
+                                    Precio = Convert.ToDecimal(rem.RemiMatPri_ValorUnitario.Value),
+                                    Proveedor = Convert.ToString(rem.Rem.Prov.Prov_Nombre)
                                 };
 
             //Asignaciones de BOPP
@@ -751,7 +756,6 @@ namespace PlasticaribeAPI.Controllers
                                  Movimiento = Convert.ToString(asg.Tipo_Documento.TpDoc_Id),
                                  Tipo_Movimiento = Convert.ToString(asg.Tipo_Documento.TpDoc_Nombre),
                                  Fecha = asg.AsigBOPP.AsigBOPP_FechaEntrega,
-                                 Hora = asg.AsigBOPP.AsigBOPP_Hora,
                                  Usuario = asg.AsigBOPP.Usua.Usua_Nombre,
                                  Materia_Prima_Id = Convert.ToInt16(84),
                                  Materia_Prima = Convert.ToString(""),
@@ -761,6 +765,8 @@ namespace PlasticaribeAPI.Controllers
                                  Bopp = Convert.ToString(asg.BOPP.BOPP_Nombre),
                                  Cantidad = Convert.ToDecimal(asg.DtAsigBOPP_Cantidad),
                                  Unidad_Medida = asg.UndMed_Id,
+                                 Precio = Convert.ToDecimal(asg.BOPP.BOPP_Precio),
+                                 Proveedor = Convert.ToString("PLASTICARIBE SAS")
                              };
 
             //Entrada de BOPP
@@ -777,7 +783,6 @@ namespace PlasticaribeAPI.Controllers
                                      Movimiento = Convert.ToString("ENTBIO"),
                                      Tipo_Movimiento = Convert.ToString("Entrada de Biorientado"),
                                      Fecha = ent.BOPP_FechaIngreso,
-                                     Hora = ent.BOPP_Hora,
                                      Usuario = ent.Usua.Usua_Nombre,
                                      Materia_Prima_Id = Convert.ToInt16(84),
                                      Materia_Prima = Convert.ToString(""),
@@ -785,8 +790,10 @@ namespace PlasticaribeAPI.Controllers
                                      Tinta = Convert.ToString(""),
                                      Bopp_Id = Convert.ToInt64(ent.BOPP_Serial),
                                      Bopp = Convert.ToString(ent.BOPP_Nombre),
-                                     Cantidad = Convert.ToDecimal(ent.BOPP_CantidadInicialKg),
+                                     Cantidad = Convert.ToDecimal(ent.BOPP_Stock),
                                      Unidad_Medida = ent.UndMed_Kg,
+                                     Precio = Convert.ToDecimal(ent.BOPP_Precio),
+                                     Proveedor = Convert.ToString(ent.Proveedor.Prov_Nombre)
                                  };
 
             //Asignacion de Tinta
@@ -803,7 +810,6 @@ namespace PlasticaribeAPI.Controllers
                                   Movimiento = Convert.ToString("ASIGTINTAS"),
                                   Tipo_Movimiento = Convert.ToString("Asignación de Tintas"),
                                   Fecha = asg.AsigMp.AsigMp_FechaEntrega,
-                                  Hora = asg.AsigMp.AsigMp_Hora,
                                   Usuario = asg.AsigMp.Usua.Usua_Nombre,
                                   Materia_Prima_Id = Convert.ToInt16(84),
                                   Materia_Prima = Convert.ToString(""),
@@ -813,6 +819,8 @@ namespace PlasticaribeAPI.Controllers
                                   Bopp = Convert.ToString(""),
                                   Cantidad = Convert.ToDecimal(asg.DtAsigTinta_Cantidad),
                                   Unidad_Medida = asg.UndMed_Id,
+                                  Precio = Convert.ToDecimal(asg.Tinta.Tinta_Precio),
+                                  Proveedor = Convert.ToString("PLASTICARIBE SAS")
                               };
 
             return Ok(conAsg.Concat(conAsgMPCreacionTintas).Concat(conDevoluciones).Concat(conFacturas).Concat(conRemisiones).Concat(conAsgBopp).Concat(conEntradaBOPP).Concat(conAsgTinta));
