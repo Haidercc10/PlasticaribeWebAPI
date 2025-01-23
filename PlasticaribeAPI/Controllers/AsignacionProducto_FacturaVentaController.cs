@@ -113,6 +113,33 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        [HttpPut("putMovementsDispatch/{id}")]
+        public async Task<IActionResult> putMovementsDispatch(int id, [FromBody] List<long> codes)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            int count = 0;
+            var dispatchs = (from asg in _context.Set<AsignacionProducto_FacturaVenta>() where codes.Contains(asg.AsigProdFV_Id) select asg);
+
+            foreach (var dis in dispatchs)
+            {
+                dis.Planilla = id;
+                _context.Entry(dis).State = EntityState.Modified;
+                _context.SaveChanges();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                count++;
+                if (count == codes.Count) return NoContent();
+            }
+            return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
         // POST: api/AsignacionProducto_FacturaVenta
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

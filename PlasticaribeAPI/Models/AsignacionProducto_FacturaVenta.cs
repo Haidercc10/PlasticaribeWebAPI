@@ -50,6 +50,7 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string? AsigProdFV_HoraEnvio { get; set; }
 
+        public int? Planilla { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

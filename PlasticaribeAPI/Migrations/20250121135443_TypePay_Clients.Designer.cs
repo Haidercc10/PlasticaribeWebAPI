@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20250121135443_TypePay_Clients")]
+    partial class TypePay_Clients
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,9 +189,6 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Property<string>("NotaCredito_Id")
                         .HasColumnType("varchar(100)");
-
-                    b.Property<int?>("Planilla")
-                        .HasColumnType("int");
 
                     b.Property<long>("Usua_Conductor")
                         .HasColumnType("bigint");
@@ -2793,48 +2793,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Prod_Id");
 
                     b.ToTable("Detalles_OrdenFacturacion");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Detalles_PlanillaDespacho", b =>
-                {
-                    b.Property<int>("DtPla_Codigo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DtPla_Codigo"));
-
-                    b.Property<long>("Cli_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("DtPla_Factura")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("DtPla_FormaPago")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<decimal>("DtPla_PesoBruto")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("DtPla_UnidadesProducto")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("DtPla_ValorFactura")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("Pla_Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("DtPla_Codigo");
-
-                    b.HasIndex("Cli_Id");
-
-                    b.HasIndex("Pla_Id");
-
-                    b.ToTable("Detalles_PlanillaDespacho");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Detalles_PrecargueDespacho", b =>
@@ -6566,71 +6524,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("Pista_Id");
 
                     b.ToTable("Pistas");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Planillas_Despacho", b =>
-                {
-                    b.Property<int>("Pla_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Pla_Id"));
-
-                    b.Property<int?>("Estado_Id")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Pla_Fecha")
-                        .HasColumnType("date");
-
-                    b.Property<DateTime?>("Pla_FechaRecepcion")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Pla_Hora")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("Pla_HoraRecepcion")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("Pla_Observacion")
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<decimal>("Pla_PesoTotal")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Pla_Placa")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<decimal>("Pla_ValorContado")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Pla_ValorRecibido")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Pla_ValorTotal")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<long>("Usua_Conductor")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Usua_Id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Pla_Id");
-
-                    b.HasIndex("Estado_Id");
-
-                    b.HasIndex("Usua_Conductor");
-
-                    b.HasIndex("Usua_Id");
-
-                    b.ToTable("Planillas_Despacho");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.PreEntrega_RolloDespacho", b =>
@@ -10832,25 +10725,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Und");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Detalles_PlanillaDespacho", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Clientes", "Cli")
-                        .WithMany()
-                        .HasForeignKey("Cli_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Planillas_Despacho", "Planilla")
-                        .WithMany()
-                        .HasForeignKey("Pla_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Cli");
-
-                    b.Navigation("Planilla");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Detalles_PrecargueDespacho", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.Precargue_Despacho", "Precargue")
@@ -12633,32 +12507,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("Usua_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Estado");
-
-                    b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Planillas_Despacho", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Estado", "Estado")
-                        .WithMany()
-                        .HasForeignKey("Estado_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Conductor")
-                        .WithMany()
-                        .HasForeignKey("Usua_Conductor")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("Usua_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Conductor");
 
                     b.Navigation("Estado");
 

@@ -57,6 +57,9 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string? Cli_Hora { get; set; }
 
+        [Column(TypeName = "varchar(50)")]
+        public string? Cli_TipoPago { get; set; }
+
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

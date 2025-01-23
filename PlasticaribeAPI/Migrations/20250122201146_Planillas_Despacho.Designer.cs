@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20250122201146_Planillas_Despacho")]
+    partial class Planillas_Despacho
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,9 +189,6 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Property<string>("NotaCredito_Id")
                         .HasColumnType("varchar(100)");
-
-                    b.Property<int?>("Planilla")
-                        .HasColumnType("int");
 
                     b.Property<long>("Usua_Conductor")
                         .HasColumnType("bigint");
@@ -2814,19 +2814,16 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(50)");
 
-                    b.Property<decimal>("DtPla_PesoBruto")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int>("DtPla_UnidadesProducto")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("DtPla_ValorFactura")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("int");
 
                     b.Property<int>("Pla_Id")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("Pla_ValorFactura")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("DtPla_Codigo");
 
@@ -6595,10 +6592,6 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Property<string>("Pla_Observacion")
                         .HasColumnType("varchar(50)");
-
-                    b.Property<decimal>("Pla_PesoTotal")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Pla_Placa")
                         .IsRequired()

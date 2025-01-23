@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using StackExchange.Redis;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -306,43 +308,65 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetRollosEnviadosCamion(DateTime inicio, DateTime fin, string? factura = "", string? placa = "", string? conductor = "")
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var fact = from asg in _context.Set<AsignacionProducto_FacturaVenta>() 
+            var fact = from asg in _context.Set<AsignacionProducto_FacturaVenta>()
                        where asg.AsigProdFV_Fecha >= inicio &&
                              asg.AsigProdFV_Fecha <= fin &&
                              (factura != "" ? asg.FacturaVta_Id == factura : true) &&
                              (placa != "" ? asg.AsigProdFV_PlacaCamion == placa : true) &&
                              (conductor != "" ? Convert.ToInt32(asg.Usua_Conductor) == Convert.ToInt32(conductor) : true)
+                        group asg by new 
+                        {
+                            Placa = asg.AsigProdFV_PlacaCamion,
+                            Id_Conductor = asg.Usua_Conductor,
+                            Conductor = asg.Usuario.Usua_Nombre,
+                            Fecha = asg.AsigProdFV_Fecha,
+                            Planilla = asg.Planilla,
+                        } into gr
                        select new
                        {
-                          Factura = asg.FacturaVta_Id,
-                          Placa = asg.AsigProdFV_PlacaCamion,
-                          Id_Conductor = asg.Usua_Conductor,
-                          Conductor = asg.Usuario.Usua_Nombre,
-                          Fecha = asg.AsigProdFV_Fecha,
-                          Hora = asg.AsigProdFV_Hora,
-                          Id_Cliente = asg.Cli_Id,
-                          Cliente = asg.Cliente.Cli_Nombre,
-                          Observacion = asg.AsigProdFV_Observacion,
+                          Placa = gr.Key.Placa,
+                          Id_Conductor = gr.Key.Id_Conductor,
+                          Conductor = gr.Key.Conductor,
+                          Fecha = gr.Key.Fecha,
+                          Planilla = gr.Key.Planilla,
                           PesoTotal = (
                             from dt in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
                             join rollo in _context.Set<Produccion_Procesos>() on dt.Rollo_Id equals rollo.Numero_Rollo
-                            where dt.AsigProdFV_Id == asg.AsigProdFV_Id
-                            select rollo.Peso_Neto
+                            where gr.Select(x => x.AsigProdFV_Id).Contains(dt.AsigProdFV_Id)
+                            select rollo.Peso_Bruto
                           ).Sum(),
-                          Details = (
-                            from dt in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
-                            join rollo in _context.Set<Produccion_Procesos>() on dt.Rollo_Id equals rollo.Numero_Rollo
-                            where dt.AsigProdFV_Id == asg.AsigProdFV_Id
-                            select new
-                            {
-                                Rollo = dt.Rollo_Id,
-                                Item = dt.Prod_Id,
-                                Referencia = dt.Prod.Prod_Nombre,
-                                Cantidad = dt.DtAsigProdFV_Cantidad,
-                                Peso = rollo.Peso_Neto,
-                                Presentacion = dt.UndMed_Id,
-                            }
-                          ).ToList(),
+                           Details = (
+                               from dt in _context.Set<DetallesAsignacionProducto_FacturaVenta>()
+                               join rollo in _context.Set<Produccion_Procesos>() on dt.Rollo_Id equals rollo.Numero_Rollo
+                               join prod in _context.Set<Producto>() on dt.Prod_Id equals prod.Prod_Id
+                               where gr.Select(x => x.AsigProdFV_Id).Contains(dt.AsigProdFV_Id)  //.FirstOrDefault()
+                               group rollo by new
+                               {
+                                   //Item = dt.Prod_Id,
+                                   //Referencia = prod.Prod_Nombre,
+                                   //Presentacion = dt.UndMed_Id,
+                                   CodigoSalida = dt.AsigProducto_FV.AsigProdFV_Id,
+                                   Factura = dt.AsigProducto_FV.FacturaVta_Id,
+                                   IdCliente = dt.AsigProducto_FV.Cli_Id,
+                                   Cliente = dt.AsigProducto_FV.Cliente.Cli_Nombre
+                               } into g
+                               select new
+                               {
+                                   CodigoSalida = g.Key.CodigoSalida,
+                                   Factura = g.Key.Factura,
+                                   //Item = g.Key.Item,
+                                   //Referencia = g.Key.Referencia,
+                                   //Cantidad = g.Key.Presentacion == "Kg" ? g.Sum(x => x.Peso_Neto) : g.Sum(x => x.Cantidad),
+                                   Peso_Bruto = g.Sum(x => x.Peso_Bruto),
+                                   Peso_Neto = g.Sum(x => x.Peso_Neto),
+                                   Unidades_Producto = g.Count(),
+                                   Forma_Pago = "", //(gr.Select(x => x.Cliente.Cli_TipoPago)).FirstOrDefault(),
+                                   //Presentacion = g.Key.Presentacion,
+                                   Valor = Convert.ToDecimal(0m),
+                                   IdCliente = g.Key.IdCliente,
+                                   Cliente = g.Key.Cliente
+                               }
+                             ).ToList(),
                        };
 
             return fact.Any() ? Ok(fact) : NotFound();
