@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
+using PlasticaribeAPI.Interfaces;
 using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
@@ -9,7 +10,7 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [Route("api/[controller]")]
     [ApiController, Authorize]
-    public class AsignacionProducto_FacturaVentaController : ControllerBase
+    public class AsignacionProducto_FacturaVentaController : ControllerBase, IAsignacionProducto_FacturaVenta
     {
         private readonly dataContext _context;
 
@@ -113,8 +114,8 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("putMovementsDispatch/{id}")]
-        public async Task<IActionResult> putMovementsDispatch(int id, [FromBody] List<long> codes)
+        [HttpPut("putMovementsDispatch/{id}/{addSpreadsheet}")]
+        public async Task<IActionResult> putMovementsDispatch(int id, bool addSpreadsheet, [FromBody] List<long> codes)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             int count = 0;
@@ -122,7 +123,12 @@ namespace PlasticaribeAPI.Controllers
 
             foreach (var dis in dispatchs)
             {
-                dis.Planilla = id;
+                if (addSpreadsheet == true) dis.Planilla = id;
+                else
+                {
+                    dis.Planilla = null;
+                };
+                
                 _context.Entry(dis).State = EntityState.Modified;
                 _context.SaveChanges();
                 try

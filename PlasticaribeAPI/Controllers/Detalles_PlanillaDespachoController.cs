@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
+using PlasticaribeAPI.Interfaces;
 using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
@@ -12,10 +13,11 @@ namespace PlasticaribeAPI.Controllers
     public class Detalles_PlanillaDespachoController : ControllerBase
     {
         private readonly dataContext _context;
-
-        public Detalles_PlanillaDespachoController(dataContext context)
+        private readonly IPlanillas_Despacho _planillasDespacho;
+        public Detalles_PlanillaDespachoController(dataContext context, IPlanillas_Despacho planillasDespacho)
         {
             _context = context;
+            _planillasDespacho = planillasDespacho;
         }
 
         // GET: api/Detalles_PlanillaDespacho
@@ -47,6 +49,7 @@ namespace PlasticaribeAPI.Controllers
                               from det in _context.Set<Detalles_PlanillaDespacho>()
                               where pla.Pla_Id == id
                               && pla.Pla_Id == det.Pla_Id
+                              orderby Convert.ToInt32(det.DtPla_Factura) ascending
                               select new
                               {
                                 Planilla = pla,
@@ -93,6 +96,41 @@ namespace PlasticaribeAPI.Controllers
             }
 
             return NoContent();
+        }
+
+        //Función que actualiza la planilla de una factura que se despachó y por alguna razón volvió  a la empresa y debe ser agregada en otra planilla. 
+        [HttpPut("putSpreadSheetForFact/{code}/{newSpreadSheet}")]
+        public async Task<IActionResult> putSpreadSheetForFact(int code, int newSpreadSheet, [FromBody] List<long> codes)
+        {
+            var dispatchs = (from pl in _context.Set<Detalles_PlanillaDespacho>() where pl.DtPla_Codigo == code select pl).FirstOrDefault();
+            if (dispatchs != null)
+            {
+                var valueCounted = dispatchs.DtPla_FormaPago == "CONTADO" ? dispatchs.DtPla_ValorFactura : Convert.ToDecimal(0m);
+                var old_Id = dispatchs.Pla_Id;
+                var valueFact = dispatchs.DtPla_ValorFactura;
+                var weight = dispatchs.DtPla_PesoBruto;
+
+                dispatchs.Pla_Id = newSpreadSheet;
+                _context.Entry(dispatchs).State = EntityState.Modified;
+                _context.SaveChanges();
+               
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    await _planillasDespacho.putHeaderSpreadSheet(newSpreadSheet, old_Id, valueFact, valueCounted, weight, codes);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+            }
+            else
+            {
+                return NotFound("No se encontró el detalle de la planilla " + code);
+            }
+
+            return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         // POST: api/Detalles_PlanillaDespacho

@@ -345,14 +345,14 @@ namespace PlasticaribeAPI.Controllers
                                    //Item = dt.Prod_Id,
                                    //Referencia = prod.Prod_Nombre,
                                    //Presentacion = dt.UndMed_Id,
-                                   CodigoSalida = dt.AsigProducto_FV.AsigProdFV_Id,
+                                   //CodigoSalida = dt.AsigProducto_FV.AsigProdFV_Id,
                                    Factura = dt.AsigProducto_FV.FacturaVta_Id,
                                    IdCliente = dt.AsigProducto_FV.Cli_Id,
                                    Cliente = dt.AsigProducto_FV.Cliente.Cli_Nombre
                                } into g
                                select new
                                {
-                                   CodigoSalida = g.Key.CodigoSalida,
+                                   //CodigoSalida = g.Key.CodigoSalida,
                                    Factura = g.Key.Factura,
                                    //Item = g.Key.Item,
                                    //Referencia = g.Key.Referencia,
@@ -364,7 +364,17 @@ namespace PlasticaribeAPI.Controllers
                                    //Presentacion = g.Key.Presentacion,
                                    Valor = Convert.ToDecimal(0m),
                                    IdCliente = g.Key.IdCliente,
-                                   Cliente = g.Key.Cliente
+                                   Cliente = g.Key.Cliente,
+                                   Codigos = (from asig in _context.Set<AsignacionProducto_FacturaVenta>() 
+                                              where asig.FacturaVta_Id == g.Key.Factura 
+                                              && asig.Cli_Id == g.Key.IdCliente
+                                              && asig.AsigProdFV_Fecha >= inicio 
+                                              && asig.AsigProdFV_Fecha <= fin
+                                              select asig.AsigProdFV_Id).ToList(),
+                                    CodigoDetail = (from dp in _context.Set<Detalles_PlanillaDespacho>()
+                                                    where dp.DtPla_Factura == g.Key.Factura && 
+                                                    dp.Pla_Id == gr.Key.Planilla.Value 
+                                                    select dp.DtPla_Codigo).FirstOrDefault(),
                                }
                              ).ToList(),
                        };

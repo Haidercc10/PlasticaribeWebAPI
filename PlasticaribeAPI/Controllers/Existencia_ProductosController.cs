@@ -251,9 +251,12 @@ namespace PlasticaribeAPI.Controllers
                                 Price = exi.ExProd_PrecioVenta,
                                 Presentation = exi.UndMed_Id,
                                 StockPrice = exi.ExProd_PrecioExistencia,
+
                             },
                             Client = (from est in _context.Set<Estados_ProcesosOT>() where est.Prod_Id == exi.Prod_Id orderby est.EstProcOT_Id descending select est.EstProcOT_Cliente).FirstOrDefault(),
                             Seller = (from est in _context.Set<Estados_ProcesosOT>() where exi.Prod_Id == est.Prod_Id orderby est.EstProcOT_Id descending select est.Usuario.Usua_Nombre).FirstOrDefault(),
+                            QtyStandard = (from pp in _context.Set<Produccion_Procesos>() where pp.Prod_Id == prod.Prod_Id && pp.Presentacion == exi.UndMed_Id select pp.Presentacion == "Kg" ? pp.Peso_Neto == null ? 0 : pp.Peso_Neto : pp.Cantidad == null ? 0 : pp.Cantidad).FirstOrDefault(),
+                            Weight = (from pp in _context.Set<Produccion_Procesos>() where pp.Prod_Id == prod.Prod_Id && pp.Presentacion == exi.UndMed_Id && pp.Estado_Rollo == 19 && pp.Envio_Zeus == true && pp.Fecha >= Convert.ToDateTime("2024-02-04") select pp.Peso_Bruto).FirstOrDefault(),
                             /*Client = (
                                 from est in _context.Set<Estados_ProcesosOT>()
                                 join vende in _context.Set<Usuario>() on est.Usua_Id equals vende.Usua_Id
