@@ -61,6 +61,12 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(10)")]
         public string? ExProd_Hora { get; set; }
 
+        [Precision(18, 2)]
+        public decimal? ExProd_PesoBruto { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? ExProd_Unidades { get; set; }
+
         //[Precision(14, 2)]
         //public int ExProd_CantBolsasPaquete { get; set; }
 

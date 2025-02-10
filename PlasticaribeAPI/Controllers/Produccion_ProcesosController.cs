@@ -956,7 +956,7 @@ namespace PlasticaribeAPI.Controllers
 
         //Consulta para traer la información de un bulto. 
         [HttpGet("getRolls/{date1}/{date2}")]
-        public ActionResult getMovementsRolls(DateTime date1, DateTime date2, string? item = "", string? ot = "", string? roll = "")
+        public ActionResult getMovementsRolls(DateTime date1, DateTime date2, string? item = "", string? ot = "", string? roll = "", string process = "")
         {
             var mov = from pp in _context.Set<Produccion_Procesos>()
                       from p in _context.Set<Producto>()
@@ -965,12 +965,14 @@ namespace PlasticaribeAPI.Controllers
                       pp.Fecha <= date2 &&
                       (item != "" ? pp.Prod_Id == Convert.ToInt64(item) : pp.Prod_Id.ToString().Contains(item)) &&
                       (ot != "" ? pp.OT == Convert.ToInt64(ot) : pp.OT.ToString().Contains(ot)) &&
-                      (roll != "" ? pp.NumeroRollo_BagPro == Convert.ToInt64(roll) : pp.NumeroRollo_BagPro.ToString().Contains(roll))
+                      (roll != "" ? pp.NumeroRollo_BagPro == Convert.ToInt64(roll) : pp.NumeroRollo_BagPro.ToString().Contains(roll)) &&
+                      (process != "" ? pp.Proceso_Id == process : pp.Proceso_Id.Contains(process))
+                      orderby pp.NumeroRollo_BagPro descending
                       select new
                       {
                           Id = pp.Id,
-                          RollBagPro = pp.NumeroRollo_BagPro,
-                          NumberRoll = pp.Numero_Rollo,
+                          Rollo = pp.NumeroRollo_BagPro,
+                          ProductionPL = pp.Numero_Rollo,
                           Item = pp.Prod_Id,
                           Reference = p.Prod_Nombre,
                           Qty = pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad,
@@ -978,14 +980,16 @@ namespace PlasticaribeAPI.Controllers
                           UserName = pp.Operario1.Usua_Nombre,
                           Process = pp.Proceso.Proceso_Nombre,
                           PrecioVenta = pp.PrecioVenta_Producto,
-                          Observation = pp.Observacion == null ? "" : pp.Observacion.ToString().ToUpper(),
-                          Fecha = pp.Fecha.ToString("dd-MM-yyyy") + " - " + pp.Hora,
+                          Observacion = pp.Observacion,
+                          Fecha = pp.Fecha.ToString("dd-MM-yyyy"),
+                          Hora = pp.Hora,
                           Status_Id = pp.Estado_Rollo,
                           Status = pp.Estado.Estado_Nombre,
                           Turn = pp.Turno_Id,
                           Client = pp.Clientes.Cli_Nombre,
-                          Envio_Zeus = pp.Envio_Zeus,
+                          Envio_Zeus = pp.Envio_Zeus == true ? "SI" : "NO",
                           Asociated_Roll = pp.Envio_Zeus,
+                          DateElimination = (from rd in _context.Set<Rollo_Desecho>() where rd.Rollo_Id == pp.NumeroRollo_BagPro && rd.Prod_Id == pp.Prod_Id select rd.Rollo_FechaEliminacion.Value.ToString("dd-MM-yyyy") + " - " + rd.Rollo_HoraEliminacion).FirstOrDefault(), 
                       };
 
             return Ok(mov);
