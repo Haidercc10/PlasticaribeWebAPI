@@ -142,7 +142,7 @@ namespace PlasticaribeAPI.Controllers
                               Value_Rewinding = m.MaqInt_ValorPago,
                               Position_Job = "Operario Corte",
                               Machine = m.Maquina,
-                              Send_Zeus = "0",
+                              Send_Zeus = "1",
                               Material = m.Materiales.Material_Nombre,
                               Printed = m.Impreso == true ? "SI" : "NO",
                               Laminate = "NO APLICA",

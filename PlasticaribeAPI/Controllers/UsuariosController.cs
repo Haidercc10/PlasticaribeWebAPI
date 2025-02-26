@@ -231,7 +231,8 @@ namespace PlasticaribeAPI.Controllers
                             {
                                 op.Usua_Id,
                                 op.Usua_Nombre,
-                                op.Area_Id
+                                op.Area_Id,
+                                Area_Nombre = op.Area.Area_Nombre.ToUpper(),
                             };
             return operarios.Any() ? Ok(operarios) : NotFound();
         }
