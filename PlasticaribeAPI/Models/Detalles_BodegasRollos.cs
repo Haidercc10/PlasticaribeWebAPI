@@ -47,6 +47,12 @@ namespace PlasticaribeAPI.Models
         public Proceso? Bodega_Ingreso { get; set; }
 
         public bool DtBgRollo_Calidad { get; set; }
+
+
+        [Column(TypeName = "date")]
+        public DateTime? DtBgRollo_FechaFab { get; set; }
+
+        public int? DtBgRollo_Maq { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

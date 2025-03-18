@@ -212,6 +212,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getInventoryAvailable")]
         public ActionResult getInventoryAvailable(string? process = "")
         {
+            var today = DateTime.Now;
             //string[] wareHouses = { "BGPI", "ROT" };
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from bg in _context.Set<Detalles_BodegasRollos>()
@@ -231,6 +232,8 @@ namespace PlasticaribeAPI.Controllers
                           Ubication = bg.DtBgRollo_Ubicacion,
                           InitialWarehouse = bg.Bodega_Inicial.Proceso_Nombre,
                           ActualWarehouse = bg.Bodega_Actual.Proceso_Nombre,
+                          DayFabrication = bg.DtBgRollo_FechaFab, 
+                          Machine = bg.DtBgRollo_Maq,
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);

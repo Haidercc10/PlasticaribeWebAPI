@@ -100,7 +100,7 @@ namespace PlasticaribeAPI.Controllers
                 preload.Pcd_HoraModifica = Convert.ToString(DateTime.Now.ToString("HH:mm:ss"));
                 preload.OF_Id = load.of;
                 preload.Pcd_Observacion = load.observation;
-                preload.Usua_Crea = load.user;
+                preload.Usua_Modifica = load.user;
             
                 _context.Entry(preload).State = EntityState.Modified;
                 _context.SaveChanges();
@@ -115,6 +115,41 @@ namespace PlasticaribeAPI.Controllers
                 }
                 count++;
                 if (count == Preload.Count) return NoContent();
+            }
+            return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
+        //Actualizar registros por orden de facturación
+        [HttpPut("putPreloadForOrderFact/{order}")]
+        public async Task<IActionResult> putPreloadForOrderFact(long order, List<Preload> Preload)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            int count = 0;
+            var preload = (from pre in _context.Set<Precargue_Despacho>() where pre.OF_Id == order select pre).ToList();
+
+            foreach (var load in preload)
+            {
+                load.Estado_Id = Preload[0].status;
+                load.Pcd_FechaModifica = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
+                load.Pcd_HoraModifica = Convert.ToString(DateTime.Now.ToString("HH:mm:ss"));
+                load.Pcd_Observacion = Preload[0].observation;
+                load.Usua_Modifica = Preload[0].user;
+                load.OF_Id = Preload[0].of;
+
+                _context.Entry(load).State = EntityState.Modified;
+                _context.SaveChanges();
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                count++;
+                if (count == preload.Count) return NoContent();
             }
             return NoContent();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
