@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20250320155518_Maquinas")]
+    partial class Maquinas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7038,9 +7041,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Estado_Rollo")
                         .HasColumnType("int");
 
-                    b.Property<long?>("Etiqueta_Trazabilidad")
-                        .HasColumnType("bigint");
-
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("date");
 
@@ -9010,13 +9010,13 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("Operario_1")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("Operario_2")
+                    b.Property<long>("Operario_2")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("Operario_3")
+                    b.Property<long>("Operario_3")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("Operario_4")
+                    b.Property<long>("Operario_4")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Presentacion")
@@ -9024,13 +9024,14 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("varchar(10)");
 
                     b.Property<string>("Proceso_Anterior")
+                        .IsRequired()
                         .HasColumnType("varchar(10)");
 
                     b.Property<string>("Proceso_Id")
                         .IsRequired()
                         .HasColumnType("varchar(10)");
 
-                    b.Property<int?>("Prod_Anterior")
+                    b.Property<int>("Prod_Anterior")
                         .HasColumnType("int");
 
                     b.Property<int>("Prod_Id")
@@ -9043,7 +9044,7 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("Trz_Etiqueta")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("Trz_EtiquetaAnterior")
+                    b.Property<long>("Trz_EtiquetaAnterior")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("Trz_Fecha")
@@ -9058,7 +9059,7 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Trz_Ot")
                         .HasColumnType("int");
 
-                    b.Property<long?>("Trz_OtAnterior")
+                    b.Property<long>("Trz_OtAnterior")
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("Trz_PesoBruto")
@@ -13768,17 +13769,20 @@ namespace PlasticaribeAPI.Migrations
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario2")
                         .WithMany()
                         .HasForeignKey("Operario_2")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario3")
                         .WithMany()
                         .HasForeignKey("Operario_3")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario4")
                         .WithMany()
                         .HasForeignKey("Operario_4")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "Unidad_Medida")
                         .WithMany()
@@ -13789,7 +13793,8 @@ namespace PlasticaribeAPI.Migrations
                     b.HasOne("PlasticaribeAPI.Models.Proceso", "ProcesoAnt")
                         .WithMany()
                         .HasForeignKey("Proceso_Anterior")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("PlasticaribeAPI.Models.Proceso", "Procesos")
                         .WithMany()
@@ -13800,7 +13805,8 @@ namespace PlasticaribeAPI.Migrations
                     b.HasOne("PlasticaribeAPI.Models.Producto", "ProductoAnt")
                         .WithMany()
                         .HasForeignKey("Prod_Anterior")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("PlasticaribeAPI.Models.Producto", "Producto")
                         .WithMany()

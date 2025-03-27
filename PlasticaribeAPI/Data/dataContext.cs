@@ -204,6 +204,9 @@ namespace PlasticaribeAPI.Data
         public DbSet<Planillas_Despacho> Planillas_Despacho { get; set; }
 
         public DbSet<Detalles_PlanillaDespacho> Detalles_PlanillaDespacho { get; set; }
+        public DbSet<Trazabilidad_Produccion> Trazabilidad_Produccion { get; set; }
+
+        public DbSet<Maquinas> Maquinas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1146,12 +1149,29 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Detalles_PlanillaDespacho>().HasOne(x => x.Cli).WithMany().HasForeignKey(x => x.Cli_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Detalles_PlanillaDespacho>().HasOne(x => x.Planilla).WithMany().HasForeignKey(x => x.Pla_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            //Trazabilidad Produccion
+            modelBuilder.Entity<Trazabilidad_Produccion>().HasOne(x => x.ProductoAnt).WithMany().HasForeignKey(x => x.Prod_Anterior).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Trazabilidad_Produccion>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Trazabilidad_Produccion>().HasOne(x => x.ProcesoAnt).WithMany().HasForeignKey(x => x.Proceso_Anterior).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Trazabilidad_Produccion>().HasOne(x => x.Procesos).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Trazabilidad_Produccion>().HasOne(x => x.Usuario1).WithMany().HasForeignKey(x => x.Operario_1).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Trazabilidad_Produccion>().HasOne(x => x.Usuario2).WithMany().HasForeignKey(x => x.Operario_2).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Trazabilidad_Produccion>().HasOne(x => x.Usuario3).WithMany().HasForeignKey(x => x.Operario_3).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Trazabilidad_Produccion>().HasOne(x => x.Usuario4).WithMany().HasForeignKey(x => x.Operario_4).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Trazabilidad_Produccion>().HasOne(x => x.Clientes).WithMany().HasForeignKey(x => x.Cli_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Trazabilidad_Produccion>().HasOne(x => x.Unidad_Medida).WithMany().HasForeignKey(x => x.Presentacion).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Maquinas
+            modelBuilder.Entity<Maquinas>().HasOne(x => x.Procesos).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
             modelBuilder.Entity<Tipo_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Usuarios"));
             modelBuilder.Entity<Archivos>().ToTable(tb => tb.HasTrigger("Auditoria_Archivos"));
             modelBuilder.Entity<Tipo_Solicitud_Rollos_Areas>().ToTable(tb => tb.HasTrigger("Auditoria_Tipo_Solicitud_Rollos_Areas"));
             modelBuilder.Entity<Conceptos_Automaticos>().ToTable(tb => tb.HasTrigger("Auditoria_Conceptos_Automaticos"));
+
 
             /*modelBuilder.Entity<Log_Errores>().ToTable(tb => tb.HasTrigger("Auditoria_Log_Errores"));
             modelBuilder.Entity<Tipos_Sellados>().ToTable(tb => tb.HasTrigger("Auditoria_Tipos_Sellados"));
