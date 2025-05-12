@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,54 @@ namespace PlasticaribeAPI.Controllers
             }
 
             return Trazabilidad_Produccion;
+        }
+
+        //
+        [HttpGet("getTraceability/{date1}/{date2}")]
+        public async Task<ActionResult<Models.Trazabilidad_Produccion>> GetTrazabilidad_Produccion(DateTime date1, DateTime date2, string? ot = "", string? item = "", string? roll = "")
+        {
+            var Trazabilidad_Produccion = from tr in _context.Set<Trazabilidad_Produccion>()
+                                          where tr.Trz_Fecha >= date1 &&
+                                          tr.Trz_Fecha <= date2 &&
+                                          (item != "" ? tr.Prod_Anterior == Convert.ToInt64(item) : tr.Prod_Anterior.ToString().Contains(item)) &&
+                                          (ot != "" ? tr.Trz_OtAnterior == Convert.ToInt64(ot) : tr.Trz_OtAnterior.ToString().Contains(ot)) &&
+                                          (roll != "" ? tr.Trz_EtiquetaAnterior == Convert.ToInt64(roll) : tr.Trz_EtiquetaAnterior.ToString().Contains(roll))
+                                          select new
+                                          {
+                                              MotherRoll = tr.Trz_EtiquetaAnterior,
+                                              MotherOT = tr.Trz_OtAnterior,
+                                              MotherItem = tr.Prod_Anterior,
+                                              MotherReference = tr.ProductoAnt.Prod_Nombre,
+                                              MotherProcess_Id = tr.Proceso_Anterior,
+                                              MotherProcess = tr.ProcesoAnt.Proceso_Nombre,
+
+                                              Roll = tr.Trz_Etiqueta,
+                                              OT = tr.Trz_Ot,
+                                              Client = tr.Clientes.Cli_Nombre,
+                                              Item = tr.Prod_Id,
+                                              Reference = tr.Producto.Prod_Nombre,
+                                              Net = tr.Trz_PesoNeto,
+                                              Gross = tr.Trz_PesoBruto,
+                                              Qty = tr.Trz_Cantidad,
+                                              RealQty = tr.Presentacion == "Kg" ? tr.Trz_PesoNeto : tr.Trz_Cantidad,
+                                              Presentacion = tr.Presentacion,
+                                              Process_Id = tr.Proceso_Id,
+                                              Process = tr.Procesos.Proceso_Nombre,
+                                              Mq = tr.Trz_Maquina,
+                                              Date = tr.Trz_Fecha,
+                                              Hour = tr.Trz_Hora, 
+                                              Operator1 = tr.Operario_1,
+                                              Operator2 = tr.Operario_2,
+                                              Operator3 = tr.Operario_3,
+                                              Operator4 = tr.Operario_4,
+                                          };
+
+            if (Trazabilidad_Produccion == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(Trazabilidad_Produccion);
         }
 
         //

@@ -678,6 +678,10 @@ namespace PlasticaribeAPI.Controllers
                                     Falla_Id = Convert.ToString(r.Falla_Id),
                                     Falla_Nombre = Convert.ToString(r.Falla.Falla_Nombre),
                                     Observacion = Convert.ToString(r.Rollo_Observacion),
+                                    Elimina_Id = Convert.ToString(r.UsuaElimina_Id),
+                                    Elimina = Convert.ToString(r.Usua_Elimina.Usua_Nombre),
+                                    Autoriza_Id = Convert.ToString(r.UsuaAutoriza_Id),
+                                    Autoriza = Convert.ToString(r.Usua_Autoriza.Usua_Nombre),
                                 };                    
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(rollo_Desecho);

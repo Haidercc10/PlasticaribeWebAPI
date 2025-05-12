@@ -881,6 +881,7 @@ namespace PlasticaribeAPI.Controllers
                                                      orderby e.EntRolloProd_Id descending
                                                      select e.EntRolloProd_Observacion).FirstOrDefault(),
                                       orderProduction = pp.OT,
+                                      Client = pp.Clientes.Cli_Nombre,
                                   };  
 
             return Ok(rollsAvailables);
@@ -916,6 +917,48 @@ namespace PlasticaribeAPI.Controllers
                                   Turn = pp2.Turno,
                                   Information = pp2.Datos_Etiqueta,
                                   orderProduction = pp2.OT,
+                                  Client = pp2.Clientes.Cli_Nombre,
+                              };
+
+            return Ok(rollsInArea);
+        }
+
+        //Consulta que devuelve la información de los rollos disponibles en area por item
+        [HttpGet("getRollsAvailables/{item}")]
+        public ActionResult getRollsAvailables(int item)
+        {
+            int[] statuses = { 20, 24, 36, 44, 45 };
+            string[] processs = { "EXT", "EMP", "SELLA", };
+
+            var rollsInArea = from pp2 in _context.Set<Produccion_Procesos>()
+                              where pp2.Prod_Id == item &&
+                                    pp2.Estado_Rollo == 19 &&
+                                    processs.Contains(pp2.Proceso_Id) &&
+                                    pp2.Fecha >= Convert.ToDateTime("2024-02-04") &&
+                                    !((from order in _context.Set<Detalles_OrdenFacturacion>()
+                                       where order.Prod_Id == pp2.Prod_Id && order.OrdenFacturacion.Estado_Id != 3 && statuses.Contains(order.Estado_Id)
+                                       select order.Numero_Rollo).ToList()).Contains(pp2.NumeroRollo_BagPro)
+                              group pp2 by new {
+                                OrderProduction = pp2.OT,
+                                Client = pp2.Clientes.Cli_Nombre,
+                                Presentation = pp2.Presentacion,
+                                Process = pp2.Proceso.Proceso_Nombre,
+                              }
+                              into prod
+                              select new    
+                              {
+                                  Quantity = prod.Sum(x => x.Cantidad),
+                                  Weight = prod.Sum(x => x.Peso_Neto),
+                                  Gross_Weight = prod.Sum(x => x.Envio_Zeus == true ? x.Peso_Bruto : 0),
+                                  Gross_Weight_Prod = prod.Sum(x => x.Envio_Zeus == false ? x.Peso_Bruto : 0),
+                                  Stock = prod.Sum(x => x.Envio_Zeus == true ? prod.Key.Presentation == "Kg" ? x.Peso_Neto : x.Cantidad : 0),
+                                  CountStock = prod.Count(x => x.Envio_Zeus == true),
+                                  InArea = prod.Sum(x => x.Envio_Zeus == false ? prod.Key.Presentation == "Kg" ? x.Peso_Neto : x.Cantidad : 0),
+                                  CountInArea = prod.Count(x => x.Envio_Zeus == false),
+                                  Presentation = prod.Key.Presentation,
+                                  Process = prod.Key.Process,
+                                  orderProduction = prod.Key.OrderProduction,
+                                  Client = prod.Key.Client,
                               };
 
             return Ok(rollsInArea);
