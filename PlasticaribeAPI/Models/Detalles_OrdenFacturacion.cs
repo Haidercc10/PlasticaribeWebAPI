@@ -23,6 +23,7 @@ namespace PlasticaribeAPI.Models
         public int Estado_Id { get; set; }
 
         public long? Pallet_Id { get; set; }
+
     }
 
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

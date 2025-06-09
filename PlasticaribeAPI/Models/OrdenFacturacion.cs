@@ -26,6 +26,8 @@ namespace PlasticaribeAPI.Models
         public string Observacion { get; set; }
         public int Estado_Id { get; set; }
         public Estado? Estado { get; set; }
+
+        public bool? Of_Directa { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

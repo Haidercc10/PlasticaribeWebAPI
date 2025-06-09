@@ -214,6 +214,42 @@ namespace PlasticaribeAPI.Controllers
             }
         }
 
+        [HttpGet("getDataProduct/{item}/{unit}")]
+        public ActionResult getDataProduct(int item, string unit)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
+            var producto = from e in _context.Set<Existencia_Productos>()
+                           where e.Prod_Id == item &&
+                           e.UndMed_Id == unit
+                           select new {
+                               e,
+                               Unit_Packing = (from pp in _context.Set<Produccion_Procesos>()
+                                               where pp.Prod_Id == item &&
+                                               pp.Presentacion == unit &&
+                                               pp.Fecha >= Convert.ToDateTime("2024-02-04") &&
+                                               pp.Estado_Rollo == 19 &&
+                                               pp.Envio_Zeus == true
+                                               select pp.Presentacion == null ? Convert.ToDecimal(0m) : pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad).FirstOrDefault(),
+                               Teoric_Weight = (from pp in _context.Set<Produccion_Procesos>()
+                                               where pp.Prod_Id == item &&
+                                               pp.Presentacion == unit &&
+                                               pp.Fecha >= Convert.ToDateTime("2024-02-04") &&
+                                               pp.Estado_Rollo == 19 &&
+                                               pp.Envio_Zeus == true
+                                               select pp.Presentacion == null ?  Convert.ToDecimal(0m) : pp.Peso_Neto).DefaultIfEmpty().Average(),
+                               Teoric_GrossWeight = (from pp in _context.Set<Produccion_Procesos>()
+                                                     where pp.Prod_Id == item &&
+                                                     pp.Presentacion == unit &&
+                                                     pp.Fecha >= Convert.ToDateTime("2024-02-04") &&
+                                                     pp.Estado_Rollo == 19 &&
+                                                     pp.Envio_Zeus == true
+                                                     select pp.Presentacion == null ? Convert.ToDecimal(0m) : pp.Peso_Bruto).DefaultIfEmpty().Average()
+                           };
+
+                return Ok(producto);
+            
+        }
+
         // Consulta que devolverá la información de un producto
         [HttpGet("getInfoProducto/{producto}")]
         public ActionResult GetInfoProducto(string producto)
@@ -594,6 +630,72 @@ namespace PlasticaribeAPI.Controllers
                 }
             }
 
+            return NoContent();
+        }
+
+        ///Restar al inventario de productos 
+        [HttpPut("putConsolidateProductsOF/{orden}")]
+        async public Task<IActionResult> putConsolidateProductsOF(int orden)
+        {
+            var products = from fp in _context.Set<Facturacion_Productos>()
+                           where fp.Of_Id == orden && fp.OrdenFacturacion.Estado_Id == 19 //&& pp.Estado_Rollo != 20
+                           select fp;
+
+            int count = 0;
+            foreach (var item in products)
+            {
+                var product = (from e in _context.Set<Existencia_Productos>() where e.Prod_Id == item.Prod_Id && e.UndMed_Id == item.UndMed_Id select e).FirstOrDefault();
+                product.ExProd_PrecioExistencia = ((product.ExProd_Cantidad - item.FactPro_Cantidad) * Convert.ToDecimal(product.ExProd_PrecioVenta));
+                product.ExProd_Cantidad = (product.ExProd_Cantidad - item.FactPro_Cantidad);
+                product.ExProd_PesoBruto = (product.ExProd_PesoBruto - item.Peso_Bruto);
+                product.ExProd_Unidades = (product.ExProd_Unidades - item.FactPro_Unidades);
+
+                _context.Entry(item).State = EntityState.Modified;
+                _context.SaveChanges();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                count++;
+                if (count == products.Count()) return NoContent();
+            }
+            return NoContent();
+        }
+
+        ///Restar al inventario de productos 
+        [HttpPut("putStockThenAnullation/{orden}")]
+        async public Task<IActionResult> putStockThenAnullation(int orden)
+        {
+            var products = from fp in _context.Set<Facturacion_Productos>()
+                           where fp.Of_Id == orden //&& pp.Estado_Rollo != 20
+                           select fp;
+
+            int count = 0;
+            foreach (var item in products)
+            {
+                var product = (from e in _context.Set<Existencia_Productos>() where e.Prod_Id == item.Prod_Id && e.UndMed_Id == item.UndMed_Id select e).FirstOrDefault();
+                product.ExProd_PrecioExistencia = ((product.ExProd_Cantidad + item.FactPro_Cantidad) * Convert.ToDecimal(product.ExProd_PrecioVenta));
+                product.ExProd_Cantidad = (product.ExProd_Cantidad + item.FactPro_Cantidad);
+                product.ExProd_PesoBruto = (product.ExProd_PesoBruto + item.Peso_Bruto);
+                product.ExProd_Unidades = (product.ExProd_Unidades + item.FactPro_Unidades);
+
+                _context.Entry(item).State = EntityState.Modified;
+                _context.SaveChanges();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                count++;
+                if (count == products.Count()) return NoContent();
+            }
             return NoContent();
         }
 

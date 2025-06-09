@@ -208,6 +208,8 @@ namespace PlasticaribeAPI.Data
 
         public DbSet<Maquinas> Maquinas { get; set; }
 
+        public DbSet<Facturacion_Productos> Facturacion_Productos { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Relaciones de productos
@@ -1165,6 +1167,11 @@ namespace PlasticaribeAPI.Data
 
             //Maquinas
             modelBuilder.Entity<Maquinas>().HasOne(x => x.Procesos).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Facturacion_Productos
+            modelBuilder.Entity<Facturacion_Productos>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Facturacion_Productos>().HasOne(x => x.OrdenFacturacion).WithMany().HasForeignKey(x => x.Of_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Facturacion_Productos>().HasOne(x => x.Und).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));

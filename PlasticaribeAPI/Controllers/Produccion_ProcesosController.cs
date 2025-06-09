@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Runtime.Intrinsics.Arm;
+using System.Security.Cryptography.Xml;
 using System.ServiceModel;
 using System.Text.RegularExpressions;
 
@@ -175,14 +176,16 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getInformationAboutProductionToSend/{production}/{orderFact}")]
         public ActionResult GetInformationAboutProductionToSend(long production, int orderFact)
         {
+            string[] process = { "SELLA", "EMP", "EXT" };
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var itemsOrder = (from dt in _context.Set<Detalles_OrdenFacturacion>() where dt.Id_OrdenFacturacion == orderFact select dt.Prod_Id).ToArray();
+            var lastSaleOrder = (from dt in _context.Set<Detalles_OrdenFacturacion>() where dt.Id_OrdenFacturacion == orderFact orderby dt.Id descending select dt.Consecutivo_Pedido).FirstOrDefault();
 
             var data = from pp in _context.Set<Produccion_Procesos>()
                        where pp.NumeroRollo_BagPro == production &&
                              (pp.Estado_Rollo == 20) &&
                              itemsOrder.Contains(pp.Prod_Id) &&
-                             (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE")
+                             process.Contains(pp.Proceso_Id)
                        orderby pp.Id descending
                        select new
                        {
@@ -198,9 +201,69 @@ namespace PlasticaribeAPI.Controllers
                            pp.Cono,
                            pp.Creador,
                            numero_RolloBagPro = 0,
+                           salesOrder = lastSaleOrder,
+                           InOfDirect = true,
                        };
             return data.Any() ? Ok(data.Take(1)) : NotFound();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
+        // Consulta que devolverá la información de la producción pesada dependiendo del numero de rollo de bagpro
+        [HttpGet("getProductsOFDirect/{production}/{orderFact}")]
+        public ActionResult getProductsOFDirect(long production, int orderFact)
+        {
+            string[] process = { "SELLA", "EMP", "EXT" };
+
+            //Productos que están en una OF directa y que tienen rollos cargados 
+            var itemsDetailsOrder = (from dt in _context.Set<Detalles_OrdenFacturacion>()
+                                     where dt.Id_OrdenFacturacion == orderFact
+                                     select dt.Prod_Id).Distinct().ToArray();
+
+            //Rollos que están en la OF directa consultada
+            var rollsDetailsOrder = (from dt in _context.Set<Detalles_OrdenFacturacion>()
+                                     where dt.Id_OrdenFacturacion == orderFact
+                                     select dt.Numero_Rollo).ToArray();
+
+            //Productos que están en una OF directa que son diferentes a los que tienen bultos
+            var itemsOfDirect = (from fp in _context.Set<Facturacion_Productos>()
+                                 where fp.Of_Id == orderFact && !itemsDetailsOrder.Contains(fp.Prod_Id)
+                                 select fp.Prod_Id).Distinct().ToArray();
+
+            //Ultimo pedido
+            var lastSaleOrder = (from fp in _context.Set<Facturacion_Productos>() 
+                                 where fp.Of_Id == orderFact 
+                                 orderby fp.FactPro_Codigo descending 
+                                 select fp.FactPro_Pedido).FirstOrDefault();
+            //Consulta
+            var data = from pp in _context.Set<Produccion_Procesos>()
+                        where pp.Envio_Zeus == true &&
+                              process.Contains(pp.Proceso_Id) &&
+                              pp.NumeroRollo_BagPro == production &&
+                              (
+                                (itemsDetailsOrder.Contains(pp.Prod_Id) && pp.Estado_Rollo == 20 && rollsDetailsOrder.Contains(pp.NumeroRollo_BagPro)) 
+                               || 
+                                (itemsOfDirect.Contains(pp.Prod_Id) && pp.Estado_Rollo == 19)
+                              ) 
+                        orderby pp.Id descending
+                        select new
+                        {
+                            pp,
+                            pp.Clientes,
+                            pp.Proceso,
+                            pp.Producto,
+                            pp.Turno,
+                            pp.Operario1,
+                            pp.Operario2,
+                            pp.Operario3,
+                            pp.Operario4,
+                            pp.Cono,
+                            pp.Creador,
+                            numero_RolloBagPro = 0,
+                            salesOrder = lastSaleOrder,
+                            InOfDirect = pp.Estado_Rollo == 20 ? true : false,
+                        };
+
+            return data.Any() ? Ok(data.Take(1)) : NotFound();
         }
 
         // Consulta que devolverá la información de la producción pesada dependiendo del numero de rollo de bagpro
@@ -921,6 +984,98 @@ namespace PlasticaribeAPI.Controllers
                               };
 
             return Ok(rollsInArea);
+        }
+
+        //Consulta que devuelve la información de los rollos disponibles en despacho por item
+        [HttpGet("getRollsWarehouseQualityForItem")]
+        public ActionResult getRollsWarehouseQualityForItem()
+        {
+            int[] statuses = { 24 };
+
+            var rollsAvailables = from pp in _context.Set<Produccion_Procesos>()
+                                  join p in _context.Set<Producto>() on pp.Prod_Id equals p.Prod_Id
+                                  where //pp.Prod_Id == item &&
+                                        pp.Estado_Rollo == 24 &&
+                                        pp.Envio_Zeus == true &&
+                                        ((from order in _context.Set<Detalles_OrdenFacturacion>()
+                                          where order.Prod_Id == pp.Prod_Id && order.OrdenFacturacion.Estado_Id != 3 && statuses.Contains(order.Estado_Id)
+                                          select order.Numero_Rollo).ToList()).Contains(pp.NumeroRollo_BagPro)
+                                  select new
+                                  {
+                                      Number_BagPro = pp.NumeroRollo_BagPro,
+                                      Item = pp.Prod_Id, 
+                                      Reference = p.Prod_Nombre,
+                                      Number = pp.Numero_Rollo,
+                                      Quantity = pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad,
+                                      Weight = pp.Peso_Neto,
+                                      Presentation = pp.Presentacion,
+                                      Process = pp.Proceso.Proceso_Nombre,
+                                      Date = pp.Fecha,
+                                      Hour = pp.Hora,
+                                      Price = pp.Precio,
+                                      SellPrice = pp.PrecioVenta_Producto,
+                                      Turn = pp.Turno,
+                                      Information = (from dt in _context.Set<DetalleEntradaRollo_Producto>()
+                                                     join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
+                                                     where (dt.Rollo_Id == pp.Numero_Rollo) &&
+                                                            e.EntRolloProd_Fecha >= Convert.ToDateTime("2024-02-04") &&
+                                                            dt.Prod_Id == pp.Prod_Id
+                                                     orderby e.EntRolloProd_Id descending
+                                                     select e.EntRolloProd_Observacion).FirstOrDefault(),
+                                      orderProduction = pp.OT,
+                                      Client = pp.Clientes.Cli_Nombre,
+                                      Subtotal = (pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad) * pp.PrecioVenta_Producto
+                                  };
+
+            return Ok(rollsAvailables);
+        }
+
+        //Consulta que devuelve la información de los rollos disponibles en despacho por item
+        [HttpGet("getRollsForRepack")]
+        public ActionResult getRollsForRepack()
+        {
+            int[] statuses = { 45 };
+
+            var rollsAvailables = from pp in _context.Set<Produccion_Procesos>()
+                                  join p in _context.Set<Producto>() on pp.Prod_Id equals p.Prod_Id
+                                  where //pp.Prod_Id == item &&
+                                        pp.Estado_Rollo == 45 &&
+                                        pp.Envio_Zeus == true &&
+                                        ((from order in _context.Set<Detalles_OrdenFacturacion>()
+                                          where order.Prod_Id == pp.Prod_Id && order.OrdenFacturacion.Estado_Id != 3 && statuses.Contains(order.Estado_Id)
+                                          select order.Numero_Rollo).ToList()).Contains(pp.NumeroRollo_BagPro)
+                                  select new
+                                  {
+                                      Number_BagPro = pp.NumeroRollo_BagPro,
+                                      Item = pp.Prod_Id,
+                                      Reference = p.Prod_Nombre,
+                                      Number = pp.Numero_Rollo,
+                                      Quantity = pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad,
+                                      Weight = pp.Peso_Neto,
+                                      Presentation = pp.Presentacion,
+                                      Process = pp.Proceso.Proceso_Nombre,
+                                      Date = pp.Fecha,
+                                      Hour = pp.Hora,
+                                      Price = pp.Precio,
+                                      SellPrice = pp.PrecioVenta_Producto,
+                                      Turn = pp.Turno,
+                                      Information = (from dt in _context.Set<DetalleEntradaRollo_Producto>()
+                                                     join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
+                                                     where (dt.Rollo_Id == pp.Numero_Rollo) &&
+                                                            e.EntRolloProd_Fecha >= Convert.ToDateTime("2024-02-04") &&
+                                                            dt.Prod_Id == pp.Prod_Id
+                                                     orderby e.EntRolloProd_Id descending
+                                                     select e.EntRolloProd_Observacion).FirstOrDefault(),
+                                      orderProduction = pp.OT,
+                                      Client = pp.Clientes.Cli_Nombre,
+                                      Subtotal = (pp.Presentacion == "Kg" ? pp.Peso_Neto : pp.Cantidad) * pp.PrecioVenta_Producto,
+                                      Of = (from order in _context.Set<Detalles_OrdenFacturacion>()
+                                            where order.Prod_Id == pp.Prod_Id && order.OrdenFacturacion.Estado_Id != 3 && statuses.Contains(order.Estado_Id)
+                                            orderby order.Id_OrdenFacturacion descending
+                                            select order.Id_OrdenFacturacion).FirstOrDefault(),
+                                  };
+
+            return Ok(rollsAvailables);
         }
 
         //Consulta que devuelve la información de los rollos disponibles en area por item

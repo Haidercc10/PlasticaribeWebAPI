@@ -118,9 +118,10 @@ namespace PlasticaribeAPI.Controllers
         public async Task<IActionResult> putMovementsDispatch(int id, bool addSpreadsheet, [FromBody] List<long> codes)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            int count = 0;
+            
             var dispatchs = (from asg in _context.Set<AsignacionProducto_FacturaVenta>() where codes.Contains(asg.AsigProdFV_Id) select asg);
-
+            
+            int count = 0;
             foreach (var dis in dispatchs)
             {
                 if (addSpreadsheet == true) dis.Planilla = id;
