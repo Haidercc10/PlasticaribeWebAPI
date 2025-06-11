@@ -132,9 +132,18 @@ namespace PlasticaribeAPI.Controllers
                                           (item != "" ? (tr.Prod_Anterior == Convert.ToInt64(item) || tr.Prod_Id == Convert.ToInt64(item)) : (tr.Prod_Anterior.ToString().Contains(item) || tr.Prod_Id.ToString().Contains(item))) &&
                                           (ot != "" ? (tr.Trz_OtAnterior == Convert.ToInt64(ot) || tr.Trz_Ot == Convert.ToInt64(ot)) : (tr.Trz_OtAnterior.ToString().Contains(ot) || tr.Trz_Ot.ToString().Contains(ot))) &&
                                           (roll != "" ? (tr.Trz_EtiquetaAnterior == Convert.ToInt64(roll) || tr.Trz_Etiqueta == Convert.ToInt64(roll)) : (tr.Trz_EtiquetaAnterior.ToString().Contains(roll) || tr.Trz_Etiqueta.ToString().Contains(roll)))
-                                          orderby tr.Trz_OtAnterior, tr.Trz_EtiquetaAnterior
-                                          select tr;
-
+                                          orderby tr.Trz_OtAnterior, tr.Trz_EtiquetaAnterior, tr.Proceso_Anterior
+                                          select new
+                                          {
+                                              tr,
+                                              Client = tr.Clientes.Cli_Nombre,
+                                              OldReference = tr.ProductoAnt.Prod_Nombre,
+                                              NewReference = tr.Producto.Prod_Nombre,
+                                              NewOperator = tr.Usuario1.Usua_Nombre,
+                                              OldProcess = tr.ProcesoAnt.Proceso_Nombre,
+                                              NewProcess = tr.Procesos.Proceso_Nombre,
+                                          };
+            
             if (Trazabilidad_Produccion == null)
             {
                 return NotFound();
