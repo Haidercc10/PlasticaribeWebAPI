@@ -1011,6 +1011,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Produccion_Procesos>().HasOne(x => x.Turno).WithMany().HasForeignKey(y => y.Turno_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Produccion_Procesos>().HasOne(x => x.Creador).WithMany().HasForeignKey(y => y.Creador_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Produccion_Procesos>().HasOne(x => x.Estado).WithMany().HasForeignKey(y => y.Estado_Rollo).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Produccion_Procesos>().HasOne(x => x.Empacador).WithMany().HasForeignKey(y => y.Empacador_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             // OrdenFacturacion
             modelBuilder.Entity<OrdenFacturacion>().HasOne(x => x.Clientes).WithMany().HasForeignKey(y => y.Cli_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
@@ -1164,6 +1165,8 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Trazabilidad_Produccion>().HasOne(x => x.Usuario4).WithMany().HasForeignKey(x => x.Operario_4).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Trazabilidad_Produccion>().HasOne(x => x.Clientes).WithMany().HasForeignKey(x => x.Cli_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Trazabilidad_Produccion>().HasOne(x => x.Unidad_Medida).WithMany().HasForeignKey(x => x.Presentacion).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Trazabilidad_Produccion>().HasOne(x => x.Turno).WithMany().HasForeignKey(x => x.Turno_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Trazabilidad_Produccion>().HasOne(x => x.Empacador).WithMany().HasForeignKey(x => x.Empacador_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Maquinas
             modelBuilder.Entity<Maquinas>().HasOne(x => x.Procesos).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);

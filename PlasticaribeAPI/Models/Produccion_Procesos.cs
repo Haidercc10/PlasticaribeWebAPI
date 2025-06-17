@@ -87,6 +87,9 @@ namespace PlasticaribeAPI.Models
         public bool? Revision { get; set; }
 
         public long? Etiqueta_Trazabilidad { get; set; }
+
+        public long? Empacador_Id { get; set; }
+        public Usuario? Empacador { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

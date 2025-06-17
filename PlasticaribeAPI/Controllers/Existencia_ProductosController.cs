@@ -647,8 +647,8 @@ namespace PlasticaribeAPI.Controllers
                 var product = (from e in _context.Set<Existencia_Productos>() where e.Prod_Id == item.Prod_Id && e.UndMed_Id == item.UndMed_Id select e).FirstOrDefault();
                 product.ExProd_PrecioExistencia = ((product.ExProd_Cantidad - item.FactPro_Cantidad) * Convert.ToDecimal(product.ExProd_PrecioVenta));
                 product.ExProd_Cantidad = (product.ExProd_Cantidad - item.FactPro_Cantidad);
-                product.ExProd_PesoBruto = (product.ExProd_PesoBruto - item.Peso_Bruto);
-                product.ExProd_Unidades = (product.ExProd_Unidades - item.FactPro_Unidades);
+                //product.ExProd_PesoBruto = (product.ExProd_PesoBruto - item.Peso_Bruto);
+                //product.ExProd_Unidades = (product.ExProd_Unidades - item.FactPro_Unidades);
 
                 _context.Entry(item).State = EntityState.Modified;
                 _context.SaveChanges();

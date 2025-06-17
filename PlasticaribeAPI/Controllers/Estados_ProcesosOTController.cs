@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
+using PlasticaribeAPI.Migrations;
 using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
@@ -410,6 +411,69 @@ namespace PlasticaribeAPI.Controllers
             {
                 return NotFound();
             }
+        }
+
+        //Función que actualiza los pesos y cantidades en estados procesos OT al momento de pesar producción
+        [HttpPut("putStatusProcessOT/{ot}/{process}/{qty}/{weight}")]
+        public async Task<IActionResult> putStatusProcessOT(long ot, string process, decimal qty, decimal weight)
+        {
+                decimal quantity = 0m;
+                decimal quantityProcessFinal = 0m;
+                decimal quantityProcessFinal2 = 0m;
+                int? status = null;
+                var order = (from e in _context.Set<Estados_ProcesosOT>() where e.EstProcOT_OrdenTrabajo == ot select e).FirstOrDefault();
+                
+                if(order.EstProcOT_FechaInicio == null) order.EstProcOT_FechaInicio = DateTime.Now;
+                if (order.EstProcOT_HoraInicio == null) order.EstProcOT_HoraInicio = DateTime.Now.ToString("HH:mm:ss");
+                order.EstProcOT_FechaFinal = DateTime.Now;
+                order.EstProcOT_HoraFinal = DateTime.Now.ToString("HH:mm:ss");
+                if (process == "EXT") order.EstProcOT_ExtrusionKg = qty;
+                if (process == "IMP") order.EstProcOT_ImpresionKg = qty;
+                if (process == "ROT") order.EstProcOT_RotograbadoKg = qty;
+                if (process == "LAM") order.EstProcOT_LaminadoKg = qty;
+                if (process == "EMP") order.EstProcOT_EmpaqueKg = qty;
+                if (process == "SELLA") { 
+                    order.EstProcOT_SelladoKg = weight;
+                    order.EstProcOT_SelladoUnd = qty;
+                }
+                if (process == "WIKE") { 
+                    order.EstProcOT_WiketiadoKg = weight;
+                    order.EstProcOT_WiketiadoUnd = qty;
+                }
+                quantity += (order.EstProcOT_ExtrusionKg + order.EstProcOT_ImpresionKg + order.EstProcOT_RotograbadoKg + order.EstProcOT_LaminadoKg);
+                quantityProcessFinal = order.EstProcOT_EmpaqueKg;
+                quantityProcessFinal2 = order.EstProcOT_SelladoUnd;
+
+            if (quantity >= 0m) {
+                if (
+                       (quantityProcessFinal == 0m && quantityProcessFinal2 > 0m && quantityProcessFinal2 < order.EstProcOT_CantidadPedidaUnd)
+                    || (quantityProcessFinal2 == 0m && quantityProcessFinal > 0m && quantityProcessFinal < order.EstProcOT_CantidadPedida)
+                    || (quantityProcessFinal > 0m && quantityProcessFinal < order.EstProcOT_CantidadPedida)
+                    || (quantityProcessFinal2 > 0m && quantityProcessFinal2 < order.EstProcOT_CantidadPedida)
+                    
+                   )
+                {
+                    status = 16;
+                }
+                else if (quantityProcessFinal >= order.EstProcOT_CantidadPedida) status = 17;
+                else if (quantityProcessFinal2 >= order.EstProcOT_CantidadPedidaUnd) status = 17;
+                else status = null;
+            }
+
+            if (status != null) order.Estado_Id = (int)status;
+            
+
+            _context.Entry(order).State = EntityState.Modified;
+            _context.SaveChanges();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return NotFound();
+            }
+            return NoContent();
         }
 
         [HttpPut("ActualizacionFallaObservacion/{EstProcOT_OrdenTrabajo}")]

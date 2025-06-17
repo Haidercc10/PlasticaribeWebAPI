@@ -59,6 +59,12 @@ namespace PlasticaribeAPI.Models
         public long? Operario_4 { get; set; }
         public Usuario? Usuario4 { get; set; }
 
+        public long? Empacador_Id { get; set; }
+        public Usuario? Empacador { get; set; }
+
+        public string? Turno_Id { get; set; }
+        public Turno? Turno { get; set; }
+
         // Anterior
         public long? Trz_EtiquetaAnterior { get; set; }
 

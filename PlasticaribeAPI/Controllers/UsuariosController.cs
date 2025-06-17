@@ -237,6 +237,23 @@ namespace PlasticaribeAPI.Controllers
             return operarios.Any() ? Ok(operarios) : NotFound();
         }
 
+        //Consulta para obtener los empacadores de producción por area
+        [HttpGet("GetPackersProduction/{area}")]
+        public ActionResult GetPackersProduction(string area)
+        {
+            var operarios = from pk in _context.Set<Usuario>()
+                            where pk.RolUsu_Id == 100 && pk.Estado_Id == 1 && pk.Area.Area_Nombre == area.ToUpper()
+                            orderby pk.Usua_Nombre ascending
+                            select new
+                            {
+                                User_Id = pk.Usua_Id,
+                                UserName = pk.Usua_Nombre,
+                                Area_Id = pk.Area_Id,
+                                Area = pk.Area.Area_Nombre.ToUpper(),
+                            };
+            return operarios.Any() ? Ok(operarios) : NotFound();
+        }
+
         [HttpGet("getTrabajadores/{startDate}/{endDate}/{area}")]
         public ActionResult GetTrabajadores(DateTime startDate, DateTime endDate, string area)
         {
