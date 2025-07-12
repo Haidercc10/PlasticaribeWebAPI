@@ -254,6 +254,53 @@ namespace PlasticaribeAPI.Controllers
             return operarios.Any() ? Ok(operarios) : NotFound();
         }
 
+        //Consulta para obtener los empacadores de producción por area
+        [HttpGet("GetUsersAthorizedForTeoricWeight/{id}")]
+        public ActionResult GetUsersAthorizedForTeoricWeight(long id)
+        {
+            int[] rols = { 1, 5, 94, 86 };
+            int[] typeUsers = { 58, 1, 73, 10 };
+            
+            var authorizedUsers = from pk in _context.Set<Usuario>()
+                            where rols.Contains(pk.RolUsu_Id) 
+                                  && pk.Estado_Id == 1 
+                                  && typeUsers.Contains(pk.tpUsu_Id)
+                                  && pk.Usua_Cedula == id
+                                  orderby pk.Usua_Nombre ascending
+                            select new
+                            {
+                                User_Id = pk.Usua_Id,
+                                UserName = pk.Usua_Nombre,
+                                Area_Id = pk.Area_Id,
+                                Area = pk.Area.Area_Nombre.ToUpper(),
+                            };
+            return authorizedUsers.Any() ? Ok(authorizedUsers) : NotFound();
+        }
+
+        //Consulta para obtener los empacadores de producción por area
+        [HttpGet("getListAuthorizeUsers")]
+        public ActionResult getListAuthorizeUsers()
+        {
+            int[] rols = { 1, 5, 94, 86 };
+            int[] typeUsers = { 58, 1, 73, 10 };
+            //long[]? users = { 1048322496, 1140888300, 1122408286, 1045745905 };
+
+            var authorizedUsers = from pk in _context.Set<Usuario>()
+                                  where rols.Contains(pk.RolUsu_Id)
+                                        && pk.Estado_Id == 1
+                                        && typeUsers.Contains(pk.tpUsu_Id)
+                                        
+                                  orderby pk.Usua_Nombre ascending
+                                  select new
+                                  {
+                                      User_Id = pk.Usua_Id,
+                                      UserName = pk.Usua_Nombre,
+                                      Area_Id = pk.Area_Id,
+                                      Area = pk.Area.Area_Nombre.ToUpper(),
+                                  };
+            return authorizedUsers.Any() ? Ok(authorizedUsers) : NotFound();
+        }
+
         [HttpGet("getTrabajadores/{startDate}/{endDate}/{area}")]
         public ActionResult GetTrabajadores(DateTime startDate, DateTime endDate, string area)
         {

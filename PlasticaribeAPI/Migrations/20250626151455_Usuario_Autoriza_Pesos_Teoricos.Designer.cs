@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20250626151455_Usuario_Autoriza_Pesos_Teoricos")]
+    partial class Usuario_Autoriza_Pesos_Teoricos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1260,12 +1263,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Usua_Id");
 
-                    b.ToTable("ControlCalidad_Extrusion", t =>
-                        {
-                            t.HasTrigger("Auditoria_ControlCalidad_Extrusion");
-                        });
-
-                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
+                    b.ToTable("ControlCalidad_Extrusion");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.ControlCalidad_Impresion", b =>
@@ -1408,7 +1406,11 @@ namespace PlasticaribeAPI.Migrations
 
                     b.ToTable("ControlCalidad_Impresion", t =>
                         {
+                            t.HasTrigger("Auditoria_ControlCalidad_Extrusion");
+
                             t.HasTrigger("Auditoria_ControlCalidad_Impresion");
+
+                            t.HasTrigger("Auditoria_ControlCalidad_Sellado");
                         });
 
                     b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
@@ -1532,12 +1534,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Usua_Id");
 
-                    b.ToTable("ControlCalidad_Sellado", t =>
-                        {
-                            t.HasTrigger("Auditoria_ControlCalidad_Sellado");
-                        });
-
-                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
+                    b.ToTable("ControlCalidad_Sellado");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Costos_Empresas_Anios", b =>
@@ -1996,24 +1993,7 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
 
-                    b.Property<string>("DtDevProdFact_Factura")
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<long?>("DtDevProdFact_OT")
-                        .HasColumnType("bigint");
-
-                    b.Property<decimal?>("DtDevProdFact_PesoBruto")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<decimal?>("DtDevProdFact_PesoNeto")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
                     b.Property<int?>("Falla_Id")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Of_Id")
                         .HasColumnType("int");
 
                     b.Property<int>("Prod_Id")
@@ -2031,8 +2011,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("DevProdFact_Id");
 
                     b.HasIndex("Falla_Id");
-
-                    b.HasIndex("Of_Id");
 
                     b.HasIndex("Prod_Id");
 
@@ -2806,19 +2784,8 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("Numero_Rollo")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OT")
-                        .HasColumnType("bigint");
-
                     b.Property<long?>("Pallet_Id")
                         .HasColumnType("bigint");
-
-                    b.Property<decimal?>("Peso_Bruto")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("Peso_Neto")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Presentacion")
                         .IsRequired()
@@ -2826,9 +2793,6 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Property<int>("Prod_Id")
                         .HasColumnType("int");
-
-                    b.Property<string>("Ubicacion")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -3147,119 +3111,63 @@ namespace PlasticaribeAPI.Migrations
                 {
                     b.Property<long>("DevProdFact_Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnOrder(0);
+                        .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("DevProdFact_Id"));
 
-                    b.Property<long?>("Asesor_Id")
-                        .HasColumnType("bigint")
-                        .HasColumnOrder(7);
-
                     b.Property<long>("Cli_Id")
-                        .HasColumnType("bigint")
-                        .HasColumnOrder(5);
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("DevProdFact_Fecha")
-                        .HasColumnType("date")
-                        .HasColumnOrder(10);
+                        .HasColumnType("date");
 
                     b.Property<DateTime?>("DevProdFact_FechaFinalizado")
-                        .HasColumnType("date")
-                        .HasColumnOrder(22);
-
-                    b.Property<DateTime>("DevProdFact_FechaGestion")
-                        .HasColumnType("date")
-                        .HasColumnOrder(18);
+                        .HasColumnType("date");
 
                     b.Property<DateTime?>("DevProdFact_FechaModificado")
-                        .HasColumnType("date")
-                        .HasColumnOrder(14);
+                        .HasColumnType("date");
 
                     b.Property<string>("DevProdFact_Hora")
-                        .HasColumnType("varchar(10)")
-                        .HasColumnOrder(11);
+                        .HasColumnType("varchar(10)");
 
                     b.Property<string>("DevProdFact_HoraFinalizado")
-                        .HasColumnType("varchar(10)")
-                        .HasColumnOrder(23);
-
-                    b.Property<string>("DevProdFact_HoraGestion")
-                        .HasColumnType("varchar(10)")
-                        .HasColumnOrder(19);
+                        .HasColumnType("varchar(10)");
 
                     b.Property<string>("DevProdFact_HoraModificado")
-                        .HasColumnType("varchar(10)")
-                        .HasColumnOrder(15);
+                        .HasColumnType("varchar(10)");
 
                     b.Property<bool?>("DevProdFact_NotaCredito")
-                        .HasColumnType("bit")
-                        .HasColumnOrder(4);
+                        .HasColumnType("bit");
 
                     b.Property<string>("DevProdFact_Observacion")
-                        .HasColumnType("varchar(max)")
-                        .HasColumnOrder(12);
-
-                    b.Property<string>("DevProdFact_ObservacionFinal")
-                        .HasColumnType("varchar(max)")
-                        .HasColumnOrder(24);
+                        .HasColumnType("varchar(max)");
 
                     b.Property<string>("DevProdFact_ObservacionGestion")
-                        .HasColumnType("varchar(max)")
-                        .HasColumnOrder(20);
-
-                    b.Property<string>("DevProdFact_ObservacionModificado")
-                        .HasColumnType("varchar(max)")
-                        .HasColumnOrder(16);
+                        .HasColumnType("varchar(max)");
 
                     b.Property<bool?>("DevProdFact_Reposicion")
-                        .HasColumnType("bit")
-                        .HasColumnOrder(3);
-
-                    b.Property<string>("DevProdFact_Responsable")
-                        .HasColumnType("varchar(100)")
-                        .HasColumnOrder(6);
+                        .HasColumnType("bit");
 
                     b.Property<int?>("Estado_Id")
-                        .HasColumnType("int")
-                        .HasColumnOrder(8);
+                        .HasColumnType("int");
 
                     b.Property<string>("FacturaVta_Id")
                         .IsRequired()
-                        .HasColumnType("varchar(100)")
-                        .HasColumnOrder(2);
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("Id_OrdenFact")
-                        .HasColumnType("int")
-                        .HasColumnOrder(1);
-
-                    b.Property<long?>("Rep_Id")
-                        .HasColumnType("bigint")
-                        .HasColumnOrder(26);
+                        .HasColumnType("int");
 
                     b.Property<int>("TipoDevProdFact_Id")
-                        .HasColumnType("int")
-                        .HasColumnOrder(25);
-
-                    b.Property<long?>("UsuaFinaliza_Id")
-                        .HasColumnType("bigint")
-                        .HasColumnOrder(21);
-
-                    b.Property<long?>("UsuaGestiona_Id")
-                        .HasColumnType("bigint")
-                        .HasColumnOrder(17);
+                        .HasColumnType("int");
 
                     b.Property<long>("UsuaModifica_Id")
-                        .HasColumnType("bigint")
-                        .HasColumnOrder(13);
+                        .HasColumnType("bigint");
 
                     b.Property<long>("Usua_Id")
-                        .HasColumnType("bigint")
-                        .HasColumnOrder(9);
+                        .HasColumnType("bigint");
 
                     b.HasKey("DevProdFact_Id");
-
-                    b.HasIndex("Asesor_Id");
 
                     b.HasIndex("Cli_Id");
 
@@ -3267,13 +3175,7 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Id_OrdenFact");
 
-                    b.HasIndex("Rep_Id");
-
                     b.HasIndex("TipoDevProdFact_Id");
-
-                    b.HasIndex("UsuaFinaliza_Id");
-
-                    b.HasIndex("UsuaGestiona_Id");
 
                     b.HasIndex("UsuaModifica_Id");
 
@@ -3768,10 +3670,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnOrder(2);
 
-                    b.Property<decimal?>("ExProd_Existencias")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<DateTime?>("ExProd_Fecha")
                         .HasColumnType("Date");
 
@@ -3795,10 +3693,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("ExProd_PrecioVenta")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("ExProd_UndEmpaque")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
@@ -6195,9 +6089,6 @@ namespace PlasticaribeAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<long?>("Asesor_Id")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("Cli_Id")
                         .HasColumnType("bigint");
 
@@ -6226,8 +6117,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Asesor_Id");
 
                     b.HasIndex("Cli_Id");
 
@@ -10574,11 +10463,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("Falla_Id")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("PlasticaribeAPI.Models.OrdenFacturacion", "Orden_Fact")
-                        .WithMany()
-                        .HasForeignKey("Of_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.Producto", "Prod")
                         .WithMany("DtDevProd_Fact")
                         .HasForeignKey("Prod_Id")
@@ -10594,8 +10478,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("DevolucionProdFact");
 
                     b.Navigation("Fallas");
-
-                    b.Navigation("Orden_Fact");
 
                     b.Navigation("Prod");
 
@@ -11409,11 +11291,6 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Devolucion_ProductoFacturado", b =>
                 {
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Asesor_ComercialDv")
-                        .WithMany()
-                        .HasForeignKey("Asesor_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.Clientes", "Cliente")
                         .WithMany()
                         .HasForeignKey("Cli_Id")
@@ -11430,26 +11307,11 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("Id_OrdenFact")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("PlasticaribeAPI.Models.Reposiciones", "Reposicion")
-                        .WithMany()
-                        .HasForeignKey("Rep_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.TipoDevolucion_ProductoFacturado", "TipoDevolucionPF")
                         .WithMany()
                         .HasForeignKey("TipoDevProdFact_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "UsuaFinalizaDv")
-                        .WithMany()
-                        .HasForeignKey("UsuaFinaliza_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usua_Gestion")
-                        .WithMany()
-                        .HasForeignKey("UsuaGestiona_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "UsuaModificaDv")
                         .WithMany()
@@ -11463,25 +11325,17 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Asesor_ComercialDv");
-
                     b.Navigation("Cliente");
 
                     b.Navigation("Estados");
 
                     b.Navigation("Orden_Fact");
 
-                    b.Navigation("Reposicion");
-
                     b.Navigation("TipoDevolucionPF");
 
                     b.Navigation("Usua");
 
-                    b.Navigation("UsuaFinalizaDv");
-
                     b.Navigation("UsuaModificaDv");
-
-                    b.Navigation("Usua_Gestion");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.EPS", b =>
@@ -12774,11 +12628,6 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.OrdenFacturacion", b =>
                 {
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Asesor_Comercial")
-                        .WithMany()
-                        .HasForeignKey("Asesor_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.Clientes", "Clientes")
                         .WithMany()
                         .HasForeignKey("Cli_Id")
@@ -12796,8 +12645,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("Usua_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Asesor_Comercial");
 
                     b.Navigation("Clientes");
 

@@ -24,6 +24,16 @@ namespace PlasticaribeAPI.Models
 
         public long? Pallet_Id { get; set; }
 
+        //Nuevos
+        public long? OT { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? Peso_Bruto { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? Peso_Neto { get; set; }
+
+        public string? Ubicacion { get; set; }
     }
 
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

@@ -180,6 +180,7 @@ namespace PlasticaribeAPI.Controllers
                                order.Hora,
                                order.Observacion,
                                order.Estado_Id,
+                               Of_Directa = order.Of_Directa == true ? "Si" : "No",
                            },
                            Clientes = new
                            {
@@ -187,12 +188,17 @@ namespace PlasticaribeAPI.Controllers
                                order.Clientes.Cli_Nombre,
                                order.Clientes.Cli_Telefono,
                                order.Clientes.Cli_Email,
-                               order.Clientes.TipoIdentificacion_Id
+                               order.Clientes.TipoIdentificacion_Id, 
                            },
                            Usuario = new
                            {
                                order.Usuario.Usua_Id,
                                order.Usuario.Usua_Nombre
+                           },
+                           Asesor = new
+                           {
+                               order.Asesor_Id,
+                               order.Asesor_Comercial.Usua_Nombre
                            },
                            dtOrder = new
                            {
@@ -222,6 +228,8 @@ namespace PlasticaribeAPI.Controllers
                            datosEnvio = dataSend.Any() ? (dataSend).FirstOrDefault() : null,
                            Weight = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo && pp.Prod_Id == dtOrder.Prod_Id select pp.Peso_Bruto).FirstOrDefault(),
                            NetWeight = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo && pp.Prod_Id == dtOrder.Prod_Id select pp.Peso_Neto).FirstOrDefault(),
+                           Direction = (from sedes in _context.Set<SedesClientes>() where sedes.Cli_Id == order.Cli_Id select sedes.SedeCliente_Direccion).FirstOrDefault(),
+                           City = (from sedes in _context.Set<SedesClientes>() where sedes.Cli_Id == order.Cli_Id select sedes.SedeCliente_Ciudad).FirstOrDefault(),
                        };
             return fact.Any() ? Ok(fact) : NotFound();
         }
@@ -241,9 +249,13 @@ namespace PlasticaribeAPI.Controllers
                            order,
                            order.Clientes,
                            order.Usuario,
+                           order.Asesor_Comercial,
                            dtOrder,
                            dtOrder.Producto,
                            Type = "Devolucion",
+                           orderProduction = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo && pp.Prod_Id == dtOrder.Prod_Id select pp.OT).FirstOrDefault(),
+                           Weight = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo && pp.Prod_Id == dtOrder.Prod_Id select pp.Peso_Bruto).FirstOrDefault(),
+                           NetWeight = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo && pp.Prod_Id == dtOrder.Prod_Id select pp.Peso_Neto).FirstOrDefault(),
                        };
             return data.Any() ? Ok(data) : NotFound();
         }
@@ -268,24 +280,27 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("getOrders/{startDate}/{endDate}")]
-        public ActionResult GetOrderd(DateTime startDate, DateTime endDate, string? order = "")
+        public ActionResult GetOrderd(DateTime startDate, DateTime endDate, string? order = "", string? clientId = "", string? salesId = "")
         {
 #pragma warning disable CS8604 // Possible null reference argument.
             var fact = from or in _context.Set<OrdenFacturacion>()
                        where or.Fecha >= startDate &&
                              or.Fecha <= endDate &&
-                             (order != "" ? (or.Factura.Contains(order) || or.Id == Convert.ToInt32(order)) : true)
+                             (order != "" ? (or.Factura.Contains(order) || or.Id == Convert.ToInt32(order)) : true) &&
+                             (clientId != "" ? (or.Cli_Id.ToString().Contains(clientId) || or.Cli_Id == Convert.ToInt32(clientId)) : true) &&
+                             (salesId != "" ? (or.Asesor_Id.ToString().Contains(salesId) || or.Asesor_Id == Convert.ToInt32(salesId)) : true)
                        select new
                        {
                            or,
                            or.Clientes,
                            or.Usuario,
                            or.Factura,
-                           Type = "Orden",
+                           Type = "OF",
+                           Asesor = or.Asesor_Comercial.Usua_Nombre,
                            FechaHora = or.Fecha + " " + or.Hora,
-                           FechaDespacho = (from asg in _context.Set<AsignacionProducto_FacturaVenta>() where asg.NotaCredito_Id == "Orden de Facturación #" + or.Id select asg.AsigProdFV_Fecha).FirstOrDefault(),
+                           FechaDespacho = (from asg in _context.Set<AsignacionProducto_FacturaVenta>() where asg.NotaCredito_Id == "Orden de Facturación #" + or.Id select asg.AsigProdFV_Fecha + " " + asg.AsigProdFV_Hora).FirstOrDefault(),
                            Estado = or.Estado_Id == 19 ? "PENDIENTE" : or.Estado_Id == 21 ? "DESPACHADO" : "ANULADO",
-                           Of = (from dof in _context.Set<Detalles_OrdenFacturacion>() where dof.Id_OrdenFacturacion == or.Id orderby dof.Id descending select dof.Id_OrdenFacturacion).FirstOrDefault(),
+                           Of = (from dof in _context.Set<Detalles_OrdenFacturacion>() where dof.Id_OrdenFacturacion == or.Id orderby dof.Id descending select dof.Id_OrdenFacturacion).FirstOrDefault(),                          
                        };
             return fact.Any() ? Ok(fact) : NotFound();
 #pragma warning restore CS8604 // Possible null reference argument.

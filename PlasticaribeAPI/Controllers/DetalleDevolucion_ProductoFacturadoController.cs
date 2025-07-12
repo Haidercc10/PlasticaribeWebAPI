@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using StackExchange.Redis;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -104,6 +105,13 @@ namespace PlasticaribeAPI.Controllers
                                   dev.Usua.Usua_Nombre,
                                   dev.UsuaModifica_Id,
                                   Usua_Modifica = dev.UsuaModificaDv.Usua_Nombre,
+                                  dev.UsuaFinaliza_Id,
+                                  UsuaFinaliza = dev.UsuaFinalizaDv.Usua_Nombre,
+                              },
+                              Asesor = new
+                              {
+                                  dev.Asesor_Id,
+                                  dev.Asesor_ComercialDv.Usua_Nombre,
                               },
                               dtDev = new
                               {
@@ -115,6 +123,7 @@ namespace PlasticaribeAPI.Controllers
                                   Presentacion = dtDev.UndMed_Id,
                                   Falla_Id = dtDev.Falla_Id,
                                   Falla = dtDev.Fallas.Falla_Nombre,
+
                               },
                               Prod = new
                               {
@@ -127,19 +136,25 @@ namespace PlasticaribeAPI.Controllers
                               },
                               EstadoOF = (from dof in _context.Set<Detalles_OrdenFacturacion>() where dof.Id_OrdenFacturacion == dev.Id_OrdenFact && dof.Numero_Rollo == dtDev.Rollo_Id select dof.Estados.Estado_Nombre).FirstOrDefault(),
                               Ot = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.OT).FirstOrDefault(),
-                              Estado_Produccion = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.Estado_Rollo).FirstOrDefault()
+                              Estado_Produccion = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.Estado_Rollo).FirstOrDefault(),
+                              Weight = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.Peso_Bruto).FirstOrDefault(),
+                              NetWeight = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.Peso_Neto).FirstOrDefault(),
+                              City = (from sedes in _context.Set<SedesClientes>() where sedes.Cli_Id == dev.Cli_Id select sedes.SedeCliente_Ciudad).FirstOrDefault(),
+                              Direction = (from sedes in _context.Set<SedesClientes>() where sedes.Cli_Id == dev.Cli_Id select sedes.SedeCliente_Direccion).FirstOrDefault(),
                           };
             return infoDev.Any() ? Ok(infoDev) : NotFound();
         }
 
         [HttpGet("getDevolutions/{startDate}/{endDate}")]
-        public ActionResult GetOrderd(DateTime startDate, DateTime endDate, string? order = "")
+        public ActionResult GetOrderd(DateTime startDate, DateTime endDate, string? order = "", string? clientId = "", string? salesId = "")
         {
 
             var infoDev = from dev in _context.Set<Devolucion_ProductoFacturado>()
                           where dev.DevProdFact_Fecha >= startDate &&
                                 dev.DevProdFact_Fecha <= endDate &&
-                                (order != "" ? Convert.ToString(dev.DevProdFact_Id) == order : true)
+                                (order != "" ? Convert.ToString(dev.DevProdFact_Id) == order : true) &&
+                                (clientId != "" ? (dev.Cli_Id.ToString().Contains(clientId) || dev.Cli_Id == Convert.ToInt32(clientId)) : true) &&
+                                (salesId != "" ? (dev.Asesor_Id.ToString().Contains(salesId) || dev.Asesor_Id == Convert.ToInt32(salesId)) : true)
                           select new
                           {
                               or = new
@@ -156,10 +171,12 @@ namespace PlasticaribeAPI.Controllers
                               },
                               Clientes = dev.Cliente,
                               Usuario = dev.Usua,
+                              Asesor = dev.Asesor_ComercialDv.Usua_Nombre,
                               FechaHora = dev.DevProdFact_Fecha + " " + dev.DevProdFact_Hora,
-                              Type = "Devolucion",
-                              Estado = dev.Estado_Id == 11 ? "PENDIENTE" : dev.Estado_Id == 29 ? "EN REVISIÓN" : dev.Estado_Id == 38 ? "POR REPONER" : dev.Estado_Id == 39 ? "EN REPOSICION" : dev.Estado_Id == 18 ? "CERRADA" : "",
-                              Of = (from dof in _context.Set<Detalles_OrdenFacturacion>() where Convert.ToString(dof.Consecutivo_Pedido) == Convert.ToString("DV"+Convert.ToString(dev.DevProdFact_Id)+"-OF"+Convert.ToString(dev.Id_OrdenFact.Value)) orderby dof.Id descending select dof.Id_OrdenFacturacion).FirstOrDefault(),
+                              FechaDespacho = dev.DevProdFact_FechaFinalizado + " " + dev.DevProdFact_HoraFinalizado,
+                              Type = "DV",
+                              Estado = dev.Estado_Id == 11 ? "PENDIENTE" : dev.Estado_Id == 29 ? "EN REVISIÓN" : dev.Estado_Id == 38 ? "POR REPONER" : dev.Estado_Id == 39 ? "EN REPOSICION" : dev.Estado_Id == 18 ? "CERRADA" : dev.Estado_Id == 53 ? "PRE-DEVUELTO" : "",
+                              Of = 0, //(from dof in _context.Set<Detalles_OrdenFacturacion>() where Convert.ToString(dof.Consecutivo_Pedido) == Convert.ToString("DV"+Convert.ToString(dev.DevProdFact_Id)+"-OF"+Convert.ToString(dev.Id_OrdenFact.Value)) orderby dof.Id descending select dof.Id_OrdenFacturacion).FirstOrDefault(),
                           };
             return infoDev.Any() ? Ok(infoDev) : NotFound();
         }

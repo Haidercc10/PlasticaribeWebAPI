@@ -450,7 +450,10 @@ namespace PlasticaribeAPI.Controllers
                     || (quantityProcessFinal2 == 0m && quantityProcessFinal > 0m && quantityProcessFinal < order.EstProcOT_CantidadPedida)
                     || (quantityProcessFinal > 0m && quantityProcessFinal < order.EstProcOT_CantidadPedida)
                     || (quantityProcessFinal2 > 0m && quantityProcessFinal2 < order.EstProcOT_CantidadPedida)
-                    
+                    || (quantityProcessFinal > 0m && quantityProcessFinal < order.EstProcOT_CantidadPedida && quantity > 0m)
+                    || (quantityProcessFinal2 > 0m && quantityProcessFinal2 < order.EstProcOT_CantidadPedidaUnd && quantity > 0m)
+                    || (quantityProcessFinal == 0m && quantityProcessFinal2 == 0m && quantity > 0m)
+                    || (quantityProcessFinal == 0m && quantityProcessFinal2 == 0m && quantity > 0m)
                    )
                 {
                     status = 16;

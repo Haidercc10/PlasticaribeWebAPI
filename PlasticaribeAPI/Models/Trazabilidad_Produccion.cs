@@ -78,5 +78,8 @@ namespace PlasticaribeAPI.Models
         public string? Proceso_Anterior { get; set; }
         public Proceso? ProcesoAnt { get; set; }
 
+        public long? Autoriza_Id { get; set; }
+        public Usuario? Autoriza { get; set; }
+
     }
 }

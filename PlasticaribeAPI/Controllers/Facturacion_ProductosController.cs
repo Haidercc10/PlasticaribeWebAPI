@@ -102,6 +102,7 @@ namespace PlasticaribeAPI.Controllers
                                order.Hora,
                                order.Observacion,
                                order.Estado_Id,
+                               Of_Directa = order.Of_Directa == true ? "Si" : "No",
                            },
                            Clientes = new
                            {
@@ -115,6 +116,11 @@ namespace PlasticaribeAPI.Controllers
                            {
                                order.Usuario.Usua_Id,
                                order.Usuario.Usua_Nombre
+                           },
+                           Asesor = new
+                           {
+                               order.Asesor_Id,
+                               order.Asesor_Comercial.Usua_Nombre
                            },
                            dtOrder = new
                            {
@@ -133,7 +139,10 @@ namespace PlasticaribeAPI.Controllers
                            },
                            datosEnvio = dataSend.Any() ? (dataSend).FirstOrDefault() : null,
                            detailsFact = details.Any() ? details.ToList() : null,
+                           Direction = (from sedes in _context.Set<SedesClientes>() where sedes.Cli_Id == order.Cli_Id select sedes.SedeCliente_Direccion).FirstOrDefault(),
+                           City = (from sedes in _context.Set<SedesClientes>() where sedes.Cli_Id == order.Cli_Id select sedes.SedeCliente_Ciudad).FirstOrDefault(),
                        };
+        
             return fact.Any() ? Ok(fact) : NotFound();
         }
 

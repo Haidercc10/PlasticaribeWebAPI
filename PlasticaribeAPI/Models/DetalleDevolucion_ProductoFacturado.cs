@@ -31,6 +31,20 @@ namespace PlasticaribeAPI.Models
         public int? Falla_Id { get; set; }
         public Falla_Tecnica? Fallas { get; set; }
 
+        [Column(TypeName = "varchar(100)")]
+        public string? DtDevProdFact_Factura { get; set; }
+
+        public long? DtDevProdFact_OT { get; set; }
+
+        [Precision(14, 2)]
+        public decimal? DtDevProdFact_PesoBruto { get; set; }
+
+        [Precision(14, 2)]
+        public decimal? DtDevProdFact_PesoNeto { get; set; }
+
+        public int? Of_Id { get; set; }
+        public OrdenFacturacion? Orden_Fact { get; set; }
+
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

@@ -28,6 +28,10 @@ namespace PlasticaribeAPI.Models
         public Estado? Estado { get; set; }
 
         public bool? Of_Directa { get; set; }
+
+        //Nuevo
+        public long? Asesor_Id { get; set; }
+        public Usuario? Asesor_Comercial { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

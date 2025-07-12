@@ -1,10 +1,14 @@
 ﻿using Humanizer;
+using Intercom.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using StackExchange.Redis;
+using System.Diagnostics;
+using System.Security.Cryptography.Xml;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -51,7 +55,7 @@ namespace PlasticaribeAPI.Controllers
                                           (item != "" ? (tr.Prod_Anterior == Convert.ToInt64(item) || tr.Prod_Id == Convert.ToInt64(item)) : (tr.Prod_Anterior.ToString().Contains(item) || tr.Prod_Id.ToString().Contains(item))) &&
                                           (ot != "" ? (tr.Trz_OtAnterior == Convert.ToInt64(ot) || tr.Trz_Ot == Convert.ToInt64(ot)) : (tr.Trz_OtAnterior.ToString().Contains(ot) || tr.Trz_Ot.ToString().Contains(ot))) &&
                                           (roll != "" ? (tr.Trz_EtiquetaAnterior == Convert.ToInt64(roll) || tr.Trz_Etiqueta == Convert.ToInt64(roll)) : (tr.Trz_EtiquetaAnterior.ToString().Contains(roll) || tr.Trz_Etiqueta.ToString().Contains(roll)))
-                                          orderby tr.Trz_OtAnterior, tr.Trz_EtiquetaAnterior 
+                                          orderby tr.Trz_OtAnterior, tr.Trz_EtiquetaAnterior
                                           group tr by new {
                                               MotherRoll = tr.Trz_EtiquetaAnterior,
                                               MotherOT = tr.Trz_OtAnterior,
@@ -96,7 +100,9 @@ namespace PlasticaribeAPI.Controllers
                                               ChildOperator = tr.Usuario1.Usua_Nombre,
                                               ChildDate = tr.Trz_Fecha,
                                               ChildHour = tr.Trz_Hora,
-                                              ChildTurn = ""
+                                              ChildTurn = tr.Turno_Id,
+                                              ChildPacker = tr.Empacador.Usua_Nombre,
+                                              ChildAuthorize = tr.Autoriza.Usua_Nombre,
                                           } into grp
                                           select new
                                           {
@@ -112,6 +118,8 @@ namespace PlasticaribeAPI.Controllers
                                               ChildDate = grp.Key.ChildDate,
                                               ChildHour = grp.Key.ChildHour,
                                               ChildTurn = grp.Key.ChildTurn,
+                                              ChildPacker = grp.Key.ChildPacker,
+                                              ChildAuthorize = grp.Key.ChildAuthorize,
                                           };
 
             if (Trazabilidad_Produccion == null)
@@ -150,6 +158,66 @@ namespace PlasticaribeAPI.Controllers
             }
             return Ok(Trazabilidad_Produccion);
         }
+
+        // Buscar trazabilidad por producción.
+        [HttpGet("getAllTraceabilityForRoll/{date1}/{date2}/{roll}/{ot}/{process}")]
+        public ActionResult getTraceabilityForRoll(DateTime date1, DateTime date2, int roll, int ot, string process)
+        {
+            var Trazabilidad_Produccion = _context.Trazabilidad_Produccion
+                                                  .Where(tr => tr.Trz_Fecha >= date1 && 
+                                                         tr.Trz_Fecha <= date2 &&
+                                                         tr.Trz_Ot == ot &&
+                                                         tr.Trz_Etiqueta == roll &&
+                                                         tr.Proceso_Id == process)
+                                                  .Select(tr => new
+                                          {
+                                              Etiqueta1 = new {
+                                                  MotherRoll = tr.Trz_Etiqueta,
+                                                  MotherItem = tr.Prod_Id,
+                                                  MotherReference = tr.Producto.Prod_Nombre,
+                                                  MotherProcess_Id = tr.Proceso_Id,
+                                                  MotherProcess = tr.Procesos.Proceso_Nombre,
+                                                  MotherOT = tr.Trz_Ot,
+                                                  MotherPacker = tr.Empacador.Usua_Nombre,
+                                                  MotherAuthorize = tr.Autoriza.Usua_Nombre,
+                                              },
+                                              Etiqueta2 = new
+                                              {
+                                                  MotherRoll = tr.Trz_EtiquetaAnterior,
+                                                  MotherItem = tr.Prod_Anterior,
+                                                  MotherReference = tr.ProductoAnt.Prod_Nombre,
+                                                  MotherProcess_Id = tr.Proceso_Anterior,
+                                                  MotherProcess = tr.ProcesoAnt.Proceso_Nombre,
+                                                  MotherOT = tr.Trz_OtAnterior,
+                                                  MotherPacker = tr.Empacador.Usua_Nombre,
+                                                  MotherAuthorize = tr.Autoriza.Usua_Nombre,
+                                              },
+                                              Etiqueta3 = (
+                                                  from tra in _context.Set<Trazabilidad_Produccion>()
+                                                  where tra.Trz_Etiqueta == tr.Trz_EtiquetaAnterior &&
+                                                  tra.Proceso_Id != "SELLA"
+                                                  select new {
+                                                      MotherRoll = tra.Trz_EtiquetaAnterior,
+                                                      MotherItem = tra.Prod_Anterior,
+                                                      MotherReference = tra.ProductoAnt.Prod_Nombre,
+                                                      MotherProcess_Id = tra.Proceso_Anterior,
+                                                      MotherProcess = tra.ProcesoAnt.Proceso_Nombre,
+                                                      MotherOT = tra.Trz_OtAnterior,
+                                                      MotherPacker = tra.Empacador.Usua_Nombre,
+                                                      MotherAuthorize = tra.Autoriza.Usua_Nombre,
+                                                  }
+                                              ).FirstOrDefault(),
+                                            });
+
+           
+
+            if (Trazabilidad_Produccion == null)
+            {
+                return NotFound();
+            }
+            return Ok(Trazabilidad_Produccion);
+        }
+
 
         //
         [HttpPut("{id}")]

@@ -67,6 +67,13 @@ namespace PlasticaribeAPI.Models
         [Precision(18, 2)]
         public decimal? ExProd_Unidades { get; set; }
 
+        //Nuevo
+        [Precision(18, 2)]
+        public decimal? ExProd_UndEmpaque { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? ExProd_Existencias { get; set; }
+
         //[Precision(14, 2)]
         //public int ExProd_CantBolsasPaquete { get; set; }
 
