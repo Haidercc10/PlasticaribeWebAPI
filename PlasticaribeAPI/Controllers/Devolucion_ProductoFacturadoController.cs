@@ -72,24 +72,36 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //Consulta que actualiza el estado de la devolucion
-        [HttpPut("PutStatusDevolution/{id}/{status}/{date}/{hour}/{user}")]
-        public async Task<IActionResult> PutStatusDevolution(long id, int status, DateTime date, string hour, long user, string? observation)
+        [HttpPut("PutStatusDevolution/{id}/{status}/{date}/{hour}/{user}/{repo}/{note}")]
+        public async Task<IActionResult> PutStatusDevolution(long id, int status, DateTime date, string hour, long user, bool repo, bool note, string? observation)
         {
-            int[] statesQuality = { 29, 38 };
+            int[] statesQuality = { 29, 38, 54 };
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var dataDevolution = (from dv in _context.Set<Devolucion_ProductoFacturado>() where dv.DevProdFact_Id == id && dv.Estado_Id != 18 select dv).FirstOrDefault();
             dataDevolution.Estado_Id = status;
-            dataDevolution.DevProdFact_ObservacionGestion = observation;
-            if (status == 18)
+            dataDevolution.DevProdFact_NotaCredito = note;
+            dataDevolution.DevProdFact_Reposicion = repo;
+            
+            if (status == 11)
             {
-                dataDevolution.DevProdFact_FechaFinalizado = date;
-                dataDevolution.DevProdFact_HoraFinalizado = hour;
+                dataDevolution.UsuaModifica_Id = user;
+                dataDevolution.DevProdFact_FechaModificado = date;
+                dataDevolution.DevProdFact_HoraModificado = hour;
+                dataDevolution.DevProdFact_ObservacionModificado = observation;
             }
             else if (statesQuality.Contains(status))
             {
-                dataDevolution.DevProdFact_FechaModificado = date;
-                dataDevolution.DevProdFact_HoraModificado = hour;
-                dataDevolution.UsuaModifica_Id = user;
+                dataDevolution.UsuaGestiona_Id = user;
+                dataDevolution.DevProdFact_FechaGestion = date;
+                dataDevolution.DevProdFact_HoraGestion = hour;
+                dataDevolution.DevProdFact_ObservacionGestion = observation;
+            }
+            else if (status == 18)
+            {
+                dataDevolution.UsuaFinaliza_Id = user;
+                dataDevolution.DevProdFact_FechaFinalizado = date;
+                dataDevolution.DevProdFact_HoraFinalizado = hour;
+                dataDevolution.DevProdFact_ObservacionFinal = observation;
             }
 
             _context.Entry(dataDevolution).State = EntityState.Modified;

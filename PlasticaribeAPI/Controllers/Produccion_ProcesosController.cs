@@ -1852,6 +1852,7 @@ public class rollsToDelete
 
 public class rollsReturned
 {
+    public long of { get; set; }
     public long roll { get; set; }
     public int item { get; set; }
 

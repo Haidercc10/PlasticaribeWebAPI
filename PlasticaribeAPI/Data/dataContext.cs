@@ -623,7 +623,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Devolucion_ProductoFacturado>().HasOne(x => x.UsuaFinalizaDv).WithMany().HasForeignKey(x => x.UsuaFinaliza_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Devolucion_ProductoFacturado>().HasOne(x => x.Asesor_ComercialDv).WithMany().HasForeignKey(x => x.Asesor_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Devolucion_ProductoFacturado>().HasOne(x => x.Usua_Gestion).WithMany().HasForeignKey(x => x.UsuaGestiona_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
-            //modelBuilder.Entity<Devolucion_ProductoFacturado>().HasOne(x => x.Reposicion).WithMany().HasForeignKey(x => x.Rep_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+           //modelBuilder.Entity<Devolucion_ProductoFacturado>().HasOne(x => x.Reposicion).WithMany().HasForeignKey(x => x.Repo_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             //Ordenar campos en la tabla. 
             modelBuilder.Entity<Devolucion_ProductoFacturado>(entity =>
             {

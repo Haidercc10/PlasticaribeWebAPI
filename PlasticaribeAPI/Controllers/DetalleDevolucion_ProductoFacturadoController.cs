@@ -105,6 +105,8 @@ namespace PlasticaribeAPI.Controllers
                                   dev.Usua.Usua_Nombre,
                                   dev.UsuaModifica_Id,
                                   Usua_Modifica = dev.UsuaModificaDv.Usua_Nombre,
+                                  dev.UsuaGestiona_Id,
+                                  UsuaGestiona = dev.Usua_Gestion.Usua_Nombre,
                                   dev.UsuaFinaliza_Id,
                                   UsuaFinaliza = dev.UsuaFinalizaDv.Usua_Nombre,
                               },
@@ -123,7 +125,11 @@ namespace PlasticaribeAPI.Controllers
                                   Presentacion = dtDev.UndMed_Id,
                                   Falla_Id = dtDev.Falla_Id,
                                   Falla = dtDev.Fallas.Falla_Nombre,
-
+                                  OT = dtDev.DtDevProdFact_OT,
+                                  Of = dtDev.Of_Id,
+                                  Fact = dtDev.DtDevProdFact_Factura,
+                                  Weight = dtDev.DtDevProdFact_PesoBruto,
+                                  NetWeight = dtDev.DtDevProdFact_PesoNeto,
                               },
                               Prod = new
                               {

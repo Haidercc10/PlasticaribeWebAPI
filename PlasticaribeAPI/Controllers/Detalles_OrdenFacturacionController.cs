@@ -300,7 +300,7 @@ namespace PlasticaribeAPI.Controllers
                            FechaHora = or.Fecha + " " + or.Hora,
                            FechaDespacho = (from asg in _context.Set<AsignacionProducto_FacturaVenta>() where asg.NotaCredito_Id == "Orden de Facturación #" + or.Id select asg.AsigProdFV_Fecha + " " + asg.AsigProdFV_Hora).FirstOrDefault(),
                            Estado = or.Estado_Id == 19 ? "PENDIENTE" : or.Estado_Id == 21 ? "DESPACHADO" : "ANULADO",
-                           Of = (from dof in _context.Set<Detalles_OrdenFacturacion>() where dof.Id_OrdenFacturacion == or.Id orderby dof.Id descending select dof.Id_OrdenFacturacion).FirstOrDefault(),                          
+                           Of = 0, //(from dof in _context.Set<Detalles_OrdenFacturacion>() where dof.Id_OrdenFacturacion == or.Id orderby dof.Id descending select dof.Id_OrdenFacturacion).FirstOrDefault(),                          
                        };
             return fact.Any() ? Ok(fact) : NotFound();
 #pragma warning restore CS8604 // Possible null reference argument.
@@ -591,6 +591,28 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
+        [HttpPut("putStatusInOF")]
+        public async Task<IActionResult> putStatusInOF(List<rollsDv> rollsDv)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            foreach (var roll in rollsDv)
+            {
+                var dataProduction = (from dof in _context.Set<Detalles_OrdenFacturacion>() where dof.Numero_Rollo == roll.roll && dof.Prod_Id == roll.item && dof.Estado_Id == roll.currentStatus && dof.Id_OrdenFacturacion == roll.of select dof).FirstOrDefault();
+                dataProduction.Estado_Id = roll.newStatus;
+                _context.Entry(dataProduction).State = EntityState.Modified;
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    return NotFound();
+                }
+            }
+            return NoContent();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
         // POST: api/Detalles_OrdenFacturacion
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -622,6 +644,17 @@ namespace PlasticaribeAPI.Controllers
         {
             return _context.Detalles_OrdenFacturacion.Any(e => e.Id == id);
         }
+    }
+
+    public class rollsDv
+    {
+        public long of { get; set; }
+        public long roll { get; set; }
+        public int item { get; set; }
+        public int currentStatus { get; set; }
+        public int newStatus { get; set; }
+        public bool envioZeus { get; set; }
+
     }
 
     public class SalidasDespacho 

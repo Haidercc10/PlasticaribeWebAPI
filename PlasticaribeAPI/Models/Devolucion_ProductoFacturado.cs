@@ -85,13 +85,13 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(max)")]
         public string? DevProdFact_ObservacionFinal { get; set; }
 
+        //public long? Reposicion_Id { get; set; }
+        //public Reposiciones? Reposicion { get; set; }
+
         //Llave foránea de tipo devolución de producto facturado
         public int TipoDevProdFact_Id { get; set; }
         public TipoDevolucion_ProductoFacturado? TipoDevolucionPF { get; set; }
         public IList<DetalleDevolucion_ProductoFacturado>? DtDevProd_Fact { get; set; }
-
-        /*public long? Rep_Id { get; set; }
-        public Reposiciones? Reposicion { get; set; }*/
 
         //[Column(TypeName = "varchar(10)")]
         //public string DevProd_Hora { get; set; }
