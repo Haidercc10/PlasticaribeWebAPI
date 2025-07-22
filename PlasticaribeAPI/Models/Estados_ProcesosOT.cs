@@ -58,6 +58,9 @@ namespace PlasticaribeAPI.Models
 
 
         [Precision(18, 2)]
+        public decimal? EstProcOT_PerforadoKg { get; set; }
+
+        [Precision(18, 2)]
         public decimal EstProcOT_CantidadPedida { get; set; }
 
         /** LLave foranea y prop. navegación Unidades Medidas */

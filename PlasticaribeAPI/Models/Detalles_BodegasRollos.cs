@@ -29,6 +29,7 @@ namespace PlasticaribeAPI.Models
         public bool DtBgRollo_Sellado { get; set; }
         public bool DtBgRollo_Corte { get; set; }
         public bool DtBgRollo_Despacho { get; set; }
+        public bool? DtBgRollo_Perforado { get; set; }
         public int? Estado_Id { get; set; }
         public Estado? Estados { get; set; }
 

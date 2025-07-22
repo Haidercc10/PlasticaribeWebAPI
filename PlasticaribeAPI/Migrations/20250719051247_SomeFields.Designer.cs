@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20250719051247_SomeFields")]
+    partial class SomeFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3236,9 +3239,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("int")
                         .HasColumnOrder(1);
 
-                    b.Property<long?>("Reposicion_Id")
-                        .HasColumnType("bigint");
-
                     b.Property<int>("TipoDevProdFact_Id")
                         .HasColumnType("int")
                         .HasColumnOrder(25);
@@ -3268,8 +3268,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Estado_Id");
 
                     b.HasIndex("Id_OrdenFact");
-
-                    b.HasIndex("Reposicion_Id");
 
                     b.HasIndex("TipoDevProdFact_Id");
 
@@ -11436,11 +11434,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("Id_OrdenFact")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("PlasticaribeAPI.Models.Reposiciones", "Reposicion")
-                        .WithMany()
-                        .HasForeignKey("Reposicion_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.TipoDevolucion_ProductoFacturado", "TipoDevolucionPF")
                         .WithMany()
                         .HasForeignKey("TipoDevProdFact_Id")
@@ -11476,8 +11469,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Estados");
 
                     b.Navigation("Orden_Fact");
-
-                    b.Navigation("Reposicion");
 
                     b.Navigation("TipoDevolucionPF");
 

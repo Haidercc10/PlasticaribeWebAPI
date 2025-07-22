@@ -84,9 +84,8 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(max)")]
         public string? DevProdFact_ObservacionFinal { get; set; }
-
-        //public long? Reposicion_Id { get; set; }
-        //public Reposiciones? Reposicion { get; set; }
+        public long? Reposicion_Id { get; set; }
+        public Reposiciones? Reposicion { get; set; }
 
         //Llave foránea de tipo devolución de producto facturado
         public int TipoDevProdFact_Id { get; set; }

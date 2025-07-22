@@ -81,7 +81,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         // Consulta que devolverá la informacaión una devolución
-        [HttpGet("getInformationDevById/{id}")]
+        [HttpGet("getInformationDevById/{id}")] 
         public ActionResult GetInformationDevById(long id)
         {
             var infoDev = from dev in _context.Set<Devolucion_ProductoFacturado>()
