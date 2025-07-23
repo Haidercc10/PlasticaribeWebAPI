@@ -258,8 +258,8 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("GetUsersAthorizedForTeoricWeight/{id}")]
         public ActionResult GetUsersAthorizedForTeoricWeight(long id)
         {
-            int[] rols = { 1, 5, 94, 86 };
-            int[] typeUsers = { 58, 1, 73, 10 };
+            int[] rols = { 1, 5, 86 };
+            int[] typeUsers = { 58, 1, 10 };
             
             var authorizedUsers = from pk in _context.Set<Usuario>()
                             where rols.Contains(pk.RolUsu_Id) 
@@ -281,8 +281,8 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getListAuthorizeUsers")]
         public ActionResult getListAuthorizeUsers()
         {
-            int[] rols = { 1, 5, 94, 86 };
-            int[] typeUsers = { 58, 1, 73, 10 };
+            int[] rols = { 1, 5, 86 };
+            int[] typeUsers = { 58, 1, 10 };
             //long[]? users = { 1048322496, 1140888300, 1122408286, 1045745905 };
 
             var authorizedUsers = from pk in _context.Set<Usuario>()
