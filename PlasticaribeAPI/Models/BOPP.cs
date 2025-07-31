@@ -84,6 +84,9 @@ namespace PlasticaribeAPI.Models
 
         //Lista requerida para relacion con BOPP en detalles asignaciones bopp
         public IList<DetalleAsignacion_BOPP>? DetAsigBOPP { get; set; }
+
+        public int? SubCatMP_Id { get; set; }
+        public Subcategorias_MatPrima? SubcategoriasMP { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

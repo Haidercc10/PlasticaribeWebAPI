@@ -210,6 +210,8 @@ namespace PlasticaribeAPI.Data
 
         public DbSet<Facturacion_Productos> Facturacion_Productos { get; set; }
 
+        public DbSet<Subcategorias_MatPrima> Subcategorias_MatPrima { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Relaciones de productos
@@ -307,6 +309,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Materia_Prima>().HasOne(mtp => mtp.CatMP).WithMany().HasForeignKey(mtp => mtp.CatMP_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Materia_Prima>().HasOne(mtp => mtp.UndMed).WithMany().HasForeignKey(mtp => mtp.UndMed_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Materia_Prima>().HasOne(mtp => mtp.TpBod).WithMany().HasForeignKey(mtp => mtp.TpBod_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Materia_Prima>().HasOne(tin => tin.SubcategoriasMP).WithMany().HasForeignKey(tint => tint.SubCatMP_Id).OnDelete(DeleteBehavior.Restrict); //foranea subcategorias matprima
 
             //Relaciones Proveedores
             //modelBuilder.Entity<Proveedor>().ToTable(tb => tb.HasTrigger("Auditoria_Proveedores"));
@@ -416,6 +419,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Tinta>().HasOne(tin => tin.UndMed).WithMany().HasForeignKey(tint => tint.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea unidad medida
             modelBuilder.Entity<Tinta>().HasOne(tin => tin.CatMP).WithMany().HasForeignKey(tint => tint.CatMP_Id).OnDelete(DeleteBehavior.Restrict); //foranea categorias matprima
             modelBuilder.Entity<Tinta>().HasOne(tin => tin.TpBod).WithMany().HasForeignKey(tint => tint.TpBod_Id).OnDelete(DeleteBehavior.Restrict); //foranea Tipo de bodega
+            modelBuilder.Entity<Tinta>().HasOne(tin => tin.SubcategoriasMP).WithMany().HasForeignKey(tint => tint.SubCatMP_Id).OnDelete(DeleteBehavior.Restrict); //foranea subcategorias matprima
 
             //Relaciones Tintas_MateriasPrimas
             //modelBuilder.Entity<Tinta_MateriaPrima>().ToTable(tb => tb.HasTrigger("Auditoria_Tintas_MateriasPrimas")); 
@@ -456,6 +460,8 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<BOPP>().HasOne(datB => datB.Usua).WithMany().HasForeignKey(dat => dat.Usua_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<BOPP>().HasOne(datB => datB.boppGenerico).WithMany().HasForeignKey(dat => dat.BoppGen_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<BOPP>().HasOne(datB => datB.Proveedor).WithMany().HasForeignKey(dat => dat.Prov_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<BOPP>().HasOne(tin => tin.SubcategoriasMP).WithMany().HasForeignKey(tint => tint.SubCatMP_Id).OnDelete(DeleteBehavior.Restrict); //foranea subcategorias matprima
+
 
             //Bopp_Generico
             modelBuilder.Entity<Bopp_Generico>().ToTable(tb => tb.HasTrigger("Auditoria_Bopp_Generico"));
@@ -1214,6 +1220,9 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Facturacion_Productos>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Facturacion_Productos>().HasOne(x => x.OrdenFacturacion).WithMany().HasForeignKey(x => x.Of_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Facturacion_Productos>().HasOne(x => x.Und).WithMany().HasForeignKey(x => x.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Subcategorias Materia Prima
+            modelBuilder.Entity<Subcategorias_MatPrima>().HasOne(x => x.Categoria_MP).WithMany().HasForeignKey(x => x.CatMP_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));

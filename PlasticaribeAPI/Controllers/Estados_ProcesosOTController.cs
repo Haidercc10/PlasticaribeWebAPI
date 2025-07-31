@@ -111,6 +111,7 @@ namespace PlasticaribeAPI.Controllers
                           Mp = orden.EstProcOT_CantMatPrimaAsignada,
                           Cli = orden.EstProcOT_Cliente,
                           Ped = orden.EstProcOT_Pedido,
+                          Perf = orden.EstProcOT_PerforadoKg,
                       };
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -164,6 +165,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
                     estOt.EstProcOT_Pedido,
+                    estOt.EstProcOT_PerforadoKg,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -254,6 +256,7 @@ namespace PlasticaribeAPI.Controllers
                           Doblado = ot.Sum(x => x.EstProcOT_DobladoKg),
                           SelladoKg = ot.Sum(x => x.EstProcOT_SelladoKg),
                           SelladoUnd = ot.Sum(x => x.EstProcOT_SelladoUnd),
+                          Perforado = ot.Sum(x => x.EstProcOT_SelladoUnd),
                           cantidad = ot.Count(),
                       };
             return Ok(con);
@@ -324,6 +327,7 @@ namespace PlasticaribeAPI.Controllers
                     estOt.EstProcOT_CantMatPrimaAsignada,
                     estOt.EstProcOT_Cliente,
                     estOt.EstProcOT_Pedido,
+                    estOt.EstProcOT_PerforadoKg,
                 })
                 .ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
@@ -386,6 +390,7 @@ namespace PlasticaribeAPI.Controllers
                                             SelladoKg = e.EstProcOT_SelladoKg,
                                             WiketiadoUnd = e.EstProcOT_WiketiadoUnd,
                                             WiketiadoKg = e.EstProcOT_WiketiadoKg,
+                                            Perforado = e.EstProcOT_PerforadoKg,
                                         }).FirstOrDefault();
 
                 counter++;
@@ -431,7 +436,9 @@ namespace PlasticaribeAPI.Controllers
                 if (process == "IMP") order.EstProcOT_ImpresionKg = qty;
                 if (process == "ROT") order.EstProcOT_RotograbadoKg = qty;
                 if (process == "LAM") order.EstProcOT_LaminadoKg = qty;
+
                 if (process == "EMP") order.EstProcOT_EmpaqueKg = qty;
+                if (process == "PERF") order.EstProcOT_PerforadoKg = qty;
                 if (process == "SELLA") { 
                     order.EstProcOT_SelladoKg = weight;
                     order.EstProcOT_SelladoUnd = qty;
@@ -440,7 +447,7 @@ namespace PlasticaribeAPI.Controllers
                     order.EstProcOT_WiketiadoKg = weight;
                     order.EstProcOT_WiketiadoUnd = qty;
                 }
-                quantity += (order.EstProcOT_ExtrusionKg + order.EstProcOT_ImpresionKg + order.EstProcOT_RotograbadoKg + order.EstProcOT_LaminadoKg);
+                quantity += (order.EstProcOT_ExtrusionKg + order.EstProcOT_ImpresionKg + Convert.ToDecimal(order.EstProcOT_PerforadoKg) + order.EstProcOT_RotograbadoKg + order.EstProcOT_LaminadoKg);
                 quantityProcessFinal = order.EstProcOT_EmpaqueKg;
                 quantityProcessFinal2 = order.EstProcOT_SelladoUnd;
 

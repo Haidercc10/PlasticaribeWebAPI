@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20250730142006_SubcategoriasMP")]
+    partial class SubcategoriasMP
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -462,9 +465,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("Prov_Id")
                         .HasColumnType("bigint");
 
-                    b.Property<int?>("SubCatMP_Id")
-                        .HasColumnType("int");
-
                     b.Property<int>("TpBod_Id")
                         .HasColumnType("int");
 
@@ -486,8 +486,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("CatMP_Id");
 
                     b.HasIndex("Prov_Id");
-
-                    b.HasIndex("SubCatMP_Id");
 
                     b.HasIndex("TpBod_Id");
 
@@ -5047,9 +5045,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("SubCatMP_Id")
-                        .HasColumnType("int");
-
                     b.Property<int>("TpBod_Id")
                         .HasColumnType("int");
 
@@ -5060,8 +5055,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("MatPri_Id");
 
                     b.HasIndex("CatMP_Id");
-
-                    b.HasIndex("SubCatMP_Id");
 
                     b.HasIndex("TpBod_Id");
 
@@ -8665,9 +8658,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("CatMP_Id")
                         .HasColumnType("int");
 
-                    b.Property<int?>("SubCatMP_Id")
-                        .HasColumnType("int");
-
                     b.Property<string>("Tinta_CodigoHexadecimal")
                         .HasColumnType("varchar(50)");
 
@@ -8710,8 +8700,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("Tinta_Id");
 
                     b.HasIndex("CatMP_Id");
-
-                    b.HasIndex("SubCatMP_Id");
 
                     b.HasIndex("TpBod_Id");
 
@@ -9948,11 +9936,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Subcategorias_MatPrima", "SubcategoriasMP")
-                        .WithMany()
-                        .HasForeignKey("SubCatMP_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.Tipo_Bodega", "TpBod")
                         .WithMany()
                         .HasForeignKey("TpBod_Id")
@@ -9980,8 +9963,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("CatMP");
 
                     b.Navigation("Proveedor");
-
-                    b.Navigation("SubcategoriasMP");
 
                     b.Navigation("TpBod");
 
@@ -12305,11 +12286,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Subcategorias_MatPrima", "SubcategoriasMP")
-                        .WithMany()
-                        .HasForeignKey("SubCatMP_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.Tipo_Bodega", "TpBod")
                         .WithMany()
                         .HasForeignKey("TpBod_Id")
@@ -12323,8 +12299,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("CatMP");
-
-                    b.Navigation("SubcategoriasMP");
 
                     b.Navigation("TpBod");
 
@@ -14075,11 +14049,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Subcategorias_MatPrima", "SubcategoriasMP")
-                        .WithMany()
-                        .HasForeignKey("SubCatMP_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.Tipo_Bodega", "TpBod")
                         .WithMany()
                         .HasForeignKey("TpBod_Id")
@@ -14093,8 +14062,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("CatMP");
-
-                    b.Navigation("SubcategoriasMP");
 
                     b.Navigation("TpBod");
 

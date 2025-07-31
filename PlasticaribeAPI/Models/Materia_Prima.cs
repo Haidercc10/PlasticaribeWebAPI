@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PlasticaribeAPI.Migrations;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -42,6 +43,9 @@ namespace PlasticaribeAPI.Models
 
         [Precision(18, 2)]
         public decimal MatPri_PrecioEstandar { get; set; }
+
+        public int? SubCatMP_Id { get; set; }
+        public Subcategorias_MatPrima? SubcategoriasMP { get; set; }
 
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

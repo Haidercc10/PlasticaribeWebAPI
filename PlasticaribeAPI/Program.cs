@@ -93,7 +93,7 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseCors(myAllowSpecificOrigins);
 app.UseStaticFiles();
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
