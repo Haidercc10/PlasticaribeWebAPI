@@ -376,6 +376,7 @@ namespace PlasticaribeAPI.Controllers
                                      Precio = mp.MatPri_Precio,
                                      Subtotal = (mp.MatPri_Stock * mp.MatPri_Precio),
                                      IdCategoria = mp.CatMP_Id,
+                                     IdSubcategoria = mp.SubCatMP_Id,
                                  };
 
             var bopp = from bp in _context.Set<BOPP>()
@@ -393,6 +394,7 @@ namespace PlasticaribeAPI.Controllers
                            Precio = bp.BOPP_Precio,
                            Subtotal = (bp.BOPP_Stock * bp.BOPP_Precio),
                            IdCategoria = bp.CatMP_Id,
+                           IdSubcategoria = bp.SubCatMP_Id,
                        };
 
             var tintas = from t in _context.Set<Tinta>()
@@ -408,7 +410,8 @@ namespace PlasticaribeAPI.Controllers
                              Stock = t.Tinta_Stock,
                              Precio = t.Tinta_Precio,
                              Subtotal = (t.Tinta_Stock * t.Tinta_Precio),
-                             IdCategoria = t.CatMP_Id
+                             IdCategoria = t.CatMP_Id,
+                             IdSubcategoria = t.SubCatMP_Id,
                          };
 
             return Ok(materiasPrimas.Concat(bopp).Concat(tintas));
@@ -520,7 +523,9 @@ namespace PlasticaribeAPI.Controllers
                            mp.MatPri_Precio,
                            mp.CatMP.CatMP_Nombre,
                            mp.CatMP_Id,
-                           mp.MatPri_PrecioEstandar
+                           mp.MatPri_PrecioEstandar, 
+                           mp.SubCatMP_Id, 
+                           mp.SubcategoriasMP.SubCatMP_Nombre
                        } into x
                        select new
                        {
@@ -540,7 +545,9 @@ namespace PlasticaribeAPI.Controllers
                            PrecioEstandar = x.Key.MatPri_PrecioEstandar,
                            SubTotal = x.Key.MatPri_Stock * x.Key.MatPri_Precio,
                            Categoria = x.Key.CatMP_Nombre,
-                           Categoria_Id = x.Key.CatMP_Id
+                           Categoria_Id = x.Key.CatMP_Id,
+                           Subcategoria = x.Key.SubCatMP_Nombre,
+                           Subcategoria_Id = x.Key.SubCatMP_Id
                        });
 
             //Entrada de BOPP
@@ -566,7 +573,9 @@ namespace PlasticaribeAPI.Controllers
                                PrecioEstandar = bpGen.BoppGen_PrecioEstandar,
                                SubTotal = bopp.BOPP_Stock * bopp.BOPP_Precio,
                                Categoria = bopp.CatMP.CatMP_Nombre,
-                               Categoria_Id = bopp.CatMP_Id
+                               Categoria_Id = bopp.CatMP_Id,
+                               Subcategoria = bopp.SubcategoriasMP.SubCatMP_Nombre,
+                               Subcategoria_Id = bopp.SubCatMP_Id
                            });
 
             //Tinta
@@ -590,7 +599,9 @@ namespace PlasticaribeAPI.Controllers
                                 PrecioEstandar = tinta.Tinta_PrecioEstandar,
                                 SubTotal = tinta.Tinta_Stock * tinta.Tinta_Precio,
                                 Categoria = tinta.CatMP.CatMP_Nombre,
-                                Categoria_Id = tinta.CatMP_Id
+                                Categoria_Id = tinta.CatMP_Id,
+                                Subcategoria = tinta.SubcategoriasMP.SubCatMP_Nombre,
+                                Subcategoria_Id = tinta.SubCatMP_Id
                             });
 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
