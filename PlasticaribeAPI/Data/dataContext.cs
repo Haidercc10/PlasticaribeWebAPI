@@ -212,6 +212,10 @@ namespace PlasticaribeAPI.Data
 
         public DbSet<Subcategorias_MatPrima> Subcategorias_MatPrima { get; set; }
 
+        public DbSet<Requerimientos_Calidad> Requerimientos_Calidad { get; set; }
+
+        public DbSet<Devoluciones_Calidad> Devoluciones_Calidad { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Relaciones de productos
@@ -1223,6 +1227,15 @@ namespace PlasticaribeAPI.Data
 
             //Subcategorias Materia Prima
             modelBuilder.Entity<Subcategorias_MatPrima>().HasOne(x => x.Categoria_MP).WithMany().HasForeignKey(x => x.CatMP_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Devoluciones Calidad
+            modelBuilder.Entity<Devoluciones_Calidad>().HasOne(x => x.Cliente).WithMany().HasForeignKey(x => x.Cli_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Devoluciones_Calidad>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Devoluciones_Calidad>().HasOne(x => x.Fallas).WithMany().HasForeignKey(x => x.Falla_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Devoluciones_Calidad>().HasOne(x => x.Proceso).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Devoluciones_Calidad>().HasOne(x => x.Proceso).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Devoluciones_Calidad>().HasOne(x => x.Requerimiento).WithMany().HasForeignKey(x => x.Req_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
 
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
