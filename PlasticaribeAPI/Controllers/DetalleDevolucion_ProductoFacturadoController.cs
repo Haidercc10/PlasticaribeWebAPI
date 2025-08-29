@@ -140,7 +140,7 @@ namespace PlasticaribeAPI.Controllers
                                   dev.Estado_Id,
                                   dev.Estados.Estado_Nombre,
                               },
-                              EstadoOF = (from dof in _context.Set<Detalles_OrdenFacturacion>() where dof.Id_OrdenFacturacion == dtDev.Of_Id && dof.Numero_Rollo == dtDev.Rollo_Id select dof.Estados.Estado_Nombre).FirstOrDefault(),
+                              EstadoOF = (from dof in _context.Set<Detalles_OrdenFacturacion>() where (dof.Id_OrdenFacturacion == dtDev.Of_Id || dof.Id_OrdenFacturacion == dev.Id_OrdenFact) && dof.Numero_Rollo == dtDev.Rollo_Id select dof.Estados.Estado_Nombre).FirstOrDefault(),
                               Ot = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.OT).FirstOrDefault(),
                               Estado_Produccion = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.Estado_Rollo).FirstOrDefault(),
                               Weight = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.Peso_Bruto).FirstOrDefault(),

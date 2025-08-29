@@ -1187,6 +1187,9 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Reposiciones>().HasOne(x => x.Usuario1).WithMany().HasForeignKey(x => x.Usua_Crea).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Reposiciones>().HasOne(x => x.Usuario2).WithMany().HasForeignKey(x => x.Usua_Salida).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Reposiciones>().HasOne(x => x.Estados).WithMany().HasForeignKey(x => x.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Reposiciones>().HasOne(x => x.Autoriza).WithMany().HasForeignKey(x => x.Usua_Autoriza).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Reposiciones>().HasOne(x => x.FallaTecnica).WithMany().HasForeignKey(x => x.Falla_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
 
             //Detalles Reposiciones
             modelBuilder.Entity<Detalles_Reposiciones>().HasOne(x => x.Repo).WithMany().HasForeignKey(x => x.Rep_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);

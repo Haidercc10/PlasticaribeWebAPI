@@ -86,6 +86,8 @@ namespace PlasticaribeAPI.Controllers
                               ProcessId = (from pp in _context.Set<Produccion_Procesos>() where pp.Prod_Id == d.Prod_Id && pp.NumeroRollo_BagPro == d.DtlRep_Rollo select pp.Proceso_Id).FirstOrDefault(),
                               Process = (from pp in _context.Set<Produccion_Procesos>() where pp.Prod_Id == d.Prod_Id && pp.NumeroRollo_BagPro == d.DtlRep_Rollo select pp.Proceso.Proceso_Nombre).FirstOrDefault(),
                               Price = (from pp in _context.Set<Produccion_Procesos>() where pp.Prod_Id == d.Prod_Id && pp.NumeroRollo_BagPro == d.DtlRep_Rollo select pp.PrecioVenta_Producto).FirstOrDefault(),
+                              Authorize = p.Autoriza.Usua_Nombre == null ? "" : p.Autoriza.Usua_Nombre,
+                              Fail = p.FallaTecnica.Falla_Nombre == null ? "" : p.FallaTecnica.Falla_Nombre,
                           };
 
             if (Reposition == null) return NotFound();
@@ -95,7 +97,7 @@ namespace PlasticaribeAPI.Controllers
 
         //
         [HttpGet("getMovementsReposition/{date1}/{date2}")]
-        public ActionResult getMovementsReposition(DateTime date1, DateTime date2, string? client = "", string? status = "", string? id = "")
+        public ActionResult getMovementsReposition(DateTime date1, DateTime date2, string? client = "", string? status = "", string? id = "", string? fail = "")
         {
             var Reposition = from p in _context.Set<Reposiciones>()
                           where
@@ -103,8 +105,9 @@ namespace PlasticaribeAPI.Controllers
                           p.Rep_FechaCrea <= date2 &&
                           (client != "" ? p.Cli_Id == Convert.ToInt64(client) : p.Cli_Id.ToString().Contains(client)) &&
                           (status != "" ? p.Estado_Id == Convert.ToInt64(status) : p.Estado_Id.ToString().Contains(status)) &&
-                          (id != "" ? p.Rep_Id == Convert.ToInt64(id) : p.Rep_Id.ToString().Contains(id))
-                          select new
+                          (id != "" ? p.Rep_Id == Convert.ToInt64(id) : p.Rep_Id.ToString().Contains(id)) &&
+                          (fail != "" ? p.Falla_Id == Convert.ToInt64(id) : p.Falla_Id.ToString().Contains(fail))
+                             select new
                           {
                               //Header
                               Movement = p.Rep_Id,
@@ -122,6 +125,8 @@ namespace PlasticaribeAPI.Controllers
                               Status = p.Estados.Estado_Nombre,
                               IdClient = p.Cli_Id,
                               Client = p.Cliente.Cli_Nombre,
+                              Fail = p.FallaTecnica.Falla_Nombre == null ? "" : p.FallaTecnica.Falla_Nombre,
+                              Authorize = p.Autoriza.Usua_Nombre == null ? "" : p.Autoriza.Usua_Nombre,
                           };
 
             if (Reposition == null) return NotFound();

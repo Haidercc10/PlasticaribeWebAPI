@@ -46,5 +46,11 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(max)")]
         public string? Rep_ObservacionSalida { get; set; }
+
+        public int? Falla_Id { get; set; }
+        public Falla_Tecnica? FallaTecnica { get; set; }
+
+        public long? Usua_Autoriza { get; set; }
+        public Usuario? Autoriza { get; set; }
     }
 }
