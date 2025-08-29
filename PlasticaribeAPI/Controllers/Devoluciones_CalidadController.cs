@@ -181,7 +181,7 @@ namespace PlasticaribeAPI.Controllers
             var dev = from d in _context.Set<Devoluciones_Calidad>()
                       where 
                       d.Dvc_Fecha >= date1 && 
-                      d.Dvc_Fecha >= date2 &&
+                      d.Dvc_Fecha <= date2 &&
                       (client != "" ? d.Cli_Id == Convert.ToInt64(client) : d.Cli_Id.ToString().Contains(client)) &&
                       (ot != "" ? d.Dvc_OT == Convert.ToInt64(ot) : d.Dvc_OT.ToString().Contains(ot)) &&
                       (typeRejected != "" ? d.Dvc_TipoRechazo == typeRejected : d.Dvc_TipoRechazo.ToString().Contains(typeRejected)) &&
