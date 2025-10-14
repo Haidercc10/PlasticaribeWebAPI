@@ -216,6 +216,8 @@ namespace PlasticaribeAPI.Data
 
         public DbSet<Devoluciones_Calidad> Devoluciones_Calidad { get; set; }
 
+        public DbSet<Produccion_Diaria> Produccion_Diaria { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Relaciones de productos
@@ -1239,7 +1241,9 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Devoluciones_Calidad>().HasOne(x => x.Proceso).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Devoluciones_Calidad>().HasOne(x => x.Requerimiento).WithMany().HasForeignKey(x => x.Req_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
-
+            //Produccion Diaria
+            modelBuilder.Entity<Produccion_Diaria>().HasOne(x => x.Procesos).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Produccion_Diaria>().HasOne(x => x.Turnos).WithMany().HasForeignKey(x => x.Turno_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));

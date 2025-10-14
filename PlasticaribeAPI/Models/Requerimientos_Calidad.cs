@@ -6,18 +6,18 @@ namespace PlasticaribeAPI.Models
     public class Requerimientos_Calidad
     {
         [Key]
-        public int Req_Id { get; set; } /** ID Requerimiento */
+        public int Req_Id { get; set; } 
 
         [Column(TypeName = "varchar(100)")]
-        public string Req_Nombre { get; set; } /** Nombre del requerimiento */
+        public string Req_Nombre { get; set; } 
 
         [Column(TypeName = "varchar(max)")]
-        public string? Req_Descripcion { get; set; } /** Descripción del requerimiento */
+        public string? Req_Descripcion { get; set; }
         
         [Column(TypeName = "date")]
-        public DateTime Req_FechaCreacion { get; set; } /** Fecha de creación del requerimiento */
+        public DateTime Req_FechaCreacion { get; set; } 
         
         [Column(TypeName = "varchar(10)")]
-        public string Req_HoraCreacion { get; set; } /** Fecha de última modificación del requerimiento */
+        public string Req_HoraCreacion { get; set; } 
     }
 }

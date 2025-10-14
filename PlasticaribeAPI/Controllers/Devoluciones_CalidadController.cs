@@ -42,12 +42,13 @@ namespace PlasticaribeAPI.Controllers
         //Devoluciones por areas.
         // Función que cargará el total de devoluciones por area en dinero.
         [HttpGet("getTotalMoneyForArea/{year}")]
-        public ActionResult getTotalMoneyForArea(int year, string? month="")
+        public ActionResult getTotalMoneyForArea(int year, string? month="", string? rejected="")
         {
             var dev = from d in _context.Set<Devoluciones_Calidad>()
                         where d.Dvc_Ano == year
                         && d.Dvc_Mes.Contains(month)
-                        group d by new {
+                        && d.Dvc_TipoRechazo.Contains(rejected)
+                      group d by new {
                              AreaId = d.Proceso_Id, 
                              Area = d.Proceso.Proceso_Nombre,
                              Year = d.Dvc_Ano
@@ -66,11 +67,12 @@ namespace PlasticaribeAPI.Controllers
 
         // Función que cargará el total por tipos de devoluciones en dinero.
         [HttpGet("getTotalMoneyForRejectedType/{year}")]
-        public ActionResult getTotalMoneyForRejectedType(int year, string? month = "")
+        public ActionResult getTotalMoneyForRejectedType(int year, string? month = "", string? rejected = "")
         {
             var dev = from d in _context.Set<Devoluciones_Calidad>()
                       where d.Dvc_Ano == year
-                      && d.Dvc_Mes.Contains(month) 
+                      && d.Dvc_Mes.Contains(month)
+                      && d.Dvc_TipoRechazo.Contains(rejected)
                       group d by new
                       {
                           RejectedType = d.Dvc_TipoRechazo,
@@ -90,10 +92,12 @@ namespace PlasticaribeAPI.Controllers
 
         // Función que cargará el total por tipos de devoluciones en dinero.
         [HttpGet("getDevolutionsForRejectedType/{year}")]
-        public ActionResult getDevolutionsForRejectedType(int year)
+        public ActionResult getDevolutionsForRejectedType(int year, string? rejected = "")
         {
+#pragma warning disable CS8629 // Un tipo que acepta valores NULL puede ser nulo.
             var dev = from d in _context.Set<Devoluciones_Calidad>()
                       where d.Dvc_Ano == year
+                      && d.Dvc_TipoRechazo.Contains(rejected)
                       orderby d.Dvc_Fecha.Value.Month
                       group d by new
                       {
@@ -113,21 +117,24 @@ namespace PlasticaribeAPI.Controllers
                           Weight = g.Sum(x => x.Dvc_PesoNeto),
                           Qty = g.Count(),
                       };
+#pragma warning restore CS8629 // Un tipo que acepta valores NULL puede ser nulo.
             return Ok(dev);
         }
 
         // Función que mostrará el total de devoluciones por mes.
         [HttpGet("getTotalMoneyForMonth/{year}")]
-        public ActionResult getTotalMoneyForMonth(int year)
+        public ActionResult getTotalMoneyForMonth(int year, string? rejected = "")
         {
             var datos = new List<object>();
             for (int i = 0; i < 12; i++)
             {
                 int mes = (i + 1);
 
+#pragma warning disable CS8629 // Un tipo que acepta valores NULL puede ser nulo.
                 var dev = from d in _context.Set<Devoluciones_Calidad>()
                           where d.Dvc_Ano == year
                           && d.Dvc_Fecha.Value.Month == mes
+                          && d.Dvc_TipoRechazo.Contains(rejected)
                           group d by new
                           {
                               Month = d.Dvc_Fecha.Value.Month,
@@ -142,6 +149,7 @@ namespace PlasticaribeAPI.Controllers
                               NameMonth = g.Key.NameMonth,
                               Total = g.Sum(x => x.Dvc_Subtotal),
                           };
+#pragma warning restore CS8629 // Un tipo que acepta valores NULL puede ser nulo.
 
                 datos.Add(dev);
                 if (i == 11) return Ok(datos);
@@ -152,10 +160,10 @@ namespace PlasticaribeAPI.Controllers
         //Devoluciones por clientes.
         // Función que cargará el total de devoluciones por area en dinero.
         [HttpGet("getTotalMoneyForClient/{year}")]
-        public ActionResult getTotalMoneyForClient(int year, string? month = "")
+        public ActionResult getTotalMoneyForClient(int year, string? month = "", string? rejected = "")
         {
             var dev = from d in _context.Set<Devoluciones_Calidad>()
-                      where d.Dvc_Ano == year && d.Dvc_Mes.Contains(month)
+                      where d.Dvc_Ano == year && d.Dvc_Mes.Contains(month) && d.Dvc_TipoRechazo.Contains(rejected)
                       group d by new
                       {
                           ClientId = d.Cli_Id,
@@ -176,7 +184,7 @@ namespace PlasticaribeAPI.Controllers
         }
         // Func
         [HttpGet("getMovementsDvQuality/{date1}/{date2}")]
-        public ActionResult getMovementsDvQuality(DateTime date1, DateTime date2, string? client = "", string? ot = "", string? typeRejected = "", string? item = "")
+        public ActionResult getMovementsDvQuality(DateTime date1, DateTime date2, string? client = "", string? ot = "", string? typeRejected = "", string? process = "")
         {
             var dev = from d in _context.Set<Devoluciones_Calidad>()
                       where 
@@ -185,7 +193,7 @@ namespace PlasticaribeAPI.Controllers
                       (client != "" ? d.Cli_Id == Convert.ToInt64(client) : d.Cli_Id.ToString().Contains(client)) &&
                       (ot != "" ? d.Dvc_OT == Convert.ToInt64(ot) : d.Dvc_OT.ToString().Contains(ot)) &&
                       (typeRejected != "" ? d.Dvc_TipoRechazo == typeRejected : d.Dvc_TipoRechazo.ToString().Contains(typeRejected)) &&
-                      (item != "" ? d.Prod_Id == Convert.ToInt64(item) : d.Prod_Id.ToString().Contains(item))
+                      (process != "" ? d.Proceso_Id == process : d.Proceso_Id.ToString().Contains(process))
                       select new
                       {
                           Devs = d, 

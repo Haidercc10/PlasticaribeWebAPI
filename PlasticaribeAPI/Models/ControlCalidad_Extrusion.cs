@@ -100,6 +100,70 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(max)")]
         public string? CcExt_Observacion { get; set; }
 
+        /*
+        [Column(TypeName = "varchar(50)")]
+        public string CcExt_AlDardo { get; set; }
+
+
+        [Column(TypeName = "varchar(50)")]
+        public string CcExt_Geles { get; set; }
+
+
+        [Column(TypeName = "varchar(50)")]
+        public string CcExt_Quemado { get; set; }
+
+
+        [Column(TypeName = "varchar(50)")]
+        public string CcExt_Brillo { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? CcExt_Calibre1 { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? CcExt_Calibre2 { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? CcExt_Calibre3 { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? CcExt_Calibre4 { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? CcExt_Calibre5 { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? CcExt_Calibre6 { get; set; }
+
+        [Precision(18, 2)]
+        public decimal CcExt_Calibre7 { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? CcExt_Calibre8 { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? CcExt_Calibre9 { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? CcExt_Calibre10 { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? CcExt_Calibre11 { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? CcExt_Calibre12 { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? CcExt_Calibre13 { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? CcExt_Calibre14 { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? CcExt_Calibre15 { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? CcExt_Calibre16 { get; set; }
+        */
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }
