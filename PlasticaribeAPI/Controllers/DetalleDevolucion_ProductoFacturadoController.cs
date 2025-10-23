@@ -181,7 +181,7 @@ namespace PlasticaribeAPI.Controllers
                               FechaHora = dev.DevProdFact_Fecha + " " + dev.DevProdFact_Hora,
                               FechaDespacho = dev.DevProdFact_FechaFinalizado + " " + dev.DevProdFact_HoraFinalizado,
                               Type = "DV",
-                              Estado = dev.Estado_Id == 11 ? "PENDIENTE" : dev.Estado_Id == 29 ? "EN REVISIÓN" : dev.Estado_Id == 38 ? "POR REPONER" : dev.Estado_Id == 39 ? "EN REPOSICION" : dev.Estado_Id == 18 ? "CERRADA" : dev.Estado_Id == 53 ?  "PRE-DEVUELTO" : dev.Estado_Id == 54 ? "POR FINALIZAR" : "",
+                              Estado = dev.Estado_Id == 11 ? "PENDIENTE" : dev.Estado_Id == 29 ? "EN REVISIÓN" :  dev.Estado_Id == 3 ? "ANULADO" : dev.Estado_Id == 38 ? "POR REPONER" : dev.Estado_Id == 39 ? "EN REPOSICION" : dev.Estado_Id == 18 ? "CERRADA" : dev.Estado_Id == 53 ?  "PRE-DEVUELTO" : dev.Estado_Id == 54 ? "POR FINALIZAR" : "",
                               Of = 0, //(from dof in _context.Set<Detalles_OrdenFacturacion>() where Convert.ToString(dof.Consecutivo_Pedido) == Convert.ToString("DV"+Convert.ToString(dev.DevProdFact_Id)+"-OF"+Convert.ToString(dev.Id_OrdenFact.Value)) orderby dof.Id descending select dof.Id_OrdenFacturacion).FirstOrDefault(),
                           };
             return infoDev.Any() ? Ok(infoDev) : NotFound();

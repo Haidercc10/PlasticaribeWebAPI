@@ -45,32 +45,36 @@ namespace PlasticaribeAPI.Controllers
             var con = from pd in _context.Set<Produccion_Diaria>()
                       where pd.Prd_Fecha >= date1 &&
                       pd.Prd_Fecha <= date2
+                      group pd by new { pd.Prd_Maquina, pd.Proceso_Id, pd.Procesos.Proceso_Nombre, pd.Prd_Fecha } into g
                       select new
                       {
-                          Id = pd.Prd_Id,
-                          Machine = pd.Prd_Maquina,
-                          Process = pd.Proceso_Id,
-                          ProcessName = pd.Procesos.Proceso_Nombre, 
-                          Date = pd.Prd_Fecha,
-                          Weight = pd.Prd_Peso,
-                          Percentage = pd.Prd_Porcentaje,
-                          Goal = pd.Prd_Meta,
+                          Machine = g.Key.Prd_Maquina,
+                          Process = g.Key.Proceso_Id,
+                          ProcessName = g.Key.Proceso_Nombre, 
+                          Date = g.Key.Prd_Fecha,
+                          Weight = g.Sum(x => x.Prd_Peso),
+                          Percentage = g.Sum(x => x.Prd_Porcentaje),
+                          Goal = g.Sum(x => x.Prd_Meta) > Convert.ToDecimal(0) ? (g.Sum(x => x.Prd_Meta) / 2) : Convert.ToDecimal(0),
                       };
             return Ok(con);
         }
 
         //Función para actualizar la meta de produccion por maquina. 
-        [HttpPut("putGoalForMachine/{id}/{goal}")]
-        public async Task<IActionResult> putGoalForMachine(int id, decimal goal)
+        [HttpPut("putGoalForMachine/{machine}/{process}/{date}/{goal}")]
+        public async Task<IActionResult> putGoalForMachine(int machine, string process, DateTime date, decimal goal)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8634 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'class' constraint.
-            var machine = (from pd in _context.Set<Produccion_Diaria>() where pd.Prd_Id == id select pd).FirstOrDefault();
+            var production = (from pd in _context.Set<Produccion_Diaria>() where pd.Prd_Maquina == machine && pd.Proceso_Id == process select pd).FirstOrDefault();
             
-            machine.Prd_Meta = goal;
-            machine.Prd_Porcentaje = machine.Prd_Peso == 0 ? 0 : (machine.Prd_Peso * 100) / goal;
+            if (production == null)
+            {
+                return NotFound("No se encontró producción para la máquina y proceso especificados.");
+            }
+            production.Prd_Meta = goal;
+            production.Prd_Porcentaje = production.Prd_Peso == 0 ? 0 : (production.Prd_Peso * 100) / goal;
 
-            _context.Entry(machine).State = EntityState.Modified;
+            _context.Entry(production).State = EntityState.Modified;
             try
             {
                 await _context.SaveChangesAsync();
@@ -80,7 +84,7 @@ namespace PlasticaribeAPI.Controllers
                 throw;
             }
 
-            return Ok(machine);
+            return Ok(production);
 #pragma warning restore CS8634 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'class' constraint.
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }

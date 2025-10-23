@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20251015203528_ControlCalidadExtrusion")]
+    partial class ControlCalidadExtrusion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1163,6 +1166,7 @@ namespace PlasticaribeAPI.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("CcExt_Id"));
 
                     b.Property<string>("CcExt_AlDardo")
+                        .IsRequired()
                         .HasColumnType("varchar(50)");
 
                     b.Property<decimal>("CcExt_Ancho")
@@ -1178,6 +1182,7 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<string>("CcExt_Brillo")
+                        .IsRequired()
                         .HasColumnType("varchar(50)");
 
                     b.Property<decimal?>("CcExt_Calibre1")
@@ -1264,14 +1269,11 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(max)");
 
-                    b.Property<decimal?>("CcExt_Desviacion")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<DateTime>("CcExt_Fecha")
                         .HasColumnType("date");
 
                     b.Property<string>("CcExt_Geles")
+                        .IsRequired()
                         .HasColumnType("varchar(50)");
 
                     b.Property<string>("CcExt_Hora")
@@ -1280,10 +1282,6 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Property<int>("CcExt_Maquina")
                         .HasColumnType("int");
-
-                    b.Property<decimal?>("CcExt_Moda")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<long>("CcExt_OT")
                         .HasColumnType("bigint");
@@ -1296,15 +1294,15 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("CcExt_Quemado")
+                        .IsRequired()
                         .HasColumnType("varchar(50)");
 
                     b.Property<string>("CcExt_Rasgado")
                         .IsRequired()
                         .HasColumnType("varchar(50)");
 
-                    b.Property<string>("CcExt_Rollo")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
+                    b.Property<long>("CcExt_Rollo")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("CcExt_Ronda")
                         .HasColumnType("int");

@@ -34,7 +34,8 @@ namespace PlasticaribeAPI.Models
         public string Referencia { get; set; }
 
 
-        public long CcExt_Rollo { get; set; }
+        [Column(TypeName = "varchar(50)")]
+        public string CcExt_Rollo { get; set; }
 
         public int Pigmento_Id { get; set; }
         public Pigmento? Pigmento { get; set; }
@@ -100,21 +101,21 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(max)")]
         public string? CcExt_Observacion { get; set; }
 
-        /*
+        
         [Column(TypeName = "varchar(50)")]
-        public string CcExt_AlDardo { get; set; }
-
-
-        [Column(TypeName = "varchar(50)")]
-        public string CcExt_Geles { get; set; }
+        public string? CcExt_AlDardo { get; set; }
 
 
         [Column(TypeName = "varchar(50)")]
-        public string CcExt_Quemado { get; set; }
+        public string? CcExt_Geles { get; set; }
 
 
         [Column(TypeName = "varchar(50)")]
-        public string CcExt_Brillo { get; set; }
+        public string? CcExt_Quemado { get; set; }
+
+
+        [Column(TypeName = "varchar(50)")]
+        public string? CcExt_Brillo { get; set; }
 
         [Precision(18, 2)]
         public decimal? CcExt_Calibre1 { get; set; }
@@ -163,7 +164,13 @@ namespace PlasticaribeAPI.Models
 
         [Precision(18, 2)]
         public decimal? CcExt_Calibre16 { get; set; }
-        */
+
+        [Precision(18, 2)]
+        public decimal? CcExt_Moda { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? CcExt_Desviacion { get; set; }
+
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }
