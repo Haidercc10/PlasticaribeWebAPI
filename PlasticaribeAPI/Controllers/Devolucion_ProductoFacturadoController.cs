@@ -71,6 +71,32 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        //Funcin que actualiza el estado de la devolucion a por finalizar y le asigna la reposicion
+        [HttpPut("PutStatusDVForReposition/{id}/{repo}")]
+        public async Task<IActionResult> PutStatusDVForReposition(long id, long repo)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var dataDevolution = (from dv in _context.Set<Devolucion_ProductoFacturado>() where dv.DevProdFact_Id == id && dv.Estado_Id != 18 select dv).FirstOrDefault();
+            
+            dataDevolution.Estado_Id = 54;
+            dataDevolution.Reposicion_Id = repo;
+
+            _context.Entry(dataDevolution).State = EntityState.Modified;
+            _context.SaveChanges();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!Devolucion_ProductoFacturadoExists(id)) return NotFound();
+                else throw;
+            }
+            return NoContent();
+
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+        }
+
         //Consulta que actualiza el estado de la devolucion
         [HttpPut("PutStatusDevolution/{id}/{status}/{date}/{hour}/{user}/{repo}/{note}")]
         public async Task<IActionResult> PutStatusDevolution(long id, int status, DateTime date, string hour, long user, bool repo, bool note, string? observation)

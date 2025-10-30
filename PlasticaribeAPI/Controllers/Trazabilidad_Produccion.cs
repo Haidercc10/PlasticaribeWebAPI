@@ -101,6 +101,7 @@ namespace PlasticaribeAPI.Controllers
                                               ChildDate = tr.Trz_Fecha,
                                               ChildHour = tr.Trz_Hora,
                                               ChildTurn = tr.Turno_Id,
+                                              ChildMachine = tr.Trz_Maquina,
                                               ChildPacker = tr.Empacador.Usua_Nombre,
                                               ChildAuthorize = tr.Autoriza.Usua_Nombre,
                                           } into grp
@@ -118,6 +119,7 @@ namespace PlasticaribeAPI.Controllers
                                               ChildDate = grp.Key.ChildDate,
                                               ChildHour = grp.Key.ChildHour,
                                               ChildTurn = grp.Key.ChildTurn,
+                                              ChildMachine = grp.Key.ChildMachine,
                                               ChildPacker = grp.Key.ChildPacker,
                                               ChildAuthorize = grp.Key.ChildAuthorize,
                                           };

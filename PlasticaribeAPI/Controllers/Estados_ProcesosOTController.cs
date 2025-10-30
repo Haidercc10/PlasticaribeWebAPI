@@ -439,6 +439,7 @@ namespace PlasticaribeAPI.Controllers
 
                 if (process == "EMP") order.EstProcOT_EmpaqueKg = qty;
                 if (process == "PERF") order.EstProcOT_PerforadoKg = qty;
+                if (process == "DBLD") order.EstProcOT_DobladoKg = qty;
                 if (process == "SELLA") { 
                     order.EstProcOT_SelladoKg = weight;
                     order.EstProcOT_SelladoUnd = qty;
