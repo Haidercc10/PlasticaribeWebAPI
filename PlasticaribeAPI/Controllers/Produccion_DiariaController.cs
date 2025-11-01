@@ -53,8 +53,12 @@ namespace PlasticaribeAPI.Controllers
                           ProcessName = g.Key.Proceso_Nombre, 
                           Date = g.Key.Prd_Fecha,
                           Weight = g.Sum(x => x.Prd_Peso),
-                          Percentage = g.Sum(x => x.Prd_Porcentaje),
+                          Percentage = Math.Round(g.Sum(x => x.Prd_Porcentaje)),
                           Goal = g.Sum(x => x.Prd_Meta) > Convert.ToDecimal(0) ? (g.Sum(x => x.Prd_Meta) / 2) : Convert.ToDecimal(0),
+                          WeightNight = g.Where(x => x.Turno_Id == "NOCHE")
+                                       .Sum(x => (decimal?)x.Prd_Peso) ?? 0,
+                          weightDay = g.Where(x => x.Turno_Id == "DIA")
+                                       .Sum(x => (decimal?)x.Prd_Peso) ?? 0
                       };
             return Ok(con);
         }
@@ -65,16 +69,22 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8634 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'class' constraint.
-            var production = (from pd in _context.Set<Produccion_Diaria>() where pd.Prd_Maquina == machine && pd.Proceso_Id == process select pd).FirstOrDefault();
-            
-            if (production == null)
+            var production = from pd in _context.Set<Produccion_Diaria>() 
+                             where pd.Prd_Maquina == machine 
+                             && pd.Prd_Fecha == date.Date 
+                             && pd.Proceso_Id == process
+                             select pd;
+
+            if (!production.Any())
             {
                 return NotFound("No se encontró producción para la máquina y proceso especificados.");
             }
-            production.Prd_Meta = goal;
-            production.Prd_Porcentaje = production.Prd_Peso == 0 ? 0 : (production.Prd_Peso * 100) / goal;
-
-            _context.Entry(production).State = EntityState.Modified;
+            foreach (var prod in production)
+            {
+                prod.Prd_Meta = goal;
+                prod.Prd_Porcentaje = prod.Prd_Peso == 0 ? 0 : (prod.Prd_Peso * 100) / goal;
+                _context.Entry(prod).State = EntityState.Modified;
+            }
             try
             {
                 await _context.SaveChangesAsync();
@@ -83,8 +93,7 @@ namespace PlasticaribeAPI.Controllers
             {
                 throw;
             }
-
-            return Ok(production);
+            return NoContent();
 #pragma warning restore CS8634 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'class' constraint.
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
