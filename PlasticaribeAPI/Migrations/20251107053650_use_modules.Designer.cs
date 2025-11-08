@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20251107053650_use_modules")]
+    partial class use_modules
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1701,71 +1704,6 @@ namespace PlasticaribeAPI.Migrations
                         });
 
                     b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.Cumplimiento_Facturacion", b =>
-                {
-                    b.Property<int>("Cufa_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Cufa_Id"));
-
-                    b.Property<decimal?>("Cufa_FacturadoAnual")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Cufa_FacturadoDia")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("Cufa_FacturadoMes")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("Cufa_Fecha")
-                        .HasColumnType("date");
-
-                    b.Property<DateTime>("Cufa_FechaRegistro")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Cufa_HoraRegistro")
-                        .IsRequired()
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<decimal?>("Cufa_MetaAnual")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Cufa_MetaDia")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("Cufa_MetaMes")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Cufa_PorcentajeAnual")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)")
-                        .HasComputedColumnSql("CASE WHEN Cufa_MetaAnual > 0 THEN (Cufa_FacturadoAnual / Cufa_MetaAnual) * 100 ELSE 0 END", true);
-
-                    b.Property<decimal>("Cufa_PorcentajeDia")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)")
-                        .HasComputedColumnSql("CASE WHEN Cufa_MetaDia > 0 THEN (Cufa_FacturadoDia / Cufa_MetaDia) * 100 ELSE 0 END", true);
-
-                    b.Property<decimal>("Cufa_PorcentajeMes")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)")
-                        .HasComputedColumnSql("CASE WHEN Cufa_MetaMes > 0 THEN (Cufa_FacturadoMes / Cufa_MetaMes) * 100 ELSE 0 END", true);
-
-                    b.HasKey("Cufa_Id");
-
-                    b.ToTable("Cumplimiento_Facturacion");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Desperdicio", b =>

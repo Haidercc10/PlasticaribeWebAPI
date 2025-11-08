@@ -218,6 +218,10 @@ namespace PlasticaribeAPI.Data
 
         public DbSet<Produccion_Diaria> Produccion_Diaria { get; set; }
 
+        public DbSet<Usabilidad_Modulos> Usabilidad_Modulos { get; set; }
+
+        public DbSet<Cumplimiento_Facturacion> Cumplimiento_Facturacion { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Relaciones de productos
@@ -1244,6 +1248,23 @@ namespace PlasticaribeAPI.Data
             //Produccion Diaria
             modelBuilder.Entity<Produccion_Diaria>().HasOne(x => x.Procesos).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Produccion_Diaria>().HasOne(x => x.Turnos).WithMany().HasForeignKey(x => x.Turno_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Usabilidad Modulos
+            modelBuilder.Entity<Usabilidad_Modulos>().HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            //Cumplimiento Facturacion - Computed Columns
+            modelBuilder.Entity<Cumplimiento_Facturacion>()
+            .Property(c => c.Cufa_PorcentajeDia)
+            .HasComputedColumnSql("CASE WHEN Cufa_MetaDia > 0 THEN (Cufa_FacturadoDia / Cufa_MetaDia) * 100 ELSE 0 END", stored: true);
+
+            modelBuilder.Entity<Cumplimiento_Facturacion>()
+            .Property(c => c.Cufa_PorcentajeMes)
+            .HasComputedColumnSql("CASE WHEN Cufa_MetaMes > 0 THEN (Cufa_FacturadoMes / Cufa_MetaMes) * 100 ELSE 0 END", stored: true);
+
+            modelBuilder.Entity<Cumplimiento_Facturacion>()
+                .Property(c => c.Cufa_PorcentajeAnual)
+                .HasComputedColumnSql("CASE WHEN Cufa_MetaAnual > 0 THEN (Cufa_FacturadoAnual / Cufa_MetaAnual) * 100 ELSE 0 END", stored: true);
+
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
