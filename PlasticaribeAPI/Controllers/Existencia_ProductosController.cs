@@ -297,6 +297,12 @@ namespace PlasticaribeAPI.Controllers
                                            where pp.Prod_Id == prod.Prod_Id && 
                                            pp.Presentacion == exi.UndMed_Id 
                                            select pp.Presentacion == "Kg" ? pp.Peso_Neto == null ? 0 : pp.Peso_Neto : pp.Cantidad == null ? 0 : pp.Cantidad).FirstOrDefault(),
+                            Date = (from pp in _context.Set<Produccion_Procesos>()
+                                    where pp.Prod_Id == prod.Prod_Id &&
+                                    pp.Presentacion == exi.UndMed_Id && 
+                                    pp.Estado_Rollo == 19 &&
+                                    pp.Envio_Zeus == true
+                                    select pp.Fecha).Max(),
                             Weight = exi.ExProd_PesoBruto, /*(from pp in _context.Set<Produccion_Procesos>() 
                                       where pp.Prod_Id == prod.Prod_Id &&
                                       pp.Presentacion == exi.UndMed_Id && 

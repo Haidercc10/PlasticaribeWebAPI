@@ -42,7 +42,13 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getProductionDay/{date1}/{date2}")]
         public ActionResult getProductionDay(DateTime date1, DateTime date2)
         {
+            string horaInicio = "07:00:00";
+            string horaFin = "06:59:59";
+            DateTime fechaExtendida = date2.AddDays(1);
+            List<int> machines = [35, 37, 38, 39];
+
             var con = from pd in _context.Set<Produccion_Diaria>()
+
                       where pd.Prd_Fecha >= date1 &&
                       pd.Prd_Fecha <= date2
                       group pd by new { pd.Prd_Maquina, pd.Proceso_Id, pd.Procesos.Proceso_Nombre, pd.Prd_Fecha } into g
@@ -50,7 +56,7 @@ namespace PlasticaribeAPI.Controllers
                       {
                           Machine = g.Key.Prd_Maquina,
                           Process = g.Key.Proceso_Id,
-                          ProcessName = g.Key.Proceso_Nombre, 
+                          ProcessName = g.Key.Proceso_Nombre,
                           Date = g.Key.Prd_Fecha,
                           Weight = g.Sum(x => x.Prd_Peso),
                           Percentage = Math.Round(g.Sum(x => x.Prd_Porcentaje)),
@@ -58,7 +64,24 @@ namespace PlasticaribeAPI.Controllers
                           WeightNight = g.Where(x => x.Turno_Id == "NOCHE")
                                        .Sum(x => (decimal?)x.Prd_Peso) ?? 0,
                           weightDay = g.Where(x => x.Turno_Id == "DIA")
-                                       .Sum(x => (decimal?)x.Prd_Peso) ?? 0
+                                       .Sum(x => (decimal?)x.Prd_Peso) ?? 0,
+                          Waste = (from d in _context.Set<Desperdicio>()
+                                   where d.Maquina == g.Key.Prd_Maquina
+                                         && ((d.Proceso_Id == "SELLA" && machines.Contains(Convert.ToInt32(d.Maquina)) ? "CAMISILLA" == g.Key.Proceso_Id :
+                                              d.Proceso_Id == "CORTE" ? "EMP" == g.Key.Proceso_Id :
+                                              d.Proceso_Id == g.Key.Proceso_Id))
+                                         && (
+                                             // Día inicial: desde 7 AM en adelante
+                                             (d.Desp_Fecha == date1 && string.Compare(d.Desp_HoraRegistro, horaInicio) >= 0)
+                                             ||
+                                             // Día final extendido: hasta antes de 7 AM del día siguiente
+                                             (d.Desp_Fecha == fechaExtendida && string.Compare(d.Desp_HoraRegistro, horaFin) < 0)
+                                             ||
+                                             // Días intermedios completos
+                                             (d.Desp_Fecha > date1 && d.Desp_Fecha < fechaExtendida)
+                                         )
+                                   select (decimal?)d.Desp_PesoKg
+                          ).Sum() ?? 0
                       };
             return Ok(con);
         }
