@@ -301,7 +301,7 @@ namespace PlasticaribeAPI.Controllers
                                     where pp.Prod_Id == prod.Prod_Id &&
                                     pp.Presentacion == exi.UndMed_Id && 
                                     pp.Estado_Rollo == 19 &&
-                                    pp.Envio_Zeus == true
+                                    (pp.Envio_Zeus == true || pp.Envio_Zeus == false)
                                     select pp.Fecha).Max(),
                             Weight = exi.ExProd_PesoBruto, /*(from pp in _context.Set<Produccion_Procesos>() 
                                       where pp.Prod_Id == prod.Prod_Id &&

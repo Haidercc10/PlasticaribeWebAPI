@@ -639,7 +639,8 @@ namespace PlasticaribeAPI.Controllers
                              Cantidad = Convert.ToDecimal(asg.DtAsigMp_Cantidad),
                              Unidad_Medida = asg.UndMed_Id,
                              Precio = Convert.ToDecimal(asg.MatPri.MatPri_Precio),
-                             Proveedor = Convert.ToString("PLASTICARIBE SAS")
+                             Proveedor = Convert.ToString("PLASTICARIBE SAS"), 
+                             Subcategoria = Convert.ToString(asg.MatPri.SubcategoriasMP.SubCatMP_Nombre),
                          };
 
             //Asignacion de Materia Prima para la creacion de Tintas
@@ -668,7 +669,8 @@ namespace PlasticaribeAPI.Controllers
                                              Cantidad = Convert.ToDecimal(cr.DetAsigMPxTinta_Cantidad),
                                              Unidad_Medida = cr.UndMed_Id,
                                              Precio = Convert.ToDecimal(cr.TintasDAMPxT.Tinta_Precio),
-                                             Proveedor = Convert.ToString("PLASTICARIBE SAS")
+                                             Proveedor = Convert.ToString("PLASTICARIBE SAS"), 
+                                             Subcategoria = Convert.ToString(cr.MatPri.SubcategoriasMP.SubCatMP_Nombre),
                                          };
 
             //Devoluciones de Materia Prima
@@ -697,7 +699,8 @@ namespace PlasticaribeAPI.Controllers
                                       Cantidad = Convert.ToDecimal(dev.DtDevMatPri_CantidadDevuelta),
                                       Unidad_Medida = dev.UndMed_Id,
                                       Precio = dev.Tinta.Tinta_Id > 2001 ? Convert.ToDecimal(dev.Tinta.Tinta_Precio) : Convert.ToDecimal(dev.MatPri.MatPri_Precio),
-                                      Proveedor = Convert.ToString("PLASTICARIBE")
+                                      Proveedor = Convert.ToString("PLASTICARIBE"), 
+                                      Subcategoria = Convert.ToString(dev.MatPri.SubcategoriasMP.SubCatMP_Nombre),
                                   };
 
             //Facturas de Materia Prima
@@ -726,7 +729,8 @@ namespace PlasticaribeAPI.Controllers
                                   Cantidad = Convert.ToDecimal(fac.FaccoMatPri_Cantidad),
                                   Unidad_Medida = fac.UndMed_Id,
                                   Precio = Convert.ToDecimal(fac.FaccoMatPri_ValorUnitario),
-                                  Proveedor = Convert.ToString(fac.Facco.Prov.Prov_Nombre)
+                                  Proveedor = Convert.ToString(fac.Facco.Prov.Prov_Nombre), 
+                                  Subcategoria = Convert.ToString(fac.MatPri.SubcategoriasMP.SubCatMP_Nombre),
                               };
 
             //Remisiones de Materia Prima
@@ -755,7 +759,8 @@ namespace PlasticaribeAPI.Controllers
                                     Cantidad = Convert.ToDecimal(rem.RemiMatPri_Cantidad),
                                     Unidad_Medida = rem.UndMed_Id,
                                     Precio = Convert.ToDecimal(rem.RemiMatPri_ValorUnitario.Value),
-                                    Proveedor = Convert.ToString(rem.Rem.Prov.Prov_Nombre)
+                                    Proveedor = Convert.ToString(rem.Rem.Prov.Prov_Nombre), 
+                                    Subcategoria = Convert.ToString(rem.MatPri.SubcategoriasMP.SubCatMP_Nombre),
                                 };
 
             //Asignaciones de BOPP
@@ -783,7 +788,8 @@ namespace PlasticaribeAPI.Controllers
                                  Cantidad = Convert.ToDecimal(asg.DtAsigBOPP_Cantidad),
                                  Unidad_Medida = asg.UndMed_Id,
                                  Precio = Convert.ToDecimal(asg.BOPP.BOPP_Precio),
-                                 Proveedor = Convert.ToString("PLASTICARIBE SAS")
+                                 Proveedor = Convert.ToString("PLASTICARIBE SAS"), 
+                                 Subcategoria = Convert.ToString(asg.BOPP.SubcategoriasMP.SubCatMP_Nombre),
                              };
 
             //Entrada de BOPP
@@ -811,7 +817,8 @@ namespace PlasticaribeAPI.Controllers
                                      Cantidad = Convert.ToDecimal(ent.BOPP_Stock),
                                      Unidad_Medida = ent.UndMed_Kg,
                                      Precio = Convert.ToDecimal(ent.BOPP_Precio),
-                                     Proveedor = Convert.ToString(ent.Proveedor.Prov_Nombre)
+                                     Proveedor = Convert.ToString(ent.Proveedor.Prov_Nombre), 
+                                     Subcategoria = Convert.ToString(ent.SubcategoriasMP.SubCatMP_Nombre),
                                  };
 
             //Asignacion de Tinta
@@ -839,7 +846,8 @@ namespace PlasticaribeAPI.Controllers
                                   Cantidad = Convert.ToDecimal(asg.DtAsigTinta_Cantidad),
                                   Unidad_Medida = asg.UndMed_Id,
                                   Precio = Convert.ToDecimal(asg.Tinta.Tinta_Precio),
-                                  Proveedor = Convert.ToString("PLASTICARIBE SAS")
+                                  Proveedor = Convert.ToString("PLASTICARIBE SAS"),
+                                  Subcategoria = Convert.ToString(asg.Tinta.SubcategoriasMP.SubCatMP_Nombre),
                               };
 
             return Ok(conAsg.Concat(conAsgMPCreacionTintas).Concat(conDevoluciones).Concat(conFacturas).Concat(conRemisiones).Concat(conAsgBopp).Concat(conEntradaBOPP).Concat(conAsgTinta));
