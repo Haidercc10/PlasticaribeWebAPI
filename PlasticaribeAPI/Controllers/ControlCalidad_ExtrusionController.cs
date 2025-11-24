@@ -48,12 +48,34 @@ namespace PlasticaribeAPI.Controllers
 
         // GET Por Fechas
         [HttpGet("getControlCalidad_ExtrusionHoy/{fecha1}/{fecha2}")]
-        public ActionResult GetControlCalidad_ExtrusionHoy(DateTime fecha1, DateTime fecha2)
+        public ActionResult GetControlCalidad_ExtrusionHoy(DateTime fecha1, DateTime fecha2, string? turn = "", string? user = "")
         {
+            List<string> turnosDia = ["DIA", "RD"];
+            List<string> turnosNoche = ["NOCHE", "RN"];
+
+            string horaInicio = "07:00:00";
+            string horaFin = "06:59:59";
+            var fechaExtendida = fecha2.AddDays(1);
+
             var controlExtrusion = from cce in _context.Set<ControlCalidad_Extrusion>()
-                                   where cce.CcExt_Fecha >= fecha1 &&
-                                   cce.CcExt_Fecha <= fecha2
-                                   select cce;
+                                   join u in _context.Set<Usuario>() on cce.Usua_Id equals u.Usua_Id
+                                   where
+                                   (
+                                     // Día inicial: desde 7 AM en adelante
+                                     (cce.CcExt_Fecha == fecha1 && String.Compare(cce.CcExt_Hora, horaInicio) >= 0)
+                                    ||
+                                     // Día final extendido: hasta antes de 7 AM del día siguiente
+                                     (cce.CcExt_Fecha == fechaExtendida && String.Compare(cce.CcExt_Hora, horaFin) < 0)
+                                    ||
+                                      // Días intermedios completos
+                                      (cce.CcExt_Fecha > fecha1 && cce.CcExt_Fecha < fechaExtendida)
+                                    ) &&
+                                    (turn != "" ? turn == "DIA" ? turnosDia.Contains(cce.Turno_Id) : turn == "NOCHE" ? turnosNoche.Contains(cce.Turno_Id) : (cce.Turno_Id.ToString() == turn) : true) &&
+                                    (user != "" ? cce.Usua_Id.ToString() == user : true)
+                                   select new { 
+                                    cce, 
+                                    u,
+                                   };
 
             if (controlExtrusion == null) return NotFound();
             else return Ok(controlExtrusion);

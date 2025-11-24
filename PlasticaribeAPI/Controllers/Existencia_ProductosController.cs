@@ -301,8 +301,8 @@ namespace PlasticaribeAPI.Controllers
                                     where pp.Prod_Id == prod.Prod_Id &&
                                     pp.Presentacion == exi.UndMed_Id && 
                                     pp.Estado_Rollo == 19 &&
-                                    (pp.Envio_Zeus == true || pp.Envio_Zeus == false)
-                                    select pp.Fecha).Max(),
+                                    pp.Envio_Zeus == true
+                                    select pp.Fecha).Min(),
                             Weight = exi.ExProd_PesoBruto, /*(from pp in _context.Set<Produccion_Procesos>() 
                                       where pp.Prod_Id == prod.Prod_Id &&
                                       pp.Presentacion == exi.UndMed_Id && 
@@ -426,6 +426,12 @@ namespace PlasticaribeAPI.Controllers
                                                      where p_p.Prod_Id == pp.Key.Item && 
                                                      p_p.Presentacion == pp.Key.Presentation 
                                                      select p_p.Presentacion == "Kg" ? p_p.Peso_Neto == null ? 0 : p_p.Peso_Neto : p_p.Cantidad == null ? 0 : p_p.Cantidad).FirstOrDefault(),
+                                      Date = (from p_p in _context.Set<Produccion_Procesos>()
+                                                     where p_p.Prod_Id == pp.Key.Item &&
+                                                     p_p.Presentacion == pp.Key.Presentation &&
+                                                     p_p.Estado_Rollo == 19 &&
+                                                     p_p.Envio_Zeus == false
+                                                     select p_p.Fecha).Min(),
                                       Weight = pp.Sum(x => x.pp.Peso_Bruto),
                                       CityClient = (from s in _context.Set<SedesClientes>()
                                                     where s.Cli_Id == (from est in _context.Set<Estados_ProcesosOT>()
