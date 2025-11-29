@@ -124,6 +124,19 @@ namespace PlasticaribeAPI.Controllers
             return Ok(sedes);
         }
 
+        // Obtener clientes con IDs específicos para restricción de peso teorico en area de empaque
+        [HttpGet("getClientsWithRestrictionWeight")]
+        public ActionResult GetClientsWithRestrictionWeight()
+        {
+            int[] clients = [802006084, 860039794, 860075208];
+
+            var clientes = from cli in _context.Set<Clientes>()
+                           where clients.Contains((int)cli.Cli_Id)
+                           select cli;
+
+            return Ok(clientes);
+        }
+
         // PUT: api/Clientes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
