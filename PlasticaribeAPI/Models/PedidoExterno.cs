@@ -56,6 +56,13 @@ namespace PlasticaribeAPI.Models
         public decimal PedExt_PrecioTotalFinal { get; set; }
         public long? Creador_Id { get; set; }
         public Usuario? Creador { get; set; }
+
+        [Column(TypeName = "varchar(100)")]
+        public string? PedExt_Oc { get; set; }
+
+        [Column(TypeName = "varchar(max)")]
+        public string? PedExt_DireccionEntrega { get; set; }
+
         // public IList<PedidoProducto>? PedExtProd { get; set; }
 
     }
