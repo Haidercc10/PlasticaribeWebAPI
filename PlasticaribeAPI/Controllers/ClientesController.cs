@@ -128,7 +128,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getClientsWithRestrictionWeight")]
         public ActionResult GetClientsWithRestrictionWeight()
         {
-            int[] clients = [802006084, 860039794, 860075208, 802014471];
+            int[] clients = [802006084, 860039794, 860075208];
 
             var clientes = from cli in _context.Set<Clientes>()
                            where clients.Contains((int)cli.Cli_Id)
