@@ -222,6 +222,8 @@ namespace PlasticaribeAPI.Data
 
         public DbSet<Cumplimiento_Facturacion> Cumplimiento_Facturacion { get; set; }
 
+        public DbSet<Producto_Terminado> Producto_Terminado { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Relaciones de productos
@@ -307,6 +309,9 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<PedidoProducto>().HasOne(pUnd => pUnd.PedidoExt).WithMany().HasForeignKey(pUnd => pUnd.PedExt_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<PedidoProducto>().HasOne(pUnd => pUnd.Product).WithMany().HasForeignKey(pUnd => pUnd.Prod_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<PedidoProducto>().HasOne(pUnd => pUnd.UndMed).WithMany().HasForeignKey(pUnd => pUnd.UndMed_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<PedidoProducto>().HasOne(pUnd => pUnd.Estado).WithMany().HasForeignKey(pUnd => pUnd.Estado_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<PedidoProducto>().HasOne(pUnd => pUnd.Pigmt).WithMany().HasForeignKey(pUnd => pUnd.Pigmt_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<PedidoProducto>().HasOne(pUnd => pUnd.MaterialMP).WithMany().HasForeignKey(pUnd => pUnd.Material_Id).OnDelete(DeleteBehavior.Restrict);
 
             //Relaciones clientes_productos
             modelBuilder.Entity<Cliente_Producto>().HasOne(clipro => clipro.Prod).WithMany().HasForeignKey(clipro => clipro.Prod_Id).OnDelete(DeleteBehavior.Restrict);
@@ -1248,6 +1253,12 @@ namespace PlasticaribeAPI.Data
             //Produccion Diaria
             modelBuilder.Entity<Produccion_Diaria>().HasOne(x => x.Procesos).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Produccion_Diaria>().HasOne(x => x.Turnos).WithMany().HasForeignKey(x => x.Turno_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Producto_Terminado>().HasOne(Prd => Prd.TpProd).WithMany().HasForeignKey(Prd => Prd.TpProd_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto_Terminado>().HasOne(prd => prd.TiposSellados).WithMany().HasForeignKey(prd => prd.TpSellado_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto_Terminado>().HasOne(prd => prd.TipoImpresion).WithMany().HasForeignKey(prd => prd.TpImpresion_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto_Terminado>().HasOne(prd => prd.PedidoProducto).WithMany().HasForeignKey(prd => prd.PedExtProd_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto_Terminado>().HasOne(prd => prd.Producto).WithMany().HasForeignKey(prd => prd.Prod_Id).OnDelete(DeleteBehavior.Restrict);
 
             //Usabilidad Modulos
             modelBuilder.Entity<Usabilidad_Modulos>().HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);

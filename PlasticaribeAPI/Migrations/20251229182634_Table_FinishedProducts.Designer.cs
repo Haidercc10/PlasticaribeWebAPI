@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20251229182634_Table_FinishedProducts")]
+    partial class Table_FinishedProducts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6950,9 +6953,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<string>("PedExtProd_Referencia")
                         .HasColumnType("varchar(200)");
 
-                    b.Property<bool>("PedExtProd_Tratado")
-                        .HasColumnType("bit");
-
                     b.Property<long>("PedExt_Id")
                         .HasColumnType("bigint");
 
@@ -7824,9 +7824,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("PedExtProd_Id")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("Prod_Id")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Pt_Ancho")
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
@@ -7873,10 +7870,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("Pt_Id");
 
                     b.HasIndex("PedExtProd_Id");
-
-                    b.HasIndex("Prod_Id");
-
-                    b.HasIndex("TpImpresion_Id");
 
                     b.HasIndex("TpProd_Id");
 
@@ -13971,21 +13964,15 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Producto", "Producto")
+                    b.HasOne("PlasticaribeAPI.Models.Tipo_Producto", "TpProd")
                         .WithMany()
-                        .HasForeignKey("Prod_Id")
+                        .HasForeignKey("TpProd_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("PlasticaribeAPI.Models.Tipos_Impresion", "TipoImpresion")
                         .WithMany()
-                        .HasForeignKey("TpImpresion_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Tipo_Producto", "TpProd")
-                        .WithMany()
-                        .HasForeignKey("TpProd_Id")
+                        .HasForeignKey("TpSellado_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -13996,8 +13983,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("PedidoProducto");
-
-                    b.Navigation("Producto");
 
                     b.Navigation("TipoImpresion");
 

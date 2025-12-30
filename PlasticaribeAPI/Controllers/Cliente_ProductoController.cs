@@ -33,8 +33,11 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult<Cliente_Producto> GetNombreCliente(long Cli_Id)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
-            var clientes = _context.Clientes_Productos.Where(pp => pp.Cli.Cli_Id == Cli_Id).ToList();
-
+            var clientes = from cp in _context.Set<Cliente_Producto>()
+                           join p in _context.Set<Producto>() on cp.Prod_Id equals p.Prod_Id
+                           where cp.Cli_Id == Cli_Id
+                           select p;
+                           
             if (clientes == null)
             {
                 return NotFound();

@@ -74,9 +74,6 @@ namespace PlasticaribeAPI.Controllers
                     pp.SedeCli.SedeCli_CodPostal,
                     pp.SedeCli.Cli.Cli_Email,
                     pp.PedExt_Observacion,
-                    pp.PedExt_Descuento,
-                    pp.PedExt_Iva,
-                    pp.PedExt_PrecioTotalFinal
                 }).ToList();
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 
@@ -1037,10 +1034,7 @@ namespace PlasticaribeAPI.Controllers
                           Observacion = ped.PedidoExt.PedExt_Observacion,
                           Vendedor_Id = ped.PedidoExt.Usua_Id,
                           Vendedor = ped.PedidoExt.Usua.Usua_Nombre,
-                          Descuento = ped.PedidoExt.PedExt_Descuento,
-                          Iva = ped.PedidoExt.PedExt_Iva,
                           Precio_Total = ped.PedidoExt.PedExt_PrecioTotal,
-                          Precio_Final = ped.PedidoExt.PedExt_PrecioTotalFinal,
                           Cliente_Id = ped.PedidoExt.SedeCli.Cli_Id,
                           Tipo_Id = ped.PedidoExt.SedeCli.Cli.TipoIdentificacion_Id,
                           Cliente = ped.PedidoExt.SedeCli.Cli.Cli_Nombre,
@@ -1090,8 +1084,6 @@ namespace PlasticaribeAPI.Controllers
                           Id_Vendedor = ped.Usua_Id,
                           Vendedor = ped.Usua.Usua_Nombre,
                           Observacion = ped.PedExt_Observacion,
-                          Descuento = ped.PedExt_Descuento,
-                          Iva = ped.PedExt_Iva,
                           Id_Creador = ped.Creador_Id,
                           Creador = ped.Creador.Usua_Nombre,
                           Valor_Total = ped.PedExt_PrecioTotal,

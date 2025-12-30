@@ -513,7 +513,6 @@ namespace PlasticaribeAPI.Controllers
             return Ok(details.Concat(repositions));
         }
 
-
         // PUT: api/Detalles_OrdenFacturacion/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

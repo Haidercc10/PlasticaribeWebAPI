@@ -166,7 +166,6 @@ namespace PlasticaribeAPI.Controllers
                           p.Estado.Estado_Nombre,
                           p.Usua_Id,
                           p.Usua.Usua_Nombre,
-                          p.PedExt_PrecioTotalFinal,
                       };
 
             return Ok(con);

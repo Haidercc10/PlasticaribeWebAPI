@@ -10,33 +10,32 @@ namespace PlasticaribeAPI.Models
         [Key]
         public long PedExt_Id { get; set; }
 
+        //Codigo Zeus
         public long PedExt_Codigo { get; set; }
 
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Column(TypeName = "date")]
         public DateTime PedExt_FechaCreacion { get; set; }
 
         [Column(TypeName = "varchar(10)")]
         public string? PedExt_HoraCreacion { get; set; }
 
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime PedExt_FechaEntrega { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime? PedExt_FechaEntrega { get; set; }
 
-        //Llave foranea empresa
+        //key empresa
         public long Empresa_Id { get; set; }
         public Empresa? Empresa { get; set; }
 
-        //Llave foranea empresa
+        //key sede cliente
         public long? SedeCli_Id { get; set; }
         public SedesClientes? SedeCli { get; set; }
 
-        //Llave foranea usuario
+        //key usuario vendedor
         [Column(Order = 6)]
         public long? Usua_Id { get; set; }
         public Usuario? Usua { get; set; }
 
-        //Llave foranea estados
+        //key estados
         public int Estado_Id { get; set; }
         public Estado? Estado { get; set; }
 
@@ -46,24 +45,17 @@ namespace PlasticaribeAPI.Models
         [Precision(18, 2)]
         public decimal PedExt_PrecioTotal { get; set; }
 
-        [Precision(18, 2)]
-        public decimal? PedExt_Descuento { get; set; } /* Porcentaje Descuento */
-
-        [Precision(18, 2)]
-        public decimal? PedExt_Iva { get; set; } /* Porcentaje IVA */
-
-        [Precision(18, 2)]
-        public decimal PedExt_PrecioTotalFinal { get; set; }
+        //key usuario creador
         public long? Creador_Id { get; set; }
         public Usuario? Creador { get; set; }
+
 
         [Column(TypeName = "varchar(100)")]
         public string? PedExt_Oc { get; set; }
 
-        [Column(TypeName = "varchar(max)")]
-        public string? PedExt_DireccionEntrega { get; set; }
 
-        // public IList<PedidoProducto>? PedExtProd { get; set; }
+        [Column(TypeName = "varchar(max)")]
+        public string PedExt_DireccionEntrega { get; set; }
 
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

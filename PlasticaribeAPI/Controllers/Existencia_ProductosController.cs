@@ -291,7 +291,11 @@ namespace PlasticaribeAPI.Controllers
                                 StockPrice = exi.ExProd_PrecioExistencia,
 
                             },
-                            Client = (from est in _context.Set<Estados_ProcesosOT>() where est.Prod_Id == exi.Prod_Id orderby est.EstProcOT_Id descending select est.EstProcOT_Cliente).FirstOrDefault(),
+                            Client = (from est in _context.Set<Estados_ProcesosOT>() 
+                                      where est.Prod_Id == exi.Prod_Id 
+                                      orderby est.EstProcOT_Id descending 
+                                      select est.EstProcOT_Cliente).FirstOrDefault(),
+
                             Seller = (from est in _context.Set<Estados_ProcesosOT>() where exi.Prod_Id == est.Prod_Id orderby est.EstProcOT_Id descending select est.Usuario.Usua_Nombre).FirstOrDefault(),
                             QtyStandard = (from pp in _context.Set<Produccion_Procesos>() 
                                            where pp.Prod_Id == prod.Prod_Id && 
