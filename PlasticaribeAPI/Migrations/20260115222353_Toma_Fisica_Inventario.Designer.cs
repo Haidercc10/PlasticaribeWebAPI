@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20260115222353_Toma_Fisica_Inventario")]
+    partial class Toma_Fisica_Inventario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4891,94 +4894,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Inventarios", b =>
-                {
-                    b.Property<int>("Inv_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Inv_Id"));
-
-                    b.Property<long>("Cli_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<decimal>("Inv_Cantidad")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<long>("Inv_Etiqueta")
-                        .HasColumnType("bigint");
-
-                    b.Property<decimal>("Inv_Existencias")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("Inv_Fecha")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Inv_Hora")
-                        .IsRequired()
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<long>("Inv_NumeroRollo")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Inv_OT")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Inv_Observacion")
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<decimal>("Inv_PesoBruto")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Inv_PrecioVenta")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Inv_Ubicacion")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("Presentacion")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("Proceso_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<int>("Prod_Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Tipo_Inventario")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int>("TpBod_Id")
-                        .HasColumnType("int");
-
-                    b.Property<long>("UsuaRegistro_Id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Inv_Id");
-
-                    b.HasIndex("Cli_Id");
-
-                    b.HasIndex("Presentacion");
-
-                    b.HasIndex("Proceso_Id");
-
-                    b.HasIndex("Prod_Id");
-
-                    b.HasIndex("TpBod_Id");
-
-                    b.HasIndex("UsuaRegistro_Id");
-
-                    b.ToTable("Inventarios");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Laminado_Capa", b =>
                 {
                     b.Property<int>("LamCapa_Id")
@@ -9798,13 +9713,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(100)");
 
-                    b.Property<string>("Tipo_Inventario")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int>("TpBod_Id")
-                        .HasColumnType("int");
-
                     b.Property<long>("UsuaRegistro_Id")
                         .HasColumnType("bigint");
 
@@ -9819,8 +9727,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Proceso_Id");
 
                     b.HasIndex("Prod_Id");
-
-                    b.HasIndex("TpBod_Id");
 
                     b.HasIndex("UsuaRegistro_Id");
 
@@ -12821,57 +12727,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Und");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Inventarios", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Clientes", "Clientes")
-                        .WithMany()
-                        .HasForeignKey("Cli_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "Unidad_Medida")
-                        .WithMany()
-                        .HasForeignKey("Presentacion")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Proceso", "Proceso")
-                        .WithMany()
-                        .HasForeignKey("Proceso_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Producto", "Producto")
-                        .WithMany()
-                        .HasForeignKey("Prod_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Tipo_Bodega", "Tipo_Bodega")
-                        .WithMany()
-                        .HasForeignKey("TpBod_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Registra")
-                        .WithMany()
-                        .HasForeignKey("UsuaRegistro_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Clientes");
-
-                    b.Navigation("Proceso");
-
-                    b.Navigation("Producto");
-
-                    b.Navigation("Registra");
-
-                    b.Navigation("Tipo_Bodega");
-
-                    b.Navigation("Unidad_Medida");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Log_Transacciones", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario")
@@ -15005,12 +14860,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Tipo_Bodega", "Tipo_Bodega")
-                        .WithMany()
-                        .HasForeignKey("TpBod_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "Registra")
                         .WithMany()
                         .HasForeignKey("UsuaRegistro_Id")
@@ -15026,8 +14875,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Producto");
 
                     b.Navigation("Registra");
-
-                    b.Navigation("Tipo_Bodega");
 
                     b.Navigation("Unidad_Medida");
                 });

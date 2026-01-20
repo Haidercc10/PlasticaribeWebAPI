@@ -224,6 +224,10 @@ namespace PlasticaribeAPI.Data
 
         public DbSet<Producto_Terminado> Producto_Terminado { get; set; }
 
+        public DbSet<Toma_Fisica_Inventario> Toma_Fisica_Inventario { get; set; }
+
+        public DbSet<Inventarios> Inventarios { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Relaciones de productos
@@ -1275,6 +1279,22 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Cumplimiento_Facturacion>()
                 .Property(c => c.Cufa_PorcentajeAnual)
                 .HasComputedColumnSql("CASE WHEN Cufa_MetaAnual > 0 THEN (Cufa_FacturadoAnual / Cufa_MetaAnual) * 100 ELSE 0 END", stored: true);
+
+            //Toma Fisica Inventario
+            modelBuilder.Entity<Toma_Fisica_Inventario>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Toma_Fisica_Inventario>().HasOne(x => x.Clientes).WithMany().HasForeignKey(x => x.Cli_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Toma_Fisica_Inventario>().HasOne(x => x.Unidad_Medida).WithMany().HasForeignKey(x => x.Presentacion).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Toma_Fisica_Inventario>().HasOne(x => x.Proceso).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Toma_Fisica_Inventario>().HasOne(x => x.Estado).WithMany().HasForeignKey(x => x.Estado_Rollo).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Toma_Fisica_Inventario>().HasOne(x => x.Registra).WithMany().HasForeignKey(x => x.UsuaRegistro_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Toma_Fisica_Inventario>().HasOne(x => x.Tipo_Bodega).WithMany().HasForeignKey(x => x.TpBod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Inventarios>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Inventarios>().HasOne(x => x.Clientes).WithMany().HasForeignKey(x => x.Cli_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Inventarios>().HasOne(x => x.Unidad_Medida).WithMany().HasForeignKey(x => x.Presentacion).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Inventarios>().HasOne(x => x.Proceso).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Inventarios>().HasOne(x => x.Registra).WithMany().HasForeignKey(x => x.UsuaRegistro_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Inventarios>().HasOne(x => x.Tipo_Bodega).WithMany().HasForeignKey(x => x.TpBod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
