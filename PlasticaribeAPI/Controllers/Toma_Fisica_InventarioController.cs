@@ -7,11 +7,12 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [Route("api/[controller]")]
     [ApiController]
     public class Toma_Fisica_InventarioController : ControllerBase
     {
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
        
             private readonly dataContext _context;
 
@@ -41,7 +42,7 @@ namespace PlasticaribeAPI.Controllers
                 return Toma_Fisica_Inventario;
             }
 
-            // GET: api/Toma_Fisica_Inventario/5/SELLA
+            
             [HttpGet("getPhysicalInventory/{roll}/{process}")]
             public async Task<ActionResult<Toma_Fisica_Inventario>> getPhysicalInventory(long roll, string process)
             {
@@ -51,35 +52,80 @@ namespace PlasticaribeAPI.Controllers
                 return Ok(physicalInv);
             }
 
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //Funcion para obtener el inventario fisico detallado por item
-        [HttpGet("getPhysicalCountForItem/{item}")]
-        public ActionResult getPhysicalCountForItem(long item)
-        {
-            var snapshot =
-                from i in _context.Set<Toma_Fisica_Inventario>()
-                join p in _context.Set<Producto>() on i.Prod_Id equals p.Prod_Id
-                join c in _context.Set<Clientes>() on i.Cli_Id equals c.Cli_Id
-                where p.Prod_Id == item
-                select new
-                {
-                    Item = p.Prod_Id,
-                    Reference = p.Prod_Nombre,
-                    Label = i.Tfi_Etiqueta,
-                    Ot = i.Tfi_OT,
-                    Client = c.Cli_Nombre,
-                    Warehouse = i.TpBod_Id,
-                    Quantity = i.Tfi_CantidadReal,
-                    GrossWeight = i.Tfi_PesoBruto,
-                    Price = i.Tfi_PrecioVenta,
-                    Unit = i.Presentacion,
-                    Process = i.Proceso_Id,
-                    Location = i.Tfi_Ubicacion,
-                    Date = i.Tfi_Fecha,
-                };
+            // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+            //Funcion para obtener el inventario fisico detallado por item
+            [HttpGet("getPhysicalCountForItem/{item}/{unit}")]
+            public ActionResult getPhysicalCountForItem(long item, string unit)
+            {
+                var snapshot =
+                    from i in _context.Set<Toma_Fisica_Inventario>()
+                    join p in _context.Set<Producto>() on i.Prod_Id equals p.Prod_Id
+                    join c in _context.Set<Clientes>() on i.Cli_Id equals c.Cli_Id
+                    where p.Prod_Id == item
+                    && i.Presentacion == unit
+                    select new
+                    {
+                        Item = p.Prod_Id,
+                        Reference = p.Prod_Nombre,
+                        Label = i.Tfi_Etiqueta,
+                        Ot = i.Tfi_OT,
+                        Client = c.Cli_Nombre,
+                        Warehouse = i.TpBod_Id,
+                        Quantity = i.Tfi_CantidadReal,
+                        GrossWeight = i.Tfi_PesoBruto,
+                        Price = i.Tfi_PrecioVenta,
+                        Unit = i.Presentacion,
+                        Process = i.Proceso_Id,
+                        Location = i.Tfi_Ubicacion,
+                        Date = i.Tfi_Fecha,
+                        SubTotal = i.Tfi_CantidadReal * i.Tfi_PrecioVenta
+                    };
 
-            return Ok(snapshot);
-        }
+                return Ok(snapshot);
+            }
+
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //Funcion para obtener el inventario fisico detallado por item en un rango de fechas
+            [HttpGet("getMovPhysicalCount/{date1}/{date2}")]
+            public ActionResult getMovPhysicalCount(DateTime date1, DateTime date2, string? ot = "", string? item = "", string? user = "", string? client = "", string? location = "")
+            {
+                var count =
+                    from i in _context.Set<Toma_Fisica_Inventario>()
+                    join p in _context.Set<Producto>() on i.Prod_Id equals p.Prod_Id
+                    join c in _context.Set<Clientes>() on i.Cli_Id equals c.Cli_Id
+                    join e in _context.Set<Estado>() on i.Estado_Rollo equals e.Estado_Id
+                    where i.Tfi_Fecha >= date1
+                    && i.Tfi_Fecha <= date2
+                    && (ot == "" || i.Tfi_OT.ToString() == ot)
+                    && (item == "" || p.Prod_Id.ToString() == item)
+                    && (user == "" || i.UsuaRegistro_Id.ToString() == user)
+                    && (client == "" || c.Cli_Id.ToString() == client)
+                    && (location == "" || i.Tfi_Ubicacion == location)
+                    select new
+                    {
+                        Item = p.Prod_Id,
+                        Reference = p.Prod_Nombre,
+                        Label = i.Tfi_Etiqueta,
+                        Ot = i.Tfi_OT,
+                        Client = c.Cli_Nombre,
+                        Warehouse = i.TpBod_Id,
+                        Quantity = i.Tfi_CantidadReal,
+                        GrossWeight = i.Tfi_PesoBruto,
+                        Price = i.Tfi_PrecioVenta,
+                        Unit = i.Presentacion,
+                        Process = i.Proceso_Id,
+                        Location = i.Tfi_Ubicacion,
+                        Date = i.Tfi_Fecha,
+                        Hour = i.Tfi_Hora,
+                        StateId = i.Estado_Rollo,
+                        State = e.Estado_Nombre,
+                        Zeus = i.Tfi_EnvioZeus ? Convert.ToString("SI") : Convert.ToString("NO"),
+                        SubTotal = i.Tfi_CantidadReal * i.Tfi_PrecioVenta,
+                        User = i.Registra.Usua_Nombre,
+                    };
+
+                return Ok(count);
+            }
 
         // PUT: api/Toma_Fisica_Inventario/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -158,5 +204,6 @@ namespace PlasticaribeAPI.Controllers
                 return _context.Toma_Fisica_Inventario.Any(e => e.Tfi_Id == id);
             }
         }
-    
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
 }

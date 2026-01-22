@@ -6,10 +6,12 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [Route("api/[controller]")]
     [ApiController]
     public class InventariosController : ControllerBase
     {
+
         private readonly dataContext _context;
 
         public InventariosController(dataContext context)
@@ -38,7 +40,7 @@ namespace PlasticaribeAPI.Controllers
             return Inventarios;
         }
 
-        // GET: api/Inventarios
+        
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         // Funcion para obtener el inventario fisico
         [HttpGet("getInventorySnapshot")]
@@ -60,7 +62,7 @@ namespace PlasticaribeAPI.Controllers
                 join p in _context.Set<Producto>()
                     on i.Prod_Id equals p.Prod_Id
 
-                // LEFT JOIN con TomaFisica
+                
                 join tf in tomaFisicaAgrupada
                     on i.Prod_Id equals tf.Prod_Id into tfJoin
                 from tf in tfJoin.DefaultIfEmpty()
@@ -80,7 +82,7 @@ namespace PlasticaribeAPI.Controllers
                     Item = g.Key.Prod_Id,
                     Reference = g.Key.Prod_Nombre,
 
-                    // SNAPSHOT
+                    
                     Stock = g.Key.Inv_Existencias,
                     Quantity = g.Sum(x => x.i.Inv_Cantidad),
                     GrossWeight = g.Sum(x => x.i.Inv_PesoBruto),
@@ -88,28 +90,31 @@ namespace PlasticaribeAPI.Controllers
                     Unit = g.Key.Presentacion,
                     Count = g.Count(),
 
-                    // TOMA FÍSICA (puede venir NULL)
+                    
                     PhysicalQty = g.Key.PhysicalCount ?? 0,
                     PhysicalRollos = g.Key.PhysicalRollos ?? 0,
 
-                    Diference = g.Key.Inv_Existencias - (g.Key.PhysicalCount ?? 0),
+                    Diference = g.Key.Inv_Existencias - (g.Key.PhysicalCount ?? 0), 
+                    Diference2 = g.Sum(x => x.i.Inv_Cantidad) - (g.Key.PhysicalCount ?? 0), 
+                    Diference3 = g.Key.Inv_Existencias - g.Sum(x => x.i.Inv_Cantidad), 
                     Subtotal = (g.Key.Inv_Existencias * g.Key.Inv_PrecioVenta)
                 };
 
             return Ok(snapshot);
         }
 
-        // GET: api/Inventarios/5/SELLA
+        
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         //Funcion para obtener el inventario fisico detallado por item
-        [HttpGet("getInventorySnapshotForItem/{item}")]
-        public ActionResult getInventorySnapshotDetailed(long item)
+        [HttpGet("getInventorySnapshotForItem/{item}/{unit}")]
+        public ActionResult getInventorySnapshotDetailed(long item, string unit)
         {
             var snapshot =
                 from i in _context.Set<Inventarios>()
                 join p in _context.Set<Producto>() on i.Prod_Id equals p.Prod_Id
                 join c in _context.Set<Clientes>() on i.Cli_Id equals c.Cli_Id
                 where p.Prod_Id == item
+                && i.Presentacion == unit
                 select new
                 {
                     Item = p.Prod_Id,
@@ -125,6 +130,7 @@ namespace PlasticaribeAPI.Controllers
                     Process = i.Proceso_Id,
                     Location = i.Inv_Ubicacion,
                     Date = i.Inv_Fecha,
+                    SubTotal = i.Inv_Cantidad * i.Inv_PrecioVenta
                 };
 
             return Ok(snapshot);
@@ -207,4 +213,5 @@ namespace PlasticaribeAPI.Controllers
             return _context.Inventarios.Any(e => e.Inv_Id == id);
         }
     }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }
