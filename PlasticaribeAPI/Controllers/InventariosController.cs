@@ -97,7 +97,10 @@ namespace PlasticaribeAPI.Controllers
                     Diference = g.Key.Inv_Existencias - (g.Key.PhysicalCount ?? 0), 
                     Diference2 = g.Sum(x => x.i.Inv_Cantidad) - (g.Key.PhysicalCount ?? 0), 
                     Diference3 = g.Key.Inv_Existencias - g.Sum(x => x.i.Inv_Cantidad), 
-                    Subtotal = (g.Key.Inv_Existencias * g.Key.Inv_PrecioVenta)
+                    Subtotal = (g.Key.Inv_Existencias * g.Key.Inv_PrecioVenta), 
+                    DiferenceUnits = g.Count() - (g.Key.PhysicalRollos ?? 0),
+                    SubtotalDetailed = (g.Sum(x => x.i.Inv_Cantidad) * g.Key.Inv_PrecioVenta),
+                    SubTotalPhysical = ((g.Key.PhysicalCount ?? 0) * g.Key.Inv_PrecioVenta)
                 };
 
             return Ok(snapshot);
