@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Aspose.Imaging.FileFormats.Cmx.ObjectModel.Enums;
+using Aspose.Imaging.FileFormats.Tga;
+using Intercom.Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using System.Collections.Generic;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -40,73 +44,135 @@ namespace PlasticaribeAPI.Controllers
             return Inventarios;
         }
 
-        
+
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         // Funcion para obtener el inventario fisico
-        [HttpGet("getInventorySnapshot")]
-        public ActionResult getInventorySnapshot()
+        [HttpGet("getInventorySnapshot/{inventory}")]
+        public ActionResult<IEnumerable<InventorySnapshotDto>> getInventorySnapshot(int inventory)
         {
 
-            var tomaFisicaAgrupada = from tf in _context.Set<Toma_Fisica_Inventario>()
+            var tomaFisicaAgrupada = (from tf in _context.Set<Toma_Fisica_Inventario>()
+                                     join t in _context.Set<Toma_Fisica>()
+                                         on tf.Toma_Id equals t.Toma_Id
+                                     where t.InvSnap_Id == inventory
                                      group tf by tf.Prod_Id into g
                                      select new
                                      {
                                         Prod_Id = g.Key,
-                                        PhysicalCount = (decimal?)g.Sum(x => x.Tfi_CantidadReal),
-                                        PhysicalRollos = (int?)g.Count()
-                                     };
+                                        PhysicalCount = g.Sum(x => x.Tfi_CantidadReal),
+                                        PhysicalRollos = g.Count()
+                                     }).ToList();
 
+
+            var snapshotBase =  (from i in _context.Set<Inventarios>()
+                                join p in _context.Set<Producto>()
+                                    on i.Prod_Id equals p.Prod_Id
+                                where i.InvSnap_Id == inventory
+                                group i by new
+                                {
+                                    i.Prod_Id,
+                                    p.Prod_Nombre,
+                                    i.Presentacion,
+                                    i.Inv_PrecioVenta,
+                                    i.Inv_Existencias,
+                                } into g
+                                select new
+                                {
+                                    g.Key.Prod_Id,
+                                    g.Key.Prod_Nombre,
+                                    g.Key.Presentacion,
+                                    g.Key.Inv_PrecioVenta,
+
+                                    Stock = g.Key.Inv_Existencias,
+                                    Quantity = g.Sum(x => x.Inv_Cantidad),
+                                    GrossWeight = g.Sum(x => x.Inv_PesoBruto),
+                                    Count = g.Count()
+                                }).ToList();
 
             var snapshot =
-                from i in _context.Set<Inventarios>()
-                join p in _context.Set<Producto>()
-                    on i.Prod_Id equals p.Prod_Id
+                            (from s in snapshotBase
+                            join tf in tomaFisicaAgrupada
+                                on s.Prod_Id equals tf.Prod_Id into tfJoin
+                            from tf in tfJoin.DefaultIfEmpty()
+                            select new InventorySnapshotDto
+                            {
+                                Item = s.Prod_Id,
+                                Reference = s.Prod_Nombre,
 
-                
-                join tf in tomaFisicaAgrupada
-                    on i.Prod_Id equals tf.Prod_Id into tfJoin
-                from tf in tfJoin.DefaultIfEmpty()
+                                Stock = s.Stock,
+                                Quantity = s.Quantity,
+                                GrossWeight = s.GrossWeight,
+                                Price = s.Inv_PrecioVenta,
+                                Unit = s.Presentacion,
+                                Count = s.Count,
 
-                group new { i, tf } by new
-                {
-                    i.Prod_Id,
-                    p.Prod_Nombre,
-                    i.Presentacion,
-                    i.Inv_PrecioVenta,
-                    i.Inv_Existencias,
-                    tf.PhysicalCount,
-                    tf.PhysicalRollos
-                } into g
-                select new
-                {
-                    Item = g.Key.Prod_Id,
-                    Reference = g.Key.Prod_Nombre,
+                                PhysicalQty = tf != null ? tf.PhysicalCount : 0,
+                                PhysicalRollos = tf != null ? tf.PhysicalRollos : 0,
 
-                    
-                    Stock = g.Key.Inv_Existencias,
-                    Quantity = g.Sum(x => x.i.Inv_Cantidad),
-                    GrossWeight = g.Sum(x => x.i.Inv_PesoBruto),
-                    Price = g.Key.Inv_PrecioVenta,
-                    Unit = g.Key.Presentacion,
-                    Count = g.Count(),
+                                Diference = s.Stock - (tf != null ? tf.PhysicalCount : 0),
+                                Diference2 = s.Quantity - (tf != null ? tf.PhysicalCount : 0),
+                                Diference3 = s.Stock - s.Quantity,
 
-                    
-                    PhysicalQty = g.Key.PhysicalCount ?? 0,
-                    PhysicalRollos = g.Key.PhysicalRollos ?? 0,
+                                Subtotal = s.Stock * s.Inv_PrecioVenta,
+                                DiferenceUnits = s.Count - (tf != null ? tf.PhysicalRollos : 0),
+                                SubtotalDetailed = s.Quantity * s.Inv_PrecioVenta,
+                                SubTotalPhysical = (tf != null ? tf.PhysicalCount : 0) * s.Inv_PrecioVenta
+                            }).ToList();
 
-                    Diference = g.Key.Inv_Existencias - (g.Key.PhysicalCount ?? 0), 
-                    Diference2 = g.Sum(x => x.i.Inv_Cantidad) - (g.Key.PhysicalCount ?? 0), 
-                    Diference3 = g.Key.Inv_Existencias - g.Sum(x => x.i.Inv_Cantidad), 
-                    Subtotal = (g.Key.Inv_Existencias * g.Key.Inv_PrecioVenta), 
-                    DiferenceUnits = g.Count() - (g.Key.PhysicalRollos ?? 0),
-                    SubtotalDetailed = (g.Sum(x => x.i.Inv_Cantidad) * g.Key.Inv_PrecioVenta),
-                    SubTotalPhysical = ((g.Key.PhysicalCount ?? 0) * g.Key.Inv_PrecioVenta)
-                };
+            var soloTomaFisica =
+                                (from t in _context.Set<Toma_Fisica>()
+                                join tfi in _context.Set<Toma_Fisica_Inventario>()
+                                    on t.Toma_Id equals tfi.Toma_Id
+                                join e in _context.Set<Existencia_Productos>()
+                                    on tfi.Prod_Id equals e.Prod_Id
+                                join p in _context.Set<Producto>()
+                                    on tfi.Prod_Id equals p.Prod_Id
 
-            return Ok(snapshot);
+                                join i in _context.Set<Inventarios>()
+                                        .Where(x => x.InvSnap_Id == inventory)
+                                    on tfi.Prod_Id equals i.Prod_Id into invJoin
+                                from inv in invJoin.DefaultIfEmpty()
+
+                                where t.InvSnap_Id == inventory
+                                   && inv == null
+                                group tfi by new
+                                {
+                                    tfi.Prod_Id,
+                                    p.Prod_Nombre,
+                                    tfi.Tfi_PrecioVenta,
+                                    tfi.Presentacion
+                                } into g
+                                select new InventorySnapshotDto
+                                {
+                                    Item = g.Key.Prod_Id,
+                                    Reference = g.Key.Prod_Nombre,
+
+                                    Stock = 0,
+                                    Quantity = 0,
+                                    GrossWeight = 0,
+                                    Price = g.Key.Tfi_PrecioVenta,
+                                    Unit = g.Key.Presentacion,
+                                    Count = 0,
+
+                                    PhysicalQty = g.Sum(x => x.Tfi_CantidadReal),
+                                    PhysicalRollos = g.Count(),
+
+                                    Diference = -g.Sum(x => x.Tfi_CantidadReal),
+                                    Diference2 = -g.Sum(x => x.Tfi_CantidadReal),
+                                    Diference3 = 0,
+
+                                    Subtotal = g.Key.Tfi_PrecioVenta * g.Sum(x => x.Tfi_CantidadReal),
+                                    DiferenceUnits = -g.Count(),
+                                    SubtotalDetailed = g.Key.Tfi_PrecioVenta * g.Sum(x => x.Tfi_CantidadReal),
+                                    SubTotalPhysical = g.Key.Tfi_PrecioVenta * g.Sum(x => x.Tfi_CantidadReal)
+                                }).ToList();
+
+            var result = snapshot.Concat(soloTomaFisica);
+
+            return Ok(result);
         }
 
-        
+
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         //Funcion para obtener el inventario fisico detallado por item
         [HttpGet("getInventorySnapshotForItem/{item}/{unit}")]
@@ -123,9 +189,9 @@ namespace PlasticaribeAPI.Controllers
                     Item = p.Prod_Id,
                     Reference = p.Prod_Nombre,
                     Label = i.Inv_Etiqueta,
+                    LabelPL = i.Inv_NumeroRollo,
                     Ot = i.Inv_OT,
                     Client = c.Cli_Nombre,
-                    Warehouse = i.TpBod_Id,
                     Quantity = i.Inv_Cantidad,
                     GrossWeight = i.Inv_PesoBruto,
                     Price = i.Inv_PrecioVenta,
@@ -217,4 +283,25 @@ namespace PlasticaribeAPI.Controllers
         }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+}
+
+public class InventorySnapshotDto
+{
+    public long Item { get; set; }
+    public string Reference { get; set; }
+    public decimal Stock { get; set; }
+    public decimal Quantity { get; set; }
+    public decimal GrossWeight { get; set; }
+    public decimal Price { get; set; }
+    public string Unit { get; set; }
+    public int Count { get; set; }
+    public decimal PhysicalQty { get; set; }
+    public int PhysicalRollos { get; set; }
+    public decimal Diference { get; set; }
+    public decimal Diference2 { get; set; }
+    public decimal Diference3 { get; set; }
+    public decimal Subtotal { get; set; }
+    public int DiferenceUnits { get; set; }
+    public decimal SubtotalDetailed { get; set; }
+    public decimal SubTotalPhysical { get; set; }
 }

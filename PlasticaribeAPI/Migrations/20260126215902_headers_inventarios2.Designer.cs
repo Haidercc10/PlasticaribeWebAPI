@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20260126215902_headers_inventarios2")]
+    partial class headers_inventarios2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -9783,9 +9786,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Estado_Id")
                         .HasColumnType("int");
 
-                    b.Property<int>("InvSnap_Id")
-                        .HasColumnType("int");
-
                     b.Property<string>("Tipo_Inventario")
                         .IsRequired()
                         .HasColumnType("varchar(20)");
@@ -9822,8 +9822,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("Toma_Id");
 
                     b.HasIndex("Estado_Id");
-
-                    b.HasIndex("InvSnap_Id");
 
                     b.HasIndex("TpBod_Id");
 
@@ -15095,12 +15093,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Inventarios_Snapshot", "Inventario_Snapshot")
-                        .WithMany()
-                        .HasForeignKey("InvSnap_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.Tipo_Bodega", "Tipo_Bodega")
                         .WithMany()
                         .HasForeignKey("TpBod_Id")
@@ -15120,8 +15112,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Estado");
-
-                    b.Navigation("Inventario_Snapshot");
 
                     b.Navigation("Tipo_Bodega");
 

@@ -9,6 +9,9 @@ namespace PlasticaribeAPI.Models
         [Key]
         public int Tfi_Id { get; set; }
 
+        public int Toma_Id { get; set; }    
+        public Toma_Fisica? Toma_Fisica { get; set; }
+
         public long Tfi_NumeroRollo { get; set; }
 
         public long Tfi_Etiqueta { get; set; }
@@ -57,13 +60,6 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(100)")]
         public string Tfi_Ubicacion { get; set; }
-
-        public int TpBod_Id { get; set; }
-        public Tipo_Bodega? Tipo_Bodega { get; set; }
-
-
-        [Column(TypeName = "varchar(100)")]
-        public string Tipo_Inventario { get; set; }
 
 
         [Column(TypeName = "varchar(max)")]

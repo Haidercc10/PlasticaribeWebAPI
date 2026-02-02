@@ -43,11 +43,11 @@ namespace PlasticaribeAPI.Controllers
             }
 
             
-            [HttpGet("getPhysicalInventory/{roll}/{process}")]
-            public async Task<ActionResult<Toma_Fisica_Inventario>> getPhysicalInventory(long roll, string process)
+            [HttpPost("getPhysicalInventory/{roll}")]
+            public async Task<ActionResult<Toma_Fisica_Inventario>> getPhysicalInventory(long roll, [FromBody] List<string> process)
             {
                 var physicalInv = await _context.Set<Toma_Fisica_Inventario>()
-                    .FirstOrDefaultAsync(tfi => tfi.Tfi_Etiqueta == roll && tfi.Proceso_Id == process);
+                    .FirstOrDefaultAsync(tfi => tfi.Tfi_Etiqueta == roll &&  process.Contains(tfi.Proceso_Id));
 
                 return Ok(physicalInv);
             }
@@ -68,9 +68,9 @@ namespace PlasticaribeAPI.Controllers
                         Item = p.Prod_Id,
                         Reference = p.Prod_Nombre,
                         Label = i.Tfi_Etiqueta,
+                        LabelPL = i.Tfi_NumeroRollo,
                         Ot = i.Tfi_OT,
                         Client = c.Cli_Nombre,
-                        Warehouse = i.TpBod_Id,
                         Quantity = i.Tfi_CantidadReal,
                         GrossWeight = i.Tfi_PesoBruto,
                         Price = i.Tfi_PrecioVenta,
@@ -86,16 +86,16 @@ namespace PlasticaribeAPI.Controllers
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         //Funcion para obtener el inventario fisico detallado por item en un rango de fechas
-            [HttpGet("getMovPhysicalCount/{date1}/{date2}")]
-            public ActionResult getMovPhysicalCount(DateTime date1, DateTime date2, string? ot = "", string? item = "", string? user = "", string? client = "", string? location = "")
+            [HttpGet("getMovPhysicalCount/{inventory}")]
+            public ActionResult getMovPhysicalCount(int inventory, string? ot = "", string? item = "", string? user = "", string? client = "", string? location = "")
             {
                 var count =
                     from i in _context.Set<Toma_Fisica_Inventario>()
+                    join t in _context.Set<Toma_Fisica>() on i.Toma_Id equals t.Toma_Id
                     join p in _context.Set<Producto>() on i.Prod_Id equals p.Prod_Id
                     join c in _context.Set<Clientes>() on i.Cli_Id equals c.Cli_Id
                     join e in _context.Set<Estado>() on i.Estado_Rollo equals e.Estado_Id
-                    where i.Tfi_Fecha >= date1
-                    && i.Tfi_Fecha <= date2
+                    where t.InvSnap_Id == inventory
                     && (ot == "" || i.Tfi_OT.ToString() == ot)
                     && (item == "" || p.Prod_Id.ToString() == item)
                     && (user == "" || i.UsuaRegistro_Id.ToString() == user)
@@ -106,9 +106,9 @@ namespace PlasticaribeAPI.Controllers
                         Item = p.Prod_Id,
                         Reference = p.Prod_Nombre,
                         Label = i.Tfi_Etiqueta,
+                        LabelPL = i.Tfi_NumeroRollo,
                         Ot = i.Tfi_OT,
                         Client = c.Cli_Nombre,
-                        Warehouse = i.TpBod_Id,
                         Quantity = i.Tfi_CantidadReal,
                         GrossWeight = i.Tfi_PesoBruto,
                         Price = i.Tfi_PrecioVenta,

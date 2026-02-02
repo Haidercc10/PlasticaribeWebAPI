@@ -228,6 +228,10 @@ namespace PlasticaribeAPI.Data
 
         public DbSet<Inventarios> Inventarios { get; set; }
 
+        public DbSet<Toma_Fisica> Toma_Fisica { get; set; }
+
+        public DbSet<Inventarios_Snapshot> Inventarios_Snapshot { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Relaciones de productos
@@ -1287,15 +1291,23 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Toma_Fisica_Inventario>().HasOne(x => x.Proceso).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Toma_Fisica_Inventario>().HasOne(x => x.Estado).WithMany().HasForeignKey(x => x.Estado_Rollo).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Toma_Fisica_Inventario>().HasOne(x => x.Registra).WithMany().HasForeignKey(x => x.UsuaRegistro_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
-            modelBuilder.Entity<Toma_Fisica_Inventario>().HasOne(x => x.Tipo_Bodega).WithMany().HasForeignKey(x => x.TpBod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Toma_Fisica_Inventario>().HasOne(x => x.Toma_Fisica).WithMany().HasForeignKey(x => x.Toma_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Inventarios>().HasOne(x => x.Producto).WithMany().HasForeignKey(x => x.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Inventarios>().HasOne(x => x.Clientes).WithMany().HasForeignKey(x => x.Cli_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Inventarios>().HasOne(x => x.Unidad_Medida).WithMany().HasForeignKey(x => x.Presentacion).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Inventarios>().HasOne(x => x.Proceso).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Inventarios>().HasOne(x => x.Registra).WithMany().HasForeignKey(x => x.UsuaRegistro_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
-            modelBuilder.Entity<Inventarios>().HasOne(x => x.Tipo_Bodega).WithMany().HasForeignKey(x => x.TpBod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Inventarios>().HasOne(x => x.Inventarios_Snapshot).WithMany().HasForeignKey(x => x.InvSnap_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Toma_Fisica>().HasOne(x => x.Tipo_Bodega).WithMany().HasForeignKey(x => x.TpBod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Toma_Fisica>().HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Toma_Fisica>().HasOne(x => x.Estado).WithMany().HasForeignKey(x => x.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Toma_Fisica>().HasOne(x => x.Usuario2).WithMany().HasForeignKey(x => x.Usua_Cierre).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Toma_Fisica>().HasOne(x => x.Inventario_Snapshot).WithMany().HasForeignKey(x => x.InvSnap_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Inventarios_Snapshot>().HasOne(x => x.Tipo_Bodega).WithMany().HasForeignKey(x => x.TpBod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Inventarios_Snapshot>().HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>().ToTable(tb => tb.HasTrigger("Auditoria_Areas"));
             modelBuilder.Entity<Rol_Usuario>().ToTable(tb => tb.HasTrigger("Auditoria_Roles_Usuarios"));
