@@ -100,7 +100,7 @@ namespace PlasticaribeAPI.Controllers
 
         //Funcion que va a devolver los datos de las ordenes de compra realizadas
         [HttpGet("getOrdenesCompras/{fechaInicial}/{fechaFinal}")]
-        public ActionResult GetOrdenesCompras(DateTime fechaInicial, DateTime fechaFinal, string? orden = "", string? estado = "")
+        public ActionResult GetOrdenesCompras(DateTime fechaInicial, DateTime fechaFinal, string? orden = "", string? estado = "", string? prov = "", string? mp = "")
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8604 // Possible null reference argument.
@@ -109,8 +109,11 @@ namespace PlasticaribeAPI.Controllers
                       where oc.Orden_Compra.Oc_Fecha >= fechaInicial &&
                             oc.Orden_Compra.Oc_Fecha <= fechaFinal &&
                             Emp.Empresa_Id == 800188732 &&
-                            Convert.ToString(oc.Oc_Id).Contains(orden) &&
-                            Convert.ToString(oc.Orden_Compra.Estado_Id).Contains(estado)
+                            (orden != "" ? oc.Oc_Id == Convert.ToInt32(orden) : Convert.ToString(oc.Oc_Id).Contains(orden)) &&
+                            (estado != "" ? oc.Orden_Compra.Estado_Id == Convert.ToInt32(estado) :  Convert.ToString(oc.Orden_Compra.Estado_Id).Contains(estado)) && 
+                            (prov != "" ? oc.Orden_Compra.Prov_Id == Convert.ToInt32(prov) : Convert.ToString(oc.Orden_Compra.Prov_Id).Contains(prov)) &&
+                            (mp != "" ? (oc.MatPri_Id == Convert.ToInt32(mp) || oc.Tinta_Id == Convert.ToInt32(mp) || oc.BOPP_Id == Convert.ToInt32(mp)) 
+                                      : (Convert.ToString(oc.MatPri_Id).Contains(mp) || Convert.ToString(oc.Tinta_Id).Contains(mp) || Convert.ToString(oc.BOPP_Id).Contains(mp)))
                       select new
                       {
                           Consecutivo = oc.Oc_Id,

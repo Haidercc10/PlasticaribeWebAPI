@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20260212222104_Control_Time_Machine")]
+    partial class Control_Time_Machine
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4016,17 +4019,11 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(100)");
 
-                    b.Property<string>("Maq_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
                     b.Property<string>("TpEvento_Id")
                         .IsRequired()
                         .HasColumnType("varchar(20)");
 
                     b.HasKey("Evmq_Id");
-
-                    b.HasIndex("Maq_Id");
 
                     b.HasIndex("TpEvento_Id");
 
@@ -12605,19 +12602,11 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Eventos_Maquinas", b =>
                 {
-                    b.HasOne("PlasticaribeAPI.Models.Maquinas", "Maquinas")
-                        .WithMany()
-                        .HasForeignKey("Maq_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("PlasticaribeAPI.Models.Tipos_Eventos", "TiposEventos")
                         .WithMany()
                         .HasForeignKey("TpEvento_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Maquinas");
 
                     b.Navigation("TiposEventos");
                 });

@@ -49,5 +49,25 @@ namespace PlasticaribeAPI.Models
 
         public int Prod_Id { get; set; }
         public Producto? Producto { get; set; }
+
+        //Datos adicionales del pedido producto (Pt)
+        public bool PedExtProd_Impresion { get; set; }
+
+        public bool ImpresionDobleCara { get; set; }
+
+        public int PedExtProd_NroEmbobinado { get; set; }
+
+        //Datos adicionales del producto
+
+        public int Material_Id { get; set; }
+        public Material_MatPrima? MaterialMP { get; set; }
+
+        public int Pigmt_Id { get; set; }
+        public Pigmento? Pigmt { get; set; }
+
+        [Precision(14, 2)]
+        public decimal PedExtProd_Calibre { get; set; }
+
+        public bool PedExtProd_Tratado { get; set; }
     }
 }

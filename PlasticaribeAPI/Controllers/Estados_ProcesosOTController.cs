@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Migrations;
 using PlasticaribeAPI.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -190,12 +191,13 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("getProductosOrdenesUltimoMes/{fecha1}/{fecha2}")]
-        public ActionResult getProductosOrdenesUltimoMes(DateTime fecha1, DateTime fecha2)
+        public ActionResult getProductosOrdenesUltimoMes(DateTime fecha1, DateTime fecha2, string? sales)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             var con = from ot in _context.Set<Estados_ProcesosOT>()
                       where ot.EstProcOT_FechaCreacion >= fecha1
                             && ot.EstProcOT_FechaCreacion <= fecha2
+                            && (string.IsNullOrEmpty(sales) || ot.Usua_Id == Convert.ToInt32(sales))
                       group ot by new
                       {
                           ot.Prod_Id,
@@ -336,7 +338,7 @@ namespace PlasticaribeAPI.Controllers
 
         //Consula que devolverá la cantidad de ordenes de trabajo que se han creado en el mes, agrupadas por el estado que tienen
         [HttpGet("getOrdenesMes_Estados")]
-        public ActionResult GetOrdenesMes_Estado()
+        public ActionResult GetOrdenesMes_Estado(string? sales)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             int mesActual = (DateTime.Now).Month;
@@ -344,7 +346,8 @@ namespace PlasticaribeAPI.Controllers
 
             var con = from ot in _context.Set<Estados_ProcesosOT>()
                       where ot.EstProcOT_FechaCreacion.Month == mesActual &&
-                            ot.EstProcOT_FechaCreacion.Year == anioActual
+                            ot.EstProcOT_FechaCreacion.Year == anioActual &&
+                            (string.IsNullOrEmpty(sales) || ot.Usua_Id == Convert.ToInt32(sales))
                       group ot by new
                       {
                           ot.Estado_Id,
@@ -363,7 +366,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost("getOtsForSalesOrder")]
         public ActionResult getOtsForSalesOrder([FromBody] List<CustomerOrders> CustomerOrders) 
         {
-            List<Object> orders = new List<Object>();
+            List<object> orders = new List<object>();
             int counter = 0;
             foreach (var item in CustomerOrders)
             {

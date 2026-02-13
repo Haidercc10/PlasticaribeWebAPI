@@ -49,26 +49,6 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(max)")]
         public string? PedExtProd_Observacion { get; set; }
 
-        //Datos adicionales del pedido producto (Pt)
-        public bool PedExtProd_Impresion { get; set; }
-
-        public bool ImpresionDobleCara { get; set; }
-
-        public int PedExtProd_NroEmbobinado { get; set; }
-
-        //Datos adicionales del producto
-
-        public int Material_Id { get; set; }
-        public Material_MatPrima? MaterialMP { get; set; }
-
-        public int Pigmt_Id { get; set; }
-        public Pigmento? Pigmt { get; set; }
-
-        [Precision(14, 2)]
-        public decimal PedExtProd_Calibre { get; set; }
-
-        public bool PedExtProd_Tratado { get; set; }
-
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

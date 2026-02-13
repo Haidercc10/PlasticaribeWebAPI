@@ -52,45 +52,17 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult<Existencia_Productos> GetNombreCliente(int Prod_Id)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL. 
-            var producto = _context.Existencias_Productos.Where(p => p.Prod_Id == Prod_Id)
-                .Select(p => new
-                {
-                    p.ExProd_Id,
-                    p.Prod_Id,
-                    p.Prod.Prod_Nombre,
-                    p.Prod.Prod_Ancho,
-                    p.Prod.Prod_Fuelle,
-                    p.Prod.Prod_Calibre,
-                    p.Prod.Prod_Largo,
-                    p.Prod.UndMedACF,
-                    p.Prod.TpProd.TpProd_Nombre,
-                    p.Prod.MaterialMP.Material_Nombre,
-                    p.Prod.Pigmt.Pigmt_Nombre,
-                    p.UndMed_Id,
-                    p.ExProd_PrecioVenta,
-                    p.ExProd_Cantidad,
-                    p.Prod.Prod_Descripcion,
-                    p.TpMoneda_Id,
-                    p.Prod.Prod_Peso_Millar,
-                    p.Prod.Prod_Peso,
-                    p.Prod.UndMedPeso,
-                    p.TpBod_Id,
-                    p.Prod.TiposSellados.TpSellados_Nombre,
-                    p.Prod.Prod_CantBolsasPaquete,
-                    p.Prod.Prod_CantBolsasBulto,
-                    p.ExProd_CantMinima
+            var producto = from e in _context.Set<Existencia_Productos>()
+                           join p in _context.Set<Producto>() on e.Prod_Id equals p.Prod_Id
+                           where e.Prod_Id == Prod_Id
+                           select new
+                           {
+                               exist = e,
+                               prod = p
+                           };
 
-                })
-                .ToList();
-
-            if (producto == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(producto);
-            }
+            if (producto == null) return NotFound();
+            else return Ok(producto);
         }
 
         /* Compara ID Producto de PBDD con Codigo Articulo de Zeus. */

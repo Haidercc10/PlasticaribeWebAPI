@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20260211221856_Cambios_Pedidos")]
+    partial class Cambios_Pedidos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3997,42 +4000,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Eventos_Maquinas", b =>
-                {
-                    b.Property<long>("Evmq_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Evmq_Id"));
-
-                    b.Property<bool>("Evmq_Activo")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Evmq_Codigo")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("Evmq_Descripcion")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("Maq_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("TpEvento_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(20)");
-
-                    b.HasKey("Evmq_Id");
-
-                    b.HasIndex("Maq_Id");
-
-                    b.HasIndex("TpEvento_Id");
-
-                    b.ToTable("Eventos_Maquinas");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Existencia_Productos", b =>
                 {
                     b.Property<long>("ExProd_Id")
@@ -5071,45 +5038,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasKey("LamCapa_Id");
 
                     b.ToTable("Laminado_Capa");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.LogEventos_Maquinas", b =>
-                {
-                    b.Property<long>("Lem_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Lem_Id"));
-
-                    b.Property<long>("Evmq_Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("Lem_Fecha")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Lem_Hora")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("Lem_Observacion")
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<string>("Maq_Id")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<long>("Usua_Id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Lem_Id");
-
-                    b.HasIndex("Evmq_Id");
-
-                    b.HasIndex("Maq_Id");
-
-                    b.HasIndex("Usua_Id");
-
-                    b.ToTable("LogEventos_Maquinas");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Log_Errores", b =>
@@ -9779,30 +9707,6 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Tipos_Conceptos");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Tipos_Eventos", b =>
-                {
-                    b.Property<string>("TpEvento_Id")
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<long>("TpEvento_Codigo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("TpEvento_Codigo"));
-
-                    b.Property<string>("TpEvento_Descripcion")
-                        .IsRequired()
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("TpEvento_Nombre")
-                        .IsRequired()
-                        .HasColumnType("varchar(100)");
-
-                    b.HasKey("TpEvento_Id");
-
-                    b.ToTable("Tipos_Eventos");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Tipos_Impresion", b =>
                 {
                     b.Property<int>("TpImpresion_Id")
@@ -12603,25 +12507,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("PlasticaribeAPI.Models.Eventos_Maquinas", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Maquinas", "Maquinas")
-                        .WithMany()
-                        .HasForeignKey("Maq_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Tipos_Eventos", "TiposEventos")
-                        .WithMany()
-                        .HasForeignKey("TpEvento_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Maquinas");
-
-                    b.Navigation("TiposEventos");
-                });
-
             modelBuilder.Entity("PlasticaribeAPI.Models.Existencia_Productos", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.Producto", "Prod")
@@ -13100,33 +12985,6 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Tipo_Bodega");
-
-                    b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("PlasticaribeAPI.Models.LogEventos_Maquinas", b =>
-                {
-                    b.HasOne("PlasticaribeAPI.Models.Eventos_Maquinas", "EventosMaquinas")
-                        .WithMany()
-                        .HasForeignKey("Evmq_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Maquinas", "Maquinas")
-                        .WithMany()
-                        .HasForeignKey("Maq_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("Usua_Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("EventosMaquinas");
-
-                    b.Navigation("Maquinas");
 
                     b.Navigation("Usuario");
                 });
