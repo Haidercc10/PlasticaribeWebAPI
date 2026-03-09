@@ -1167,6 +1167,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Precargue_Despacho>().HasOne(x => x.Usuario2).WithMany().HasForeignKey(x => x.Usua_Modifica).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Precargue_Despacho>().HasOne(x => x.OrdenFact).WithMany().HasForeignKey(x => x.OF_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Precargue_Despacho>().HasOne(x => x.Estados).WithMany().HasForeignKey(x => x.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Precargue_Despacho>().HasOne(x => x.Usuario3).WithMany().HasForeignKey(x => x.Usua_Vendedor).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Detalles Precargue Despacho
             modelBuilder.Entity<Detalles_PrecargueDespacho>().HasOne(x => x.Precargue).WithMany().HasForeignKey(x => x.Pcd_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
@@ -1212,6 +1213,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Reposiciones>().HasOne(x => x.Estados).WithMany().HasForeignKey(x => x.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Reposiciones>().HasOne(x => x.Autoriza).WithMany().HasForeignKey(x => x.Usua_Autoriza).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Reposiciones>().HasOne(x => x.FallaTecnica).WithMany().HasForeignKey(x => x.Falla_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Reposiciones>().HasOne(x => x.Vendedor).WithMany().HasForeignKey(x => x.Usua_Vendedor).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
 
             //Detalles Reposiciones

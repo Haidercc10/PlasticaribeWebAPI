@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
+using PlasticaribeAPI.Migrations;
 using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
@@ -97,7 +98,7 @@ namespace PlasticaribeAPI.Controllers
 
         //
         [HttpGet("getMovementsReposition/{date1}/{date2}")]
-        public ActionResult getMovementsReposition(DateTime date1, DateTime date2, string? client = "", string? status = "", string? id = "", string? fail = "")
+        public ActionResult getMovementsReposition(DateTime date1, DateTime date2, string? client = "", string? status = "", string? id = "", string? fail = "", string? sales = "")
         {
             var Reposition = from p in _context.Set<Reposiciones>()
                           where
@@ -106,28 +107,30 @@ namespace PlasticaribeAPI.Controllers
                           (client != "" ? p.Cli_Id == Convert.ToInt64(client) : p.Cli_Id.ToString().Contains(client)) &&
                           (status != "" ? p.Estado_Id == Convert.ToInt64(status) : p.Estado_Id.ToString().Contains(status)) &&
                           (id != "" ? p.Rep_Id == Convert.ToInt64(id) : p.Rep_Id.ToString().Contains(id)) &&
-                          (fail != "" ? p.Falla_Id == Convert.ToInt64(id) : p.Falla_Id.ToString().Contains(fail))
+                          (fail != "" ? p.Falla_Id == Convert.ToInt64(id) : p.Falla_Id.ToString().Contains(fail)) &&
+                          (sales != "" ? p.Usua_Vendedor == Convert.ToInt64(sales) : p.Usua_Vendedor.ToString().Contains(sales))
                              select new
-                          {
-                              //Header
-                              Movement = p.Rep_Id,
-                              Date1 = p.Rep_FechaCrea,
-                              Hour1 = p.Rep_HoraCrea,
-                              Date2 = p.Rep_FechaSalida,
-                              Hour2 = p.Rep_HoraSalida,
-                              UserId1 = p.Usua_Crea,
-                              UserId2 = p.Usua_Salida,
-                              User1 = p.Usuario1.Usua_Nombre,
-                              User2 = p.Usuario2.Usua_Nombre,
-                              Observation1 = p.Rep_Observacion,
-                              Observation2 = p.Rep_ObservacionSalida,
-                              StatusId = p.Estado_Id,
-                              Status = p.Estados.Estado_Nombre,
-                              IdClient = p.Cli_Id,
-                              Client = p.Cliente.Cli_Nombre,
-                              Fail = p.FallaTecnica.Falla_Nombre == null ? "" : p.FallaTecnica.Falla_Nombre,
-                              Authorize = p.Autoriza.Usua_Nombre == null ? "" : p.Autoriza.Usua_Nombre,
-                          };
+                             {
+                                  //Header
+                                  Movement = p.Rep_Id,
+                                  Date1 = p.Rep_FechaCrea,
+                                  Hour1 = p.Rep_HoraCrea,
+                                  Date2 = p.Rep_FechaSalida,
+                                  Hour2 = p.Rep_HoraSalida,
+                                  UserId1 = p.Usua_Crea,
+                                  UserId2 = p.Usua_Salida,
+                                  User1 = p.Usuario1.Usua_Nombre,
+                                  User2 = p.Usuario2.Usua_Nombre,
+                                  Observation1 = p.Rep_Observacion,
+                                  Observation2 = p.Rep_ObservacionSalida,
+                                  StatusId = p.Estado_Id,
+                                  Status = p.Estados.Estado_Nombre,
+                                  IdClient = p.Cli_Id,
+                                  Client = p.Cliente.Cli_Nombre,
+                                  Fail = p.FallaTecnica.Falla_Nombre == null ? "" : p.FallaTecnica.Falla_Nombre,
+                                  Authorize = p.Autoriza.Usua_Nombre == null ? "" : p.Autoriza.Usua_Nombre,
+                                  Sales = p.Vendedor.Usua_Nombre == null ? "" : p.Vendedor.Usua_Nombre,
+                             };
 
             if (Reposition == null) return NotFound();
             else if (Reposition.Any()) return Ok(Reposition);

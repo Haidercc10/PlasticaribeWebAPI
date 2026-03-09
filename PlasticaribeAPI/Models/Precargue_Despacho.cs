@@ -50,5 +50,8 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(max)")]
         public string? Pcd_ObservacionModifica { get; set; }
 
+        public long? Usua_Vendedor { get; set; }
+        public Usuario? Usuario3 { get; set; }
+
     }
 }

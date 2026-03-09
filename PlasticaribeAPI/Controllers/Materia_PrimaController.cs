@@ -610,7 +610,7 @@ namespace PlasticaribeAPI.Controllers
 
         //Movimientos de Materia Prima, Tintas, Biorientados
         [HttpGet("getMovimientos/{fecha1}/{fecha2}")]
-        public ActionResult GetMoviemientos(DateTime fecha1, DateTime fecha2, string? codigo = "", string? tipoMov = "", string? materiaPrima = "")
+        public ActionResult GetMoviemientos(DateTime fecha1, DateTime fecha2, string? codigo = "", string? tipoMov = "", string? materiaPrima = "", string? tipoDoc = "")
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
@@ -620,6 +620,7 @@ namespace PlasticaribeAPI.Controllers
                                && asg.AsigMp.AsigMp_FechaEntrega <= fecha2
                                && Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo).Contains(codigo)
                                && "ASIGMP".Contains(tipoMov)
+                               && "SALIDA".Contains(tipoDoc)
                                && (materiaPrima != "" ? Convert.ToString(asg.MatPri_Id) == materiaPrima : Convert.ToString(asg.MatPri_Id).Contains(materiaPrima))
                          select new
                          {
@@ -641,6 +642,7 @@ namespace PlasticaribeAPI.Controllers
                              Precio = Convert.ToDecimal(asg.MatPri.MatPri_Precio),
                              Proveedor = Convert.ToString("PLASTICARIBE SAS"), 
                              Subcategoria = Convert.ToString(asg.MatPri.SubcategoriasMP.SubCatMP_Nombre),
+                             TpDoc = Convert.ToString("SALIDA"),
                          };
 
             //Asignacion de Materia Prima para la creacion de Tintas
@@ -649,6 +651,7 @@ namespace PlasticaribeAPI.Controllers
                                                && cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= fecha2
                                                && Convert.ToString(cr.AsigMPxTinta.Tinta_Id).Contains(codigo)
                                                && "CRTINTAS".Contains(tipoMov)
+                                               && "ENTRADA".Contains(tipoDoc)
                                                && (materiaPrima != "" ? (Convert.ToString(cr.Tinta_Id) == materiaPrima || Convert.ToString(cr.MatPri_Id) == materiaPrima) :
                                                                         (Convert.ToString(cr.Tinta_Id).Contains(materiaPrima) || Convert.ToString(cr.MatPri_Id).Contains(materiaPrima)))
                                          select new
@@ -671,6 +674,7 @@ namespace PlasticaribeAPI.Controllers
                                              Precio = Convert.ToDecimal(cr.TintasDAMPxT.Tinta_Precio),
                                              Proveedor = Convert.ToString("PLASTICARIBE SAS"), 
                                              Subcategoria = Convert.ToString(cr.MatPri.SubcategoriasMP.SubCatMP_Nombre),
+                                             TpDoc = Convert.ToString("ENTRADA"),
                                          };
 
             //Devoluciones de Materia Prima
@@ -679,6 +683,7 @@ namespace PlasticaribeAPI.Controllers
                                         && dev.DevMatPri.DevMatPri_Fecha <= fecha2
                                         && Convert.ToString(dev.DevMatPri.DevMatPri_OrdenTrabajo).Contains(codigo)
                                         && "DEVMP".Contains(tipoMov)
+                                        && "DEVOLUCION".Contains(tipoDoc)
                                         && (materiaPrima != "" ? (Convert.ToString(dev.MatPri_Id) == materiaPrima || Convert.ToString(dev.Tinta.Tinta_Id) == materiaPrima || Convert.ToString(dev.Bopp.BOPP_Serial) == materiaPrima) :
                                                                  (Convert.ToString(dev.MatPri_Id).Contains(materiaPrima) || Convert.ToString(dev.Tinta.Tinta_Id).Contains(materiaPrima) || Convert.ToString(dev.Bopp.BOPP_Serial).Contains(materiaPrima)))
                                   select new
@@ -701,6 +706,7 @@ namespace PlasticaribeAPI.Controllers
                                       Precio = dev.Tinta.Tinta_Id > 2001 ? Convert.ToDecimal(dev.Tinta.Tinta_Precio) : Convert.ToDecimal(dev.MatPri.MatPri_Precio),
                                       Proveedor = Convert.ToString("PLASTICARIBE"), 
                                       Subcategoria = Convert.ToString(dev.MatPri.SubcategoriasMP.SubCatMP_Nombre),
+                                      TpDoc = Convert.ToString("DEVOLUCION"),
                                   };
 
             //Facturas de Materia Prima
@@ -709,6 +715,7 @@ namespace PlasticaribeAPI.Controllers
                                     && fac.Facco.Facco_FechaFactura <= fecha2
                                     && Convert.ToString(fac.Facco.Facco_Codigo).Contains(codigo)
                                     && fac.Facco.TpDoc_Id.Contains(tipoMov)
+                                    && "ENTRADA".Contains(tipoDoc)
                                     && (materiaPrima != "" ? (Convert.ToString(fac.MatPri_Id) == materiaPrima || Convert.ToString(fac.Tinta.Tinta_Id) == materiaPrima || Convert.ToString(fac.Bopp_Generico.BoppGen_Id) == materiaPrima) :
                                                              (Convert.ToString(fac.MatPri_Id).Contains(materiaPrima) || Convert.ToString(fac.Tinta.Tinta_Id).Contains(materiaPrima) || Convert.ToString(fac.Bopp_Generico.BoppGen_Id).Contains(materiaPrima)))
                               select new
@@ -731,6 +738,7 @@ namespace PlasticaribeAPI.Controllers
                                   Precio = Convert.ToDecimal(fac.FaccoMatPri_ValorUnitario),
                                   Proveedor = Convert.ToString(fac.Facco.Prov.Prov_Nombre), 
                                   Subcategoria = Convert.ToString(fac.MatPri.SubcategoriasMP.SubCatMP_Nombre),
+                                  TpDoc = Convert.ToString("ENTRADA"),
                               };
 
             //Remisiones de Materia Prima
@@ -739,6 +747,7 @@ namespace PlasticaribeAPI.Controllers
                                       && rem.Rem.Rem_Fecha <= fecha2
                                       && Convert.ToString(rem.Rem.Rem_Codigo).Contains(codigo)
                                       && rem.Rem.TpDoc_Id.Contains(tipoMov)
+                                      && "ENTRADA".Contains(tipoDoc)
                                       && (materiaPrima != "" ? (Convert.ToString(rem.MatPri_Id) == materiaPrima || Convert.ToString(rem.Tinta.Tinta_Id) == materiaPrima || Convert.ToString(rem.Bopp.BoppGen_Id) == materiaPrima) :
                                                                (Convert.ToString(rem.MatPri_Id).Contains(materiaPrima) || Convert.ToString(rem.Tinta.Tinta_Id).Contains(materiaPrima) || Convert.ToString(rem.Bopp.BoppGen_Id).Contains(materiaPrima)))
                                 select new
@@ -761,6 +770,7 @@ namespace PlasticaribeAPI.Controllers
                                     Precio = Convert.ToDecimal(rem.RemiMatPri_ValorUnitario.Value),
                                     Proveedor = Convert.ToString(rem.Rem.Prov.Prov_Nombre), 
                                     Subcategoria = Convert.ToString(rem.MatPri.SubcategoriasMP.SubCatMP_Nombre),
+                                    TpDoc = Convert.ToString("ENTRADA"),
                                 };
 
             //Asignaciones de BOPP
@@ -769,6 +779,7 @@ namespace PlasticaribeAPI.Controllers
                                    && asg.AsigBOPP.AsigBOPP_FechaEntrega <= fecha2
                                    && Convert.ToString(asg.DtAsigBOPP_OrdenTrabajo).Contains(codigo)
                                    && Convert.ToString(asg.TpDoc_Id).Contains(tipoMov)
+                                   && "SALIDA".Contains(tipoDoc)
                                    && (materiaPrima != "" ? Convert.ToString(asg.BOPP_Id) == materiaPrima : Convert.ToString(asg.BOPP_Id).Contains(materiaPrima))
                              select new
                              {
@@ -790,6 +801,7 @@ namespace PlasticaribeAPI.Controllers
                                  Precio = Convert.ToDecimal(asg.BOPP.BOPP_Precio),
                                  Proveedor = Convert.ToString("PLASTICARIBE SAS"), 
                                  Subcategoria = Convert.ToString(asg.BOPP.SubcategoriasMP.SubCatMP_Nombre),
+                                 TpDoc = Convert.ToString("SALIDA"),
                              };
 
             //Entrada de BOPP
@@ -798,6 +810,7 @@ namespace PlasticaribeAPI.Controllers
                                        && ent.BOPP_FechaIngreso <= fecha2
                                        && Convert.ToString(ent.BOPP_Id).Contains(codigo)
                                        && Convert.ToString("ENTBIO").Contains(tipoMov)
+                                       && "ENTRADA".Contains(tipoDoc)
                                        && (materiaPrima != "" ? Convert.ToString(ent.BOPP_Serial) == materiaPrima : Convert.ToString(ent.BOPP_Serial).Contains(materiaPrima))
                                  select new
                                  {
@@ -819,6 +832,7 @@ namespace PlasticaribeAPI.Controllers
                                      Precio = Convert.ToDecimal(ent.BOPP_Precio),
                                      Proveedor = Convert.ToString(ent.Proveedor.Prov_Nombre), 
                                      Subcategoria = Convert.ToString(ent.SubcategoriasMP.SubCatMP_Nombre),
+                                     TpDoc = Convert.ToString("ENTRADA"),
                                  };
 
             //Asignacion de Tinta
@@ -827,6 +841,7 @@ namespace PlasticaribeAPI.Controllers
                                     && asg.AsigMp.AsigMp_FechaEntrega <= fecha2
                                     && Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo).Contains(codigo)
                                     && Convert.ToString("ASIGTINTAS").Contains(tipoMov)
+                                    && "SALIDA".Contains(tipoDoc)
                                     && (materiaPrima != "" ? Convert.ToString(asg.Tinta_Id) == materiaPrima : Convert.ToString(asg.Tinta_Id).Contains(materiaPrima))
                               select new
                               {
@@ -848,6 +863,7 @@ namespace PlasticaribeAPI.Controllers
                                   Precio = Convert.ToDecimal(asg.Tinta.Tinta_Precio),
                                   Proveedor = Convert.ToString("PLASTICARIBE SAS"),
                                   Subcategoria = Convert.ToString(asg.Tinta.SubcategoriasMP.SubCatMP_Nombre),
+                                  TpDoc = Convert.ToString("SALIDA"),
                               };
 
             return Ok(conAsg.Concat(conAsgMPCreacionTintas).Concat(conDevoluciones).Concat(conFacturas).Concat(conRemisiones).Concat(conAsgBopp).Concat(conEntradaBOPP).Concat(conAsgTinta));

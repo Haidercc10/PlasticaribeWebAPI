@@ -95,15 +95,16 @@ namespace PlasticaribeAPI.Controllers
 
         //
         [HttpGet("getMovementsPreload/{date1}/{date2}")]
-        public ActionResult getMovementsPreload(DateTime date1, DateTime date2, string? client = "", string? status = "", string? id = "")
+        public ActionResult getMovementsPreload(DateTime date1, DateTime date2, string? client = "", string? status = "", string? id = "", string? sales = "")
         {
             var preload = from p in _context.Set<Precargue_Despacho>()
                           where
                           p.Pcd_FechaCrea >= date1 &&
                           p.Pcd_FechaCrea <= date2 &&
-                          (client != "" ? p.Cli_Id == Convert.ToInt64(client) : p.Cli_Id.ToString().Contains(client)) &&
-                          (status != "" ? p.Estado_Id == Convert.ToInt64(status) : p.Estado_Id.ToString().Contains(status)) &&
-                          (id != "" ? p.Pcd_Id == Convert.ToInt64(id) : p.Pcd_Id.ToString().Contains(id))
+                          (client != "" ? p.Cli_Id == Convert.ToInt32(client) : p.Cli_Id.ToString().Contains(client)) &&
+                          (status != "" ? p.Estado_Id == Convert.ToInt32(status) : p.Estado_Id.ToString().Contains(status)) &&
+                          (id != "" ? p.Pcd_Id == Convert.ToInt32(id) : p.Pcd_Id.ToString().Contains(id)) &&
+                          (sales != "" ? p.Usua_Vendedor == Convert.ToInt32(sales) : p.Usua_Vendedor.ToString().Contains(sales))
                           select new
                           {
                               //Header
@@ -111,8 +112,8 @@ namespace PlasticaribeAPI.Controllers
                               OF = p.OF_Id, 
                               Date1 = p.Pcd_FechaCrea,
                               Hour1 = p.Pcd_HoraCrea,
-                              Date2 = p.Pcd_FechaModifica,
-                              Hour2 = p.Pcd_HoraModifica,
+                              Date2 = Convert.ToDateTime(p.Pcd_FechaCrea) == Convert.ToDateTime(p.Pcd_FechaModifica) ? "" : Convert.ToString(p.Pcd_FechaModifica),
+                              Hour2 = Convert.ToDateTime(p.Pcd_FechaCrea) == Convert.ToDateTime(p.Pcd_FechaModifica) ? "" : Convert.ToString(p.Pcd_HoraModifica),
                               UserId1 = p.Usua_Crea,
                               UserId2 = p.Usua_Modifica,
                               User1 = p.Usuario1.Usua_Nombre,
@@ -123,6 +124,8 @@ namespace PlasticaribeAPI.Controllers
                               Status = p.Estados.Estado_Nombre,
                               IdClient = p.Cli_Id, 
                               Client = p.Cliente.Cli_Nombre, 
+                              SalesId = p.Usua_Vendedor,
+                              Sales = p.Usuario3.Usua_Nombre,
                           };
 
             if (preload == null) return NotFound();

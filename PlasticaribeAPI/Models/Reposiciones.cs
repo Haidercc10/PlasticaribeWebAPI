@@ -52,5 +52,8 @@ namespace PlasticaribeAPI.Models
 
         public long? Usua_Autoriza { get; set; }
         public Usuario? Autoriza { get; set; }
+
+        public long? Usua_Vendedor { get; set; }
+        public Usuario? Vendedor { get; set; }
     }
 }

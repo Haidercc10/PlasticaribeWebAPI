@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20260219145821_Sales_InPreload")]
+    partial class Sales_InPreload
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -8527,9 +8530,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("Usua_Salida")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("Usua_Vendedor")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Rep_Id");
 
                     b.HasIndex("Cli_Id");
@@ -8543,8 +8543,6 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Usua_Crea");
 
                     b.HasIndex("Usua_Salida");
-
-                    b.HasIndex("Usua_Vendedor");
 
                     b.ToTable("Reposiciones");
                 });
@@ -14840,11 +14838,6 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Vendedor")
-                        .WithMany()
-                        .HasForeignKey("Usua_Vendedor")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("Autoriza");
 
                     b.Navigation("Cliente");
@@ -14856,8 +14849,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Usuario1");
 
                     b.Navigation("Usuario2");
-
-                    b.Navigation("Vendedor");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Rollo_Desecho", b =>
