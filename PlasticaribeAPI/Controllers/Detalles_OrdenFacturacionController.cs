@@ -287,8 +287,8 @@ namespace PlasticaribeAPI.Controllers
                        where or.Fecha >= startDate &&
                              or.Fecha <= endDate &&
                              (order != "" ? (or.Factura.Contains(order) || or.Id == Convert.ToInt32(order)) : true) &&
-                             (clientId != "" ? or.Cli_Id == Convert.ToInt32(clientId) : or.Cli_Id.ToString().Contains(clientId)) &&
-                             (salesId != "" ? or.Asesor_Id == Convert.ToInt32(salesId) : or.Asesor_Id.ToString().Contains(salesId))
+                             (clientId != "" ? (or.Cli_Id.ToString().Contains(clientId) || or.Cli_Id == Convert.ToInt32(clientId)) : true) &&
+                             (salesId != "" ? (or.Asesor_Id.ToString().Contains(salesId) || or.Asesor_Id == Convert.ToInt32(salesId)) : true)
                        select new
                        {
                            or,

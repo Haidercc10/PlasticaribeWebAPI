@@ -1791,6 +1791,96 @@ namespace PlasticaribeAPI.Controllers
             return CreatedAtAction("GetProduccion_Procesos", new { id = produccion_Procesos.Id }, produccion_Procesos);
         }
 
+        [HttpPost("postProduccionProcesos")]
+        public async Task<ActionResult> PostProduccionProcesos([FromBody] Produccion_Procesos data)
+        {
+            try
+            {
+                var numeroUltimoRollo = (from prod in _context.Set<Produccion_Procesos>()
+                                         orderby prod.Id descending
+                                         select prod.Numero_Rollo).FirstOrDefault();
+
+                var seed = Environment.TickCount;
+                var random = new Random(seed);
+                var value = random.Next(1, 15);
+                var value2 = random.Next(1, 10);
+                data.Numero_Rollo = numeroUltimoRollo + value + value2;
+                
+                _context.Produccion_Procesos.Add(data);
+                await _context.SaveChangesAsync(); 
+                
+                var result = await (from p in _context.Set<Produccion_Procesos>()
+                                    where p.Id == data.Id
+                                    select new
+                                    {
+                                        p.Id,
+                                        p.Cli_Id,
+                                        p.Clientes.Cli_Nombre,
+                                        p.Prod_Id,
+                                        p.Producto.Prod_Nombre,
+                                        p.NumeroRollo_BagPro,
+                                        p.OT,
+                                        p.Producto.MaterialMP.Material_Nombre,
+                                        p.Peso_Neto,
+                                        p.Peso_Bruto,
+                                        p.Cantidad,
+                                        p.Presentacion,
+                                        p.Proceso_Id,
+                                        p.Proceso.Proceso_Nombre,
+                                        p.Operario1_Id,
+                                        p.Operario1.Usua_Nombre,
+                                        p.Operario2_Id,
+                                        p.Operario3_Id,
+                                        p.Operario4_Id,
+                                        p.Datos_Etiqueta,
+                                        p.Etiqueta_Trazabilidad,
+                                        p.Maquina,
+                                        p.Autoriza_Id,
+                                        p.Fecha,
+                                        p.Hora,
+                                        p.Empacador_Id
+                                    }).FirstOrDefaultAsync();
+
+                return Ok(new
+                {
+                    Id = result.Id,
+                    Cli_Id = result.Cli_Id,
+                    Cli_Nombre = result.Cli_Nombre,
+                    Prod_Id = result.Prod_Id,
+                    Prod_Nombre = result.Prod_Nombre,
+                    NumeroRollo_BagPro = result.NumeroRollo_BagPro,
+                    OT = result.OT,
+                    Material_Nombre = result.Material_Nombre,
+                    Peso_Neto = result.Peso_Neto,
+                    Peso_Bruto = result.Peso_Bruto,
+                    Cantidad = result.Cantidad,
+                    Presentacion = result.Presentacion,
+                    Proceso_Id = result.Proceso_Id,
+                    Proceso_Nombre = result.Proceso_Nombre,
+                    Operario1_Id = result.Operario1_Id,
+                    Operario2_Id = result.Operario2_Id,
+                    Operario3_Id = result.Operario3_Id,
+                    Operario4_Id = result.Operario4_Id,
+                    Usua_Nombre = result.Usua_Nombre,
+                    Datos_Etiqueta = result.Datos_Etiqueta,
+                    Etiqueta_Trazabilidad = result.Etiqueta_Trazabilidad,
+                    Maquina = result.Maquina,
+                    Autoriza_Id = result.Autoriza_Id,
+                    Fecha = result.Fecha,
+                    Hora = result.Hora,
+                    Empacador_Id = result.Empacador_Id
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    mensaje = "Error al crear el registro de producción.",
+                    detalle = ex.Message
+                });
+            }
+        }
+
         //.Función que creará la inserción de la información de rollos de la bodega (de rollos PL) basada en el array que recibe por parametro. 
         [HttpPost("massiveInsertFromStoreRolls")]
         async public Task<IActionResult> massiveInsertFromStoreRolls([FromBody] List<Produccion_Procesos> produccion_Procesos)
