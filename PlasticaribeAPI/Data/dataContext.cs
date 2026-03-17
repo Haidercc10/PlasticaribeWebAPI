@@ -1276,6 +1276,10 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Producto_Terminado>().HasOne(prd => prd.Producto).WithMany().HasForeignKey(prd => prd.Prod_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto_Terminado>().HasOne(pUnd => pUnd.Pigmt).WithMany().HasForeignKey(pUnd => pUnd.Pigmt_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto_Terminado>().HasOne(pUnd => pUnd.MaterialMP).WithMany().HasForeignKey(pUnd => pUnd.Material_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto_Terminado>().HasOne(pUnd => pUnd.UnidadesALF).WithMany().HasForeignKey(pUnd => pUnd.UndMed_ALF).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto_Terminado>().HasOne(pUnd => pUnd.Tratados).WithMany().HasForeignKey(pUnd => pUnd.Tratado_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto_Terminado>().HasOne(pUnd => pUnd.UnidadesCal).WithMany().HasForeignKey(pUnd => pUnd.UndMed_Calibre).OnDelete(DeleteBehavior.Restrict);
+
 
             //Usabilidad Modulos
             modelBuilder.Entity<Usabilidad_Modulos>().HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);

@@ -37,25 +37,46 @@ namespace PlasticaribeAPI.Models
 
         public int TpProd_Id { get; set; }
         public Tipo_Producto? TpProd { get; set; }
-        
+
+        //Nuevo
+        public int Tratado_Id { get; set; } 
+        public Tratado? Tratados { get; set; }
+
         [Precision(14, 2)]
         public decimal Pt_Ancho { get; set; }
         
         [Precision(14, 2)]
         public decimal Pt_Largo { get; set; }
 
+        //Fuelles
         [Precision(14, 2)]
-        public decimal? Pt_Fuelle { get; set; }
+        public decimal? Pt_FuelleIzq { get; set; }
+
+        [Precision(14, 2)]
+        public decimal? Pt_FuelleDer { get; set; }
+
+        [Precision(14, 2)]
+        public decimal? Pt_FuelleFondo { get; set; }
+
+        [Precision(14, 2)]
+        public decimal? Pt_Solapa { get; set; }
+
+        //Nuevo
+        [Column(TypeName = "varchar(10)")]
+        public string UndMed_ALF { get; set; }
+        public Unidad_Medida? UnidadesALF { get; set; }
 
         public int Prod_Id { get; set; }
         public Producto? Producto { get; set; }
 
         //Datos adicionales del pedido producto (Pt)
-        public bool PedExtProd_Impresion { get; set; }
 
-        public bool ImpresionDobleCara { get; set; }
+        [Column(TypeName = "varchar(50)")]
+        public string Pt_ImpresionFD { get; set; }
 
-        public int PedExtProd_NroEmbobinado { get; set; }
+        public bool Pt_Laminado { get; set; }
+
+        public int Pt_NroEmbobinado { get; set; }
 
         //Datos adicionales del producto
 
@@ -66,8 +87,11 @@ namespace PlasticaribeAPI.Models
         public Pigmento? Pigmt { get; set; }
 
         [Precision(14, 2)]
-        public decimal PedExtProd_Calibre { get; set; }
+        public decimal Pt_Calibre { get; set; }
 
-        public bool PedExtProd_Tratado { get; set; }
+
+        [Column(TypeName = "varchar(10)")]
+        public string UndMed_Calibre { get; set; }
+        public Unidad_Medida? UnidadesCal { get; set; }
     }
 }

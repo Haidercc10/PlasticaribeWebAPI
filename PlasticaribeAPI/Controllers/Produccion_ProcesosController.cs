@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Interfaces;
+using PlasticaribeAPI.Migrations;
 using PlasticaribeAPI.Models;
 using ServiceReference1;
 using StackExchange.Redis;
@@ -225,12 +226,12 @@ namespace PlasticaribeAPI.Controllers
                                      select dt.Numero_Rollo).ToArray();
 
             //Productos que están en una OF directa que son diferentes a los que tienen bultos
-            var itemsOfDirect = (from fp in _context.Set<Facturacion_Productos>()
+            var itemsOfDirect = (from fp in _context.Set<Models.Facturacion_Productos>()
                                  where fp.Of_Id == orderFact && !itemsDetailsOrder.Contains(fp.Prod_Id)
                                  select fp.Prod_Id).Distinct().ToArray();
 
             //Ultimo pedido
-            var lastSaleOrder = (from fp in _context.Set<Facturacion_Productos>() 
+            var lastSaleOrder = (from fp in _context.Set<Models.Facturacion_Productos>() 
                                  where fp.Of_Id == orderFact 
                                  orderby fp.FactPro_Codigo descending 
                                  select fp.FactPro_Pedido).FirstOrDefault();
@@ -1838,7 +1839,24 @@ namespace PlasticaribeAPI.Controllers
                                         p.Autoriza_Id,
                                         p.Fecha,
                                         p.Hora,
-                                        p.Empacador_Id
+                                        p.Empacador_Id,
+                                        p.Cono_Id,
+                                        p.Turno_Id,
+                                        p.Rebobinado,
+                                        p.Rollo_Asociado,
+                                        p.Revision,
+                                        p.Tara_Cono,
+                                        p.Ancho_Cono,
+                                        p.Creador_Id,
+                                        p.Desviacion,
+                                        p.Observacion,
+                                        p.Numero_Rollo,
+                                        p.Estado_Rollo,
+                                        p.Pesado_Entre,
+                                        p.Peso_Teorico, 
+                                        p.PrecioVenta_Producto,
+                                        p.Precio,
+                                        p.Envio_Zeus,
                                     }).FirstOrDefaultAsync();
 
                 return Ok(new
@@ -1868,7 +1886,24 @@ namespace PlasticaribeAPI.Controllers
                     Autoriza_Id = result.Autoriza_Id,
                     Fecha = result.Fecha,
                     Hora = result.Hora,
-                    Empacador_Id = result.Empacador_Id
+                    Empacador_Id = result.Empacador_Id,
+                    Cono_Id = result.Cono_Id,
+                    Turno_Id = result.Turno_Id,
+                    Rebobinado = result.Rebobinado,
+                    Rollo_Asociado = result.Rollo_Asociado,
+                    Revision = result.Revision,
+                    Tara_Cono = result.Tara_Cono,
+                    Ancho_Cono = result.Ancho_Cono,
+                    Creador_Id = result.Creador_Id,
+                    Desviacion = result.Desviacion,
+                    Observacion = result.Observacion,
+                    Numero_Rollo = result.Numero_Rollo,
+                    Estado_Rollo = result.Estado_Rollo,
+                    Pesado_Entre = result.Pesado_Entre,
+                    Peso_Teorico = result.Peso_Teorico,
+                    PrecioVenta_Producto = result.PrecioVenta_Producto,
+                    Precio = result.Precio,
+                    Envio_Zeus = result.Envio_Zeus,
                 });
             }
             catch (Exception ex)

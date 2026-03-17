@@ -43,11 +43,11 @@ namespace PlasticaribeAPI.Controllers
             }
 
             
-            [HttpPost("getPhysicalInventory/{roll}")]
-            public async Task<ActionResult<Toma_Fisica_Inventario>> getPhysicalInventory(long roll, [FromBody] List<string> process)
+            [HttpPost("getPhysicalInventory/{toma}/{roll}")]
+            public async Task<ActionResult<Toma_Fisica_Inventario>> getPhysicalInventory(int toma, long roll, [FromBody] List<string> process)
             {
                 var physicalInv = await _context.Set<Toma_Fisica_Inventario>()
-                    .FirstOrDefaultAsync(tfi => tfi.Tfi_Etiqueta == roll &&  process.Contains(tfi.Proceso_Id));
+                    .FirstOrDefaultAsync(tfi => tfi.Toma_Id == toma && tfi.Tfi_Etiqueta == roll &&  process.Contains(tfi.Proceso_Id));
 
                 return Ok(physicalInv);
             }
