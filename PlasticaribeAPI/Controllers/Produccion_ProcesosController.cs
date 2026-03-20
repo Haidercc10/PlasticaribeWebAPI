@@ -1407,6 +1407,65 @@ namespace PlasticaribeAPI.Controllers
             return Ok(peletizados);
         }
 
+        //Consulta que devuelve la información de los rollos disponibles en despacho por item
+        [HttpGet("getEtiquetaForOT/{ot}/{process}")]
+        public ActionResult getEtiquetaForOT(long ot, string process)
+        {
+            var result =  (from p in _context.Set<Produccion_Procesos>()
+                          where p.OT == ot &&
+                          p.Proceso_Id == process
+                          select new
+                          {
+                              Id = p.Id,
+                              Cli_Id = p.Cli_Id,
+                              Cli_Nombre = p.Clientes.Cli_Nombre,
+                              Prod_Id = p.Prod_Id,
+                              Prod_Nombre = p.Producto.Prod_Nombre,
+                              NumeroRollo_BagPro = p.NumeroRollo_BagPro,
+                              OT = p.OT,
+                              Material_Nombre = p.Producto.MaterialMP.Material_Nombre,
+                              Peso_Neto = p.Peso_Neto,
+                              Peso_Bruto = p.Peso_Bruto,
+                              Cantidad = p.Cantidad,
+                              Presentacion = p.Presentacion,
+                              Proceso_Id = p.Proceso_Id,
+                              Proceso_Nombre = p.Proceso.Proceso_Nombre,
+                              Operario1_Id = p.Operario1_Id,
+                              Usua_Nombre = p.Operario1.Usua_Nombre,
+                              Operario2_Id = p.Operario2_Id,
+                              Operario3_Id = p.Operario3_Id,
+                              Operario4_Id = p.Operario4_Id,
+                              Datos_Etiqueta = p.Datos_Etiqueta,
+                              Etiqueta_Trazabilidad = p.Etiqueta_Trazabilidad,
+                              Maquina = p.Maquina,
+                              Autoriza_Id = p.Autoriza_Id,
+                              Fecha = p.Fecha,
+                              Hora = p.Hora,
+                              Empacador_Id = p.Empacador_Id,
+                              Cono_Id = p.Cono_Id,
+                              Turno_Id = p.Turno_Id,
+                              Rebobinado = p.Rebobinado,
+                              Rollo_Asociado = p.Rollo_Asociado,
+                              Revision = p.Revision,
+                              Tara_Cono = p.Tara_Cono,
+                              Ancho_Cono = p.Ancho_Cono,
+                              Creador_Id = p.Creador_Id,
+                              Desviacion = p.Desviacion,
+                              Observacion = p.Observacion,
+                              Numero_Rollo = p.Numero_Rollo,
+                              Estado_Rollo = p.Estado_Rollo,
+                              Pesado_Entre = p.Pesado_Entre,
+                              Peso_Teorico = p.Peso_Teorico,
+                              PrecioVenta_Producto = p.PrecioVenta_Producto,
+                              Precio = p.Precio,
+                              Envio_Zeus = p.Envio_Zeus,
+                          });
+
+            if (result == null) return NotFound();
+            return Ok(result);
+
+        }
+
         [HttpPut("putExistencia/{producto}/{presentacion}/{precio}/{cantidad}")]
         public async Task<IActionResult> PutExistencia(int producto, string presentacion, decimal precio, decimal cantidad)
         {
@@ -1797,6 +1856,9 @@ namespace PlasticaribeAPI.Controllers
         {
             try
             {
+                int intentos = 0;
+                int maxIntentos = 5;
+                int? numeroBagPro = null;
                 var numeroUltimoRollo = (from prod in _context.Set<Produccion_Procesos>()
                                          orderby prod.Id descending
                                          select prod.Numero_Rollo).FirstOrDefault();
@@ -1808,8 +1870,22 @@ namespace PlasticaribeAPI.Controllers
                 data.Numero_Rollo = numeroUltimoRollo + value + value2;
                 
                 _context.Produccion_Procesos.Add(data);
-                await _context.SaveChangesAsync(); 
-                
+                await _context.SaveChangesAsync();
+
+                while (intentos < maxIntentos)
+                {
+                    numeroBagPro = (int?)await _context.Set<Produccion_Procesos>()
+                        .Where(p => p.Id == data.Id)
+                        .Select(p => p.NumeroRollo_BagPro)
+                        .FirstOrDefaultAsync();
+
+                    if (numeroBagPro != null)
+                        break;
+
+                    await Task.Delay(200);
+                    intentos++;
+                }
+
                 var result = await (from p in _context.Set<Produccion_Procesos>()
                                     where p.Id == data.Id
                                     select new
