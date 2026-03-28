@@ -113,6 +113,35 @@ namespace PlasticaribeAPI.Models
         [Precision(14, 2)]
         public decimal Prod_Peso_Bulto { get; set; }
 
+        public int? Tratado_Id { get; set; }
+        public Tratado? Tratados { get; set; }
+
+        public int? TpImpresion_Id { get; set; }
+        public Tipos_Impresion? Tipos_Impresion { get; set; }
+
+        public string? UndMedCalibre { get; set; }
+        public Unidad_Medida? Unidad_Calibre { get; set; }
+
+        [Precision(14, 2)]
+        public decimal? Prod_FuelleIzq { get; set; }
+
+        [Precision(14, 2)]
+        public decimal? Prod_FuelleDer { get; set; }
+
+        [Precision(14, 2)]
+        public decimal? Prod_FuelleFondo { get; set; }
+
+        [Precision(14, 2)]
+        public decimal? Prod_Solapa { get; set; }
+
+        public int? Prod_Embobinado { get; set; }
+
+        public bool? Prod_Laminado { get; set; }
+
+
+        [Column(TypeName ="varchar(50)")]
+        public string? Prod_Impresion { get; set; }
+
         public IList<DetallesAsignacionProducto_FacturaVenta>? DtAsigProd_FVTA { get; set; }
 
         public IList<DetalleDevolucion_ProductoFacturado>? DtDevProd_Fact { get; set; }

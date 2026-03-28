@@ -287,8 +287,8 @@ namespace PlasticaribeAPI.Controllers
                        where or.Fecha >= startDate &&
                              or.Fecha <= endDate &&
                              (order != "" ? (or.Factura.Contains(order) || or.Id == Convert.ToInt32(order)) : true) &&
-                             (clientId != "" ? (or.Cli_Id.ToString().Contains(clientId) || or.Cli_Id == Convert.ToInt32(clientId)) : true) &&
-                             (salesId != "" ? (or.Asesor_Id.ToString().Contains(salesId) || or.Asesor_Id == Convert.ToInt32(salesId)) : true)
+                             (clientId != "" ? (or.Cli_Id == Convert.ToInt32(clientId) || or.Cli_Id.ToString().Contains(clientId)) : true) &&
+                             (salesId != "" ? (or.Asesor_Id == Convert.ToInt32(salesId)) : true)
                        select new
                        {
                            or,
@@ -435,6 +435,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getDetailsForItem/{item}")]
         public ActionResult getDetailsForItem(int item) 
         {
+            List<int> statuses =  [19, 21] ;
             var details = from d in _context.Set<Detalles_OrdenFacturacion>()
                           join o in _context.Set<OrdenFacturacion>() on d.Id_OrdenFacturacion equals o.Id
                           join c in _context.Set<Clientes>() on o.Cli_Id equals c.Cli_Id
@@ -509,8 +510,45 @@ namespace PlasticaribeAPI.Controllers
                                   Type = d.Key.Type
                               };
 
-            if (details.Concat(repositions) == null) return NotFound();
-            return Ok(details.Concat(repositions));
+            var factDirect = from d in _context.Set<Facturacion_Productos>()
+                             join o in _context.Set<OrdenFacturacion>() on d.Of_Id equals o.Id
+                             join c in _context.Set<Clientes>() on o.Cli_Id equals c.Cli_Id
+                             join p in _context.Set<Producto>() on d.Prod_Id equals p.Prod_Id
+                             where d.Prod_Id == item && o.Of_Directa == true && o.Estado_Id == 19
+                             group new { o, d, p, c } by new
+                             {
+                                 Doc = o.Id,
+                                 Date = o.Fecha,
+                                 Fact = o.Factura,
+                                 Client_Id = o.Cli_Id,
+                                 Client = c.Cli_Nombre,
+                                 Status = o.Estado.Estado_Nombre,
+                                 SaleOrder = d.FactPro_Pedido,
+                                 Item = d.Prod_Id,
+                                 Reference = p.Prod_Nombre,
+                                 Presentation = d.UndMed_Id,
+                                 Observation = o.Observacion,
+                                 Type = "OF Directa"
+                             } into d
+                             select new
+                             {
+                                 Doc = d.Key.Doc,
+                                 Date = d.Key.Date.Value,
+                                 Fact = d.Key.Fact,
+                                 Client_Id = d.Key.Client_Id,
+                                 Client = d.Key.Client,
+                                 Status = d.Key.Status,
+                                 SaleOrder = d.Key.SaleOrder,
+                                 Item = d.Key.Item,
+                                 Reference = d.Key.Reference,
+                                 Qty = d.Sum(x => x.d.FactPro_Cantidad),
+                                 Presentation = d.Key.Presentation, 
+                                 Observation = d.Key.Observation,
+                                 Type = d.Key.Type
+                             };
+
+            if (details.Concat(repositions).Concat(factDirect) == null) return NotFound();
+            return Ok(details.Concat(repositions).Concat(factDirect));
         }
 
         // PUT: api/Detalles_OrdenFacturacion/5

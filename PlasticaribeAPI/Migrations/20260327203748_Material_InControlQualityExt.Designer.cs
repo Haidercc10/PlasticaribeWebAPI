@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20260327203748_Material_InControlQualityExt")]
+    partial class Material_InControlQualityExt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7916,9 +7919,6 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<string>("Prod_Descripcion")
                         .HasColumnType("varchar(max)");
 
-                    b.Property<int?>("Prod_Embobinado")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("Prod_Fecha")
                         .HasColumnType("Date");
 
@@ -7927,26 +7927,8 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("decimal(14,2)")
                         .HasColumnOrder(8);
 
-                    b.Property<decimal?>("Prod_FuelleDer")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<decimal?>("Prod_FuelleFondo")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<decimal?>("Prod_FuelleIzq")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
                     b.Property<string>("Prod_Hora")
                         .HasColumnType("varchar(10)");
-
-                    b.Property<string>("Prod_Impresion")
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<bool?>("Prod_Laminado")
-                        .HasColumnType("bit");
 
                     b.Property<decimal?>("Prod_Largo")
                         .HasPrecision(14, 2)
@@ -7984,13 +7966,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
 
-                    b.Property<decimal?>("Prod_Solapa")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("decimal(14,2)");
-
-                    b.Property<int?>("TpImpresion_Id")
-                        .HasColumnType("int");
-
                     b.Property<int>("TpProd_Id")
                         .HasColumnType("int")
                         .HasColumnOrder(4);
@@ -7998,16 +7973,10 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int?>("TpSellado_Id")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Tratado_Id")
-                        .HasColumnType("int");
-
                     b.Property<string>("UndMedACF")
                         .IsRequired()
                         .HasColumnType("varchar(10)")
                         .HasColumnOrder(12);
-
-                    b.Property<string>("UndMedCalibre")
-                        .HasColumnType("varchar(10)");
 
                     b.Property<string>("UndMedPeso")
                         .IsRequired()
@@ -8022,17 +7991,11 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasIndex("Pigmt_Id");
 
-                    b.HasIndex("TpImpresion_Id");
-
                     b.HasIndex("TpProd_Id");
 
                     b.HasIndex("TpSellado_Id");
 
-                    b.HasIndex("Tratado_Id");
-
                     b.HasIndex("UndMedACF");
-
-                    b.HasIndex("UndMedCalibre");
 
                     b.HasIndex("UndMedPeso");
 
@@ -14497,11 +14460,6 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("Pigmt_Id")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("PlasticaribeAPI.Models.Tipos_Impresion", "Tipos_Impresion")
-                        .WithMany()
-                        .HasForeignKey("TpImpresion_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.Tipo_Producto", "TpProd")
                         .WithMany()
                         .HasForeignKey("TpProd_Id")
@@ -14513,21 +14471,11 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("TpSellado_Id")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("PlasticaribeAPI.Models.Tratado", "Tratados")
-                        .WithMany()
-                        .HasForeignKey("Tratado_Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "UndMed2")
                         .WithMany()
                         .HasForeignKey("UndMedACF")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "Unidad_Calibre")
-                        .WithMany()
-                        .HasForeignKey("UndMedCalibre")
-                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("PlasticaribeAPI.Models.Unidad_Medida", "UndMed1")
                         .WithMany()
@@ -14543,17 +14491,11 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Navigation("TiposSellados");
 
-                    b.Navigation("Tipos_Impresion");
-
                     b.Navigation("TpProd");
-
-                    b.Navigation("Tratados");
 
                     b.Navigation("UndMed1");
 
                     b.Navigation("UndMed2");
-
-                    b.Navigation("Unidad_Calibre");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Producto_Terminado", b =>

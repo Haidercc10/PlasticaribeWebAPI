@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public class Producto_Terminado
     {
         
@@ -94,4 +95,5 @@ namespace PlasticaribeAPI.Models
         public string UndMed_Calibre { get; set; }
         public Unidad_Medida? UnidadesCal { get; set; }
     }
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 }

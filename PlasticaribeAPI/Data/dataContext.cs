@@ -249,7 +249,11 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Producto>().HasOne(prd => prd.UndMed2).WithMany().HasForeignKey(prd => prd.UndMedACF).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto>().HasOne(Prd => Prd.MaterialMP).WithMany().HasForeignKey(Prd => Prd.Material_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto>().HasOne(prd => prd.TiposSellados).WithMany().HasForeignKey(prd => prd.TpSellado_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto>().HasOne(prd => prd.Tipos_Impresion).WithMany().HasForeignKey(prd => prd.TpImpresion_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto>().HasOne(prd => prd.Tratados).WithMany().HasForeignKey(prd => prd.Tratado_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto>().HasOne(prd => prd.Unidad_Calibre).WithMany().HasForeignKey(prd => prd.UndMedCalibre).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto>().Property(c => c.Prod_Cod).UseIdentityColumn().ValueGeneratedOnAddOrUpdate();
+            
 
             //modelBuilder.Entity<Estado>().ToTable(tb => tb.HasTrigger("Auditoria_Estados"));
             modelBuilder.Entity<Estado>().HasOne<Tipo_Estado>().WithMany().HasForeignKey(Est => Est.TpEstado_Id).OnDelete(DeleteBehavior.Restrict);
@@ -1004,6 +1008,8 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<ControlCalidad_Extrusion>().HasOne(x => x.Producto).WithMany().HasForeignKey(y => y.Prod_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<ControlCalidad_Extrusion>().HasOne(x => x.Pigmento).WithMany().HasForeignKey(y => y.Pigmento_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<ControlCalidad_Extrusion>().HasOne(x => x.UndMedida).WithMany().HasForeignKey(y => y.UndMed_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<ControlCalidad_Extrusion>().HasOne(x => x.MaterialMP).WithMany().HasForeignKey(y => y.Material_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
 
             //ControlCalidad_Sellado
             modelBuilder.Entity<ControlCalidad_Sellado>().ToTable(x => x.HasTrigger("Auditoria_ControlCalidad_Sellado"));
