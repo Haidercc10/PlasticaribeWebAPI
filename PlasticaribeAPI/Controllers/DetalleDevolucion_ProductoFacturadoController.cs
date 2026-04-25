@@ -173,7 +173,7 @@ namespace PlasticaribeAPI.Controllers
                                   Observacion = dev.DevProdFact_Observacion,
                                   Reposicion = dev.DevProdFact_Reposicion,
                                   Estado_Id = dev.Estado_Id,
-                                  
+                                  NC = dev.DevProdFact_NotaCredito,
                               },
                               Clientes = dev.Cliente,
                               Usuario = dev.Usua,

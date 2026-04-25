@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -1286,6 +1287,35 @@ namespace PlasticaribeAPI.Controllers
                                    Subtotal = (mp.MatPri_Stock * mp.MatPri_Precio)
                                };
             return Ok(peletizado);
+        }
+
+        //Función que traerá las materias primas y tintas con sus respectivas subcategorias para el módulo de solicitud de materia prima
+        [HttpGet("getSubcategories")]
+        public ActionResult getSubcategories() {
+
+            var materiaPrima = from mp in _context.Set<Materia_Prima>()
+                               where mp.MatPri_Id != 84
+                               select new
+                               {
+                                   Item = mp.MatPri_Id,
+                                   Referencia = mp.MatPri_Nombre,
+                                   Stock = mp.MatPri_Stock,
+                                   Subcategoria = mp.SubCatMP_Id,
+                                   Id_Subcategoria = mp.SubcategoriasMP.SubCatMP_Nombre,
+                               };
+
+            var tinta = from tt in _context.Set<Tinta>()
+                        where tt.Tinta_Id != 2001
+                        select new
+                        {
+                            Item = tt.Tinta_Id,
+                            Referencia = tt.Tinta_Nombre,
+                            Stock = tt.Tinta_Stock,
+                            Subcategoria = tt.SubCatMP_Id,
+                            Id_Subcategoria = tt.SubcategoriasMP.SubCatMP_Nombre,
+                        };
+
+            return Ok(materiaPrima.Concat(tinta));
         }
 
         // PUT: api/Materia_Prima/5

@@ -1016,34 +1016,37 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult getCrearPdfUltPedido(int pedido)
         {
             var con = from ped in _context.Set<PedidoProducto>()
+                      from pedExt in _context.Set<PedidoExterno>()
                       from Emp in _context.Set<Empresa>()
                       where ped.PedExt_Id == pedido
                             && Emp.Empresa_Id == 800188732
+                            && ped.PedExt_Id == pedExt.PedExt_Id
                       select new
                       {
                           Id_Pedido = ped.PedExt_Id,
                           Consecutivo = ped.PedidoExt.PedExt_Codigo,
                           FechaCreacion = ped.PedidoExt.PedExt_FechaCreacion,
-                          //FechaEntrega = ped.PedidoExt.PedExt_FechaEntrega,
                           Hora = ped.PedidoExt.PedExt_HoraCreacion,
                           Creador_Id = ped.PedidoExt.Creador_Id,
                           Creador = ped.PedidoExt.Creador.Usua_Nombre,
 
-                          Estado_Id = ped.PedidoExt.Estado_Id,
-                          Estado = ped.PedidoExt.Estado.Estado_Nombre,
-                          Observacion = ped.PedidoExt.PedExt_Observacion,
-                          Vendedor_Id = ped.PedidoExt.Usua_Id,
-                          Vendedor = ped.PedidoExt.Usua.Usua_Nombre,
-                          Precio_Total = ped.PedidoExt.PedExt_PrecioTotal,
-                          Cliente_Id = ped.PedidoExt.SedeCli.Cli_Id,
-                          Tipo_Id = ped.PedidoExt.SedeCli.Cli.TipoIdentificacion_Id,
-                          Cliente = ped.PedidoExt.SedeCli.Cli.Cli_Nombre,
-                          Tipo_Cliente = ped.PedidoExt.SedeCli.Cli.TPCli.TPCli_Nombre,
-                          Telefono_Cliente = ped.PedidoExt.SedeCli.Cli.Cli_Telefono,
-                          Ciudad_Cliente = ped.PedidoExt.SedeCli.SedeCliente_Ciudad,
-                          Correo_Cliente = ped.PedidoExt.SedeCli.Cli.Cli_Email,
-                          Direccion_Cliente = ped.PedidoExt.SedeCli.SedeCliente_Direccion,
-                          CodPostal_Cliente = ped.PedidoExt.SedeCli.SedeCli_CodPostal,
+                          Estado_Id = pedExt.Estado_Id,
+                          Estado = pedExt.Estado.Estado_Nombre,
+                          Observacion = pedExt.PedExt_Observacion,
+                          Vendedor_Id = pedExt.Usua_Id,
+                          Vendedor = pedExt.Usua.Usua_Nombre,
+                          Precio_Total = pedExt.PedExt_PrecioTotal,
+                          Cliente_Id = pedExt.SedeCli.Cli_Id,
+                          Tipo_Id = pedExt.SedeCli.Cli.TipoIdentificacion_Id,
+                          Cliente = pedExt.SedeCli.Cli.Cli_Nombre,
+                          Tipo_Cliente = pedExt.SedeCli.Cli.TPCli.TPCli_Nombre,
+                          Telefono_Cliente = pedExt.SedeCli.Cli.Cli_Telefono,
+                          Ciudad_Cliente = pedExt.SedeCli.SedeCliente_Ciudad,
+                          Correo_Cliente = pedExt.SedeCli.Cli.Cli_Email,
+                          Direccion_Cliente = pedExt.SedeCli.SedeCliente_Direccion,
+                          CodPostal_Cliente = pedExt.SedeCli.SedeCli_CodPostal,
+                          Orden_Compra = pedExt.PedExt_Oc,
+
 
                           Producto_Id = ped.Prod_Id,
                           Producto = ped.Product.Prod_Nombre,
@@ -1052,6 +1055,11 @@ namespace PlasticaribeAPI.Controllers
                           Precio_Unitario = ped.PedExtProd_PrecioUnitario,
                           SubTotal_Producto = (ped.PedExtProd_Cantidad * ped.PedExtProd_PrecioUnitario),
                           Fecha_Entrega = ped.PedExtProd_FechaEntrega,
+                          OT = ped.PedExtProd_OT,
+                          Cantidad_Facturada = ped.PedExtProd_CantidadFacturada,
+                          Cantidad_Faltante = ped.PedExtProd_CantidadFaltante,
+                          Observacion_Producto = ped.PedExtProd_Observacion,
+                          Referencia = ped.PedExtProd_Referencia,
 
                           Empresa_Id = Emp.Empresa_Id,
                           Empresa_Ciudad = Emp.Empresa_Ciudad,
@@ -1087,6 +1095,13 @@ namespace PlasticaribeAPI.Controllers
                           Id_Creador = ped.Creador_Id,
                           Creador = ped.Creador.Usua_Nombre,
                           Valor_Total = ped.PedExt_PrecioTotal,
+                          Orden_Compra = ped.PedExt_Oc,
+                          Fecha_Creacion = ped.PedExt_FechaCreacion,
+                          Hora_Creacion = ped.PedExt_HoraCreacion,
+                          Empresa_Id = ped.Empresa_Id,
+                          Empresa = ped.Empresa.Empresa_Nombre,
+                          Direccion_Entrega = ped.PedExt_DireccionEntrega,
+                          Codigo = ped.PedExt_Codigo,
 
                           Id_Producto = pedProd.Prod_Id,
                           Producto = pedProd.Product.Prod_Nombre,
@@ -1094,6 +1109,13 @@ namespace PlasticaribeAPI.Controllers
                           Presentacion = pedProd.UndMed_Id,
                           Precio_Unitario = pedProd.PedExtProd_PrecioUnitario,
                           Fecha_Entrega = pedProd.PedExtProd_FechaEntrega,
+                          OT = pedProd.PedExtProd_OT,
+                          Cantidad_Facturada = pedProd.PedExtProd_CantidadFacturada,
+                          Cantidad_Faltante = pedProd.PedExtProd_CantidadFaltante,
+                          Estado_Id = ped.Estado_Id,    
+                          Estado = ped.Estado.Estado_Nombre,
+                          Observacion_Producto = pedProd.PedExtProd_Observacion,
+                          Referencia = pedProd.PedExtProd_Referencia,
                       };
             return Ok(con);
 
