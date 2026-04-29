@@ -1300,8 +1300,8 @@ namespace PlasticaribeAPI.Controllers
                                    Item = mp.MatPri_Id,
                                    Referencia = mp.MatPri_Nombre,
                                    Stock = mp.MatPri_Stock,
-                                   Subcategoria = mp.SubCatMP_Id,
-                                   Id_Subcategoria = mp.SubcategoriasMP.SubCatMP_Nombre,
+                                   Subcategoria = mp.SubcategoriasMP.SubCatMP_Nombre,
+                                   Id_Subcategoria = mp.SubCatMP_Id,
                                };
 
             var tinta = from tt in _context.Set<Tinta>()
@@ -1311,8 +1311,8 @@ namespace PlasticaribeAPI.Controllers
                             Item = tt.Tinta_Id,
                             Referencia = tt.Tinta_Nombre,
                             Stock = tt.Tinta_Stock,
-                            Subcategoria = tt.SubCatMP_Id,
-                            Id_Subcategoria = tt.SubcategoriasMP.SubCatMP_Nombre,
+                            Subcategoria = tt.SubcategoriasMP.SubCatMP_Nombre,
+                            Id_Subcategoria = tt.SubCatMP_Id,
                         };
 
             return Ok(materiaPrima.Concat(tinta));
