@@ -301,6 +301,27 @@ namespace PlasticaribeAPI.Controllers
             return authorizedUsers.Any() ? Ok(authorizedUsers) : NotFound();
         }
 
+        //Consulta para obtener los supervisores activos por area y rol
+        [HttpGet("getSupervisors/{area}/{rol}")]
+        public async Task<ActionResult> getSupervisors(long area, int rol)
+        {
+            var supervisors = await (from u in _context.Set<Usuario>()
+                                     where u.RolUsu_Id == rol
+                                     && u.Area_Id == area
+                                     && u.Estado_Id == Convert.ToInt32(1)
+                                     select new
+                                     {
+                                         Supervisor_Id = u.Usua_Id,
+                                         Supervisor_Name = u.Usua_Nombre,
+                                     }).ToListAsync();
+
+            if (supervisors == null || !supervisors.Any())
+            {
+                return NotFound();
+            }
+            return Ok(supervisors);
+        }
+
         [HttpGet("getTrabajadores/{startDate}/{endDate}/{area}")]
         public ActionResult GetTrabajadores(DateTime startDate, DateTime endDate, string area)
         {

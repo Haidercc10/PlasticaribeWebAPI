@@ -512,7 +512,7 @@ namespace PlasticaribeAPI.Controllers
                 var endpoint = new EndpointAddress("http://192.168.0.85/wsGenericoZeus/ServiceWS.asmx");
                 WebservicesGenericoZeusSoapClient client = new WebservicesGenericoZeusSoapClient(binding, endpoint);
                 SoapResponse response = await client.ExecuteActionSOAPAsync(request);
-                if (Convert.ToString(response.Status) == "SUCCESS") PutStatusZeus(rollo, articulo);
+                if (Convert.ToString(response.Status) == "SUCCESS") await PutStatusZeus2(rollo, articulo);
                 return Convert.ToString(response.Status) == "SUCCESS" ? Ok(response) : BadRequest(response);
             }
             finally 
@@ -543,6 +543,56 @@ namespace PlasticaribeAPI.Controllers
                 throw;
             }
             return NoContent();
+        }
+
+        // Función que actualizará el estado del rollo a enviado a zeus y el estado del rollo a 19 para que no vuelva a ser enviado a zeus
+        [HttpPut("putStatusZeus2/{rollo}")]
+        public async Task<IActionResult> PutStatusZeus2(long rollo, string item)
+        {
+            var dataProduction = await _context.Set<Produccion_Procesos>()
+                .FirstOrDefaultAsync(prod =>
+                    prod.NumeroRollo_BagPro == rollo
+                    && prod.Prod_Id == Convert.ToInt64(item));
+
+            if (dataProduction == null)
+                return NotFound();
+
+            dataProduction.Envio_Zeus = true;
+            dataProduction.Estado_Rollo = 19;
+
+            try
+            {
+                await _context.SaveChangesAsync(); 
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw;
+            }
+
+            return NoContent();
+        }
+
+        [HttpPut("putStatusZeus3/{rollo}")]
+        public async Task<IActionResult> PutStatusZeus3(long rollo, string item)
+        {
+            try
+            {
+                var rows = await _context.Database.ExecuteSqlRawAsync(
+                    @"UPDATE Produccion_Procesos 
+                      SET Envio_Zeus = 1, Estado_Rollo = 19 
+                      WHERE NumeroRollo_BagPro = {0} AND Prod_Id = {1}",
+                    rollo, Convert.ToInt64(item)
+                );
+
+                if (rows == 0)
+                    return NotFound(); 
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         //funcion que devolverá el primer rollo pesado

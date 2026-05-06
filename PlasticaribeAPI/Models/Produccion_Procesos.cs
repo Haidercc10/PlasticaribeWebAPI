@@ -93,6 +93,9 @@ namespace PlasticaribeAPI.Models
 
         public long? Autoriza_Id { get; set; }
         public Usuario? Autoriza { get; set; }
+
+        public long? Supervisor_Id { get; set; }
+        public Usuario? Supervisor { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }
