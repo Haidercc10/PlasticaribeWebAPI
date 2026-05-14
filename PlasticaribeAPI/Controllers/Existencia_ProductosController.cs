@@ -268,7 +268,11 @@ namespace PlasticaribeAPI.Controllers
                                       orderby est.EstProcOT_Id descending 
                                       select est.EstProcOT_Cliente).FirstOrDefault(),
 
-                            Seller = (from est in _context.Set<Estados_ProcesosOT>() where exi.Prod_Id == est.Prod_Id && (string.IsNullOrEmpty(sales) || est.Usua_Id == Convert.ToInt32(sales)) orderby est.EstProcOT_Id descending select est.Usuario.Usua_Nombre).FirstOrDefault(),
+                            Seller = (from est in _context.Set<Estados_ProcesosOT>() 
+                                      where exi.Prod_Id == est.Prod_Id 
+                                      && (string.IsNullOrEmpty(sales) || est.Usua_Id == Convert.ToInt32(sales)) 
+                                      orderby est.EstProcOT_Id descending 
+                                      select est.Usuario.Usua_Nombre).FirstOrDefault(),
                             QtyStandard = (from pp in _context.Set<Produccion_Procesos>() 
                                            where pp.Prod_Id == prod.Prod_Id && 
                                            pp.Presentacion == exi.UndMed_Id 

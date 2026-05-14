@@ -37,6 +37,10 @@ namespace PlasticaribeAPI.Models
 
         [Precision(18, 2)]
         public decimal Doc_PrecioUnitario { get; set; }
+
+
+        [Column(TypeName = "Date")]
+        public DateTime? Doc_FechaEntrega { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

@@ -40,6 +40,10 @@ namespace PlasticaribeAPI.Models
         public int Estado_Id { get; set; } //Llave foranea de estado
         public Estado? Estado { get; set; } //Propiedad de navegación estado
 
+
+        [Column(TypeName = "date")]
+        public DateTime? AsigMPxTinta_FechaRealEntrega { get; set; }
+
         //Lista requerida para relación Asignacion_MatPrimaXTinta - materias primas
         //public IList<DetalleAsignacion_MatPrimaXTinta>? DetAsigMPxTinta { get; set; }
 

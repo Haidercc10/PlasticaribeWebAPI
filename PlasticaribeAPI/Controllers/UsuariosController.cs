@@ -302,17 +302,38 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //Consulta para obtener los supervisores activos por area y rol
-        [HttpGet("getSupervisors/{area}/{rol}")]
-        public async Task<ActionResult> getSupervisors(long area, int rol)
+        [HttpGet("getSupervisors/{area}")]
+        public async Task<ActionResult> getSupervisors(long area)
         {
             var supervisors = await (from u in _context.Set<Usuario>()
-                                     where u.RolUsu_Id == rol
+                                     where u.RolUsu_Id == Convert.ToInt32(105)
                                      && u.Area_Id == area
                                      && u.Estado_Id == Convert.ToInt32(1)
                                      select new
                                      {
                                          Supervisor_Id = u.Usua_Id,
                                          Supervisor_Name = u.Usua_Nombre,
+                                     }).ToListAsync();
+
+            if (supervisors == null || !supervisors.Any())
+            {
+                return NotFound();
+            }
+            return Ok(supervisors);
+        }
+
+        [HttpGet("getAllSupervisors")]
+        public async Task<ActionResult> getAllSupervisors()
+        {
+            var supervisors = await (from u in _context.Set<Usuario>()
+                                     where u.RolUsu_Id == Convert.ToInt32(105)
+                                     && u.Estado_Id == Convert.ToInt32(1)
+                                     select new
+                                     {
+                                         Supervisor_Id = u.Usua_Id,
+                                         Supervisor_Name = u.Usua_Nombre,
+                                         Area_Id = u.Area_Id,   
+                                         Area_Name = u.Area.Area_Nombre,
                                      }).ToListAsync();
 
             if (supervisors == null || !supervisors.Any())

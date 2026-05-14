@@ -26,6 +26,9 @@ namespace PlasticaribeAPI.Models
         public int Estado_Id { get; set; } //Llave foranea de estado
         public Estado? Estado { get; set; } //Propiedad de navegación estado
 
+        [Column(TypeName = "date")]
+        public DateTime? AsigBOPP_FechaRealEntrega { get; set; }
+
         //Lista requerida para relacion con BOPP en detalles asignaciones bopp
         public IList<DetalleAsignacion_BOPP>? DetAsigBOPP { get; set; }
 
