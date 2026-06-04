@@ -609,7 +609,7 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con.Concat(conBopp).Concat(conTinta));
         }
 
-        //Movimientos de Materia Prima, Tintas, Biorientados
+        //Movimientos de Materia Prima, Tintas, Biorientados ***
         [HttpGet("getMovimientos/{fecha1}/{fecha2}")]
         public ActionResult GetMoviemientos(DateTime fecha1, DateTime fecha2, string? codigo = "", string? tipoMov = "", string? materiaPrima = "", string? tipoDoc = "")
         {
@@ -617,8 +617,8 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
             //Asignaciones de Materia Prima
             var conAsg = from asg in _context.Set<DetalleAsignacion_MateriaPrima>()
-                         where asg.AsigMp.AsigMp_FechaEntrega >= fecha1
-                               && asg.AsigMp.AsigMp_FechaEntrega <= fecha2
+                         where asg.AsigMp.AsigMp_FechaRealEntrega >= fecha1
+                               && asg.AsigMp.AsigMp_FechaRealEntrega <= fecha2
                                && Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo).Contains(codigo)
                                && "ASIGMP".Contains(tipoMov)
                                && "SALIDA".Contains(tipoDoc)
@@ -648,8 +648,8 @@ namespace PlasticaribeAPI.Controllers
 
             //Asignacion de Materia Prima para la creacion de Tintas
             var conAsgMPCreacionTintas = from cr in _context.Set<DetalleAsignacion_MatPrimaXTinta>()
-                                         where cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega >= fecha1
-                                               && cr.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= fecha2
+                                         where cr.AsigMPxTinta.AsigMPxTinta_FechaRealEntrega >= fecha1
+                                               && cr.AsigMPxTinta.AsigMPxTinta_FechaRealEntrega <= fecha2
                                                && Convert.ToString(cr.AsigMPxTinta.Tinta_Id).Contains(codigo)
                                                && "CRTINTAS".Contains(tipoMov)
                                                && "ENTRADA".Contains(tipoDoc)
@@ -776,8 +776,8 @@ namespace PlasticaribeAPI.Controllers
 
             //Asignaciones de BOPP
             var conAsgBopp = from asg in _context.Set<DetalleAsignacion_BOPP>()
-                             where asg.AsigBOPP.AsigBOPP_FechaEntrega >= fecha1
-                                   && asg.AsigBOPP.AsigBOPP_FechaEntrega <= fecha2
+                             where asg.AsigBOPP.AsigBOPP_FechaRealEntrega >= fecha1
+                                   && asg.AsigBOPP.AsigBOPP_FechaRealEntrega <= fecha2
                                    && Convert.ToString(asg.DtAsigBOPP_OrdenTrabajo).Contains(codigo)
                                    && Convert.ToString(asg.TpDoc_Id).Contains(tipoMov)
                                    && "SALIDA".Contains(tipoDoc)
@@ -838,8 +838,8 @@ namespace PlasticaribeAPI.Controllers
 
             //Asignacion de Tinta
             var conAsgTinta = from asg in _context.Set<DetalleAsignacion_Tinta>()
-                              where asg.AsigMp.AsigMp_FechaEntrega >= fecha1
-                                    && asg.AsigMp.AsigMp_FechaEntrega <= fecha2
+                              where asg.AsigMp.AsigMp_FechaRealEntrega >= fecha1
+                                    && asg.AsigMp.AsigMp_FechaRealEntrega <= fecha2
                                     && Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo).Contains(codigo)
                                     && Convert.ToString("ASIGTINTAS").Contains(tipoMov)
                                     && "SALIDA".Contains(tipoDoc)

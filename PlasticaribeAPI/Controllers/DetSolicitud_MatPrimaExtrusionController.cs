@@ -81,7 +81,47 @@ namespace PlasticaribeAPI.Controllers
                                                      Tinta_Id = dsmpe.Tinta_Id,
                                                      Tinta = dsmpe.Tinta.Tinta_Nombre,
                                                      Stock_Tinta = dsmpe.Tinta.Tinta_Stock,
-                                                     Cantidad = dsmpe.DtSolMpExt_Cantidad,
+                                                     Cantidad_Pedida = dsmpe.DtSolMpExt_Cantidad,  
+                                                     Cantidad_Restante = dsmpe.DtSolMpExt_Cantidad - 
+                                                     (
+                                                         (
+                                                            from d in _context.Set<DetalleAsignacion_MateriaPrima>()
+                                                            where d.AsigMp.SolMpExt_Id == id &&
+                                                            d.MatPri_Id == dsmpe.MatPri_Id
+                                                            //&& d.MatPri_Id != 84
+                                                            group d by d.MatPri_Id into g
+                                                            select (decimal?)g.Sum(x => x.DtAsigMp_Cantidad)
+                                                         ).Sum() ?? Convert.ToDecimal(0)
+                                                         +
+                                                         (
+                                                            from d in _context.Set<DetalleAsignacion_Tinta>()
+                                                            where d.AsigMp.SolMpExt_Id == id &&
+                                                            d.Tinta_Id == dsmpe.Tinta_Id
+                                                            && d.Tinta_Id != 2001
+                                                            group d by d.Tinta_Id into g
+                                                            select (decimal?)g.Sum(x => x.DtAsigTinta_Cantidad)
+                                                          ).Sum() ?? Convert.ToDecimal(0)
+                                                     ),
+                                                     Cantidad_Entregada =
+                                                     (
+                                                         (
+                                                            from d in _context.Set<DetalleAsignacion_MateriaPrima>()
+                                                            where d.AsigMp.SolMpExt_Id == id &&
+                                                            d.MatPri_Id == dsmpe.MatPri_Id
+                                                            //&& d.MatPri_Id != 84
+                                                            group d by d.MatPri_Id into g
+                                                            select (decimal?)g.Sum(x => x.DtAsigMp_Cantidad)
+                                                         ).Sum() ?? Convert.ToDecimal(0)
+                                                         +
+                                                         (
+                                                            from d in _context.Set<DetalleAsignacion_Tinta>()
+                                                            where d.AsigMp.SolMpExt_Id == id &&
+                                                            d.Tinta_Id == dsmpe.Tinta_Id
+                                                            && d.Tinta_Id != 2001
+                                                            group d by d.Tinta_Id into g
+                                                            select (decimal?)g.Sum(x => x.DtAsigTinta_Cantidad)
+                                                          ).Sum() ?? Convert.ToDecimal(0)
+                                                     ),
                                                      Medida = dsmpe.UndMed_Id,
                                                      //Empresa
                                                      emp.Empresa_Id,

@@ -93,6 +93,7 @@ namespace PlasticaribeAPI.Controllers
                           Cantidad = dt.Doc_CantidadPedida,
                           Unidad_Medida = dt.UndMed_Id,
                           Precio_Unitario = dt.Doc_PrecioUnitario,
+                          Fecha_Entrega = dt.Doc_FechaEntrega,
                       };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con);
@@ -165,6 +166,7 @@ namespace PlasticaribeAPI.Controllers
                           Cantidad = oc.Doc_CantidadPedida,
                           Unidad_Medida = oc.UndMed_Id,
                           Precio_Unitario = oc.Doc_PrecioUnitario,
+                          Fecha_Entrega = oc.Doc_FechaEntrega,
                       };
 #pragma warning restore CS8604 // Possible null reference argument.
 #pragma warning restore CS8602 // Dereference of a possibly null reference.

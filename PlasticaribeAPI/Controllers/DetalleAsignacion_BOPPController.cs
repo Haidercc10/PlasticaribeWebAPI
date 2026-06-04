@@ -174,6 +174,37 @@ namespace PlasticaribeAPI.Controllers
             return CreatedAtAction("GetDetalleAsignacion_BOPP", new { id = detalleAsignacion_BOPP.AsigBOPP_Id }, detalleAsignacion_BOPP);
         }
 
+        // POST: api/DetalleAsignacion_BOPP/PostMasivo
+        [HttpPost("postMasivo")]
+        public async Task<ActionResult> PostDetallesAsignacionBOPPMasivo(List<DetalleAsignacion_BOPP> detalles)
+        {
+            if (_context.DetallesAsignaciones_BOPP == null)
+            {
+                return Problem(
+                    "Entity set 'dataContext.DetallesAsignaciones_BOPP' is null."
+                );
+            }
+
+            try
+            {
+                await _context.DetallesAsignaciones_BOPP.AddRangeAsync(detalles);
+                await _context.SaveChangesAsync();
+                return Ok(new
+                {
+                    mensaje = "Registros guardados correctamente",
+                    cantidad = detalles.Count
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    mensaje = "Error guardando asignaciones",
+                    error = ex.Message
+                });
+            }
+        }
+
         // DELETE: api/DetalleAsignacion_BOPP/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDetalleAsignacion_BOPP(long id)

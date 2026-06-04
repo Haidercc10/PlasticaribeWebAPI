@@ -373,6 +373,22 @@ namespace PlasticaribeAPI.Controllers
             return CreatedAtAction("GetBOPP", new { id = bOPP.BOPP_Id }, bOPP);
         }
 
+        // POST: api/BOPP/getSerialesBopp
+        [HttpPost("getSerialesBopp")]
+        public async Task<ActionResult<IEnumerable<BOPP>>> getSerialesBopp([FromBody] List<long> seriales)
+        {
+            if (_context.BOPP == null)
+            {
+                return Problem("Entity set 'BOPP' is null.");
+            }
+
+            var data = await _context.BOPP
+                .Where(x => seriales.Contains(x.BOPP_Serial))
+                .ToListAsync();
+
+            return Ok(data);
+        }
+
         // DELETE: api/BOPP/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBOPP(long id)

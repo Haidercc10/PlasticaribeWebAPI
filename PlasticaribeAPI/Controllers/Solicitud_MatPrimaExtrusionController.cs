@@ -49,11 +49,21 @@ namespace PlasticaribeAPI.Controllers
 
         /** Obtener las ultimas 100 solicitudes para mostrar en los estados */
         [HttpGet("getUltimas100Solicitudes")]
-        public ActionResult GetUltimasSolicitudes()
+        public async Task<ActionResult<Solicitud_MatPrimaExtrusion>> GetUltimasSolicitudes()
         {
             if (_context.Solicitud_MatPrimaExtrusion == null) return NotFound();
 
-            var todo = _context.Solicitud_MatPrimaExtrusion.Take(100).OrderByDescending(p => p.SolMpExt_Id);
+            var todo = await (from s in _context.Set<Solicitud_MatPrimaExtrusion>()
+                              group s by new {
+                                  Estado_Id = s.Estado_Id, 
+                                  Estado = s.Estado.Estado_Nombre
+                              } into g
+                              select new
+                              {
+                                  Estado_Id = g.Key.Estado_Id,
+                                  Estado = g.Key.Estado,
+                                  Suma = g.Count()
+                              }).ToListAsync();
 
             if (todo != null) return Ok(todo);
             else return BadRequest("No se encontraron registros de solicitudes de material de producción");
