@@ -2,8 +2,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Ocsp;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using ServiceReference1;
+using System.ServiceModel;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks.Dataflow;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -165,6 +170,97 @@ namespace PlasticaribeAPI.Controllers
                                exis
                            };
             return products.Any() ? Ok(products) : NotFound();
+        }
+
+        [HttpGet("PostArticuloZeus/{item}")]
+        public async Task<ActionResult> PostArticuloZeus(string item)
+        {
+            var article = await (from p in _context.Set<Producto>()
+                                join exis in _context.Set<Existencia_Productos>() on p.Prod_Id equals exis.Prod_Id
+                                where p.Prod_Id == Convert.ToInt32(item)
+                                select new
+                                {
+                                    Item = p.Prod_Id,
+                                    Referencia = p.Prod_Nombre,
+                                    Descripcion = p.Prod_Descripcion,
+                                    Costo = exis.ExProd_PrecioVenta,
+                                    PrecioVenta = exis.ExProd_PrecioVenta,
+                                }).FirstOrDefaultAsync();
+
+            if (article == null) {
+                return NotFound();
+            }
+
+            try
+            {
+                string tipo = Convert.ToString("PRODUCTO TERMINADO");
+                string valorizacion = "PROMEDIO";
+                string grupo = "00301";
+                string precio = article.PrecioVenta.HasValue ? Convert.ToString(article.PrecioVenta.Value) : Convert.ToString(0m);
+
+                SoapRequestAction request = new SoapRequestAction();
+                request.User = "wsZeusInvProd";
+                request.Password = "wsZeusInvProd";
+
+                request.Body = "<Articulo>" +
+                                    "<Op>I</Op>" +
+                                        "<Codigo>" + Convert.ToString(article.Item) + "</Codigo>" +
+                                        "<Nombre>" + Convert.ToString(article.Referencia) + "</Nombre>" +
+                                        "<Descripcion>" + Convert.ToString(article.Descripcion) + "</Descripcion>" +
+                                        "<Grupo> " + grupo + " </Grupo>" +
+                                        "<GrupoAuxiliar> " + grupo + "</GrupoAuxiliar>" +
+                                        "<Presentacion>" + Convert.ToString(article.Descripcion) + " </Presentacion>" +
+                                        "<CostoPromedio>" + article.Costo + "</CostoPromedio>" +
+                                        "<Tipo>" + tipo + "</Tipo>" +
+                                        "<Valorizacion>" + valorizacion + "</Valorizacion>" +
+                                        "<Categoria>Gravado</Categoria>" +
+                                        "<PorcentajeIva>19.000000</PorcentajeIva>" +
+                                        "<CuentaIVA>24081005</CuentaIVA>" +
+                                        "<PrecioVenta>" + precio + "</PrecioVenta>" +
+                                        "<DescripcionOtroIdioma>" + Convert.ToString(article.Descripcion) + "</DescripcionOtroIdioma>" +
+                                        "<ComplementoCosto>2</ComplementoCosto>" +
+                                        "<DesHabilitado>0</DesHabilitado>" +
+                                        "<DiasGarantia>0</DiasGarantia>" +
+                                        "<ComplementoVenta>2</ComplementoVenta>" +
+                                        "<ConfiguracionPrecioVenta>4</ConfiguracionPrecioVenta>" +
+                                        "<ComplementoInventario>4</ComplementoInventario>" +
+                                        "<ComplementoDevolucionVentas1>2</ComplementoDevolucionVentas1>" +
+                                        "<CuentaIVAVentas>24080505</CuentaIVAVentas>" +
+                                        "<CuentaIVAVentas>24080505</CuentaIVAVentas>" +
+                                        "<CuentaIVADevolucionVentas>24081020</CuentaIVADevolucionVentas>" +
+                                        "<ComplementoInventarioRemisionado>4</ComplementoInventarioRemisionado>" +
+                                        "<ComplementoCentroCosto>4</ComplementoCentroCosto>" +
+                                        "<ComplementoVenta1>4</ComplementoVenta1>" +
+                                        "<TipoArticulo>G</TipoArticulo>" +
+                                        "<UnidadesContenidaEmpaque>1.0000</UnidadesContenidaEmpaque>" +
+                                        "<ArticuloBolsaAgropecuaria>N</ArticuloBolsaAgropecuaria>" +
+                                        "<MaximoIVADescontable>19.0000</MaximoIVADescontable>" +
+                                        "<ModificarCantidadAlistamientoPorVerificacion>0</ModificarCantidadAlistamientoPorVerificacion>		 " +
+                               "</Articulo>";
+
+                request.DynamicProperty = "7";
+                request.Action = "Inventario"; //modulo
+                request.TypeSQL = "true"; //1
+
+                var binding = new BasicHttpBinding()
+                {
+                    Name = "BasicHttpBinding_IFakeService",
+                    MaxBufferSize = 2147483647,
+                    MaxReceivedMessageSize = 2147483647
+                };
+
+                var endpoint = new EndpointAddress("http://192.168.0.85/wsGenericoZeus/ServiceWS.asmx");
+                WebservicesGenericoZeusSoapClient client = new WebservicesGenericoZeusSoapClient(binding, endpoint);
+                SoapResponse response = await client.ExecuteActionSOAPAsync(request);
+                if (Convert.ToString(response.Status) == "SUCCESS") Console.Write("Ok");
+                return Convert.ToString(response.Status) == "SUCCESS" ? Ok(response) : BadRequest(response);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
         }
 
         // PUT: api/Producto/5
