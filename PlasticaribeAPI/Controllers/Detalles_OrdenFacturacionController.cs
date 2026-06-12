@@ -635,8 +635,15 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             foreach (var roll in rollsDv)
             {
-                var dataProduction = (from dof in _context.Set<Detalles_OrdenFacturacion>() where dof.Numero_Rollo == roll.roll && dof.Prod_Id == roll.item && dof.Estado_Id == roll.currentStatus && dof.Id_OrdenFacturacion == roll.of select dof).FirstOrDefault();
+                var dataProduction = await (from dof in _context.Set<Detalles_OrdenFacturacion>() 
+                                            where dof.Numero_Rollo == roll.roll 
+                                            && dof.Prod_Id == roll.item 
+                                            && dof.Estado_Id == roll.currentStatus 
+                                            && dof.Id_OrdenFacturacion == roll.of 
+                                            select dof).FirstOrDefaultAsync();
+
                 dataProduction.Estado_Id = roll.newStatus;
+
                 _context.Entry(dataProduction).State = EntityState.Modified;
                 try
                 {

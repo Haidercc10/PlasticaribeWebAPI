@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Mono.TextTemplating;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 using StackExchange.Redis;
@@ -82,12 +83,12 @@ namespace PlasticaribeAPI.Controllers
 
         // Consulta que devolverá la informacaión una devolución
         [HttpGet("getInformationDevById/{id}")] 
-        public ActionResult GetInformationDevById(long id)
+        public async Task<ActionResult> GetInformationDevById(long id, string? status = "")
         {
-            var infoDev = from dev in _context.Set<Devolucion_ProductoFacturado>()
-                          join dtDev in _context.Set<DetalleDevolucion_ProductoFacturado>() on dev.DevProdFact_Id equals dtDev.DevProdFact_Id
+            var infoDev = await (from dev in _context.Set<Devolucion_ProductoFacturado>().AsNoTracking()
+                          join dtDev in _context.Set<DetalleDevolucion_ProductoFacturado>().AsNoTracking() on dev.DevProdFact_Id equals dtDev.DevProdFact_Id
+                           
                           where dev.DevProdFact_Id == id
-                          //&& dev.Estado_Id != 18 
                           select new
                           {
                               dev,
@@ -130,6 +131,10 @@ namespace PlasticaribeAPI.Controllers
                                   Fact = dtDev.DtDevProdFact_Factura,
                                   Weight = dtDev.DtDevProdFact_PesoBruto,
                                   NetWeight = dtDev.DtDevProdFact_PesoNeto,
+                                  EstadoOF = (from dof in _context.Set<Detalles_OrdenFacturacion>() 
+                                              where (dof.Id_OrdenFacturacion == dtDev.Of_Id || dof.Id_OrdenFacturacion == dev.Id_OrdenFact) 
+                                              && dof.Numero_Rollo == dtDev.Rollo_Id
+                                              select dof.Estados.Estado_Nombre).FirstOrDefault(),
                               },
                               Prod = new
                               {
@@ -140,14 +145,33 @@ namespace PlasticaribeAPI.Controllers
                                   dev.Estado_Id,
                                   dev.Estados.Estado_Nombre,
                               },
-                              EstadoOF = (from dof in _context.Set<Detalles_OrdenFacturacion>() where (dof.Id_OrdenFacturacion == dtDev.Of_Id || dof.Id_OrdenFacturacion == dev.Id_OrdenFact) && dof.Numero_Rollo == dtDev.Rollo_Id select dof.Estados.Estado_Nombre).FirstOrDefault(),
-                              Ot = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.OT).FirstOrDefault(),
-                              Estado_Produccion = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.Estado_Rollo).FirstOrDefault(),
-                              Weight = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.Peso_Bruto).FirstOrDefault(),
-                              NetWeight = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.Peso_Neto).FirstOrDefault(),
-                              City = (from sedes in _context.Set<SedesClientes>() where sedes.Cli_Id == dev.Cli_Id select sedes.SedeCliente_Ciudad).FirstOrDefault(),
-                              Direction = (from sedes in _context.Set<SedesClientes>() where sedes.Cli_Id == dev.Cli_Id select sedes.SedeCliente_Direccion).FirstOrDefault(),
-                          };
+                              //EstadoOF = (from dof in _context.Set<Detalles_OrdenFacturacion>() where (dof.Id_OrdenFacturacion == dtDev.Of_Id || dof.Id_OrdenFacturacion == dev.Id_OrdenFact) && dof.Numero_Rollo == dtDev.Rollo_Id select dof.Estados.Estado_Nombre).FirstOrDefault(),
+                              Production = (
+                                  from pp in _context.Set<Produccion_Procesos>() 
+                                  where pp.NumeroRollo_BagPro == dtDev.Rollo_Id 
+                                  && pp.Prod_Id == dtDev.Prod_Id 
+                                  select new
+                                  {
+                                      Ot = pp.OT,
+                                      Estado_Produccion = pp.Estado_Rollo,
+                                      Weight = pp.Peso_Bruto,
+                                      NetWeight = pp.Peso_Neto,
+                                  }).FirstOrDefault(),
+                              Sedes = (
+                                  from sedes in _context.Set<SedesClientes>() 
+                                  where sedes.Cli_Id == dev.Cli_Id 
+                                  select new
+                                  { 
+                                    City = sedes.SedeCliente_Ciudad,
+                                    Direction = sedes.SedeCliente_Direccion
+                                  }).FirstOrDefault()
+                              //Ot = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.OT).FirstOrDefault(),
+                              //Estado_Produccion = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.Estado_Rollo).FirstOrDefault(),
+                              //Weight = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.Peso_Bruto).FirstOrDefault(),
+                              //NetWeight = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtDev.Rollo_Id && pp.Prod_Id == dtDev.Prod_Id select pp.Peso_Neto).FirstOrDefault(),
+                              //City = (from sedes in _context.Set<SedesClientes>() where sedes.Cli_Id == dev.Cli_Id select sedes.SedeCliente_Ciudad).FirstOrDefault(),
+                              //Direction = (from sedes in _context.Set<SedesClientes>() where sedes.Cli_Id == dev.Cli_Id select sedes.SedeCliente_Direccion).FirstOrDefault(),
+                          }).ToListAsync();
             return infoDev.Any() ? Ok(infoDev) : NotFound();
         }
 
@@ -238,7 +262,7 @@ namespace PlasticaribeAPI.Controllers
             // PUT: api/DetalleDevolucion_ProductoFacturado/5
             // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDetalleDevolucion_ProductoFacturado(long id, DetalleDevolucion_ProductoFacturado detalleDevolucion_ProductoFacturado)
+        public async Task<IActionResult> PutDetalleDevolucion_ProductoFacturado(int id, DetalleDevolucion_ProductoFacturado detalleDevolucion_ProductoFacturado)
         {
             if (id != detalleDevolucion_ProductoFacturado.DevProdFact_Id)
             {
@@ -265,7 +289,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpPut("updateStatusRollsFromPele/{id}")]
-        public async Task<IActionResult> updateStatusRollsFromPele(long id)
+        public async Task<IActionResult> updateStatusRollsFromPele(int id)
         {
             var dv = (from pp in _context.Set<Produccion_Procesos>()
                         from d in _context.Set<DetalleDevolucion_ProductoFacturado>()
@@ -315,7 +339,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (DbUpdateException)
             {
-                if (DetalleDevolucion_ProductoFacturadoExists(detalleDevolucion_ProductoFacturado.DevProdFact_Id))
+                if (DetalleDevolucion_ProductoFacturadoExists(detalleDevolucion_ProductoFacturado.DtDevProdFact_Id))
                 {
                     return Conflict();
                 }
@@ -325,12 +349,12 @@ namespace PlasticaribeAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetDetalleDevolucion_ProductoFacturado", new { id = detalleDevolucion_ProductoFacturado.DevProdFact_Id }, detalleDevolucion_ProductoFacturado);
+            return CreatedAtAction("GetDetalleDevolucion_ProductoFacturado", new { id = detalleDevolucion_ProductoFacturado.DtDevProdFact_Id }, detalleDevolucion_ProductoFacturado);
         }
 
         // DELETE: api/DetalleDevolucion_ProductoFacturado/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDetalleDevolucion_ProductoFacturado(long id)
+        public async Task<IActionResult> DeleteDetalleDevolucion_ProductoFacturado(int id)
         {
             var detalleDevolucion_ProductoFacturado = await _context.DetallesDevoluciones_ProductosFacturados.FindAsync(id);
             if (detalleDevolucion_ProductoFacturado == null)
@@ -344,9 +368,9 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        private bool DetalleDevolucion_ProductoFacturadoExists(long id)
+        private bool DetalleDevolucion_ProductoFacturadoExists(int id)
         {
-            return _context.DetallesDevoluciones_ProductosFacturados.Any(e => e.DevProdFact_Id == id);
+            return _context.DetallesDevoluciones_ProductosFacturados.Any(e => e.DtDevProdFact_Id == id);
         }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

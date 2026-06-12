@@ -1596,7 +1596,13 @@ namespace PlasticaribeAPI.Controllers
             int count = 0;
             foreach (var roll in rollsReturned)
             {
-                var dataProduction = (from prod in _context.Set<Produccion_Procesos>() where prod.NumeroRollo_BagPro == roll.roll && prod.Prod_Id == roll.item && prod.Estado_Rollo == roll.currentStatus select prod).FirstOrDefault();
+                var dataProduction = (from prod in _context.Set<Produccion_Procesos>() 
+                                      where 
+                                      prod.NumeroRollo_BagPro == roll.roll 
+                                      && prod.Prod_Id == roll.item 
+                                      //&& prod.Estado_Rollo == roll.currentStatus 
+                                      select prod).FirstOrDefault();
+
                 if (dataProduction == null)
                 {
                     continue;
