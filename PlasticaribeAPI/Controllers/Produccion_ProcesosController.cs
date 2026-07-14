@@ -55,30 +55,29 @@ namespace PlasticaribeAPI.Controllers
 
         // Consulta que devolverá toda la información de un rollo
         [HttpGet("getInformationAboutProductionToUpdateZeus/{production}/{process}")]
-        public ActionResult GetInformationAboutProductionToUpdateZeus(long production, string process)
+        public async Task<ActionResult> GetInformationAboutProductionToUpdateZeus(long production, string process)
         {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var data = from pp in _context.Set<Produccion_Procesos>()
-                       where pp.NumeroRollo_BagPro == production &&
-                             pp.Envio_Zeus == false &&
-                             pp.Estado_Rollo == 19 &&
-                             (process != "TODO" ? process == "SELLA" ? (pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE") : (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP") : (pp.Proceso_Id == "EXT" || pp.Proceso_Id == "EMP" || pp.Proceso_Id == "SELLA" || pp.Proceso_Id == "WIKE"))
-                       select new
-                       {
-                           pp,
-                           pp.Clientes,
-                           pp.Proceso,
-                           pp.Producto,
-                           pp.Turno,
-                           pp.Operario1,
-                           pp.Operario2,
-                           pp.Operario3,
-                           pp.Operario4,
-                           pp.Cono,
-                           pp.Creador,
-                           numero_RolloBagPro = 0,
-                       };
-            return data.Any() ? Ok(data.Take(1)) : NotFound();
+            var query = _context.Set<Produccion_Procesos>()
+                        .AsNoTracking()
+                        .Where(pp =>
+                            pp.NumeroRollo_BagPro == production &&
+                            pp.Envio_Zeus == false &&
+                            pp.Estado_Rollo == 19 &&
+                            pp.Proceso_Id == process && 
+                            pp.Fecha >= new DateTime(2024, 02, 04)
+                            );
+
+                            var data = await query
+                            .Select(pp => new
+                            {
+                                pp,
+                                pp.Clientes,
+                                pp.Producto,
+                                numero_RolloBagPro = 0
+                            })
+                            .FirstOrDefaultAsync();
+
+            return data != null ? Ok(data) : NotFound();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
@@ -145,7 +144,8 @@ namespace PlasticaribeAPI.Controllers
             string[] process = { "SELLA", "EMP", "EXT" }; 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var data = from pp in _context.Set<Produccion_Procesos>()
-                       from p in _context.Set<Producto>()
+                       join p in _context.Set<Producto>() on pp.Prod_Id equals p.Prod_Id
+                       join e in _context.Set<Existencia_Productos>() on p.Prod_Id equals e.Prod_Id
                        where pp.NumeroRollo_BagPro == production &&
                              pp.Estado_Rollo == 19 &&
                              pp.Envio_Zeus == true &&
@@ -168,6 +168,7 @@ namespace PlasticaribeAPI.Controllers
                            ProcessId = pp.Proceso_Id,
                            Process = pp.Proceso.Proceso_Nombre,
                            Price = pp.PrecioVenta_Producto,
+                           Stock = e.ExProd_Cantidad,
                        };
             return data.Any() ? Ok(data) : NotFound();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -252,13 +253,6 @@ namespace PlasticaribeAPI.Controllers
                             pp.Clientes,
                             pp.Proceso,
                             pp.Producto,
-                            pp.Turno,
-                            pp.Operario1,
-                            pp.Operario2,
-                            pp.Operario3,
-                            pp.Operario4,
-                            pp.Cono,
-                            pp.Creador,
                             numero_RolloBagPro = 0,
                             salesOrder = lastSaleOrder,
                             InOfDirect = pp.Estado_Rollo == 20 ? true : false,
@@ -572,7 +566,7 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut("putStatusZeus3/{rollo}")]
+        [HttpPut("putStatusZeus3/{rollo}/{item}")]
         public async Task<IActionResult> PutStatusZeus3(long rollo, string item)
         {
             try
@@ -1745,12 +1739,35 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        // Función que cambiará el estado de los rollos a No Disponible, esta función se diferencia de la anterior
+        [HttpPut("putStateNotAvaible2/{orden}")]
+        public async Task<IActionResult> putStateNotAvaible2(int orden)
+        {
+            var rollos = await (
+                from of in _context.Set<Detalles_OrdenFacturacion>()
+                join pp in _context.Set<Produccion_Procesos>()
+                    on of.Numero_Rollo equals pp.NumeroRollo_BagPro
+                where of.Id_OrdenFacturacion == orden
+                   && of.Prod_Id == pp.Prod_Id
+                select pp
+            ).ToListAsync();
+
+            foreach (var item in rollos)
+            {
+                item.Estado_Rollo = 23;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         [HttpPut("putEstadoPorDespachar/{orden}")]
         async public Task<IActionResult> PutEstadoPorDespachar(int orden)
         {
             var rollos = from of in _context.Set<Detalles_OrdenFacturacion>()
                          join pp in _context.Set<Produccion_Procesos>() on of.Numero_Rollo equals pp.NumeroRollo_BagPro
-                         where of.Id_OrdenFacturacion == orden && of.Prod_Id == pp.Prod_Id //&& pp.Estado_Rollo != 20
+                         where of.Id_OrdenFacturacion == orden && of.Prod_Id == pp.Prod_Id
                          select pp;
 
             int count = 0;
@@ -1837,7 +1854,10 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             foreach (var rolls in rollsToDelete)
             {
-                var roll = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == rolls.roll && pp.Proceso_Id == rolls.process select pp).FirstOrDefault();
+                var roll = (from pp in _context.Set<Produccion_Procesos>() 
+                            where pp.NumeroRollo_BagPro == rolls.roll 
+                            && pp.Proceso_Id == rolls.process 
+                            select pp).FirstOrDefault();
 
                 roll.Estado_Rollo = 22;
                 _context.Entry(roll).State = EntityState.Modified;
@@ -1852,6 +1872,28 @@ namespace PlasticaribeAPI.Controllers
             }
             return NoContent();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
+        // Función que cambiará el estado de los rollos a Eliminados, esta función se diferencia de la anterior
+        // en que esta hace una sola consulta para traer los rollos a modificar y luego los recorre para cambiar
+        // su estado, mientras que la anterior hace una consulta por cada rollo a modificar.
+        [HttpPut("putStateDeletedRolls2")]
+        public async Task<IActionResult> putStateDeletedRolls2(List<rollsToDelete> rollsToDelete)
+        {
+            var rolls = await _context.Set<Produccion_Procesos>()
+                .Where(pp => rollsToDelete
+                    .Any(r => r.roll == pp.NumeroRollo_BagPro &&
+                              r.process == pp.Proceso_Id))
+                .ToListAsync();
+
+            foreach (var roll in rolls)
+            {
+                roll.Estado_Rollo = 22;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
 
         [HttpPut("putAvailableFromReposition/{repo}/{user}")]
@@ -2040,11 +2082,7 @@ namespace PlasticaribeAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new
-                {
-                    mensaje = "Error al crear el registro de producción.",
-                    detalle = ex.Message
-                });
+                return BadRequest();
             }
         }
 

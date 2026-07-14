@@ -51,12 +51,22 @@ namespace PlasticaribeAPI.Controllers
             return Ok((from o in _context.Set<OrdenFacturacion>() orderby o.Id descending select o.Id).FirstOrDefault()); 
         }
 
-        [HttpPut("putStatusOrder/{order}")]
-        public async Task<IActionResult> PutStatusOrder(int order)
+        [HttpPut("putStatusOrder/{order}/{fact}")]
+        public async Task<IActionResult> PutStatusOrder(int order, string fact)
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var ordenFacturacion = (from of in _context.Set<OrdenFacturacion>() where of.Id == order select of).FirstOrDefault();
-            ordenFacturacion.Estado_Id = 21;
+            var ordenFacturacion = await (from of in _context.Set<OrdenFacturacion>() where of.Id == order select of).FirstOrDefaultAsync();
+
+            if (ordenFacturacion == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                ordenFacturacion.Estado_Id = 21;
+                ordenFacturacion.Factura = fact;
+            }
+
             _context.Entry(ordenFacturacion).State = EntityState.Modified;
             try
             {

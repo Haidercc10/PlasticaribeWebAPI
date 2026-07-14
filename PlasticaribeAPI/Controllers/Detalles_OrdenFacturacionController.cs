@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 
 namespace PlasticaribeAPI.Controllers
@@ -44,12 +43,12 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("getInformationOrderFactToSend/{id}/{ofDirect}")]
-        public ActionResult GetInformacionOrderFactToSend(int id, bool ofDirect)
+        public async Task<ActionResult> GetInformacionOrderFactToSend(int id, bool ofDirect)
         {
             if (!ofDirect)
             {
-                var fact = from order in _context.Set<OrdenFacturacion>()
-                           join dtOrder in _context.Set<Detalles_OrdenFacturacion>() on order.Id equals dtOrder.Id_OrdenFacturacion
+                var fact = await (from order in _context.Set<OrdenFacturacion>().AsNoTracking()
+                           join dtOrder in _context.Set<Detalles_OrdenFacturacion>().AsNoTracking() on order.Id equals dtOrder.Id_OrdenFacturacion
                            where order.Id == id &&
                                  order.Estado_Id == 19
                            select new
@@ -65,7 +64,7 @@ namespace PlasticaribeAPI.Controllers
                                },
                                Clientes = new
                                {
-                                   order.Clientes.Cli_Id,
+                                   order.Cli_Id,
                                    order.Clientes.Cli_Nombre,
                                    order.Clientes.Cli_Telefono,
                                    order.Clientes.Cli_Email,
@@ -73,7 +72,7 @@ namespace PlasticaribeAPI.Controllers
                                },
                                Usuario = new
                                {
-                                   order.Usuario.Usua_Id,
+                                   order.Usua_Id,
                                    order.Usuario.Usua_Nombre
                                },
                                dtOrder = new
@@ -86,26 +85,27 @@ namespace PlasticaribeAPI.Controllers
                                },
                                Producto = new
                                {
-                                   dtOrder.Producto.Prod_Id,
+                                   dtOrder.Prod_Id,
                                    dtOrder.Producto.Prod_Nombre
                                },
                                //Optimizar//
-                               Ubication = (from pp in _context.Set<Produccion_Procesos>()
-                                            from dt in _context.Set<DetalleEntradaRollo_Producto>()
-                                            join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
-                                            where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo &&
-                                                   (dt.Rollo_Id == pp.Numero_Rollo) &&
-                                                   e.EntRolloProd_Id >= 28512
+                               Ubication = (from pp in _context.Set<Produccion_Procesos>().AsNoTracking()
+                                            join dt in _context.Set<DetalleEntradaRollo_Producto>().AsNoTracking() on pp.Numero_Rollo equals dt.Rollo_Id
+                                            join e in _context.Set<EntradaRollo_Producto>().AsNoTracking() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
+                                            where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo
+                                                   && pp.Prod_Id == dt.Prod_Id 
+                                                   && pp.Prod_Id == dtOrder.Prod_Id
+                                                   && e.EntRolloProd_Id >= 28512
                                             orderby e.EntRolloProd_Id descending
                                             select e.EntRolloProd_Observacion).FirstOrDefault(),
-                           };
+                           }).ToListAsync();
 
                 return fact.Any() ? Ok(fact) : NotFound();
             }
             else 
             {
-                var directFact = from order in _context.Set<OrdenFacturacion>()
-                                 join dtOrder in _context.Set<Facturacion_Productos>() on order.Id equals dtOrder.Of_Id
+                var directFact = await (from order in _context.Set<OrdenFacturacion>().AsNoTracking()
+                                 join dtOrder in _context.Set<Facturacion_Productos>().AsNoTracking() on order.Id equals dtOrder.Of_Id
                                  where order.Id == id &&
                                        order.Estado_Id == 19
                                  select new
@@ -121,7 +121,7 @@ namespace PlasticaribeAPI.Controllers
                                      },
                                      Clientes = new
                                      {
-                                         order.Clientes.Cli_Id,
+                                         order.Cli_Id,
                                          order.Clientes.Cli_Nombre,
                                          order.Clientes.Cli_Telefono,
                                          order.Clientes.Cli_Email,
@@ -129,24 +129,24 @@ namespace PlasticaribeAPI.Controllers
                                      },
                                      Usuario = new
                                      {
-                                         order.Usuario.Usua_Id,
+                                         order.Usua_Id,
                                          order.Usuario.Usua_Nombre
                                      },
                                      dtOrder = new
                                      {
                                          Cantidad = dtOrder.FactPro_Cantidad,
                                          Presentacion = dtOrder.UndMed_Id,
-                                         Numero_Rollo = Convert.ToInt32(0),
+                                         Numero_Rollo = 0 ,
                                          Consecutivo_Pedido = dtOrder.FactPro_Pedido,
-                                         Pallet_Id = Convert.ToString(""),
+                                         Pallet_Id = "",
                                      },
                                      Producto = new
                                      {
-                                         dtOrder.Producto.Prod_Id,
+                                         dtOrder.Prod_Id,
                                          dtOrder.Producto.Prod_Nombre
                                      },
-                                     Ubication = Convert.ToString(""),
-                                 };
+                                     Ubication = "",
+                                 }).ToListAsync();
 
                 return directFact.Any() ? Ok(directFact) : NotFound();
             }
@@ -638,9 +638,10 @@ namespace PlasticaribeAPI.Controllers
                 var dataProduction = await (from dof in _context.Set<Detalles_OrdenFacturacion>() 
                                             where dof.Numero_Rollo == roll.roll 
                                             && dof.Prod_Id == roll.item 
-                                            && dof.Estado_Id == roll.currentStatus 
+                                            //&& dof.Estado_Id == roll.currentStatus 
                                             && dof.Id_OrdenFacturacion == roll.of 
                                             select dof).FirstOrDefaultAsync();
+
 
                 dataProduction.Estado_Id = roll.newStatus;
 
