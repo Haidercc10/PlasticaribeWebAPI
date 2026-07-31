@@ -74,6 +74,18 @@ namespace PlasticaribeAPI.Models
         [Precision(18, 2)]
         public decimal? ExProd_Existencias { get; set; }
 
+
+        [Column(TypeName = "varchar(150)")]
+        public string? ExProd_Cliente { get; set; }
+
+
+        [Column(TypeName = "varchar(150)")]
+        public string? ExProd_Asesor { get; set; }
+
+
+        public long? Usua_Asesor { get; set; }
+        public Usuario? Usuario { get; set; }
+
         //[Precision(14, 2)]
         //public int ExProd_CantBolsasPaquete { get; set; }
 

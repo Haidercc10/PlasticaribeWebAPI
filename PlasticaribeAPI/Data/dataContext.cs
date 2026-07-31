@@ -301,6 +301,8 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Existencia_Productos>().HasOne(exp => exp.TpBod).WithMany().HasForeignKey(exp => exp.TpBod_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Existencia_Productos>().HasOne(expr => expr.UndMed).WithMany().HasForeignKey(expr => expr.UndMed_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Existencia_Productos>().HasOne(Exprd => Exprd.TpMoneda).WithMany().HasForeignKey(Exprd => Exprd.TpMoneda_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Existencia_Productos>().HasOne(Exprd => Exprd.Usuario).WithMany().HasForeignKey(Exprd => Exprd.Usua_Asesor).OnDelete(DeleteBehavior.Restrict);
+
 
             //Relación de empresa con tipo de identificación de la empresa
             //modelBuilder.Entity<Empresa>().ToTable(tb => tb.HasTrigger("Auditoria_Empresas"));

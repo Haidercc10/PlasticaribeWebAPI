@@ -1745,8 +1745,7 @@ namespace PlasticaribeAPI.Controllers
         {
             var rollos = await (
                 from of in _context.Set<Detalles_OrdenFacturacion>()
-                join pp in _context.Set<Produccion_Procesos>()
-                    on of.Numero_Rollo equals pp.NumeroRollo_BagPro
+                join pp in _context.Set<Produccion_Procesos>() on of.Numero_Rollo equals pp.NumeroRollo_BagPro
                 where of.Id_OrdenFacturacion == orden
                    && of.Prod_Id == pp.Prod_Id
                 select pp
@@ -1758,7 +1757,6 @@ namespace PlasticaribeAPI.Controllers
             }
 
             await _context.SaveChangesAsync();
-
             return NoContent();
         }
 
