@@ -256,22 +256,6 @@ namespace PlasticaribeAPI.Controllers
                             Code_Seller = exi.Usua_Asesor,
                             Seller = exi.ExProd_Asesor, 
                             QtyStandard = exi.ExProd_UndEmpaque,
-                            //              _context.Set<Produccion_Procesos>()
-                            //                       .Where(pp => pp.Prod_Id == prod.Prod_Id 
-                            //                       && pp.Presentacion == exi.UndMed_Id)
-                            //                       .Select(pp => exi.UndMed_Id == UnidadKg
-                            //                               ? pp.Peso_Neto
-                            //                               : pp.Cantidad
-                            //              ).FirstOrDefault(), 
-                            //
-                            //Date = (from pp in _context.Set<Produccion_Procesos>()
-                            //        where pp.Prod_Id == prod.Prod_Id &&
-                            //        pp.Presentacion == exi.UndMed_Id && 
-                            //        pp.Estado_Rollo == 19 &&
-                            //        pp.Fecha >= Convert.ToDateTime("2024-02-04") &&
-                            //        pp.Envio_Zeus == true
-                            //        select (DateTime?)pp.Fecha).Min(),
-
                             Weight = exi.ExProd_PesoBruto, 
                             CityClient = (from s in _context.Set<SedesClientes>()
                                           where s.Cli_Id == (from est in _context.Set<Estados_ProcesosOT>()
@@ -287,20 +271,16 @@ namespace PlasticaribeAPI.Controllers
 
         //Consulta que devolverá el inventario de los rollos que se han pesado en empaque pero no se han entregado a despacho
         [HttpGet("getStockProducts_Process/{process}")]
-        public ActionResult GetStockProducts_Process(string process)
+        public async Task<ActionResult> GetStockProducts_Process(string process)
         {
-            int[] statuses = { 20, 24, 36, 44, 45 };
 
-            var stockNotAvaible = from pp in _context.Set<Produccion_Procesos>()
+            var stockNotAvaible = await (from pp in _context.Set<Produccion_Procesos>()
                                   join p in _context.Set<Producto>() on pp.Prod_Id equals p.Prod_Id
                                   where pp.Envio_Zeus == false &&
                                         pp.Estado_Rollo == 19 &&
                                         pp.Proceso_Id == process &&
                                         pp.Proceso_Id != "WIKE" &&
-                                        pp.Fecha >= Convert.ToDateTime("2024-02-04") &&
-                                      !((from order in _context.Set<Detalles_OrdenFacturacion>()
-                                         where order.Prod_Id == pp.Prod_Id && order.OrdenFacturacion.Estado_Id != 3 && statuses.Contains(order.Estado_Id)
-                                         select order.Numero_Rollo).ToList()).Contains(pp.NumeroRollo_BagPro)
+                                        pp.Fecha >= Convert.ToDateTime("2024-02-04")
                                   group new { pp, p } by new
                                   {
                                       Item = p.Prod_Id,
@@ -323,16 +303,21 @@ namespace PlasticaribeAPI.Controllers
                                       },
                                       Client = (from est in _context.Set<Estados_ProcesosOT>() where est.Prod_Id == pp.Key.Item orderby est.EstProcOT_Id descending select est.EstProcOT_Cliente).FirstOrDefault(),
                                       Seller = (from est in _context.Set<Estados_ProcesosOT>() where pp.Key.Item == est.Prod_Id orderby est.EstProcOT_Id descending select est.Usuario.Usua_Nombre).FirstOrDefault(),
-                                      QtyStandard = (from p_p in _context.Set<Produccion_Procesos>() 
-                                                     where p_p.Prod_Id == pp.Key.Item && 
-                                                     p_p.Presentacion == pp.Key.Presentation 
-                                                     select p_p.Presentacion == "Kg" ? p_p.Peso_Neto == null ? 0 : p_p.Peso_Neto : p_p.Cantidad == null ? 0 : p_p.Cantidad).FirstOrDefault(),
-                                      Date = (from p_p in _context.Set<Produccion_Procesos>()
-                                                     where p_p.Prod_Id == pp.Key.Item &&
-                                                     p_p.Presentacion == pp.Key.Presentation &&
-                                                     p_p.Estado_Rollo == 19 &&
-                                                     p_p.Envio_Zeus == false
-                                                     select p_p.Fecha).Min(),
+                                      QtyStandard = (from e in _context.Set<Existencia_Productos>() 
+                                                       where e.Prod_Id == pp.Key.Item && 
+                                                       e.UndMed_Id == pp.Key.Presentation 
+                                                       select e.ExProd_UndEmpaque == null ? 0 : e.ExProd_UndEmpaque).FirstOrDefault(),
+                                      //QtyStandard = (from p_p in _context.Set<Produccion_Procesos>() 
+                                      //               where p_p.Prod_Id == pp.Key.Item && 
+                                      //               p_p.Presentacion == pp.Key.Presentation 
+                                      //               select p_p.Presentacion == "Kg" ? p_p.Peso_Neto == null ? 0 : p_p.Peso_Neto 
+                                      //                                              : p_p.Cantidad == null ? 0 : p_p.Cantidad).FirstOrDefault(),   
+                                      //Date = (from p_p in _context.Set<Produccion_Procesos>()
+                                      //               where p_p.Prod_Id == pp.Key.Item &&
+                                      //               p_p.Presentacion == pp.Key.Presentation &&
+                                      //               p_p.Estado_Rollo == 19 &&
+                                      //               p_p.Envio_Zeus == false
+                                      //               select p_p.Fecha).Min(),
                                       Weight = pp.Sum(x => x.pp.Peso_Bruto),
                                       CityClient = (from s in _context.Set<SedesClientes>()
                                                     where s.Cli_Id == (from est in _context.Set<Estados_ProcesosOT>()
@@ -341,7 +326,8 @@ namespace PlasticaribeAPI.Controllers
                                                                        select est.Cli_Id == null ? 1 : est.Cli_Id).FirstOrDefault()
                                                     select s.SedeCliente_Ciudad).FirstOrDefault(),
                                       Count = pp.Count(),
-                                                                       };
+                                  }).ToListAsync();
+
             return Ok(stockNotAvaible);
         }
 

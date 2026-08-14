@@ -24,7 +24,7 @@ namespace PlasticaribeAPI.Controllers
         
         private readonly dataContext _context;
         private readonly IReposiciones _reposiciones;
-        private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(5, 5);
 
         public Produccion_ProcesosController(dataContext context, IReposiciones reposiciones)
         {
