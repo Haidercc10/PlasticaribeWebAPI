@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Intercom.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
@@ -518,6 +519,99 @@ namespace PlasticaribeAPI.Controllers
                       };
 
             return con.Any() ? Ok(con) : BadRequest($"¡No se encontró una Orden de Trabajo con el consecutivo {orden}!");
+        }
+
+        [HttpGet("getOrdenesTrabajo/{fechaInicial}/{fechaFinal}")]
+        public async Task<ActionResult> GetOrdenesTrabajo(DateTime fechaInicial, DateTime fechaFinal, string cliente = "", string item = "", string material = "", string pigmento = "", string ancho = "", string largo = "", string fuelle = "", string calibre = "")
+        {
+#pragma warning disable IDE0075 // Simplify conditional expression
+            var ordenesTrabajo = from ot in _context.Set<Orden_Trabajo>()
+                                 join sc in _context.Set<SedesClientes>() on ot.SedeCli_Id equals sc.SedeCli_Id
+                                 join c in _context.Set<Clientes>() on sc.Cli_Id equals c.Cli_Id
+                                 join p in _context.Set<Producto>() on ot.Prod_Id equals p.Prod_Id
+                                 join mp in _context.Set<Material_MatPrima>() on p.Material_Id equals mp.Material_Id
+                                 join pig in _context.Set<Pigmento>() on p.Pigmt_Id equals pig.Pigmt_Id
+                                 join tp in _context.Set<Tipo_Producto>() on p.TpProd_Id equals tp.TpProd_Id
+                                 join ex in _context.Set<OT_Extrusion>() on ot.Ot_Id equals ex.Ot_Id
+                                 join frm in _context.Set<Formato>() on ex.Formato_Id equals frm.Formato_Id
+                                 join lam in _context.Set<OT_Laminado>() on ot.Ot_Id equals lam.OT_Id
+                                 join imp in _context.Set<OT_Impresion>() on ot.Ot_Id equals imp.Ot_Id
+                                 //join rod in _context.Set<Rodillos>() on imp.Rodillo_Id equals rod.Rodillo_Id
+                                 join sll in _context.Set<OT_Sellado_Corte>() on ot.Ot_Id equals sll.Ot_Id
+                                 join tps in _context.Set<Tipos_Sellados>() on sll.TpSellado_Id equals tps.TpSellado_Id
+                                 where ot.Ot_FechaCreacion >= fechaInicial &&
+                                       ot.Ot_FechaCreacion <= fechaFinal &&
+                                       (cliente != "" ? Convert.ToString(c.Cli_Id) == cliente : true) &&
+                                       (item != "" ? Convert.ToString(p.Prod_Id) == item : true) &&
+                                       (material != "" ? mp.Material_Nombre == material : true) &&
+                                       (pigmento != "" ? pig.Pigmt_Nombre == pigmento : true) &&
+                                       (ancho != "" ? p.Prod_Ancho == Convert.ToDecimal(ancho) : true) &&
+                                       (largo != "" ? p.Prod_Largo == Convert.ToDecimal(largo) : true) &&
+                                       (fuelle != "" ? p.Prod_Fuelle == Convert.ToDecimal(fuelle) : true) &&
+                                       (calibre != "" ? p.Prod_Calibre == Convert.ToDecimal(calibre) : true)
+                                 select new
+                                 {
+                                     OrdenTrabajo = ot.Numero_OT,
+                                     FechaCreacion = ot.Ot_FechaCreacion,
+                                     IdCliente = c.Cli_Id,
+                                     //NitCliente = c.Cli_Id,
+                                     Cliente = c.Cli_Nombre,
+                                     Item = p.Prod_Id,
+                                     Referencia = p.Prod_Nombre.ToUpper(),
+                                     Item_Referencia = Convert.ToString(p.Prod_Id) + " " + p.Prod_Nombre.ToUpper(),
+                                     Cantidad = ot.Ot_CantidadPedida,
+                                     Precio = ot.Ot_ValorUnidad,
+                                     Existencia = 0,
+                                     Presentacion = ot.UndMed_Id,
+                                     Material = mp.Material_Nombre,
+                                     Pigmento = pig.Pigmt_Nombre,
+                                     UndExtrusion = ex.UndMed_Id,
+                                     Calibre = p.Prod_Calibre,
+                                     Formato = tp.TpProd_Nombre,
+                                     Ancho = p.Prod_Ancho,
+                                     Largo = p.Prod_Largo,
+                                     Fuelle = p.Prod_Fuelle,
+                                     Peso_Metro = ex.Extrusion_Peso,
+                                     Rodillo = 0, // mientras se resuelve el tema de los rodillos en la bd
+                                     Kilos = ot.Ot_PesoNetoKg,
+                                     Formato_Extrusion = frm.Formato_Nombre.ToUpper().Trim(),
+                                     Ancho_Extrusion = Convert.ToDecimal(ex.Extrusion_Ancho2) > 0 ? Convert.ToString(Convert.ToString(" DE ") + Convert.ToString(ex.Extrusion_Ancho1).Trim() + "+" + Convert.ToString(ex.Extrusion_Ancho2).Trim() + "+" + Convert.ToString(ex.Extrusion_Ancho3).Trim() + " " + ex.UndMed_Id.ToUpper().Trim()) : Convert.ToString(" DE " + Convert.ToString(ex.Extrusion_Ancho1).Trim() + " " + ex.UndMed_Id.ToUpper().Trim()),
+                                     Pigmento_Extrusion = pig.Pigmt_Nombre.ToUpper().Trim() != "NATURAL" ? Convert.ToString(" PIG.: " + pig.Pigmt_Nombre.Trim()) : "",
+                                     Calibre_Extrusion = Convert.ToString(" CAL. " + Convert.ToString(ex.Extrusion_Calibre).Trim() + " MILS``"),
+                                     Maquinas = "",
+                                     //Colores
+                                     Color_1 = (from tin in _context.Set<Tinta>() where tin.Tinta_Id == imp.Tinta1_Id select tin.Tinta_Nombre).FirstOrDefault(),
+                                     Color_2 = (from tin in _context.Set<Tinta>() where tin.Tinta_Id == imp.Tinta2_Id select tin.Tinta_Nombre).FirstOrDefault(),
+                                     Color_3 = (from tin in _context.Set<Tinta>() where tin.Tinta_Id == imp.Tinta3_Id select tin.Tinta_Nombre).FirstOrDefault(),
+                                     Color_4 = (from tin in _context.Set<Tinta>() where tin.Tinta_Id == imp.Tinta4_Id select tin.Tinta_Nombre).FirstOrDefault(),
+                                     Color_5 = (from tin in _context.Set<Tinta>() where tin.Tinta_Id == imp.Tinta5_Id select tin.Tinta_Nombre).FirstOrDefault(),
+                                     Color_6 = (from tin in _context.Set<Tinta>() where tin.Tinta_Id == imp.Tinta6_Id select tin.Tinta_Nombre).FirstOrDefault(),
+                                     Color_7 = (from tin in _context.Set<Tinta>() where tin.Tinta_Id == imp.Tinta7_Id select tin.Tinta_Nombre).FirstOrDefault(),
+                                     Color_8 = (from tin in _context.Set<Tinta>() where tin.Tinta_Id == imp.Tinta8_Id select tin.Tinta_Nombre).FirstOrDefault(),
+
+                                     Fecha_Despacho = DateTime.Now.AddDays(7), // BUSCAR EL DATOS FECHA A DESPACHAR
+                                     AnchoPT = ex.Extrusion_Ancho1,
+                                     LargoPT = ex.Extrusion_Ancho2,
+                                     FuellePT = ex.Extrusion_Ancho3,
+                                     Tipo_Sellado = tps.TpSellados_Nombre,
+
+                                     Etiqueta = "",
+                                     Etiqueta_Largo = "",
+                                     Etiqueta_Fuelle = "",
+                                     Cant_Unidades = "",
+                                     Fuelle_Izquierdo = p.Prod_FuelleIzq,
+                                     Fuelle_Derecho = p.Prod_FuelleDer,
+                                     Fuelle_Fondo = p.Prod_FuelleFondo,
+
+                                     AnchoReal = tps.TpSellados_Nombre == "LATERAL" ? p.Prod_Ancho : ex.Extrusion_Ancho1,
+                                     LargoReal = tps.TpSellados_Nombre == "LATERAL" ? p.Prod_Largo : ex.Extrusion_Ancho2,
+                                     FuelleReal = tps.TpSellados_Nombre == "LATERAL" ? p.Prod_Fuelle : ex.Extrusion_Ancho3,
+                                     Peso_Millar = p.Prod_Peso_Millar,
+                                     CantBolsasxPaquete = p.Prod_Peso_Paquete,
+                                     CantBolsasxBulto = p.Prod_Peso_Bulto
+                                 };
+            return Ok(ordenesTrabajo);
+#pragma warning restore IDE0075 // Simplify conditional expression
         }
 
         //Funcion que consultará la información de la ultima orden de trabajo que se hizo de un producto con una presentación en especifico
