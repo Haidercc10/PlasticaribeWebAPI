@@ -110,50 +110,36 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult Get_CantidadTickets()
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var fecha = DateTime.Today;
             var abiertos = from tk in _context.Set<Tickets>()
+                           join est in _context.Set<Estado>() on tk.Estado_Id equals est.Estado_Id
                            where tk.Estado_Id == 28
-                                 && tk.Ticket_Fecha.Month == fecha.Month
-                                 && tk.Ticket_Fecha.Year == fecha.Year
-                           group tk by new
-                           {
-                               tk.Estado.Estado_Nombre,
-                               tk.Estado_Id,
-                           } into tk
+                           group tk by est.Estado_Nombre into grupo
                            select new
                            {
-                               Estado = tk.Key.Estado_Nombre,
-                               Cantidad = tk.Count(),
+                               Estado = grupo.Key,
+                               Cantidad = grupo.Count(),
                            };
 
             var EnRevision = from tk in _context.Set<Tickets>()
+                             join est in _context.Set<Estado>() on tk.Estado_Id equals est.Estado_Id
                              where tk.Estado_Id == 29
-                                   && tk.Ticket_Fecha.Month == fecha.Month
-                                   && tk.Ticket_Fecha.Year == fecha.Year
-                             group tk by new
-                             {
-                                 tk.Estado.Estado_Nombre,
-                                 tk.Estado_Id,
-                             } into tk
+                             group tk by est.Estado_Nombre into grupo
                              select new
                              {
-                                 Estado = tk.Key.Estado_Nombre,
-                                 Cantidad = tk.Count(),
+                                 Estado = grupo.Key,
+                                 Cantidad = grupo.Count(),
                              };
 
             var Resueltos = from tk in _context.Set<Tickets>()
-                            where tk.Estado_Id == 30
-                                && tk.Ticket_Fecha.Month == fecha.Month
-                                && tk.Ticket_Fecha.Year == fecha.Year
-                            group tk by new
-                            {
-                                tk.Estado.Estado_Nombre,
-                                tk.Estado_Id,
-                            } into tk
+                            join est in _context.Set<Estado>() on tk.Estado_Id equals est.Estado_Id
+                            where tk.Estado_Id == 30 
+                            && tk.Ticket_Fecha.Month == DateTime.Now.Month 
+                            && tk.Ticket_Fecha.Year == DateTime.Now.Year
+                            group tk by est.Estado_Nombre into grupo
                             select new
                             {
-                                Estado = tk.Key.Estado_Nombre,
-                                Cantidad = tk.Count(),
+                                Estado = grupo.Key,
+                                Cantidad = grupo.Count(),
                             };
             return Ok(abiertos.Concat(EnRevision).Concat(Resueltos));
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
