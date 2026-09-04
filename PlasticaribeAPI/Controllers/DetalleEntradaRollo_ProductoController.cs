@@ -167,7 +167,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("getDataProductionIncome/{startDate}/{endDate}")]
-        public ActionResult GetDataProductionIncome(DateTime startDate, DateTime endDate, string? production = "", string? orderProduction = "", string? item = "")
+        public ActionResult GetDataProductionIncome(DateTime startDate, DateTime endDate, string? production = "", string? orderProduction = "", string? item = "", string? estado = "")
         {
             var con = from dt in _context.Set<DetalleEntradaRollo_Producto>()
                       join ent in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals ent.EntRolloProd_Id
@@ -178,6 +178,7 @@ namespace PlasticaribeAPI.Controllers
                             (production != "" ? reel.NumeroRollo_BagPro == Convert.ToInt64(production) : true) &&
                             (orderProduction != "" ? dt.DtEntRolloProd_OT == Convert.ToInt64(orderProduction) : true) &&
                             (item != "" ? dt.Prod_Id == Convert.ToInt64(item) : true) &&
+                            (estado != "" ? reel.Estado_Rollo == Convert.ToInt32(estado) : true) &&
                             ent.EntRolloProd_Id >= 28686 &&
                             reel.Envio_Zeus == true
                       select new
