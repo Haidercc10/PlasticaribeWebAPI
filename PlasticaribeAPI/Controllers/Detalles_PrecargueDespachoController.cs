@@ -112,7 +112,7 @@ namespace PlasticaribeAPI.Controllers
                               OF = p.OF_Id, 
                               Date1 = p.Pcd_FechaCrea,
                               Hour1 = p.Pcd_HoraCrea,
-                              Date2 = Convert.ToDateTime(p.Pcd_FechaCrea) == Convert.ToDateTime(p.Pcd_FechaModifica) ? "" : Convert.ToString(p.Pcd_FechaModifica),
+                              Date2 = p.Pcd_FechaModifica, // validar si fechacrea = fechamodifica, poner vacio, sino, poner fecha modificacion en el front-end
                               Hour2 = Convert.ToDateTime(p.Pcd_FechaCrea) == Convert.ToDateTime(p.Pcd_FechaModifica) ? "" : Convert.ToString(p.Pcd_HoraModifica),
                               UserId1 = p.Usua_Crea,
                               UserId2 = p.Usua_Modifica,
@@ -192,6 +192,41 @@ namespace PlasticaribeAPI.Controllers
         private bool Detalles_PrecargueDespachoExists(long id)
         {
             return _context.Detalles_PrecargueDespacho.Any(e => e.DtlPcd_Codigo == id);
+        }
+
+        //PUT para editar el nombre del cliente en un precargue de despacho.
+        [HttpPut("editPreloadClientName/{id}/{idClient}")]
+        public async Task<IActionResult> EditPreloadClientName(string id, string idClient)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(id))
+                    throw new Exception("El ID del precargue es requerido.");
+                else if (!int.TryParse(id, out int Id))
+                    return BadRequest("El ID del precargue no es válido.");
+
+                if (string.IsNullOrEmpty(idClient))
+                    throw new Exception("El ID del cliente es requerido.");
+                else if (!int.TryParse(idClient, out int clientId)) 
+                    return BadRequest("El ID del cliente no es válido.");
+
+                // obtener la info del precargue
+                var preload = (from pcd in _context.Set<Precargue_Despacho>() where pcd.Pcd_Id == Convert.ToInt32(id) select pcd).FirstOrDefault();
+                // si no existe, envia error de no encontrado.
+                if (preload == null) return NotFound("El precargue no fue encontrado con los datos ingresados.");
+
+                // si bajó por aqui entonces si existe el precargue. Editamos solo el IdCliente
+                preload.Cli_Id = Convert.ToInt32(idClient);
+
+                // hacer el update con el nuevo cambio.
+                _context.Entry(preload).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
