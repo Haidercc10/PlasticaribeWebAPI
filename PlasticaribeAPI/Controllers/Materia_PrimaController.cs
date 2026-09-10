@@ -1318,6 +1318,41 @@ namespace PlasticaribeAPI.Controllers
             return Ok(materiaPrima.Concat(tinta));
         }
 
+        //Función que traerá todas las subcategorias de materias primas y tintas con su respectivo stock para el módulo de solicitud de materia prima
+        [HttpGet("getAllSubcategories")]
+        public async Task<ActionResult> getAllSubcategories()
+        {
+
+            var materiaPrima = from mp in _context.Set<Materia_Prima>()
+                               where mp.MatPri_Id != 84
+                               group mp by new { 
+                                   mp.SubCatMP_Id, 
+                                   mp.SubcategoriasMP.SubCatMP_Nombre 
+                               } into g
+                               select new
+                               {
+                                   Stock = g.Sum(x => x.MatPri_Stock),
+                                   Subcategoria = g.Key.SubCatMP_Nombre,
+                                   Id_Subcategoria = g.Key.SubCatMP_Id,
+                               };
+
+            var tinta = from tt in _context.Set<Tinta>()
+                        where tt.Tinta_Id != 2001
+                        group tt by new { 
+                            tt.SubCatMP_Id, 
+                            tt.SubcategoriasMP.SubCatMP_Nombre 
+                        } into g
+                        select new
+                        {
+                            Stock = g.Sum(x => x.Tinta_Stock),
+                            Subcategoria = g.Key.SubCatMP_Nombre,
+                            Id_Subcategoria = g.Key.SubCatMP_Id,
+                        };
+
+            var result = await materiaPrima.Concat(tinta).ToListAsync();
+            return Ok(result);
+        }
+
         // PUT: api/Materia_Prima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
