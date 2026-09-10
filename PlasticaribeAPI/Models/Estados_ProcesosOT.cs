@@ -17,32 +17,59 @@ namespace PlasticaribeAPI.Models
         [Precision(18, 2)]
         public decimal EstProcOT_ExtrusionKg { get; set; }
 
+        [Precision(18, 2)]
+        public decimal? EstProcOT_DespExtrusionKg { get; set; } //Nuevo
+
 
         [Precision(18, 2)]
         public decimal EstProcOT_ImpresionKg { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? EstProcOT_DespImpresionKg { get; set; } //Nuevo
 
 
         [Precision(18, 2)]
         public decimal EstProcOT_RotograbadoKg { get; set; }
 
+        [Precision(18, 2)]
+        public decimal? EstProcOT_DespRotograbadoKg { get; set; } //Nuevo
+
 
         [Precision(18, 2)]
         public decimal EstProcOT_LaminadoKg { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? EstProcOT_DespLaminadoKg { get; set; } //Nuevo
 
 
         [Precision(18, 2)]
         public decimal EstProcOT_CorteKg { get; set; }
 
+        [Precision(18, 2)]
+        public decimal? EstProcOT_DespCorteKg { get; set; } //Nuevo
+
 
         [Precision(18, 2)]
         public decimal EstProcOT_DobladoKg { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? EstProcOT_DespDobladoKg { get; set; } //Nuevo
 
 
         [Precision(18, 2)]
         public decimal EstProcOT_EmpaqueKg { get; set; }
 
+
+        [Precision(18, 2)]
+        public decimal? EstProcOT_DespEmpaqueKg { get; set; } //Nuevo
+
+
         [Precision(18, 2)]
         public decimal EstProcOT_SelladoKg { get; set; }
+
+
+        [Precision(18, 2)]
+        public decimal? EstProcOT_DespSelladoKg { get; set; } //Nuevo
 
 
         [Precision(18, 2)]
@@ -52,6 +79,9 @@ namespace PlasticaribeAPI.Models
         [Precision(18, 2)]
         public decimal EstProcOT_WiketiadoKg { get; set; }
 
+        [Precision(18, 2)]
+        public decimal? EstProcOT_DespWiketiadoKg { get; set; } //Nuevo
+
 
         [Precision(18, 2)]
         public decimal EstProcOT_WiketiadoUnd { get; set; }
@@ -59,6 +89,11 @@ namespace PlasticaribeAPI.Models
 
         [Precision(18, 2)]
         public decimal? EstProcOT_PerforadoKg { get; set; }
+
+
+        [Precision(18, 2)]
+        public decimal? EstProcOT_DespPerforadoKg { get; set; }
+
 
         [Precision(18, 2)]
         public decimal EstProcOT_CantidadPedida { get; set; }

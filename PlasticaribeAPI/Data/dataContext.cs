@@ -917,10 +917,11 @@ namespace PlasticaribeAPI.Data
 
             //DetSolicitudes_MatPrimaExtrusion
             modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().ToTable(tb => tb.HasTrigger("Auditoria_DetSolicitud_MatPrimaExtrusion"));
-            modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.MatPrima).WithMany().HasForeignKey(asigmp => asigmp.MatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado
-            modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.Tinta).WithMany().HasForeignKey(asgmpr => asgmpr.Tinta_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario
+            /*modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.MatPrima).WithMany().HasForeignKey(asigmp => asigmp.MatPri_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado
+            modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.Tinta).WithMany().HasForeignKey(asgmpr => asgmpr.Tinta_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario*/
             modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.UndMed).WithMany().HasForeignKey(asigmp => asigmp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
             modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.SolMatPriExt).WithMany().HasForeignKey(asigmp => asigmp.SolMpExt_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
+            modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.SubCatMP).WithMany().HasForeignKey(asigmp => asigmp.SubCatMP_Id).OnDelete(DeleteBehavior.Restrict); //foranea subcategorias
 
             //Solicitud de Rollos a Areas
             modelBuilder.Entity<Solicitud_Rollos_Areas>().ToTable(tb => tb.HasTrigger("Auditoria_Solicitud_Rollos_Areas"));

@@ -279,17 +279,16 @@ namespace PlasticaribeAPI.Controllers
 
         //Consulta para obtener los empacadores de producción por area
         [HttpGet("getListAuthorizeUsers")]
-        public ActionResult getListAuthorizeUsers()
+        public async Task<ActionResult> getListAuthorizeUsers()
         {
-            int[] rols = { 1, 5, 86 };
-            int[] typeUsers = { 58, 1, 10 };
-            //long[]? users = { 1048322496, 1140888300, 1122408286, 1045745905 };
+            int[] rols = { 1, 5 };
+            int[] typeUsers = { 58, 1 };
 
-            var authorizedUsers = from pk in _context.Set<Usuario>()
+            var authorizedUsers = await (from pk in _context.Set<Usuario>()
                                   where rols.Contains(pk.RolUsu_Id)
                                         && pk.Estado_Id == 1
                                         && typeUsers.Contains(pk.tpUsu_Id)
-                                        
+                                        && pk.Usua_Cedula != null
                                   orderby pk.Usua_Nombre ascending
                                   select new
                                   {
@@ -297,7 +296,8 @@ namespace PlasticaribeAPI.Controllers
                                       UserName = pk.Usua_Nombre,
                                       Area_Id = pk.Area_Id,
                                       Area = pk.Area.Area_Nombre.ToUpper(),
-                                  };
+                                  }).ToListAsync();
+
             return authorizedUsers.Any() ? Ok(authorizedUsers) : NotFound();
         }
 

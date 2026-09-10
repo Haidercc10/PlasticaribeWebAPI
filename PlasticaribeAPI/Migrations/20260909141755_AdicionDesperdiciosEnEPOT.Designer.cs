@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlasticaribeAPI.Data;
 
@@ -11,9 +12,11 @@ using PlasticaribeAPI.Data;
 namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
-    partial class dataContextModelSnapshot : ModelSnapshot
+    [Migration("20260909141755_AdicionDesperdiciosEnEPOT")]
+    partial class AdicionDesperdiciosEnEPOT
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1877,15 +1880,14 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
 
+                    b.Property<long>("MatPri_Id")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("SolMpExt_Id")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("SubCatMP_Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SubCatMP_Nombre")
-                        .IsRequired()
-                        .HasColumnType("varchar(MAX)");
+                    b.Property<long>("Tinta_Id")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("UndMed_Id")
                         .IsRequired()
@@ -1893,9 +1895,11 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("Codigo");
 
+                    b.HasIndex("MatPri_Id");
+
                     b.HasIndex("SolMpExt_Id");
 
-                    b.HasIndex("SubCatMP_Id");
+                    b.HasIndex("Tinta_Id");
 
                     b.HasIndex("UndMed_Id");
 
@@ -11378,15 +11382,21 @@ namespace PlasticaribeAPI.Migrations
 
             modelBuilder.Entity("PlasticaribeAPI.Models.DetSolicitud_MatPrimaExtrusion", b =>
                 {
+                    b.HasOne("PlasticaribeAPI.Models.Materia_Prima", "MatPrima")
+                        .WithMany()
+                        .HasForeignKey("MatPri_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("PlasticaribeAPI.Models.Solicitud_MatPrimaExtrusion", "SolMatPriExt")
                         .WithMany()
                         .HasForeignKey("SolMpExt_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("PlasticaribeAPI.Models.Subcategorias_MatPrima", "SubCatMP")
+                    b.HasOne("PlasticaribeAPI.Models.Tinta", "Tinta")
                         .WithMany()
-                        .HasForeignKey("SubCatMP_Id")
+                        .HasForeignKey("Tinta_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -11396,9 +11406,11 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("MatPrima");
+
                     b.Navigation("SolMatPriExt");
 
-                    b.Navigation("SubCatMP");
+                    b.Navigation("Tinta");
 
                     b.Navigation("UndMed");
                 });

@@ -47,6 +47,7 @@ namespace PlasticaribeAPI.Controllers
             return detSolicitud_MatPrimaExtrusion;
         }
 
+        /*
         // GET: api/DetSolicitud_MatPrimaExtrusion/5
         [HttpGet("getSolicitudMp_Extrusion/{id}")]
         public ActionResult GetSolicitudMp_Extrusion(long id)
@@ -137,7 +138,8 @@ namespace PlasticaribeAPI.Controllers
             else return Ok(detSolicitud_MatPrimaExtrusion);
         }
 
-        /** Obtener solicitudes y materias primas asociadas para actualizar detalles  */
+        /*
+        // Obtener solicitudes y materias primas asociadas para actualizar detalles  
         [HttpGet("getSolicitudesConMatPrimas/{solicitud}/{mp}")]
         public ActionResult GetSolicitudesConMatPrimas(long solicitud, long mp)
         {
@@ -147,7 +149,8 @@ namespace PlasticaribeAPI.Controllers
                       select sol.Codigo;
             return Ok(con);
         }
-
+        */
+        /*
         // GET: api/DetSolicitud_MatPrimaExtrusion/5
         [HttpGet("getQuerySolicitudesMp_Extrusion/{fecha1}/{fecha2}")]
         public ActionResult GetQuerySolicitudesMp_Extrusion(DateTime fecha1, DateTime fecha2, string? id = "", string? estado = "")
@@ -201,7 +204,7 @@ namespace PlasticaribeAPI.Controllers
 
             if (detSolicitud_MatPrimaExtrusion == null) return NotFound();
             else return Ok(detSolicitud_MatPrimaExtrusion);
-        }
+        }*/
 
         // PUT: api/DetSolicitud_MatPrimaExtrusion/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

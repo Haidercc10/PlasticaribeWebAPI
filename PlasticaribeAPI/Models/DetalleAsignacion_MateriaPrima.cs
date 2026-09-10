@@ -30,6 +30,13 @@ namespace PlasticaribeAPI.Models
         public string Proceso_Id { get; set; }
         public Proceso? Proceso { get; set; }
 
+        
+        [Precision(14, 2)]
+        public decimal? DtAsigMp_Precio { get; set; }
+
+        [Precision(14, 2)]
+        public decimal? DtAsigMp_Subtotal { get; set; }
+        
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }
