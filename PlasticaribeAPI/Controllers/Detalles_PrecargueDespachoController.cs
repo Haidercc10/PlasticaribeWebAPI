@@ -112,8 +112,8 @@ namespace PlasticaribeAPI.Controllers
                               OF = p.OF_Id, 
                               Date1 = p.Pcd_FechaCrea,
                               Hour1 = p.Pcd_HoraCrea,
-                              Date2 = p.Pcd_FechaModifica, // validar si fechacrea = fechamodifica, poner vacio, sino, poner fecha modificacion en el front-end
-                              Hour2 = Convert.ToDateTime(p.Pcd_FechaCrea) == Convert.ToDateTime(p.Pcd_FechaModifica) ? "" : Convert.ToString(p.Pcd_HoraModifica),
+                              Date2 = p.Pcd_FechaModifica, // validar si fechacrea = fechamodifica, poner vacio, sino, poner fecha modificacion en el front-end. *nueva: si ambas fechas y ambas horas son iguales, no ponga nada
+                              Hour2 = p.Pcd_HoraModifica, // como la hora modifica solo sale cuando salga la fecha modifica pues solo envia la hora modifica sin validar.
                               UserId1 = p.Usua_Crea,
                               UserId2 = p.Usua_Modifica,
                               User1 = p.Usuario1.Usua_Nombre,
