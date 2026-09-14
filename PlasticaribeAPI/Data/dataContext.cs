@@ -1274,6 +1274,8 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Devoluciones_Calidad>().HasOne(x => x.Proceso).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Devoluciones_Calidad>().HasOne(x => x.Proceso).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Devoluciones_Calidad>().HasOne(x => x.Requerimiento).WithMany().HasForeignKey(x => x.Req_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Devoluciones_Calidad>().HasOne(x => x.Supervisor).WithMany().HasForeignKey(x => x.Usua_Supervisor).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Devoluciones_Calidad>().HasOne(x => x.Operario).WithMany().HasForeignKey(x => x.Usua_Operario).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Produccion Diaria
             modelBuilder.Entity<Produccion_Diaria>().HasOne(x => x.Procesos).WithMany().HasForeignKey(x => x.Proceso_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
