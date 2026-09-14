@@ -13,14 +13,6 @@ namespace PlasticaribeAPI.Models
         public long SolMpExt_Id { get; set; }
         public Solicitud_MatPrimaExtrusion? SolMatPriExt { get; set; }
 
-        /*
-        public long MatPri_Id { get; set; }
-        public Materia_Prima? MatPrima { get; set; }
-
-        public long Tinta_Id { get; set; }
-        public Tinta? Tinta { get; set; }
-        */
-
         public int SubCatMP_Id { get; set; }
         public Subcategorias_MatPrima? SubCatMP { get; set; }
 

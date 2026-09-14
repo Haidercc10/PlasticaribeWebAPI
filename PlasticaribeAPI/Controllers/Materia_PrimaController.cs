@@ -1291,7 +1291,7 @@ namespace PlasticaribeAPI.Controllers
 
         //Función que traerá las materias primas y tintas con sus respectivas subcategorias para el módulo de solicitud de materia prima
         [HttpGet("getSubcategories")]
-        public ActionResult getSubcategories() {
+        public async Task<ActionResult> getSubcategories() {
 
             var materiaPrima = from mp in _context.Set<Materia_Prima>()
                                where mp.MatPri_Id != 84
@@ -1304,7 +1304,7 @@ namespace PlasticaribeAPI.Controllers
                                    Id_Subcategoria = mp.SubCatMP_Id,
                                };
 
-            var tinta = from tt in _context.Set<Tinta>()
+            /*var tinta = from tt in _context.Set<Tinta>()
                         where tt.Tinta_Id != 2001
                         select new
                         {
@@ -1313,30 +1313,33 @@ namespace PlasticaribeAPI.Controllers
                             Stock = tt.Tinta_Stock,
                             Subcategoria = tt.SubcategoriasMP.SubCatMP_Nombre,
                             Id_Subcategoria = tt.SubCatMP_Id,
-                        };
+                        };*/
+            var result = await materiaPrima.ToListAsync();  
 
-            return Ok(materiaPrima.Concat(tinta));
+            return Ok(materiaPrima);
         }
 
         //Función que traerá todas las subcategorias de materias primas y tintas con su respectivo stock para el módulo de solicitud de materia prima
-        [HttpGet("getAllSubcategories")]
-        public async Task<ActionResult> getAllSubcategories()
+        [HttpGet("getAllSubcategoriesForName/{material}")]
+        public async Task<ActionResult> getAllSubcategoriesForId(string material)
         {
-
             var materiaPrima = from mp in _context.Set<Materia_Prima>()
                                where mp.MatPri_Id != 84
+                               && mp.MatPri_Nombre.Contains(material)
+                               && mp.SubCatMP_Id != null
                                group mp by new { 
                                    mp.SubCatMP_Id, 
                                    mp.SubcategoriasMP.SubCatMP_Nombre 
                                } into g
                                select new
                                {
-                                   Stock = g.Sum(x => x.MatPri_Stock),
-                                   Subcategoria = g.Key.SubCatMP_Nombre,
                                    Id_Subcategoria = g.Key.SubCatMP_Id,
+                                   Subcategoria = g.Key.SubCatMP_Nombre,
+                                   Stock = g.Sum(x => x.MatPri_Stock),
+                                   Und = g.Select(x => x.UndMed_Id).FirstOrDefault(),
                                };
 
-            var tinta = from tt in _context.Set<Tinta>()
+            /*var tinta = from tt in _context.Set<Tinta>()
                         where tt.Tinta_Id != 2001
                         group tt by new { 
                             tt.SubCatMP_Id, 
@@ -1347,9 +1350,9 @@ namespace PlasticaribeAPI.Controllers
                             Stock = g.Sum(x => x.Tinta_Stock),
                             Subcategoria = g.Key.SubCatMP_Nombre,
                             Id_Subcategoria = g.Key.SubCatMP_Id,
-                        };
+                        };*/
 
-            var result = await materiaPrima.Concat(tinta).ToListAsync();
+            var result = await materiaPrima.ToListAsync();
             return Ok(result);
         }
 

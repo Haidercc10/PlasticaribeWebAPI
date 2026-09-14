@@ -47,17 +47,17 @@ namespace PlasticaribeAPI.Controllers
             return detSolicitud_MatPrimaExtrusion;
         }
 
-        /*
+        
         // GET: api/DetSolicitud_MatPrimaExtrusion/5
         [HttpGet("getSolicitudMp_Extrusion/{id}")]
-        public ActionResult GetSolicitudMp_Extrusion(long id)
+        public async Task<ActionResult> GetSolicitudMp_Extrusion(long id)
         {
             if (_context.DetSolicitud_MatPrimaExtrusion == null) return NotFound();
 
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var detSolicitud_MatPrimaExtrusion = from smpe in _context.Set<Solicitud_MatPrimaExtrusion>()
-                                                 from dsmpe in _context.Set<DetSolicitud_MatPrimaExtrusion>()
-                                                 from emp in _context.Set<Empresa>()
+            var detSolicitud_MatPrimaExtrusion = from smpe in _context.Set<Solicitud_MatPrimaExtrusion>().AsNoTracking()
+                                                 from emp in _context.Set<Empresa>().AsNoTracking()
+                                                 join dsmpe in _context.Set<DetSolicitud_MatPrimaExtrusion>().AsNoTracking() on smpe.SolMpExt_Id equals dsmpe.SolMpExt_Id
                                                  where smpe.SolMpExt_Id == dsmpe.SolMpExt_Id &&
                                                  dsmpe.SolMpExt_Id == id &&
                                                  emp.Empresa_Id == 800188732
@@ -76,14 +76,13 @@ namespace PlasticaribeAPI.Controllers
                                                      Fecha = smpe.SolMpExt_Fecha,
                                                      Hora = smpe.SolMpExt_Hora,
                                                      //Detalle
-                                                     MatPrima_Id = dsmpe.MatPri_Id,
-                                                     MatPrima = dsmpe.MatPrima.MatPri_Nombre,
-                                                     Stock_Mp = dsmpe.MatPrima.MatPri_Stock,
-                                                     Tinta_Id = dsmpe.Tinta_Id,
-                                                     Tinta = dsmpe.Tinta.Tinta_Nombre,
-                                                     Stock_Tinta = dsmpe.Tinta.Tinta_Stock,
+                                                     Id_Subcategoria = dsmpe.SubCatMP_Id,
+                                                     Subcategoria = dsmpe.SubCatMP_Nombre,
+                                                     Stock = (from mp in _context.Set<Materia_Prima>()
+                                                                 where mp.SubCatMP_Id == dsmpe.SubCatMP_Id
+                                                                 select (decimal?)mp.MatPri_Stock).Sum() ?? Convert.ToDecimal(0),
                                                      Cantidad_Pedida = dsmpe.DtSolMpExt_Cantidad,  
-                                                     Cantidad_Restante = dsmpe.DtSolMpExt_Cantidad - 
+                                                     /*Cantidad_Restante = dsmpe.DtSolMpExt_Cantidad - 
                                                      (
                                                          (
                                                             from d in _context.Set<DetalleAsignacion_MateriaPrima>()
@@ -122,7 +121,7 @@ namespace PlasticaribeAPI.Controllers
                                                             group d by d.Tinta_Id into g
                                                             select (decimal?)g.Sum(x => x.DtAsigTinta_Cantidad)
                                                           ).Sum() ?? Convert.ToDecimal(0)
-                                                     ),
+                                                     ),*/
                                                      Medida = dsmpe.UndMed_Id,
                                                      //Empresa
                                                      emp.Empresa_Id,
@@ -133,9 +132,10 @@ namespace PlasticaribeAPI.Controllers
                                                      emp.Empresa_Correo
                                                  };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var result = await detSolicitud_MatPrimaExtrusion.ToListAsync();
 
-            if (detSolicitud_MatPrimaExtrusion == null) return NotFound();
-            else return Ok(detSolicitud_MatPrimaExtrusion);
+            if (result == null) return NotFound();
+            else return Ok(result);
         }
 
         /*
