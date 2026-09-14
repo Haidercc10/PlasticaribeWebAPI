@@ -106,18 +106,27 @@ namespace PlasticaribeAPI.Controllers
                     Ot = orden.EstProcOT_OrdenTrabajo,
                     Ext = orden.EstProcOT_ExtrusionKg,
                     Desp_ext = desp.DespExt ?? 0m,
+                    Sum_ext = (orden.EstProcOT_ExtrusionKg + desp.DespExt ?? 0m),
                     Imp = orden.EstProcOT_ImpresionKg,
                     Desp_imp = desp.DespImp ?? 0m,
+                    Sum_imp = (orden.EstProcOT_ImpresionKg + desp.DespImp ?? 0m),
+                    Perf = orden.EstProcOT_PerforadoKg,
+                    Desp_perf = desp.DespPerf ?? 0m,
+                    Sum_perf = (orden.EstProcOT_PerforadoKg + desp.DespPerf ?? 0m),
                     Rot = orden.EstProcOT_RotograbadoKg,
                     Lam = orden.EstProcOT_LaminadoKg,
                     Desp_lam = desp.DespLam ?? 0m,
+                    Sum_lam = (orden.EstProcOT_LaminadoKg + desp.DespLam ?? 0m),
                     Dbl = orden.EstProcOT_DobladoKg,
                     Desp_dbl = desp.DespDob ?? 0m,
+                    Sum_dbl = (orden.EstProcOT_DobladoKg + desp.DespDob ?? 0m),
                     Cor = orden.EstProcOT_CorteKg,
                     Emp = orden.EstProcOT_EmpaqueKg,
                     Desp_emp = desp.DespEmp ?? 0m,
+                    Sum_emp = (orden.EstProcOT_EmpaqueKg + desp.DespEmp ?? 0m),
                     Sel = orden.EstProcOT_SelladoKg,
                     Desp_sel = desp.DespSella ?? 0m,
+                    Sum_sel = (orden.EstProcOT_SelladoKg + desp.DespSella ?? 0m),
                     SelUnd = orden.EstProcOT_SelladoUnd,
                     Wik = orden.EstProcOT_WiketiadoKg,
                     WikUnd = orden.EstProcOT_WiketiadoUnd,
@@ -145,13 +154,250 @@ namespace PlasticaribeAPI.Controllers
                     Mp = orden.EstProcOT_CantMatPrimaAsignada,
                     Cli = orden.EstProcOT_Cliente,
                     Ped = orden.EstProcOT_Pedido,
-                    Perf = orden.EstProcOT_PerforadoKg,
-                    Desp_perf = desp.DespPerf ?? 0m,
+                    
                 };
 
             var con = await query.ToListAsync();
 
             return con.Any() ? Ok(con) : NotFound("¡No se encontró información!");
+        }
+
+        
+
+        [HttpGet("getInfo_OrdenesTrabajoConBalance/{fechaInicial}/{fechaFinal}")]
+        public async Task<ActionResult> GetInfo_OrdenesTrabajoConBalance(
+            DateTime fechaInicial,
+            DateTime fechaFinal,
+            string? ot = "",
+            string? cli = "",
+            string? prod = "",
+            string? estado = "",
+            string? vendedor = "",
+            string? falla = "")
+        {
+            // -------------------------------------------------------------
+            // 1) Agregación de desperdicios (una sola pasada, GROUP BY + LEFT JOIN,
+            //    igual que en getInfo_OrdenesTrabajo2).
+            // -------------------------------------------------------------
+            var desperdiciosPorOt = _context.Set<Models.Desperdicio>()
+                .GroupBy(d => d.Desp_OT)
+                .Select(g => new
+                {
+                    Ot = g.Key,
+                    DespExt = g.Where(x => x.Proceso_Id == "EXT").Sum(x => (decimal?)x.Desp_PesoKg),
+                    DespImp = g.Where(x => x.Proceso_Id == "IMP").Sum(x => (decimal?)x.Desp_PesoKg),
+                    DespPerf = g.Where(x => x.Proceso_Id == "PERF").Sum(x => (decimal?)x.Desp_PesoKg),
+                    DespLam = g.Where(x => x.Proceso_Id == "LAM").Sum(x => (decimal?)x.Desp_PesoKg),
+                    DespDbl = g.Where(x => x.Proceso_Id == "DBLD").Sum(x => (decimal?)x.Desp_PesoKg),
+                    DespEmp = g.Where(x => x.Proceso_Id == "EMP").Sum(x => (decimal?)x.Desp_PesoKg),
+                    DespSel = g.Where(x => x.Proceso_Id == "SELLA").Sum(x => (decimal?)x.Desp_PesoKg),
+                    Desp = g.Sum(x => (decimal?)x.Desp_PesoKg),
+                });
+
+            // -------------------------------------------------------------
+            // 2) Query principal + LEFT JOIN. Todavía SIN los balances -- esos se
+            //    calculan después porque dependen de lo que pasó en el proceso
+            //    anterior (lógica secuencial, no expresable de forma legible en SQL).
+            // -------------------------------------------------------------
+            var query =
+                from orden in _context.Set<Estados_ProcesosOT>().AsNoTracking()
+                where orden.EstProcOT_FechaInicio >= fechaInicial
+                      && orden.EstProcOT_FechaFinal <= fechaFinal
+                      && (string.IsNullOrEmpty(ot) || Convert.ToString(orden.EstProcOT_OrdenTrabajo).Contains(ot))
+                      && (string.IsNullOrEmpty(falla) || Convert.ToString(orden.Falla_Id) == falla)
+                      && (string.IsNullOrEmpty(estado) || Convert.ToString(orden.Estado_Id) == estado)
+                      && (string.IsNullOrEmpty(vendedor) || Convert.ToString(orden.Usuario.Usua_Id) == vendedor)
+                      && (string.IsNullOrEmpty(cli) || Convert.ToString(orden.EstProcOT_Cliente).Contains(cli))
+                      && (string.IsNullOrEmpty(prod) || Convert.ToString(orden.Prod_Id) == prod)
+                join desp in desperdiciosPorOt
+                    on orden.EstProcOT_OrdenTrabajo equals desp.Ot into despJoin
+                from desp in despJoin.DefaultIfEmpty()
+                select new OrdenTrabajoConBalanceDto
+                {
+                    EstProcOT_Id = Convert.ToInt32(orden.EstProcOT_Id),
+                    Ot = Convert.ToString(orden.EstProcOT_OrdenTrabajo),
+                    Mp = orden.EstProcOT_CantMatPrimaAsignada,
+                    Cant = orden.EstProcOT_CantidadPedida,
+                    CantUnd = Convert.ToDecimal(orden.EstProcOT_CantidadPedidaUnd),
+                    Und = orden.UndMed_Id,
+
+                    Ext = orden.EstProcOT_ExtrusionKg,
+                    Desp_ext = desp.DespExt ?? 0m,
+                    Sum_ext = (orden.EstProcOT_ExtrusionKg + desp.DespExt ?? 0m),
+
+                    Imp = orden.EstProcOT_ImpresionKg,
+                    Desp_imp = desp.DespImp ?? 0m,
+                    Sum_imp = (orden.EstProcOT_ImpresionKg + desp.DespImp ?? 0m),
+
+                    Perf = Convert.ToDecimal(orden.EstProcOT_PerforadoKg),
+                    Desp_perf = desp.DespPerf ?? 0m,
+                    Sum_perf = (orden.EstProcOT_PerforadoKg + desp.DespImp ?? 0m),
+
+                    Lam = orden.EstProcOT_LaminadoKg,
+                    Desp_lam = desp.DespLam ?? 0m,
+
+                    Dbl = orden.EstProcOT_DobladoKg,
+                    Desp_dbl = desp.DespDbl ?? 0m,
+
+                    Emp = orden.EstProcOT_EmpaqueKg,
+                    Desp_emp = desp.DespEmp ?? 0m,
+
+                    Sel = orden.EstProcOT_SelladoKg,
+                    SelUnd = orden.EstProcOT_SelladoUnd,
+                    Desp_sel = desp.DespSel ?? 0m,
+
+                    Desp = Convert.ToDecimal(desp.Desp),
+
+                    Estado_Id = orden.Estado_Id,
+                    Est = orden.Estado_OT.Estado_Nombre,
+                    Obs = orden.EstProcOT_Observacion,
+                    Fecha = orden.EstProcOT_FechaCreacion,
+                    Cli = orden.Clientes.Cli_Nombre,
+
+                    Ref = orden.Producto.Prod_Nombre,
+                    Item = orden.Prod_Id,
+                };
+
+            var con = await query.ToListAsync();
+
+            if (!con.Any())
+                return NotFound("¡No se encontró información!");
+
+            // -------------------------------------------------------------
+            // 3) Balance por proceso, calculado secuencialmente y asignado
+            //    directamente a las columnas planas del DTO.
+            // -------------------------------------------------------------
+            foreach (var o in con)
+            {
+                decimal baseSiguiente = o.Mp;
+
+                o.Balance_Ext = baseSiguiente - (o.Ext + o.Desp_ext);
+                if (o.Ext > 0) baseSiguiente = o.Ext;
+
+                o.Balance_Imp = baseSiguiente - (o.Imp + o.Desp_imp);
+                if (o.Imp > 0) baseSiguiente = o.Imp;
+
+                o.Balance_Lam = baseSiguiente - (o.Lam + o.Desp_lam);
+                if (o.Lam > 0) baseSiguiente = o.Lam;
+
+                o.Balance_Perf = baseSiguiente - (o.Perf + o.Desp_perf);
+                if (o.Perf > 0) baseSiguiente = o.Perf;
+
+                o.Balance_Dbl = baseSiguiente - (o.Dbl + o.Desp_dbl);
+                if (o.Dbl > 0) baseSiguiente = o.Dbl;
+
+                o.Balance_Emp = baseSiguiente - (o.Emp + o.Desp_emp);
+                if (o.Emp > 0) baseSiguiente = o.Emp;
+
+                o.Balance_Sel = baseSiguiente - (o.Sel + o.Desp_sel);
+                if (o.Sel > 0) baseSiguiente = o.Sel;
+
+                // =========================================================
+                // BALANCE GENERAL
+                // =========================================================
+
+                // Primer proceso que tenga cantidad
+                
+                if (o.Ext > 0)
+                {
+                    o.Proceso_Inicial = "Extrusión";
+                    o.Cantidad_Inicial = o.Ext;
+                }
+                else if (o.Mp > 0)
+                {
+                    o.Proceso_Inicial = "Materia Prima";
+                    o.Cantidad_Inicial = o.Mp;
+                }
+                else if (o.Imp > 0)
+                {
+                    o.Proceso_Inicial = "Impresión";
+                    o.Cantidad_Inicial = o.Imp;
+                }
+                else if (o.Perf > 0)
+                {
+                    o.Proceso_Inicial = "Perforado";
+                    o.Cantidad_Inicial = o.Perf;
+                }
+                else if (o.Lam > 0)
+                {
+                    o.Proceso_Inicial = "Laminado";
+                    o.Cantidad_Inicial = o.Lam;
+                }
+                else if (o.Dbl > 0)
+                {
+                    o.Proceso_Inicial = "Doblado";
+                    o.Cantidad_Inicial = o.Dbl;
+                }
+                else if (o.Emp > 0)
+                {
+                    o.Proceso_Inicial = "Empaque";
+                    o.Cantidad_Inicial = o.Emp;
+                }
+                else if (o.Sel > 0)
+                {
+                    o.Proceso_Inicial = "Sellado";
+                    o.Cantidad_Inicial = o.Sel;
+                }
+
+
+                // =========================================================
+                // Último proceso que tenga cantidad
+                // =========================================================
+
+                if (o.Sel > 0)
+                {
+                    o.Proceso_Final = "Sellado";
+                    o.Cantidad_Final = o.Sel;
+                    o.Desperdicio_Final = o.Desp_sel;
+                }
+                else if (o.Emp > 0)
+                {
+                    o.Proceso_Final = "Empaque";
+                    o.Cantidad_Final = o.Emp;
+                    o.Desperdicio_Final = o.Desp_emp;
+                }
+                else if (o.Dbl > 0)
+                {
+                    o.Proceso_Final = "Doblado";
+                    o.Cantidad_Final = o.Dbl;
+                    o.Desperdicio_Final = o.Desp_dbl;
+                }
+                else if (o.Lam > 0)
+                {
+                    o.Proceso_Final = "Laminado";
+                    o.Cantidad_Final = o.Lam;
+                    o.Desperdicio_Final = o.Desp_lam;
+                }
+                else if (o.Perf > 0)
+                {
+                    o.Proceso_Final = "Perforado";
+                    o.Cantidad_Final = o.Perf;
+                    o.Desperdicio_Final = o.Desp_perf;
+                }
+                else if (o.Imp > 0)
+                {
+                    o.Proceso_Final = "Impresión";
+                    o.Cantidad_Final = o.Imp;
+                    o.Desperdicio_Final = o.Desp_imp;
+                }
+                else if (o.Ext > 0)
+                {
+                    o.Proceso_Final = "Extrusión";
+                    o.Cantidad_Final = o.Ext;
+                    o.Desperdicio_Final = o.Desp_ext;
+                }
+
+
+                // =========================================================
+                // BALANCE GENERAL
+                // =========================================================
+
+                o.Balance_General =
+                    o.Cantidad_Inicial -
+                    (o.Cantidad_Final + o.Desperdicio_Final);
+            }
+
+            return Ok(con);
         }
 
         //Consulta por OT
@@ -528,6 +774,7 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        //Función que actualiza la falla y la observación de una orden de trabajo
         [HttpPut("ActualizacionFallaObservacion/{EstProcOT_OrdenTrabajo}")]
         public IActionResult Put(long EstProcOT_OrdenTrabajo, Estados_ProcesosOT Estados_ProcesosOT)
         {
@@ -639,5 +886,83 @@ public class CustomerOrders
     public int item { get; set; }
 
     public string consecutivo { get; set; }
+}
+
+public class OrdenTrabajoConBalanceDto
+{
+    public int EstProcOT_Id { get; set; }
+    public string Ot { get; set; } = "";
+    public decimal Mp { get; set; }
+
+    public decimal Ext { get; set; }
+    public decimal Desp_ext { get; set; }
+    public decimal Sum_ext { get; set; }
+    public decimal Balance_Ext { get; set; }
+
+    public decimal Imp { get; set; }
+    public decimal Desp_imp { get; set; }
+    public decimal Sum_imp { get; set; }
+    public decimal Balance_Imp { get; set; }
+
+    public decimal Perf { get; set; }
+    public decimal Desp_perf { get; set; }
+
+    public decimal Sum_perf { get; set; }
+    public decimal Balance_Perf { get; set; }
+
+    public decimal Lam { get; set; }
+    public decimal Desp_lam { get; set; }
+    public decimal Balance_Lam { get; set; }
+
+    public decimal Dbl { get; set; }
+    public decimal Desp_dbl { get; set; }
+    public decimal Sum_dbl { get; set; }
+    public decimal Balance_Dbl { get; set; }
+
+    public decimal Emp { get; set; }
+    public decimal Desp_emp { get; set; }
+    public decimal Sum_emp { get; set; }
+    public decimal Balance_Emp { get; set; }
+
+    public decimal Sel { get; set; }
+    public decimal SelUnd { get; set; }
+    public decimal Desp_sel { get; set; }
+    public decimal Sum_sel { get; set; }
+    public decimal Balance_Sel { get; set; }
+
+    public decimal Balance_General { get; set; }
+
+    public decimal Cantidad_Inicial { get; set; }
+
+    public decimal Cantidad_Final { get; set; }
+
+    public decimal Desperdicio_Final { get; set; }
+
+    public string Proceso_Inicial  { get; set; }
+
+    public string Proceso_Final { get; set; }
+
+    public decimal Desp { get; set; }
+
+    public decimal Cant { get; set; }
+    public decimal CantUnd { get; set; }
+
+    public string Und { get; set; }
+
+
+    public decimal Entrada { get; set; }
+    public decimal Salida { get; set; }
+
+    public int? Estado_Id { get; set; }
+    public string? Est { get; set; }
+    public string? Obs { get; set; }
+    public DateTime Fecha { get; set; }
+    public DateTime FechaInicio { get; set; }
+    public DateTime FechaFinal { get; set; }
+
+    public string? Cli { get; set; }
+
+    public int? Item { get; set; }
+    public string? Ref { get; set; }
 }
 
