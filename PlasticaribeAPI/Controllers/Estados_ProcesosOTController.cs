@@ -67,6 +67,9 @@ namespace PlasticaribeAPI.Controllers
             //    agrupada por OT, con sumas condicionales por proceso.
             //    Esto reemplaza las N subconsultas correlacionadas.
             // -------------------------------------------------------------
+            var fechaActual = DateTime.Now;
+            DateTime fechaUnMesAtras = fechaActual.AddMonths(-1);
+
             var desperdiciosPorOt = _context.Set<Models.Desperdicio>()
                 .GroupBy(d => d.Desp_OT)
                 .Select(g => new
@@ -89,7 +92,7 @@ namespace PlasticaribeAPI.Controllers
             // -------------------------------------------------------------
             var query =
                 from orden in _context.Set<Estados_ProcesosOT>().AsNoTracking()
-                where orden.EstProcOT_FechaInicio >= fechaInicial
+                where (fechaInicial == fechaUnMesAtras ? orden.EstProcOT_FechaCreacion : orden.EstProcOT_FechaInicio) >= fechaInicial
                       && orden.EstProcOT_FechaFinal <= fechaFinal
                       && (string.IsNullOrEmpty(ot) || Convert.ToString(orden.EstProcOT_OrdenTrabajo).Contains(ot))
                       && (string.IsNullOrEmpty(falla) || Convert.ToString(orden.Falla_Id) == falla)
@@ -179,6 +182,10 @@ namespace PlasticaribeAPI.Controllers
             // 1) Agregación de desperdicios (una sola pasada, GROUP BY + LEFT JOIN,
             //    igual que en getInfo_OrdenesTrabajo2).
             // -------------------------------------------------------------
+            var fechaActual = DateTime.Now;
+            DateTime fechaUnMesAtras = fechaActual.AddMonths(-1);
+            bool usarFechaCreacion = fechaInicial == fechaUnMesAtras;
+
             var desperdiciosPorOt = _context.Set<Models.Desperdicio>()
                 .GroupBy(d => d.Desp_OT)
                 .Select(g => new
@@ -201,8 +208,9 @@ namespace PlasticaribeAPI.Controllers
             // -------------------------------------------------------------
             var query =
                 from orden in _context.Set<Estados_ProcesosOT>().AsNoTracking()
-                where orden.EstProcOT_FechaInicio >= fechaInicial
-                      && orden.EstProcOT_FechaFinal <= fechaFinal
+                where  ( usarFechaCreacion
+                        ? orden.EstProcOT_FechaCreacion >= fechaInicial && orden.EstProcOT_FechaFinal <= fechaFinal
+                        : orden.EstProcOT_FechaInicio >= fechaInicial && orden.EstProcOT_FechaFinal <= fechaFinal)
                       && (string.IsNullOrEmpty(ot) || Convert.ToString(orden.EstProcOT_OrdenTrabajo).Contains(ot))
                       && (string.IsNullOrEmpty(falla) || Convert.ToString(orden.Falla_Id) == falla)
                       && (string.IsNullOrEmpty(estado) || Convert.ToString(orden.Estado_Id) == estado)
@@ -256,6 +264,7 @@ namespace PlasticaribeAPI.Controllers
 
                     Ref = orden.Producto.Prod_Nombre,
                     Item = orden.Prod_Id,
+
                 };
 
             var con = await query.ToListAsync();
@@ -271,26 +280,33 @@ namespace PlasticaribeAPI.Controllers
             {
                 decimal baseSiguiente = o.Mp;
 
-                o.Balance_Ext = baseSiguiente - (o.Ext + o.Desp_ext);
+                o.Balance_Ext = (o.Ext + o.Desp_ext) - baseSiguiente;
                 if (o.Ext > 0) baseSiguiente = o.Ext;
+                else o.Balance_Ext = 0;
 
-                o.Balance_Imp = baseSiguiente - (o.Imp + o.Desp_imp);
+                o.Balance_Imp = (o.Imp + o.Desp_imp) - baseSiguiente;
                 if (o.Imp > 0) baseSiguiente = o.Imp;
+                else o.Balance_Imp = 0;
 
-                o.Balance_Lam = baseSiguiente - (o.Lam + o.Desp_lam);
+                o.Balance_Lam = (o.Lam + o.Desp_lam) - baseSiguiente;
                 if (o.Lam > 0) baseSiguiente = o.Lam;
+                else o.Balance_Lam = 0;
 
-                o.Balance_Perf = baseSiguiente - (o.Perf + o.Desp_perf);
+                o.Balance_Perf = (o.Perf + o.Desp_perf) - baseSiguiente;
                 if (o.Perf > 0) baseSiguiente = o.Perf;
+                else o.Balance_Perf = 0;
 
-                o.Balance_Dbl = baseSiguiente - (o.Dbl + o.Desp_dbl);
+                o.Balance_Dbl = (o.Dbl + o.Desp_dbl) - baseSiguiente;
                 if (o.Dbl > 0) baseSiguiente = o.Dbl;
+                else o.Balance_Dbl = 0;
 
-                o.Balance_Emp = baseSiguiente - (o.Emp + o.Desp_emp);
+                o.Balance_Emp = (o.Emp + o.Desp_emp) - baseSiguiente;
                 if (o.Emp > 0) baseSiguiente = o.Emp;
+                else o.Balance_Emp = 0;
 
-                o.Balance_Sel = baseSiguiente - (o.Sel + o.Desp_sel);
+                o.Balance_Sel = (o.Sel + o.Desp_sel) - baseSiguiente;
                 if (o.Sel > 0) baseSiguiente = o.Sel;
+                else o.Balance_Sel = 0;
 
                 // =========================================================
                 // BALANCE GENERAL
@@ -300,42 +316,42 @@ namespace PlasticaribeAPI.Controllers
                 
                 if (o.Ext > 0)
                 {
-                    o.Proceso_Inicial = "Extrusión";
+                    o.Proceso_Inicial = "EXT";
                     o.Cantidad_Inicial = o.Ext;
                 }
                 else if (o.Mp > 0)
                 {
-                    o.Proceso_Inicial = "Materia Prima";
+                    o.Proceso_Inicial = "MP";
                     o.Cantidad_Inicial = o.Mp;
                 }
                 else if (o.Imp > 0)
                 {
-                    o.Proceso_Inicial = "Impresión";
+                    o.Proceso_Inicial = "IMP";
                     o.Cantidad_Inicial = o.Imp;
                 }
                 else if (o.Perf > 0)
                 {
-                    o.Proceso_Inicial = "Perforado";
+                    o.Proceso_Inicial = "PERF";
                     o.Cantidad_Inicial = o.Perf;
                 }
                 else if (o.Lam > 0)
                 {
-                    o.Proceso_Inicial = "Laminado";
+                    o.Proceso_Inicial = "LAM";
                     o.Cantidad_Inicial = o.Lam;
                 }
                 else if (o.Dbl > 0)
                 {
-                    o.Proceso_Inicial = "Doblado";
+                    o.Proceso_Inicial = "DOBL";
                     o.Cantidad_Inicial = o.Dbl;
                 }
                 else if (o.Emp > 0)
                 {
-                    o.Proceso_Inicial = "Empaque";
+                    o.Proceso_Inicial = "EMP";
                     o.Cantidad_Inicial = o.Emp;
                 }
                 else if (o.Sel > 0)
                 {
-                    o.Proceso_Inicial = "Sellado";
+                    o.Proceso_Inicial = "SELLA";
                     o.Cantidad_Inicial = o.Sel;
                 }
 
@@ -346,46 +362,61 @@ namespace PlasticaribeAPI.Controllers
 
                 if (o.Sel > 0)
                 {
-                    o.Proceso_Final = "Sellado";
+                    o.Proceso_Final = "SELLA";
                     o.Cantidad_Final = o.Sel;
                     o.Desperdicio_Final = o.Desp_sel;
+                    o.Reportado_Final = o.Sel + o.Desp_sel;
                 }
                 else if (o.Emp > 0)
                 {
-                    o.Proceso_Final = "Empaque";
+                    o.Proceso_Final = "EMP";
                     o.Cantidad_Final = o.Emp;
                     o.Desperdicio_Final = o.Desp_emp;
+                    o.Reportado_Final = o.Emp + o.Desp_emp;
                 }
                 else if (o.Dbl > 0)
                 {
-                    o.Proceso_Final = "Doblado";
+                    o.Proceso_Final = "DOBL";
                     o.Cantidad_Final = o.Dbl;
                     o.Desperdicio_Final = o.Desp_dbl;
+                    o.Reportado_Final = o.Dbl + o.Desp_dbl;
                 }
                 else if (o.Lam > 0)
                 {
-                    o.Proceso_Final = "Laminado";
+                    o.Proceso_Final = "LAM";
                     o.Cantidad_Final = o.Lam;
                     o.Desperdicio_Final = o.Desp_lam;
+                    o.Reportado_Final = o.Lam + o.Desp_lam;
                 }
                 else if (o.Perf > 0)
                 {
-                    o.Proceso_Final = "Perforado";
+                    o.Proceso_Final = "PERF";
                     o.Cantidad_Final = o.Perf;
                     o.Desperdicio_Final = o.Desp_perf;
+                    o.Reportado_Final = o.Perf + o.Desp_perf;
                 }
                 else if (o.Imp > 0)
                 {
-                    o.Proceso_Final = "Impresión";
+                    o.Proceso_Final = "IMP";
                     o.Cantidad_Final = o.Imp;
                     o.Desperdicio_Final = o.Desp_imp;
+                    o.Reportado_Final = o.Imp + o.Desp_imp;
                 }
                 else if (o.Ext > 0)
                 {
-                    o.Proceso_Final = "Extrusión";
+                    o.Proceso_Final = "EXT";
                     o.Cantidad_Final = o.Ext;
                     o.Desperdicio_Final = o.Desp_ext;
+                    o.Reportado_Final = o.Ext + o.Desp_ext;
                 }
+                else if (o.Mp > 0)
+                {
+                    o.Proceso_Final = "MP";
+                    o.Cantidad_Final = o.Mp;
+                    o.Desperdicio_Final = Convert.ToDecimal(0);
+                    o.Reportado_Final = o.Mp;
+                }
+
 
 
                 // =========================================================
@@ -393,8 +424,8 @@ namespace PlasticaribeAPI.Controllers
                 // =========================================================
 
                 o.Balance_General =
-                    o.Cantidad_Inicial -
-                    (o.Cantidad_Final + o.Desperdicio_Final);
+                    (o.Cantidad_Final + o.Desperdicio_Final) - o.Cantidad_Inicial;
+                    
             }
 
             return Ok(con);
@@ -941,6 +972,8 @@ public class OrdenTrabajoConBalanceDto
     public string Proceso_Inicial  { get; set; }
 
     public string Proceso_Final { get; set; }
+
+    public decimal Reportado_Final { get; set; }
 
     public decimal Desp { get; set; }
 
