@@ -55,6 +55,14 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "varchar(max)")]
         public string? Dvc_Observacion { get; set; }
 
+        public long? Usua_Operario { get; set; }
+
+        public Usuario? Operario { get; set; }
+
+        public long? Usua_Supervisor { get; set; }
+
+        public Usuario? Supervisor {  get; set; }
+
         [Column(TypeName = "date")]
         public DateTime Dvc_FechaRegistro { get; set; }
 
