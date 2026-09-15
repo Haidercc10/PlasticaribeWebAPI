@@ -82,46 +82,26 @@ namespace PlasticaribeAPI.Controllers
                                                                  where mp.SubCatMP_Id == dsmpe.SubCatMP_Id
                                                                  select (decimal?)mp.MatPri_Stock).Sum() ?? Convert.ToDecimal(0),
                                                      Cantidad_Pedida = dsmpe.DtSolMpExt_Cantidad,  
-                                                     /*Cantidad_Restante = dsmpe.DtSolMpExt_Cantidad - 
+                                                     Cantidad_Restante = dsmpe.DtSolMpExt_Cantidad - 
                                                      (
                                                          (
                                                             from d in _context.Set<DetalleAsignacion_MateriaPrima>()
-                                                            where d.AsigMp.SolMpExt_Id == id &&
-                                                            d.MatPri_Id == dsmpe.MatPri_Id
+                                                            where d.AsigMp.SolMpExt_Id == id 
                                                             //&& d.MatPri_Id != 84
                                                             group d by d.MatPri_Id into g
                                                             select (decimal?)g.Sum(x => x.DtAsigMp_Cantidad)
                                                          ).Sum() ?? Convert.ToDecimal(0)
-                                                         +
-                                                         (
-                                                            from d in _context.Set<DetalleAsignacion_Tinta>()
-                                                            where d.AsigMp.SolMpExt_Id == id &&
-                                                            d.Tinta_Id == dsmpe.Tinta_Id
-                                                            && d.Tinta_Id != 2001
-                                                            group d by d.Tinta_Id into g
-                                                            select (decimal?)g.Sum(x => x.DtAsigTinta_Cantidad)
-                                                          ).Sum() ?? Convert.ToDecimal(0)
                                                      ),
                                                      Cantidad_Entregada =
                                                      (
                                                          (
                                                             from d in _context.Set<DetalleAsignacion_MateriaPrima>()
-                                                            where d.AsigMp.SolMpExt_Id == id &&
-                                                            d.MatPri_Id == dsmpe.MatPri_Id
+                                                            where d.AsigMp.SolMpExt_Id == id 
                                                             //&& d.MatPri_Id != 84
                                                             group d by d.MatPri_Id into g
                                                             select (decimal?)g.Sum(x => x.DtAsigMp_Cantidad)
                                                          ).Sum() ?? Convert.ToDecimal(0)
-                                                         +
-                                                         (
-                                                            from d in _context.Set<DetalleAsignacion_Tinta>()
-                                                            where d.AsigMp.SolMpExt_Id == id &&
-                                                            d.Tinta_Id == dsmpe.Tinta_Id
-                                                            && d.Tinta_Id != 2001
-                                                            group d by d.Tinta_Id into g
-                                                            select (decimal?)g.Sum(x => x.DtAsigTinta_Cantidad)
-                                                          ).Sum() ?? Convert.ToDecimal(0)
-                                                     ),*/
+                                                     ),
                                                      Medida = dsmpe.UndMed_Id,
                                                      //Empresa
                                                      emp.Empresa_Id,
@@ -138,19 +118,19 @@ namespace PlasticaribeAPI.Controllers
             else return Ok(result);
         }
 
-        /*
+        
         // Obtener solicitudes y materias primas asociadas para actualizar detalles  
         [HttpGet("getSolicitudesConMatPrimas/{solicitud}/{mp}")]
         public ActionResult GetSolicitudesConMatPrimas(long solicitud, long mp)
         {
             var con = from sol in _context.Set<DetSolicitud_MatPrimaExtrusion>()
                       where sol.SolMpExt_Id == solicitud
-                            && (sol.MatPri_Id == mp || sol.Tinta_Id == mp)
+                            //&& (sol.MatPri_Id == mp || sol.Tinta_Id == mp)
                       select sol.Codigo;
             return Ok(con);
         }
-        */
-        /*
+        
+        
         // GET: api/DetSolicitud_MatPrimaExtrusion/5
         [HttpGet("getQuerySolicitudesMp_Extrusion/{fecha1}/{fecha2}")]
         public ActionResult GetQuerySolicitudesMp_Extrusion(DateTime fecha1, DateTime fecha2, string? id = "", string? estado = "")
@@ -183,12 +163,10 @@ namespace PlasticaribeAPI.Controllers
                                                      Fecha = smpe.SolMpExt_Fecha,
                                                      Hora = smpe.SolMpExt_Hora,
                                                      //Detalle
-                                                     MatPrima_Id = dsmpe.MatPri_Id,
-                                                     MatPrima = dsmpe.MatPrima.MatPri_Nombre,
-                                                     Stock_Mp = dsmpe.MatPrima.MatPri_Stock,
-                                                     Tinta_Id = dsmpe.Tinta_Id,
-                                                     Tinta = dsmpe.Tinta.Tinta_Nombre,
-                                                     Stock_Tinta = dsmpe.Tinta.Tinta_Stock,
+                                                     MatPrima_Id = dsmpe.SubCatMP_Id,
+                                                     MatPrima = dsmpe.SubCatMP_Nombre,
+                                                    
+                                                     Stock = 0,
                                                      Cantidad = dsmpe.DtSolMpExt_Cantidad,
                                                      Medida = dsmpe.UndMed_Id,
                                                      //Empresa
@@ -204,7 +182,7 @@ namespace PlasticaribeAPI.Controllers
 
             if (detSolicitud_MatPrimaExtrusion == null) return NotFound();
             else return Ok(detSolicitud_MatPrimaExtrusion);
-        }*/
+        }
 
         // PUT: api/DetSolicitud_MatPrimaExtrusion/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

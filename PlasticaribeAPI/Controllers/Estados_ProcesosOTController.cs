@@ -165,12 +165,13 @@ namespace PlasticaribeAPI.Controllers
             return con.Any() ? Ok(con) : NotFound("¡No se encontró información!");
         }
 
-        
 
-        [HttpGet("getInfo_OrdenesTrabajoConBalance/{fechaInicial}/{fechaFinal}")]
+        //Función que se encarga de mostrar el balance de las ordenes de trabajo, calculando el balance por proceso y el balance general
+        [HttpGet("getInfo_OrdenesTrabajoConBalance/{fechaInicial}/{fechaFinal}/{usarFechaCreacion}")]
         public async Task<ActionResult> GetInfo_OrdenesTrabajoConBalance(
             DateTime fechaInicial,
             DateTime fechaFinal,
+            bool usarFechaCreacion,
             string? ot = "",
             string? cli = "",
             string? prod = "",
@@ -182,10 +183,7 @@ namespace PlasticaribeAPI.Controllers
             // 1) Agregación de desperdicios (una sola pasada, GROUP BY + LEFT JOIN,
             //    igual que en getInfo_OrdenesTrabajo2).
             // -------------------------------------------------------------
-            var fechaActual = DateTime.Now;
-            DateTime fechaUnMesAtras = fechaActual.AddMonths(-1);
-            bool usarFechaCreacion = fechaInicial == fechaUnMesAtras;
-
+            
             var desperdiciosPorOt = _context.Set<Models.Desperdicio>()
                 .GroupBy(d => d.Desp_OT)
                 .Select(g => new
@@ -239,20 +237,24 @@ namespace PlasticaribeAPI.Controllers
 
                     Perf = Convert.ToDecimal(orden.EstProcOT_PerforadoKg),
                     Desp_perf = desp.DespPerf ?? 0m,
-                    Sum_perf = (orden.EstProcOT_PerforadoKg + desp.DespImp ?? 0m),
+                    Sum_perf = (orden.EstProcOT_PerforadoKg + desp.DespPerf ?? 0m),
 
                     Lam = orden.EstProcOT_LaminadoKg,
                     Desp_lam = desp.DespLam ?? 0m,
+                    Sum_lam = (orden.EstProcOT_LaminadoKg + desp.DespLam ?? 0m),
 
                     Dbl = orden.EstProcOT_DobladoKg,
                     Desp_dbl = desp.DespDbl ?? 0m,
+                    Sum_dbl = (orden.EstProcOT_DobladoKg + desp.DespDbl ?? 0m),
 
                     Emp = orden.EstProcOT_EmpaqueKg,
                     Desp_emp = desp.DespEmp ?? 0m,
+                    Sum_emp = (orden.EstProcOT_EmpaqueKg + desp.DespEmp ?? 0m),
 
                     Sel = orden.EstProcOT_SelladoKg,
                     SelUnd = orden.EstProcOT_SelladoUnd,
                     Desp_sel = desp.DespSel ?? 0m,
+                    Sum_sel = (orden.EstProcOT_SelladoKg + desp.DespSel ?? 0m),
 
                     Desp = Convert.ToDecimal(desp.Desp),
 
@@ -260,6 +262,9 @@ namespace PlasticaribeAPI.Controllers
                     Est = orden.Estado_OT.Estado_Nombre,
                     Obs = orden.EstProcOT_Observacion,
                     Fecha = orden.EstProcOT_FechaCreacion,
+                    FechaInicio = orden.EstProcOT_FechaInicio.Value,
+                    FechaFinal = orden.EstProcOT_FechaFinal.Value,
+                    Diff_Dias = orden.EstProcOT_FechaFinal != null ? (orden.EstProcOT_FechaFinal - orden.EstProcOT_FechaInicio).Value.Days : 0,
                     Cli = orden.Clientes.Cli_Nombre,
 
                     Ref = orden.Producto.Prod_Nombre,
@@ -278,42 +283,126 @@ namespace PlasticaribeAPI.Controllers
             // -------------------------------------------------------------
             foreach (var o in con)
             {
-                decimal baseSiguiente = o.Mp;
+                decimal baseSiguiente = o.Mp; //3450
+                
 
-                o.Balance_Ext = (o.Ext + o.Desp_ext) - baseSiguiente;
-                if (o.Ext > 0) baseSiguiente = o.Ext;
-                else o.Balance_Ext = 0;
+                o.Balance_Ext = (o.Ext + o.Desp_ext) - baseSiguiente; //9656-3450
+                if (o.Ext > 0)
+                {
+                    o.Base_Ext = baseSiguiente; //3450
+                    baseSiguiente = o.Ext; //9616
+                }
+                else {
+                    o.Balance_Ext = 0;
+                    o.Base_Ext = 0;
+                } 
+
 
                 o.Balance_Imp = (o.Imp + o.Desp_imp) - baseSiguiente;
-                if (o.Imp > 0) baseSiguiente = o.Imp;
-                else o.Balance_Imp = 0;
+                if (o.Imp > 0)
+                {
+                    o.Base_Imp = baseSiguiente;
+                    baseSiguiente = o.Imp;
+                    
+                }
+                else {
+                    o.Balance_Imp = 0;
+                    o.Base_Imp = 0;
+                } 
+               
 
                 o.Balance_Lam = (o.Lam + o.Desp_lam) - baseSiguiente;
-                if (o.Lam > 0) baseSiguiente = o.Lam;
-                else o.Balance_Lam = 0;
+                if (o.Lam > 0)
+                {
+                    o.Base_Lam = baseSiguiente;
+                    baseSiguiente = o.Lam;
+                }
+                else {
+                    o.Balance_Lam = 0;
+                    o.Base_Lam = 0;
+                } 
+                
 
                 o.Balance_Perf = (o.Perf + o.Desp_perf) - baseSiguiente;
-                if (o.Perf > 0) baseSiguiente = o.Perf;
-                else o.Balance_Perf = 0;
+                if (o.Perf > 0)
+                {
+                    o.Base_Perf = baseSiguiente;
+                    baseSiguiente = o.Perf;
+                }
+                else { 
+                    o.Balance_Perf = 0;
+                    o.Base_Perf = 0;
+                }
+               
 
                 o.Balance_Dbl = (o.Dbl + o.Desp_dbl) - baseSiguiente;
-                if (o.Dbl > 0) baseSiguiente = o.Dbl;
-                else o.Balance_Dbl = 0;
+                if (o.Dbl > 0) {
+                    o.Base_Dbl = baseSiguiente;
+                    baseSiguiente = o.Dbl;
+                }   
+                else
+                {
+                    o.Balance_Dbl = 0;
+                    o.Base_Dbl = 0; 
+                }
 
                 o.Balance_Emp = (o.Emp + o.Desp_emp) - baseSiguiente;
-                if (o.Emp > 0) baseSiguiente = o.Emp;
-                else o.Balance_Emp = 0;
+                if (o.Emp > 0) {
+                    o.Base_Emp = baseSiguiente;
+                    baseSiguiente = o.Emp;
+                } 
+                else { 
+                    o.Balance_Emp = 0;
+                    o.Base_Emp = 0;
+                }
 
                 o.Balance_Sel = (o.Sel + o.Desp_sel) - baseSiguiente;
-                if (o.Sel > 0) baseSiguiente = o.Sel;
-                else o.Balance_Sel = 0;
+                if (o.Sel > 0)
+                {
+                    o.Base_Sel = baseSiguiente;
+                    baseSiguiente = o.Sel;
+                }
+                else { 
+                    o.Balance_Sel = 0;
+                    o.Base_Sel = 0;
+                }
+
+                /*decimal baseAnterior = o.Mp;
+
+                o.Base_Ext = baseAnterior;
+                o.Balance_Ext = o.Ext == 0 ? 0m : (o.Ext + o.Desp_ext) - baseAnterior;
+                baseAnterior = o.Ext;
+
+                o.Base_Imp = baseAnterior;
+                o.Balance_Imp = o.Imp == 0 ? 0m : (o.Imp + o.Desp_imp) - baseAnterior;
+                baseAnterior = o.Imp;
+
+                o.Base_Perf = baseAnterior;
+                o.Balance_Perf = o.Perf == 0 ? 0m : (o.Perf + o.Desp_perf) - baseAnterior;
+                baseAnterior = o.Perf;
+
+                o.Base_Lam = baseAnterior;
+                o.Balance_Lam = o.Lam == 0 ? 0m : (o.Lam + o.Desp_lam) - baseAnterior;
+                baseAnterior = o.Lam;
+
+                o.Base_Dbl = baseAnterior;
+                o.Balance_Dbl = o.Dbl == 0 ? 0m : (o.Dbl + o.Desp_dbl) - baseAnterior;
+                baseAnterior = o.Dbl;
+
+                o.Base_Emp = baseAnterior;
+                o.Balance_Emp = o.Emp == 0 ? 0m : (o.Emp + o.Desp_emp) - baseAnterior;
+                baseAnterior = o.Emp;
+
+                o.Base_Sel = baseAnterior;
+                o.Balance_Sel = o.Sel == 0 ? 0m : (o.Sel + o.Desp_sel) - baseAnterior;
+                baseAnterior = o.Sel;*/
 
                 // =========================================================
                 // BALANCE GENERAL
                 // =========================================================
 
                 // Primer proceso que tenga cantidad
-                
+
                 if (o.Ext > 0)
                 {
                     o.Proceso_Inicial = "EXT";
@@ -925,36 +1014,44 @@ public class OrdenTrabajoConBalanceDto
     public string Ot { get; set; } = "";
     public decimal Mp { get; set; }
 
+    public decimal Base_Ext { get; set; }
     public decimal Ext { get; set; }
     public decimal Desp_ext { get; set; }
     public decimal Sum_ext { get; set; }
     public decimal Balance_Ext { get; set; }
 
+    public decimal Base_Imp { get; set; }
     public decimal Imp { get; set; }
     public decimal Desp_imp { get; set; }
     public decimal Sum_imp { get; set; }
     public decimal Balance_Imp { get; set; }
 
+    public decimal Base_Perf { get; set; }
     public decimal Perf { get; set; }
     public decimal Desp_perf { get; set; }
 
     public decimal Sum_perf { get; set; }
     public decimal Balance_Perf { get; set; }
 
+    public decimal Base_Lam { get; set; }
     public decimal Lam { get; set; }
     public decimal Desp_lam { get; set; }
     public decimal Balance_Lam { get; set; }
+    public decimal Sum_lam { get; set; }
 
+    public decimal Base_Dbl { get; set; }
     public decimal Dbl { get; set; }
     public decimal Desp_dbl { get; set; }
     public decimal Sum_dbl { get; set; }
     public decimal Balance_Dbl { get; set; }
 
+    public decimal Base_Emp { get; set; }
     public decimal Emp { get; set; }
     public decimal Desp_emp { get; set; }
     public decimal Sum_emp { get; set; }
     public decimal Balance_Emp { get; set; }
 
+    public decimal Base_Sel { get; set; }
     public decimal Sel { get; set; }
     public decimal SelUnd { get; set; }
     public decimal Desp_sel { get; set; }
@@ -992,6 +1089,8 @@ public class OrdenTrabajoConBalanceDto
     public DateTime Fecha { get; set; }
     public DateTime FechaInicio { get; set; }
     public DateTime FechaFinal { get; set; }
+
+    public int Diff_Dias { get; set; }
 
     public string? Cli { get; set; }
 

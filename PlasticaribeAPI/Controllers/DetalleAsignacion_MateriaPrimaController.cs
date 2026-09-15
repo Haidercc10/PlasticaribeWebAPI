@@ -262,9 +262,49 @@ namespace PlasticaribeAPI.Controllers
                                dev.Tinta_Id == 2001
                          select dev.DtDevMatPri_CantidadDevuelta).Sum();
 
+            var solicitud = (from sol in _context.Set<DetSolicitud_MatPrimaExtrusion>()
+                           where sol.SolMatPriExt.SolMpExt_OT == ot
+                           select sol.DtSolMpExt_Cantidad).Sum();
+
             var asigs = (asig + asgBopp) - devol;
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(asigs);
+        }
+
+        //Consulta que traerá la cantidad de materia prima asignada, teniendo en cuenta la materia prima devuelta
+        [HttpGet("getMateriaPrimaSolicitada/{ot}")]
+        public async Task<ActionResult> getMateriaPrimaSolicitada(int ot)
+        {
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var asig = (from asg in _context.Set<DetalleAsignacion_MateriaPrima>().AsTracking()
+                        where asg.AsigMp.AsigMP_OrdenTrabajo == ot
+                        select asg.DtAsigMp_Cantidad).Sum();
+
+            var asgBopp = (from asgbopp in _context.Set<DetalleAsignacion_BOPP>().AsTracking()
+                           where asgbopp.DtAsigBOPP_OrdenTrabajo == ot
+                           select asgbopp.DtAsigBOPP_Cantidad).Sum();
+
+            var solicitud = (from sol in _context.Set<DetSolicitud_MatPrimaExtrusion>().AsTracking()
+                             where sol.SolMatPriExt.SolMpExt_OT == ot
+                             select sol.DtSolMpExt_Cantidad).Sum();
+
+            var devol = (from dev in _context.Set<DetalleDevolucion_MateriaPrima>().AsTracking()
+                         where dev.DevMatPri.DevMatPri_OrdenTrabajo == ot &&
+                               dev.Tinta_Id == 2001
+                         select dev.DtDevMatPri_CantidadDevuelta).Sum();
+
+            var asigs = (asig + asgBopp) - devol;
+
+            var result = new
+            {
+                Cantidad_Asignada = asigs,
+                Cantidad_Solicitada = solicitud,
+                Cantidad_Total = (solicitud + asigs)
+            };
+
+           var data = await Task.FromResult(result);
+            return Ok(data);
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
         }
 
         //Consulta que traerá la cantidad de materia prima asignada, teniendo en cuenta la materia prima devuelta
