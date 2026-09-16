@@ -202,6 +202,8 @@ namespace PlasticaribeAPI.Controllers
                           Fails = d.Fallas,
                           Process = d.Proceso,
                           Req = d.Requerimiento,
+                          Ops = d.Operario,
+                          Sups = d.Supervisor
                       };
             return Ok(dev);
         }

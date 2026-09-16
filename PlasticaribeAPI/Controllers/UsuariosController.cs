@@ -3,10 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
-using StackExchange.Redis;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -43,6 +39,7 @@ namespace PlasticaribeAPI.Controllers
             return usuario;
         }
 
+        // GET: usuario por nombre (wtf con el nombre y las variables?)
         [HttpGet("nombreUsuario/{Usua_Nombre}")]
         public ActionResult<Usuario> GetProductoPedido(string Usua_Nombre)
         {
@@ -204,8 +201,6 @@ namespace PlasticaribeAPI.Controllers
             {
                 return Ok(usuario);
             }
-
-
         }
 
         [HttpGet("getVendedores")]
@@ -254,7 +249,7 @@ namespace PlasticaribeAPI.Controllers
             return operarios.Any() ? Ok(operarios) : NotFound();
         }
 
-        //Consulta para obtener los empacadores de producción por area
+        //Consulta para obtener los usuarios autorizados para el peso teórico por cedula
         [HttpGet("GetUsersAthorizedForTeoricWeight/{id}")]
         public ActionResult GetUsersAthorizedForTeoricWeight(long id)
         {
@@ -277,7 +272,7 @@ namespace PlasticaribeAPI.Controllers
             return authorizedUsers.Any() ? Ok(authorizedUsers) : NotFound();
         }
 
-        //Consulta para obtener los empacadores de producción por area
+        //Consulta para obtener los usuarios autorizados sin parametros
         [HttpGet("getListAuthorizeUsers")]
         public async Task<ActionResult> getListAuthorizeUsers()
         {
@@ -322,6 +317,7 @@ namespace PlasticaribeAPI.Controllers
             return Ok(supervisors);
         }
 
+        // GET: Todos los supervisores
         [HttpGet("getAllSupervisors")]
         public async Task<ActionResult> getAllSupervisors()
         {
@@ -336,19 +332,16 @@ namespace PlasticaribeAPI.Controllers
                                          Area_Name = u.Area.Area_Nombre,
                                      }).ToListAsync();
 
-            if (supervisors == null || !supervisors.Any())
-            {
-                return NotFound();
-            }
-            return Ok(supervisors);
+            return supervisors.Any() ? Ok(supervisors) : NotFound();
         }
 
+        // GET: Todos los trabajadores
         [HttpGet("getTrabajadores/{startDate}/{endDate}/{area}")]
         public ActionResult GetTrabajadores(DateTime startDate, DateTime endDate, string area)
         {
             string[] areas = area.Split("|");
 
-            var notAvaibleWorkers = from p in _context.Set<NominaDetallada_Plasticaribe>()
+            var notAvailableWorkers = from p in _context.Set<NominaDetallada_Plasticaribe>()
                                     where (p.PeriodoInicio >= startDate && p.PeriodoInicio <= endDate) ||
                                           (p.PeriodoFin >= startDate && p.PeriodoFin <= endDate) || 
                                           (p.PeriodoInicio < startDate && p.PeriodoFin >= startDate)
@@ -359,7 +352,7 @@ namespace PlasticaribeAPI.Controllers
                           join st in _context.Set<SalariosTrabajadores>() on u.Usua_Id equals st.Id_Trabajador
                           where areas.Contains(Convert.ToString(u.Area_Id)) &&
                                 u.Estado_Id == 1 &&
-                                !notAvaibleWorkers.Contains(u.Usua_Id)
+                                !notAvailableWorkers.Contains(u.Usua_Id)
                           select new
                           {
                               Identification = u.Usua_Id,
@@ -450,6 +443,7 @@ namespace PlasticaribeAPI.Controllers
             return workers.Any() ? Ok(workers) : NotFound();
         }
 
+        //GET: Trabajadores no disponibles
         [HttpGet("getNotAvaibleWorkers/{startDate}/{endDate}")]
         public ActionResult GetNotAvaibleWorkers(DateTime startDate, DateTime endDate)
         {
@@ -458,16 +452,22 @@ namespace PlasticaribeAPI.Controllers
                       select p.Id_Trabajador);
         }
 
+        //GET: Empleados por nombre o ID
         [HttpGet("getEmployees/{data}")]
         public ActionResult getEmployees(string data)
         {
             var employees = from emp in _context.Set<Usuario>()
                             where emp.Estado_Id == 1
                             && (emp.Usua_Nombre.Contains(data) || Convert.ToString(emp.Usua_Id) == data)
-                            select new { emp.Usua_Id, emp.Usua_Cedula, emp.Usua_Nombre, emp.Area_Id, emp.RolUsu_Id };
+                            select new { 
+                                emp.Usua_Id, 
+                                emp.Usua_Cedula, 
+                                emp.Usua_Nombre, 
+                                emp.Area_Id, 
+                                emp.RolUsu_Id 
+                            };
 
-            if (employees != null) return Ok(employees);
-            else return NotFound();
+            return employees.Any() ? Ok(employees) : NotFound();
         }
 
         // PUT: api/Usuarios/5
@@ -547,6 +547,31 @@ namespace PlasticaribeAPI.Controllers
             return _context.Usuarios.Any(e => e.Usua_Id == id);
         }
 
+        //Consulta para obtener los los supervisores y operarios activos por area
+        [HttpGet("getSupervisoresYOperariosPorArea/{area}")]
+        public async Task<ActionResult> getSupervisoresYOperariosPorArea(string area)
+        {
+            // obtener todos los usuarios por area
+            var users = await (from u in _context.Set<Usuario>()
+                               join a in _context.Set<Area>() on u.Area_Id equals a.Area_Id
+                                     where u.Estado_Id == 1
+                                     && a.Area_Nombre == area.ToUpper()
+                                     orderby u.Usua_Nombre ascending
+                                     select new
+                                     {
+                                         usua_Id = u.Usua_Id,
+                                         usua_Nombre = u.Usua_Nombre,
+                                         rolUsu_Id = u.RolUsu_Id
+                                     }).ToListAsync();
+
+            // separar los usuarios de la misma area por roles y ponerlos en cada lista de salida.
+            var response = new { 
+                operators = users.Where(o => o.rolUsu_Id == 59).Select(o => new { o.usua_Id, o.usua_Nombre }).ToList(),
+                supervisors = users.Where(s => s.rolUsu_Id == 105).Select(s => new { s.usua_Id, s.usua_Nombre}).ToList()
+            };
+
+            return users.Any() ? Ok(response) : NotFound();
+        }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }
