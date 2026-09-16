@@ -262,10 +262,6 @@ namespace PlasticaribeAPI.Controllers
                                dev.Tinta_Id == 2001
                          select dev.DtDevMatPri_CantidadDevuelta).Sum();
 
-            var solicitud = (from sol in _context.Set<DetSolicitud_MatPrimaExtrusion>()
-                           where sol.SolMatPriExt.SolMpExt_OT == ot
-                           select sol.DtSolMpExt_Cantidad).Sum();
-
             var asigs = (asig + asgBopp) - devol;
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(asigs);

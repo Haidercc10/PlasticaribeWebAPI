@@ -207,7 +207,7 @@ namespace PlasticaribeAPI.Controllers
             var query =
                 from orden in _context.Set<Estados_ProcesosOT>().AsNoTracking()
                 where  ( usarFechaCreacion
-                        ? orden.EstProcOT_FechaCreacion >= fechaInicial && orden.EstProcOT_FechaFinal <= fechaFinal
+                        ? orden.EstProcOT_FechaCreacion >= fechaInicial && orden.EstProcOT_FechaCreacion <= fechaFinal
                         : orden.EstProcOT_FechaInicio >= fechaInicial && orden.EstProcOT_FechaFinal <= fechaFinal)
                       && (string.IsNullOrEmpty(ot) || Convert.ToString(orden.EstProcOT_OrdenTrabajo).Contains(ot))
                       && (string.IsNullOrEmpty(falla) || Convert.ToString(orden.Falla_Id) == falla)
@@ -235,7 +235,7 @@ namespace PlasticaribeAPI.Controllers
                     Desp_imp = desp.DespImp ?? 0m,
                     Sum_imp = (orden.EstProcOT_ImpresionKg + desp.DespImp ?? 0m),
 
-                    Perf = Convert.ToDecimal(orden.EstProcOT_PerforadoKg),
+                    Perf = orden.EstProcOT_PerforadoKg ?? 0m,
                     Desp_perf = desp.DespPerf ?? 0m,
                     Sum_perf = (orden.EstProcOT_PerforadoKg + desp.DespPerf ?? 0m),
 
@@ -443,6 +443,10 @@ namespace PlasticaribeAPI.Controllers
                     o.Proceso_Inicial = "SELLA";
                     o.Cantidad_Inicial = o.Sel;
                 }
+                else { 
+                    o.Proceso_Inicial = "N/A";
+                    o.Cantidad_Inicial = 0;
+                }
 
 
                 // =========================================================
@@ -505,16 +509,22 @@ namespace PlasticaribeAPI.Controllers
                     o.Desperdicio_Final = Convert.ToDecimal(0);
                     o.Reportado_Final = o.Mp;
                 }
+                else { 
+                    o.Proceso_Final = "N/A";
+                    o.Cantidad_Final = 0;
+                    o.Desperdicio_Final = 0;
+                    o.Reportado_Final = 0;
+                }
 
 
 
-                // =========================================================
-                // BALANCE GENERAL
-                // =========================================================
+                    // =========================================================
+                    // BALANCE GENERAL
+                    // =========================================================
 
-                o.Balance_General =
-                    (o.Cantidad_Final + o.Desperdicio_Final) - o.Cantidad_Inicial;
-                    
+                    o.Balance_General =
+                        (o.Cantidad_Final + o.Desperdicio_Final) - o.Cantidad_Inicial;
+
             }
 
             return Ok(con);
@@ -826,6 +836,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpPut("putStatusProcessOT/{ot}/{process}/{qty}/{weight}")]
         public async Task<IActionResult> putStatusProcessOT(long ot, string process, decimal qty, decimal weight)
         {
+
             decimal quantity = 0m;
             decimal quantityProcessFinal = 0m;
             decimal quantityProcessFinal2 = 0m;
@@ -1066,9 +1077,9 @@ public class OrdenTrabajoConBalanceDto
 
     public decimal Desperdicio_Final { get; set; }
 
-    public string Proceso_Inicial  { get; set; }
+    public string? Proceso_Inicial  { get; set; }
 
-    public string Proceso_Final { get; set; }
+    public string? Proceso_Final { get; set; }
 
     public decimal Reportado_Final { get; set; }
 
@@ -1077,7 +1088,7 @@ public class OrdenTrabajoConBalanceDto
     public decimal Cant { get; set; }
     public decimal CantUnd { get; set; }
 
-    public string Und { get; set; }
+    public string? Und { get; set; }
 
 
     public decimal Entrada { get; set; }
@@ -1086,9 +1097,9 @@ public class OrdenTrabajoConBalanceDto
     public int? Estado_Id { get; set; }
     public string? Est { get; set; }
     public string? Obs { get; set; }
-    public DateTime Fecha { get; set; }
-    public DateTime FechaInicio { get; set; }
-    public DateTime FechaFinal { get; set; }
+    public DateTime? Fecha { get; set; }
+    public DateTime? FechaInicio { get; set; }
+    public DateTime? FechaFinal { get; set; }
 
     public int Diff_Dias { get; set; }
 

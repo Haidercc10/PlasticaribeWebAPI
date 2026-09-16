@@ -7,6 +7,7 @@ using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [Route("api/[controller]")]
     [ApiController]
     public class Detalles_PrecargueDespachoController : ControllerBase
@@ -38,7 +39,7 @@ namespace PlasticaribeAPI.Controllers
             return Detalles_PrecargueDespacho;
         }
 
-        //
+        
         [HttpGet("getPreloadId/{id}")]
         public ActionResult getPreloadId(long id)
         {
@@ -229,4 +230,5 @@ namespace PlasticaribeAPI.Controllers
             }
         }
     }
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 }
