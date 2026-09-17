@@ -112,6 +112,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getMovementsPeletizado/{date1}/{date2}")]
         public ActionResult getMovementsPeletizado(DateTime date1, DateTime date2, string? mp = "", string? ot = "", string? status = "", string? typeMov = "")
         {
+#pragma warning disable CS8629 // Dereference of a possibly null value.
             var entries = from ing in _context.Set<Ingreso_Peletizado>()
                           where ing.IngPel_FechaIngreso >= date1 &&
                           ing.IngPel_FechaIngreso <= date2 &&

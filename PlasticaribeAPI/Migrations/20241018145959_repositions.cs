@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PlasticaribeAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class repositions : Migration
+    public partial class Repositions : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -558,7 +558,7 @@ namespace PlasticaribeAPI.Controllers
             {
                 await _context.SaveChangesAsync(); 
             }
-            catch (DbUpdateConcurrencyException ex)
+            catch
             {
                 throw;
             }
@@ -1201,6 +1201,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getRolls/{date1}/{date2}")]
         public ActionResult getMovementsRolls(DateTime date1, DateTime date2, string? item = "", string? ot = "", string? roll = "", string process = "")
         {
+#pragma warning disable CS8629 // Dereference of a possibly null value.
             var mov = from pp in _context.Set<Produccion_Procesos>()
                       from p in _context.Set<Producto>()
                       where pp.Prod_Id == p.Prod_Id &&
@@ -2078,7 +2079,7 @@ namespace PlasticaribeAPI.Controllers
                     Envio_Zeus = result.Envio_Zeus,
                 });
             }
-            catch (Exception ex)
+            catch
             {
                 return BadRequest();
             }

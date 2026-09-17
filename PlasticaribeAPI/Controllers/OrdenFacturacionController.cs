@@ -125,6 +125,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getMovementsInvoices/{fact}")]
         public ActionResult getMovementsInvoices(string fact)
         {
+#pragma warning disable CS8629 // Dereference of a possibly null value.
             var billingOrder = from o in _context.Set<OrdenFacturacion>()
                                where o.Factura == fact
                                select new

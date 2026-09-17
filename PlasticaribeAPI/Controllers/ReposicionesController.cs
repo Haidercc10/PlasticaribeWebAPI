@@ -44,7 +44,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getLastReposition")]
         public async Task<ActionResult<Reposiciones>> GetLastReposition(long id)
         {
-            var lastReposition = (from r in _context.Set<Reposiciones>() select r.Rep_Id == null ? 0 : r.Rep_Id).Max() + 1;
+            var lastReposition = _context.Reposiciones.Select(r => r.Rep_Id).DefaultIfEmpty().Max() + 1;
             return Ok(lastReposition);
         }
 

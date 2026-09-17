@@ -13,7 +13,7 @@ namespace PlasticaribeAPI.Migrations
 {
     [DbContext(typeof(dataContext))]
     [Migration("20241018145959_repositions")]
-    partial class repositions
+    partial class Repositions
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

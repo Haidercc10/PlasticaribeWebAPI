@@ -615,6 +615,7 @@ namespace PlasticaribeAPI.Controllers
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
+#pragma warning disable CS8629 // Dereference of a possibly null value.
             //Asignaciones de Materia Prima
             var conAsg = from asg in _context.Set<DetalleAsignacion_MateriaPrima>()
                          where asg.AsigMp.AsigMp_FechaRealEntrega >= fecha1

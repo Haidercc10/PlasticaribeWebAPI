@@ -53,7 +53,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getLastPreload")]
         public async Task<ActionResult<Precargue_Despacho>> GetLastPreload(long id)
         {
-            var lastReposition = (from p in _context.Set<Precargue_Despacho>() select p.Pcd_Id == null ? 0 : p.Pcd_Id).Max() + 1;
+            var lastReposition = _context.Precargue_Despacho.Select(p => p.Pcd_Id).DefaultIfEmpty().Max() + 1;
             return Ok(lastReposition);
         }
 

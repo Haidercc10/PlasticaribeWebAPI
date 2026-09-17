@@ -350,7 +350,7 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getProductionSentMonthDetailed/{year}")]
         public ActionResult getProductionSentMonthDetailed(int year)
         {
-
+#pragma warning disable CS8629 // Dereference of a possibly null value.
             //List<SalidasDespacho> listaSalidas = new List<SalidasDespacho>();
             List<int> meses = [1,2,3,4,5,6,7,8,9,10,11,12];
 

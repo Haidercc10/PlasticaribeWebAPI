@@ -371,6 +371,8 @@ namespace PlasticaribeAPI.Controllers
         [HttpPost("getInventoryProducts")]
         public ActionResult getInventoryProducts([FromBody] List<Article> items) 
         {
+#pragma warning disable CS8629 // Dereference of a possibly null value.
+#pragma warning disable CS0472 // Dereference of a possibly null value.
             int count = 0;
             List<Product> newStock = new List<Product>();
 

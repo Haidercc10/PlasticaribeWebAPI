@@ -308,6 +308,7 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult GetRollosEnviadosCamion(DateTime inicio, DateTime fin, string? factura = "", string? placa = "", string? conductor = "")
         {
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8629 // Dereference of a possibly null value.
             var fact = from asg in _context.Set<AsignacionProducto_FacturaVenta>()
                        where asg.AsigProdFV_Fecha >= inicio &&
                              asg.AsigProdFV_Fecha <= fin &&
@@ -373,7 +374,7 @@ namespace PlasticaribeAPI.Controllers
                                               select asig.AsigProdFV_Id).ToList(),
                                     CodigoDetail = (from dp in _context.Set<Detalles_PlanillaDespacho>()
                                                     where dp.DtPla_Factura == g.Key.Factura && 
-                                                    dp.Pla_Id == gr.Key.Planilla.Value 
+                                                    dp.Pla_Id == gr.Key.Planilla
                                                     select dp.DtPla_Codigo).FirstOrDefault(),
                                }
                              ).ToList(),

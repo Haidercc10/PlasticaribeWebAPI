@@ -179,11 +179,12 @@ namespace PlasticaribeAPI.Controllers
             string? vendedor = "",
             string? falla = "")
         {
+#pragma warning disable CS8629 // Dereference of a possibly null value.
             // -------------------------------------------------------------
             // 1) Agregación de desperdicios (una sola pasada, GROUP BY + LEFT JOIN,
             //    igual que en getInfo_OrdenesTrabajo2).
             // -------------------------------------------------------------
-            
+
             var desperdiciosPorOt = _context.Set<Models.Desperdicio>()
                 .GroupBy(d => d.Desp_OT)
                 .Select(g => new
