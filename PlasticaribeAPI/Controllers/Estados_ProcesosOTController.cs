@@ -50,122 +50,6 @@ namespace PlasticaribeAPI.Controllers
             return estados_ProcesosOT;
         }
 
-        // Consulta para obtener información de las órdenes de trabajo con filtros opcionales y agregación de desperdicios
-        [HttpGet("getInfo_OrdenesTrabajo2/{fechaInicial}/{fechaFinal}")]
-        public async Task<ActionResult> GetInfo_OrdenesTrabajo2(
-        DateTime fechaInicial,
-        DateTime fechaFinal,
-        string? ot = "",
-        string? cli = "",
-        string? prod = "",
-        string? estado = "",
-        string? vendedor = "",
-        string? falla = "")
-        {
-            // -------------------------------------------------------------
-            // 1) Agregación de desperdicios: UNA sola pasada por Desperdicio,
-            //    agrupada por OT, con sumas condicionales por proceso.
-            //    Esto reemplaza las N subconsultas correlacionadas.
-            // -------------------------------------------------------------
-            var fechaActual = DateTime.Now;
-            DateTime fechaUnMesAtras = fechaActual.AddMonths(-1);
-
-            var desperdiciosPorOt = _context.Set<Models.Desperdicio>()
-                .GroupBy(d => d.Desp_OT)
-                .Select(g => new
-                {
-                    Ot = g.Key,
-                    DespExt = g.Where(x => x.Proceso_Id == "EXT").Sum(x => (decimal?)x.Desp_PesoKg),
-                    DespImp = g.Where(x => x.Proceso_Id == "IMP").Sum(x => (decimal?)x.Desp_PesoKg),
-                    DespPerf = g.Where(x => x.Proceso_Id == "PERF").Sum(x => (decimal?)x.Desp_PesoKg),
-                    DespDob = g.Where(x => x.Proceso_Id == "DBLD").Sum(x => (decimal?)x.Desp_PesoKg),
-                    DespLam = g.Where(x => x.Proceso_Id == "LAM").Sum(x => (decimal?)x.Desp_PesoKg),
-                    DespEmp = g.Where(x => x.Proceso_Id == "CORTE").Sum(x => (decimal?)x.Desp_PesoKg) ,
-                    DespSella = g.Where(x => x.Proceso_Id == "SELLA").Sum(x => (decimal?)x.Desp_PesoKg),
-                    DespTotal = g.Sum(x => (decimal?)x.Desp_PesoKg),
-                    
-                });
-
-            // -------------------------------------------------------------
-            // 2) Query principal con filtros condicionales (solo se aplican
-            //    si el parámetro viene informado) + LEFT JOIN a la agregación.
-            // -------------------------------------------------------------
-            var query =
-                from orden in _context.Set<Estados_ProcesosOT>().AsNoTracking()
-                where (fechaInicial == fechaUnMesAtras ? orden.EstProcOT_FechaCreacion : orden.EstProcOT_FechaInicio) >= fechaInicial
-                      && orden.EstProcOT_FechaFinal <= fechaFinal
-                      && (string.IsNullOrEmpty(ot) || Convert.ToString(orden.EstProcOT_OrdenTrabajo).Contains(ot))
-                      && (string.IsNullOrEmpty(falla) || Convert.ToString(orden.Falla_Id) == falla)
-                      && (string.IsNullOrEmpty(estado) || Convert.ToString(orden.Estado_Id) == estado)
-                      && (string.IsNullOrEmpty(vendedor) || Convert.ToString(orden.Usuario.Usua_Id) == vendedor)
-                      && (string.IsNullOrEmpty(cli) || Convert.ToString(orden.EstProcOT_Cliente).Contains(cli))
-                      && (string.IsNullOrEmpty(prod) || Convert.ToString(orden.Prod_Id) == prod)
-                join desp in desperdiciosPorOt
-                    on orden.EstProcOT_OrdenTrabajo equals desp.Ot into despJoin
-                from desp in despJoin.DefaultIfEmpty() // LEFT JOIN: OTs sin desperdicio no se pierden
-                select new
-                {
-                    orden.EstProcOT_Id,
-                    Ot = orden.EstProcOT_OrdenTrabajo,
-                    Ext = orden.EstProcOT_ExtrusionKg,
-                    Desp_ext = desp.DespExt ?? 0m,
-                    Sum_ext = (orden.EstProcOT_ExtrusionKg + desp.DespExt ?? 0m),
-                    Imp = orden.EstProcOT_ImpresionKg,
-                    Desp_imp = desp.DespImp ?? 0m,
-                    Sum_imp = (orden.EstProcOT_ImpresionKg + desp.DespImp ?? 0m),
-                    Perf = orden.EstProcOT_PerforadoKg,
-                    Desp_perf = desp.DespPerf ?? 0m,
-                    Sum_perf = (orden.EstProcOT_PerforadoKg + desp.DespPerf ?? 0m),
-                    Rot = orden.EstProcOT_RotograbadoKg,
-                    Lam = orden.EstProcOT_LaminadoKg,
-                    Desp_lam = desp.DespLam ?? 0m,
-                    Sum_lam = (orden.EstProcOT_LaminadoKg + desp.DespLam ?? 0m),
-                    Dbl = orden.EstProcOT_DobladoKg,
-                    Desp_dbl = desp.DespDob ?? 0m,
-                    Sum_dbl = (orden.EstProcOT_DobladoKg + desp.DespDob ?? 0m),
-                    Cor = orden.EstProcOT_CorteKg,
-                    Emp = orden.EstProcOT_EmpaqueKg,
-                    Desp_emp = desp.DespEmp ?? 0m,
-                    Sum_emp = (orden.EstProcOT_EmpaqueKg + desp.DespEmp ?? 0m),
-                    Sel = orden.EstProcOT_SelladoKg,
-                    Desp_sel = desp.DespSella ?? 0m,
-                    Sum_sel = (orden.EstProcOT_SelladoKg + desp.DespSella ?? 0m),
-                    SelUnd = orden.EstProcOT_SelladoUnd,
-                    Wik = orden.EstProcOT_WiketiadoKg,
-                    WikUnd = orden.EstProcOT_WiketiadoUnd,
-                    Desp = desp.DespTotal ?? 0m,
-                    orden.Falla_Id,
-                    Falla = orden.FallaTecnica.Falla_Nombre,
-                    orden.Estado_Id,
-                    Est = orden.Estado_OT.Estado_Nombre,
-                    Obs = orden.EstProcOT_Observacion,
-                    Fecha = orden.EstProcOT_FechaCreacion,
-                    Cant = orden.EstProcOT_CantidadPedida,
-                    Und = orden.UndMed_Id,
-                    orden.UnidadMedida.UndMed_Nombre,
-                    FechaInicio = orden.EstProcOT_FechaInicio,
-                    FechaFinal = orden.EstProcOT_FechaFinal,
-                    CantUnd = orden.EstProcOT_CantidadPedidaUnd,
-                    Usu = orden.Usua_Id,
-                    NombreUsu = orden.Usuario.Usua_Nombre,
-                    orden.Cli_Id,
-                    CliNombre = orden.Clientes.Cli_Nombre,
-                    orden.Prod_Id,
-                    Prod = orden.Producto.Prod_Nombre,
-                    Salida = orden.EstProcOT_CantProdFacturada,
-                    Entrada = orden.EstProcOT_CantProdIngresada,
-                    Mp = orden.EstProcOT_CantMatPrimaAsignada,
-                    Cli = orden.EstProcOT_Cliente,
-                    Ped = orden.EstProcOT_Pedido,
-                    
-                };
-
-            var con = await query.ToListAsync();
-
-            return con.Any() ? Ok(con) : NotFound("¡No se encontró información!");
-        }
-
-
         //Función que se encarga de mostrar el balance de las ordenes de trabajo, calculando el balance por proceso y el balance general
         [HttpGet("getInfo_OrdenesTrabajoConBalance/{fechaInicial}/{fechaFinal}/{usarFechaCreacion}")]
         public async Task<ActionResult> GetInfo_OrdenesTrabajoConBalance(
@@ -184,6 +68,12 @@ namespace PlasticaribeAPI.Controllers
             // 1) Agregación de desperdicios (una sola pasada, GROUP BY + LEFT JOIN,
             //    igual que en getInfo_OrdenesTrabajo2).
             // -------------------------------------------------------------
+            // Reemplaza esta línea incorrecta:
+            // var rangoInicial = fechaInicial ?? DateTime.Today.AddMonths(-1);
+
+            // Por esta línea corregida:
+            var rangoInicial = fechaInicial;
+            var rangoFinal = fechaFinal;
 
             var desperdiciosPorOt = _context.Set<Models.Desperdicio>()
                 .GroupBy(d => d.Desp_OT)
@@ -207,9 +97,14 @@ namespace PlasticaribeAPI.Controllers
             // -------------------------------------------------------------
             var query =
                 from orden in _context.Set<Estados_ProcesosOT>().AsNoTracking()
-                where  ( usarFechaCreacion
-                        ? orden.EstProcOT_FechaCreacion >= fechaInicial && orden.EstProcOT_FechaCreacion <= fechaFinal
-                        : orden.EstProcOT_FechaInicio >= fechaInicial && orden.EstProcOT_FechaFinal <= fechaFinal)
+
+                // Obtener la fecha efectiva (FechaFinal ?? FechaInicio ?? FechaCreacion)
+                let fechaEfectiva = orden.EstProcOT_FechaFinal
+                                   ?? orden.EstProcOT_FechaInicio
+                                   ?? orden.EstProcOT_FechaCreacion
+
+                where ((orden.EstProcOT_FechaFinal ?? orden.EstProcOT_FechaInicio ?? orden.EstProcOT_FechaCreacion) >= rangoInicial
+                      && (orden.EstProcOT_FechaFinal ?? orden.EstProcOT_FechaInicio ?? orden.EstProcOT_FechaCreacion) <= rangoFinal)
                       && (string.IsNullOrEmpty(ot) || Convert.ToString(orden.EstProcOT_OrdenTrabajo).Contains(ot))
                       && (string.IsNullOrEmpty(falla) || Convert.ToString(orden.Falla_Id) == falla)
                       && (string.IsNullOrEmpty(estado) || Convert.ToString(orden.Estado_Id) == estado)
@@ -224,6 +119,7 @@ namespace PlasticaribeAPI.Controllers
                     EstProcOT_Id = Convert.ToInt32(orden.EstProcOT_Id),
                     Ot = Convert.ToString(orden.EstProcOT_OrdenTrabajo),
                     Mp = orden.EstProcOT_CantMatPrimaAsignada,
+                    Bopp = orden.EstProcOT_CantBoppAsignado,
                     Cant = orden.EstProcOT_CantidadPedida,
                     CantUnd = Convert.ToDecimal(orden.EstProcOT_CantidadPedidaUnd),
                     Und = orden.UndMed_Id,
@@ -1025,6 +921,7 @@ public class OrdenTrabajoConBalanceDto
     public int EstProcOT_Id { get; set; }
     public string Ot { get; set; } = "";
     public decimal Mp { get; set; }
+    public decimal? Bopp { get; set; }
 
     public decimal Base_Ext { get; set; }
     public decimal Ext { get; set; }

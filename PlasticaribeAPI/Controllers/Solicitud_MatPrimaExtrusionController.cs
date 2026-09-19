@@ -48,8 +48,8 @@ namespace PlasticaribeAPI.Controllers
         }
 
         /** Obtener las ultimas 100 solicitudes para mostrar en los estados */
-        [HttpGet("getUltimas100Solicitudes")]
-        public async Task<ActionResult<Solicitud_MatPrimaExtrusion>> GetUltimasSolicitudes()
+        [HttpGet("getEstadosSolicitudes")]
+        public async Task<ActionResult<Solicitud_MatPrimaExtrusion>> getEstadosSolicitudes()
         {
             if (_context.Solicitud_MatPrimaExtrusion == null) return NotFound();
 

@@ -133,21 +133,20 @@ namespace PlasticaribeAPI.Controllers
         
         // GET: api/DetSolicitud_MatPrimaExtrusion/5
         [HttpGet("getQuerySolicitudesMp_Extrusion/{fecha1}/{fecha2}")]
-        public ActionResult GetQuerySolicitudesMp_Extrusion(DateTime fecha1, DateTime fecha2, string? id = "", string? estado = "")
+        public async Task<ActionResult> GetQuerySolicitudesMp_Extrusion(DateTime fecha1, DateTime fecha2, string? id = "", string? estado = "")
         {
             if (_context.DetSolicitud_MatPrimaExtrusion == null) return NotFound();
 
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+
             var detSolicitud_MatPrimaExtrusion = from smpe in _context.Set<Solicitud_MatPrimaExtrusion>()
-                                                 from dsmpe in _context.Set<DetSolicitud_MatPrimaExtrusion>()
-                                                 from emp in _context.Set<Empresa>()
+                                                 join dsmpe in _context.Set<DetSolicitud_MatPrimaExtrusion>() on smpe.SolMpExt_Id equals dsmpe.SolMpExt_Id
                                                  where smpe.SolMpExt_Id == dsmpe.SolMpExt_Id &&
                                                  smpe.SolMpExt_Fecha >= fecha1 &&
                                                  smpe.SolMpExt_Fecha <= fecha2 &&
                                                  Convert.ToString(smpe.SolMpExt_Id).Contains(id) &&
-                                                 Convert.ToString(smpe.Estado_Id).Contains(estado) &&
-                                                 emp.Empresa_Id == 800188732
+                                                 Convert.ToString(smpe.Estado_Id).Contains(estado)
                                                  select new
                                                  {
                                                      //Encabezado
@@ -163,25 +162,20 @@ namespace PlasticaribeAPI.Controllers
                                                      Fecha = smpe.SolMpExt_Fecha,
                                                      Hora = smpe.SolMpExt_Hora,
                                                      //Detalle
-                                                     MatPrima_Id = dsmpe.SubCatMP_Id,
-                                                     MatPrima = dsmpe.SubCatMP_Nombre,
-                                                    
+                                                     Subcat_Id = dsmpe.SubCatMP_Id,
+                                                     Subcategoria = dsmpe.SubCatMP_Nombre,
                                                      Stock = 0,
                                                      Cantidad = dsmpe.DtSolMpExt_Cantidad,
+                                                     Cantidad_Aprobada = 0,
                                                      Medida = dsmpe.UndMed_Id,
-                                                     //Empresa
-                                                     emp.Empresa_Id,
-                                                     emp.Empresa_Nombre,
-                                                     emp.Empresa_Direccion,
-                                                     emp.Empresa_Telefono,
-                                                     emp.Empresa_Ciudad,
-                                                     emp.Empresa_Correo
                                                  };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
 
-            if (detSolicitud_MatPrimaExtrusion == null) return NotFound();
-            else return Ok(detSolicitud_MatPrimaExtrusion);
+            var result = await detSolicitud_MatPrimaExtrusion.ToListAsync();
+
+            if (result == null) return NotFound();
+            else return Ok(result);
         }
 
         // PUT: api/DetSolicitud_MatPrimaExtrusion/5
