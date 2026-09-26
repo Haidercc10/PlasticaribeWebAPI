@@ -46,8 +46,7 @@ namespace PlasticaribeAPI.Controllers
             var preload = from p in _context.Set<Precargue_Despacho>()
                           from d in _context.Set<Detalles_PrecargueDespacho>()
                           where p.Pcd_Id == d.Pcd_Id &&
-                          p.Pcd_Id == id //&& 
-                          //p.Estado_Id == 11
+                          p.Pcd_Id == id
                           select new
                           {
                               //Header
@@ -92,6 +91,260 @@ namespace PlasticaribeAPI.Controllers
             if (preload == null) return NotFound();
             else if (preload.Any()) return Ok(preload);
             else return BadRequest();
+        }
+
+        [HttpGet("getPreloadIdAsync/{id}")]
+        public async Task<ActionResult> GetPreloadIdAsync(long id)
+        {
+            // ============================================================
+            // 1. HEADER DEL PRECARGUE
+            // ============================================================
+
+            var preload = await _context.Set<Precargue_Despacho>()
+                .AsNoTracking()
+                .Where(p => p.Pcd_Id == id)
+                .Select(p => new
+                {
+                    Movement = p.Pcd_Id,
+                    OF = p.OF_Id,
+
+                    Date1 = p.Pcd_FechaCrea,
+                    Hour1 = p.Pcd_HoraCrea,
+
+                    Date2 = p.Pcd_FechaModifica,
+                    Hour2 = p.Pcd_HoraModifica,
+
+                    UserId1 = p.Usua_Crea,
+                    UserId2 = p.Usua_Modifica,
+
+                    User1 = p.Usuario1.Usua_Nombre,
+                    User2 = p.Usuario2.Usua_Nombre,
+
+                    Observation1 = p.Pcd_Observacion,
+                    Observation2 = p.Pcd_ObservacionModifica,
+
+                    StatusId = p.Estado_Id,
+                    Status = p.Estados.Estado_Nombre,
+
+                    IdClient = p.Cli_Id,
+                    Client = p.Cliente.Cli_Nombre
+                })
+                .FirstOrDefaultAsync();
+
+            if (preload == null)
+            {
+                return NotFound();
+            }
+
+
+            // ============================================================
+            // 2. DETALLES DEL PRECARGUE
+            // ============================================================
+
+            var details = await _context.Set<Detalles_PrecargueDespacho>()
+                .AsNoTracking()
+                .Where(d => d.Pcd_Id == id)
+                .Select(d => new
+                {
+                    Roll = d.DtlPcd_Rollo,
+                    Item = d.Prod_Id,
+                    Reference = d.Producto.Prod_Nombre,
+                    Quantity = d.DtlPcd_Cantidad,
+                    Presentation = d.UndMed_Id
+                })
+                .ToListAsync();
+
+            if (details.Count == 0)
+            {
+                return BadRequest();
+            }
+
+
+            // ============================================================
+            // 3. OBTENER LAS COMBINACIONES ROLLO + PRODUCTO
+            // ============================================================
+
+            var combinations = details
+                .Select(x => new
+                {
+                    x.Roll,
+                    x.Item
+                })
+                .Distinct()
+                .ToList();
+
+
+            // ============================================================
+            // 4. PRODUCCIÓN
+            // ============================================================
+
+            var rolls = combinations
+                .Select(x => x.Roll)
+                .Distinct()
+                .ToList();
+
+            var products = combinations
+                .Select(x => x.Item)
+                .Distinct()
+                .ToList();
+
+
+            var production = await _context.Set<Produccion_Procesos>()
+                .AsNoTracking()
+                .Where(pp =>
+                    rolls.Contains(pp.NumeroRollo_BagPro) &&
+                    products.Contains(pp.Prod_Id))
+                .Select(pp => new
+                {
+                    Roll = pp.NumeroRollo_BagPro,
+                    Item = pp.Prod_Id,
+
+                    OT = pp.OT,
+                    Weight = pp.Peso_Bruto,
+                    NetWeight = pp.Peso_Neto,
+
+                    ProcessId = pp.Proceso_Id,
+                    Process = pp.Proceso.Proceso_Nombre,
+
+                    Numero_Rollo = pp.Numero_Rollo
+                })
+                .ToListAsync();
+
+
+            // ============================================================
+            // 5. CONVERTIR PRODUCCIÓN EN DICCIONARIO
+            // ============================================================
+
+            var productionDict = production
+                .GroupBy(x => new
+                {
+                    x.Roll,
+                    x.Item
+                })
+                .ToDictionary(
+                    g => (g.Key.Roll, g.Key.Item),
+                    g => g.First()
+                );
+
+
+            // ============================================================
+            // 6. OBTENER UBICACIONES
+            // ============================================================
+
+            var locations = await (
+                from pp in _context.Set<Produccion_Procesos>().AsNoTracking()
+
+                join dt in _context.Set<DetalleEntradaRollo_Producto>().AsNoTracking()
+                    on pp.Numero_Rollo equals dt.Rollo_Id
+
+                join e in _context.Set<EntradaRollo_Producto>().AsNoTracking()
+                    on dt.EntRolloProd_Id equals e.EntRolloProd_Id
+
+                where rolls.Contains(pp.NumeroRollo_BagPro)
+                      && e.EntRolloProd_Id >= 28512
+
+                orderby e.EntRolloProd_Id descending
+
+                select new
+                {
+                    Roll = pp.NumeroRollo_BagPro,
+                    Location = e.EntRolloProd_Observacion,
+                    EntryId = e.EntRolloProd_Id
+                }
+            ).ToListAsync();
+
+
+            // ============================================================
+            // 7. OBTENER LA ÚLTIMA UBICACIÓN POR ROLLO
+            // ============================================================
+
+            var locationDict = locations
+                .GroupBy(x => x.Roll)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.First().Location
+                );
+
+
+            // ============================================================
+            // 8. ARMAR RESULTADO
+            // ============================================================
+
+            var result = details.Select(detail =>
+            {
+                productionDict.TryGetValue(
+                    (detail.Roll, detail.Item),
+                    out var prod
+                );
+
+                locationDict.TryGetValue(
+                    detail.Roll,
+                    out var location
+                );
+
+                return new
+                {
+                    // ============================
+                    // Header
+                    // ============================
+
+                    preload.Movement,
+                    preload.OF,
+
+                    preload.Date1,
+                    preload.Hour1,
+
+                    preload.Date2,
+                    preload.Hour2,
+
+                    preload.UserId1,
+                    preload.UserId2,
+
+                    preload.User1,
+                    preload.User2,
+
+                    preload.Observation1,
+                    preload.Observation2,
+
+                    preload.StatusId,
+                    preload.Status,
+
+                    preload.IdClient,
+                    preload.Client,
+
+                    // ============================
+                    // Details
+                    // ============================
+
+                    detail.Roll,
+                    detail.Item,
+                    detail.Reference,
+                    detail.Quantity,
+                    detail.Presentation,
+
+                    // ============================
+                    // Production
+                    // ============================
+
+                    OT = prod?.OT,
+
+                    Weight = prod?.Weight,
+
+                    NetWeight = prod?.NetWeight,
+
+                    ProcessId = prod?.ProcessId,
+
+                    Process = prod?.Process,
+
+                    // ============================
+                    // Location
+                    // ============================
+
+                    Ubication = location
+                };
+            }).ToList();
+
+            return Ok(result);
         }
 
         //
