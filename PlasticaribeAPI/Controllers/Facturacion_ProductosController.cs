@@ -41,7 +41,7 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpGet("getInfoOfDirect/{id}")]
-        public ActionResult getInfoOfDirect(int id)
+        public async Task<ActionResult> getInfoOfDirect(int id)
         {
             var dataSend = from asg in _context.Set<AsignacionProducto_FacturaVenta>()
                            where asg.NotaCredito_Id == $"Orden de Facturación #{id}"
@@ -73,20 +73,29 @@ namespace PlasticaribeAPI.Controllers
                                   dtOrder.Producto.Prod_Id,
                                   dtOrder.Producto.Prod_Nombre
                               },
-                              Ubication = (from pp in _context.Set<Produccion_Procesos>()
-                                           from dt in _context.Set<DetalleEntradaRollo_Producto>()
-                                           join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
-                                           where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo &&
-                                                  (dt.Rollo_Id == pp.Numero_Rollo) &&
-                                                  dt.Estado_Id == 19 &&
-                                                  e.EntRolloProd_Id >= 28512
-                                           orderby e.EntRolloProd_Id descending
-                                           select e.EntRolloProd_Observacion).FirstOrDefault(),
-
-                              orderProduction = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo && pp.Prod_Id == dtOrder.Prod_Id select pp.OT).FirstOrDefault(),
-
-                              Weight = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo && pp.Prod_Id == dtOrder.Prod_Id select pp.Peso_Bruto).FirstOrDefault(),
-                              NetWeight = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo && pp.Prod_Id == dtOrder.Prod_Id select pp.Peso_Neto).FirstOrDefault(),
+                              Ubication = "",
+                                          //(from pp in _context.Set<Produccion_Procesos>()
+                                          // from dt in _context.Set<DetalleEntradaRollo_Producto>()
+                                          // join e in _context.Set<EntradaRollo_Producto>() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
+                                          // where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo &&
+                                          //        (dt.Rollo_Id == pp.Numero_Rollo) &&
+                                          //        dt.Estado_Id == 19 &&
+                                          //        e.EntRolloProd_Id >= 28512
+                                          // orderby e.EntRolloProd_Id descending
+                                          // select e.EntRolloProd_Observacion).FirstOrDefault(),
+                              dataProduction = (from pp in _context.Set<Produccion_Procesos>()
+                                                where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo && pp.Prod_Id == dtOrder.Prod_Id
+                                                select new
+                                                {
+                                                    OrdenProduction = pp.OT,
+                                                    Weight = pp.Peso_Bruto,
+                                                    NetWeight = pp.Peso_Neto,
+                                                    Item = pp.Prod_Id,
+                                                    Etiqueta = pp.NumeroRollo_BagPro
+                                                }).FirstOrDefault(),
+                              //orderProduction = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo && pp.Prod_Id == dtOrder.Prod_Id select pp.OT).FirstOrDefault(),
+                              //Weight = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo && pp.Prod_Id == dtOrder.Prod_Id select pp.Peso_Bruto).FirstOrDefault(),
+                              //NetWeight = (from pp in _context.Set<Produccion_Procesos>() where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo && pp.Prod_Id == dtOrder.Prod_Id select pp.Peso_Neto).FirstOrDefault(),
                           };
 
             var fact = from order in _context.Set<OrdenFacturacion>()
@@ -139,10 +148,19 @@ namespace PlasticaribeAPI.Controllers
                            },
                            datosEnvio = dataSend.Any() ? (dataSend).FirstOrDefault() : null,
                            detailsFact = details.Any() ? details.ToList() : null,
-                           Direction = (from sedes in _context.Set<SedesClientes>() where sedes.Cli_Id == order.Cli_Id select sedes.SedeCliente_Direccion).FirstOrDefault(),
-                           City = (from sedes in _context.Set<SedesClientes>() where sedes.Cli_Id == order.Cli_Id select sedes.SedeCliente_Ciudad).FirstOrDefault(),
+                           Sede = (from sedes in _context.Set<SedesClientes>() 
+                                   where sedes.Cli_Id == order.Cli_Id 
+                                   select new {
+                                       City = sedes.SedeCliente_Ciudad,
+                                        Direction = sedes.SedeCliente_Direccion
+                                   }).FirstOrDefault(),
+
+                           //Direction = (from sedes in _context.Set<SedesClientes>() where sedes.Cli_Id == order.Cli_Id select sedes.SedeCliente_Direccion).FirstOrDefault(),
+                           //City = (from sedes in _context.Set<SedesClientes>() where sedes.Cli_Id == order.Cli_Id select sedes.SedeCliente_Ciudad).FirstOrDefault(),
                        };
-        
+
+            var result = await fact.ToListAsync();
+
             return fact.Any() ? Ok(fact) : NotFound();
         }
 

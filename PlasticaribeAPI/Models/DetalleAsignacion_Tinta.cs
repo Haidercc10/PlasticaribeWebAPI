@@ -33,6 +33,12 @@ namespace PlasticaribeAPI.Models
         public string Proceso_Id { get; set; }  //Llave foranea de proceso
         public Proceso? Proceso { get; set; }   //Llave foranea de proceso
 
+        [Precision(14, 2)]
+        public decimal? DtAsigTinta_Precio { get; set; }
+
+        [Precision(14, 2)]
+        public decimal? DtAsigTinta_Subtotal { get; set; }
+
         /*[Column(TypeName = "bigint")]
         public long DtAsigTinta_OTImpresion { get; set; }*/
 

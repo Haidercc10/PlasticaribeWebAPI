@@ -89,15 +89,16 @@ namespace PlasticaribeAPI.Controllers
                                    dtOrder.Producto.Prod_Nombre
                                },
                                //Optimizar//
-                               Ubication = (from pp in _context.Set<Produccion_Procesos>().AsNoTracking()
-                                            join dt in _context.Set<DetalleEntradaRollo_Producto>().AsNoTracking() on pp.Numero_Rollo equals dt.Rollo_Id
-                                            join e in _context.Set<EntradaRollo_Producto>().AsNoTracking() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
-                                            where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo
-                                                   && pp.Prod_Id == dt.Prod_Id 
-                                                   && pp.Prod_Id == dtOrder.Prod_Id
-                                                   && e.EntRolloProd_Id >= 28512
-                                            orderby e.EntRolloProd_Id descending
-                                            select e.EntRolloProd_Observacion).FirstOrDefault(),
+                               Ubication = ""
+                                            // (from pp in _context.Set<Produccion_Procesos>().AsNoTracking()
+                                            // join dt in _context.Set<DetalleEntradaRollo_Producto>().AsNoTracking() on pp.Numero_Rollo equals dt.Rollo_Id
+                                            // join e in _context.Set<EntradaRollo_Producto>().AsNoTracking() on dt.EntRolloProd_Id equals e.EntRolloProd_Id
+                                            // where pp.NumeroRollo_BagPro == dtOrder.Numero_Rollo
+                                            //        && pp.Prod_Id == dt.Prod_Id 
+                                            //        && pp.Prod_Id == dtOrder.Prod_Id
+                                            //        && e.EntRolloProd_Id >= 28512
+                                            // orderby e.EntRolloProd_Id descending
+                                            // select e.EntRolloProd_Observacion).FirstOrDefault(),
                            }).ToListAsync();
 
                 return fact.Any() ? Ok(fact) : NotFound();

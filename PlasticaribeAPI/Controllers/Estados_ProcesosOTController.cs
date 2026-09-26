@@ -51,11 +51,10 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //Función que se encarga de mostrar el balance de las ordenes de trabajo, calculando el balance por proceso y el balance general
-        [HttpGet("getInfo_OrdenesTrabajoConBalance/{fechaInicial}/{fechaFinal}/{usarFechaCreacion}")]
+        [HttpGet("getInfo_OrdenesTrabajoConBalance")]
         public async Task<ActionResult> GetInfo_OrdenesTrabajoConBalance(
-            DateTime fechaInicial,
-            DateTime fechaFinal,
-            bool usarFechaCreacion,
+            DateTime? fechaInicial = null,
+            DateTime? fechaFinal = null,
             string? ot = "",
             string? cli = "",
             string? prod = "",
@@ -71,9 +70,17 @@ namespace PlasticaribeAPI.Controllers
             // Reemplaza esta línea incorrecta:
             // var rangoInicial = fechaInicial ?? DateTime.Today.AddMonths(-1);
 
-            // Por esta línea corregida:
-            var rangoInicial = fechaInicial;
-            var rangoFinal = fechaFinal;
+
+            // -------------------------------------------------------------
+            // 0) Si no seleccionan ninguna fecha: último mes por creación (todos los
+            //    estados). Si seleccionan alguna: se activa el filtro "personalizado"
+            //    por solapamiento de producción (ver más abajo) -- si solo mandan una
+            //    de las dos, la otra se completa con hoy / hace un mes.
+            // -------------------------------------------------------------
+
+            var rangoInicial = fechaInicial ?? DateTime.Today.AddMonths(-1);
+            var rangoFinal = (fechaFinal ?? DateTime.Today).Date.AddDays(1).AddTicks(-1);
+
 
             var desperdiciosPorOt = _context.Set<Models.Desperdicio>()
                 .GroupBy(d => d.Desp_OT)
@@ -94,17 +101,37 @@ namespace PlasticaribeAPI.Controllers
             // 2) Query principal + LEFT JOIN. Todavía SIN los balances -- esos se
             //    calculan después porque dependen de lo que pasó en el proceso
             //    anterior (lógica secuencial, no expresable de forma legible en SQL).
+            //
+            //    Un solo criterio, con o sin fecha seleccionada -- lo único que
+            //    cambia es la fecha "de referencia" de cada OT:
+            //      - Si ya tuvo FechaInicio (tuvo algún pesaje): solapamiento de su
+            //        intervalo [FechaInicio, FechaFinal ?? ahora] contra el rango.
+            //      - Si nunca ha tenido FechaInicio (Abierto/Asignado): se compara
+            //        su FechaCreacion como punto único contra el rango.
+            //    Así una OT creada hace tiempo pero con actividad reciente (como tu
+            //    ejemplo: creada 12-ago, iniciada 24-ago, último pesaje 15-sep) sí
+            //    aparece en el rango por defecto del último mes.
             // -------------------------------------------------------------
+
             var query =
                 from orden in _context.Set<Estados_ProcesosOT>().AsNoTracking()
+                where (
+                        // Opción 1: Si tiene FechaInicio, esta DEBE haber empezado antes o dentro del rango,
+                        // pero la creación o el inicio no pueden ser más viejos que el límite deseado si no ha finalizado.
+                        // O si ya finalizó, su intervalo [FechaInicio, FechaFinal] debe cruzarse con el rango.
+                        (orden.EstProcOT_FechaInicio != null
+                            && orden.EstProcOT_FechaInicio <= rangoFinal
+                            && (orden.EstProcOT_FechaFinal != null
+                                ? orden.EstProcOT_FechaFinal >= rangoInicial
+                                : orden.EstProcOT_FechaInicio >= rangoInicial)) // Si no ha finalizado, exigimos que haya iniciado dentro del rango
 
-                // Obtener la fecha efectiva (FechaFinal ?? FechaInicio ?? FechaCreacion)
-                let fechaEfectiva = orden.EstProcOT_FechaFinal
-                                   ?? orden.EstProcOT_FechaInicio
-                                   ?? orden.EstProcOT_FechaCreacion
+                        ||
 
-                where ((orden.EstProcOT_FechaFinal ?? orden.EstProcOT_FechaInicio ?? orden.EstProcOT_FechaCreacion) >= rangoInicial
-                      && (orden.EstProcOT_FechaFinal ?? orden.EstProcOT_FechaInicio ?? orden.EstProcOT_FechaCreacion) <= rangoFinal)
+                        // Opción 2: Si nunca ha iniciado (FechaInicio es null), filtramos estrictamente por su FechaCreacion
+                        (orden.EstProcOT_FechaInicio == null
+                            && orden.EstProcOT_FechaCreacion >= rangoInicial
+                            && orden.EstProcOT_FechaCreacion <= rangoFinal)
+                    )
                       && (string.IsNullOrEmpty(ot) || Convert.ToString(orden.EstProcOT_OrdenTrabajo).Contains(ot))
                       && (string.IsNullOrEmpty(falla) || Convert.ToString(orden.Falla_Id) == falla)
                       && (string.IsNullOrEmpty(estado) || Convert.ToString(orden.Estado_Id) == estado)
@@ -180,14 +207,13 @@ namespace PlasticaribeAPI.Controllers
             // -------------------------------------------------------------
             foreach (var o in con)
             {
-                decimal baseSiguiente = o.Mp; //3450
-                
+                decimal baseSiguiente = o.Mp; 
 
-                o.Balance_Ext = (o.Ext + o.Desp_ext) - baseSiguiente; //9656-3450
+                o.Balance_Ext = (o.Ext + o.Desp_ext) - baseSiguiente; 
                 if (o.Ext > 0)
                 {
-                    o.Base_Ext = baseSiguiente; //3450
-                    baseSiguiente = o.Ext; //9616
+                    o.Base_Ext = baseSiguiente; 
+                    baseSiguiente = o.Ext; 
                 }
                 else {
                     o.Balance_Ext = 0;
@@ -264,40 +290,6 @@ namespace PlasticaribeAPI.Controllers
                     o.Base_Sel = 0;
                 }
 
-                /*decimal baseAnterior = o.Mp;
-
-                o.Base_Ext = baseAnterior;
-                o.Balance_Ext = o.Ext == 0 ? 0m : (o.Ext + o.Desp_ext) - baseAnterior;
-                baseAnterior = o.Ext;
-
-                o.Base_Imp = baseAnterior;
-                o.Balance_Imp = o.Imp == 0 ? 0m : (o.Imp + o.Desp_imp) - baseAnterior;
-                baseAnterior = o.Imp;
-
-                o.Base_Perf = baseAnterior;
-                o.Balance_Perf = o.Perf == 0 ? 0m : (o.Perf + o.Desp_perf) - baseAnterior;
-                baseAnterior = o.Perf;
-
-                o.Base_Lam = baseAnterior;
-                o.Balance_Lam = o.Lam == 0 ? 0m : (o.Lam + o.Desp_lam) - baseAnterior;
-                baseAnterior = o.Lam;
-
-                o.Base_Dbl = baseAnterior;
-                o.Balance_Dbl = o.Dbl == 0 ? 0m : (o.Dbl + o.Desp_dbl) - baseAnterior;
-                baseAnterior = o.Dbl;
-
-                o.Base_Emp = baseAnterior;
-                o.Balance_Emp = o.Emp == 0 ? 0m : (o.Emp + o.Desp_emp) - baseAnterior;
-                baseAnterior = o.Emp;
-
-                o.Base_Sel = baseAnterior;
-                o.Balance_Sel = o.Sel == 0 ? 0m : (o.Sel + o.Desp_sel) - baseAnterior;
-                baseAnterior = o.Sel;*/
-
-                // =========================================================
-                // BALANCE GENERAL
-                // =========================================================
-
                 // Primer proceso que tenga cantidad
 
                 if (o.Ext > 0)
@@ -344,7 +336,6 @@ namespace PlasticaribeAPI.Controllers
                     o.Proceso_Inicial = "N/A";
                     o.Cantidad_Inicial = 0;
                 }
-
 
                 // =========================================================
                 // Último proceso que tenga cantidad
@@ -412,8 +403,6 @@ namespace PlasticaribeAPI.Controllers
                     o.Desperdicio_Final = 0;
                     o.Reportado_Final = 0;
                 }
-
-
 
                     // =========================================================
                     // BALANCE GENERAL
