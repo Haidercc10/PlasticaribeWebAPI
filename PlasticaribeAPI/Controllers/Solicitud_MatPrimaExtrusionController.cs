@@ -53,7 +53,7 @@ namespace PlasticaribeAPI.Controllers
         {
             if (_context.Solicitud_MatPrimaExtrusion == null) return NotFound();
 
-            var todo = await (from s in _context.Set<Solicitud_MatPrimaExtrusion>()
+            var todo = await (from s in _context.Set<Solicitud_MatPrimaExtrusion>().AsNoTracking()
                               group s by new {
                                   Estado_Id = s.Estado_Id, 
                                   Estado = s.Estado.Estado_Nombre

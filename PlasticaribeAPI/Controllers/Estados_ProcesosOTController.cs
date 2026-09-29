@@ -186,6 +186,7 @@ namespace PlasticaribeAPI.Controllers
                     Est = orden.Estado_OT.Estado_Nombre,
                     Obs = orden.EstProcOT_Observacion,
                     Fecha = orden.EstProcOT_FechaCreacion,
+                    Fecha_AsignacionMP = orden.EstProcOT_FechaAsignacionMP,
                     FechaInicio = orden.EstProcOT_FechaInicio.Value,
                     FechaFinal = orden.EstProcOT_FechaFinal.Value,
                     Diff_Dias = orden.EstProcOT_FechaFinal != null ? (orden.EstProcOT_FechaFinal - orden.EstProcOT_FechaInicio).Value.Days : 0,
@@ -985,6 +986,9 @@ public class OrdenTrabajoConBalanceDto
     public string? Est { get; set; }
     public string? Obs { get; set; }
     public DateTime? Fecha { get; set; }
+
+    public DateTime? Fecha_AsignacionMP { get; set; }
+
     public DateTime? FechaInicio { get; set; }
     public DateTime? FechaFinal { get; set; }
 
