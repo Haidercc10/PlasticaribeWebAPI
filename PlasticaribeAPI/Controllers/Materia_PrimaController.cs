@@ -611,7 +611,7 @@ namespace PlasticaribeAPI.Controllers
 
         //Movimientos de Materia Prima, Tintas, Biorientados ***
         [HttpGet("getMovimientos/{fecha1}/{fecha2}")]
-        public ActionResult GetMoviemientos(DateTime fecha1, DateTime fecha2, string? codigo = "", string? tipoMov = "", string? materiaPrima = "", string? tipoDoc = "")
+        public ActionResult GetMovimientos(DateTime fecha1, DateTime fecha2, string? codigo = "", string? tipoMov = "", string? materiaPrima = "", string? tipoDoc = "")
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
@@ -630,7 +630,7 @@ namespace PlasticaribeAPI.Controllers
                              Codigo = Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo),
                              Movimiento = Convert.ToString("ASIGMP"),
                              Tipo_Movimiento = Convert.ToString("Asignación de Materia Prima"),
-                             Fecha = asg.AsigMp.AsigMp_FechaEntrega,
+                             Fecha = asg.AsigMp.AsigMp_FechaRealEntrega.Value,
                              Hora = asg.AsigMp.AsigMp_Hora,
                              Usuario = asg.AsigMp.Usua.Usua_Nombre,
                              Materia_Prima_Id = Convert.ToInt16(asg.MatPri_Id),
@@ -641,7 +641,7 @@ namespace PlasticaribeAPI.Controllers
                              Bopp = Convert.ToString(""),
                              Cantidad = Convert.ToDecimal(asg.DtAsigMp_Cantidad),
                              Unidad_Medida = asg.UndMed_Id,
-                             Precio = Convert.ToDecimal(asg.MatPri.MatPri_Precio),
+                             Precio = asg.DtAsigMp_Precio ?? 0m,
                              Proveedor = Convert.ToString("PLASTICARIBE SAS"), 
                              Subcategoria = Convert.ToString(asg.MatPri.SubcategoriasMP.SubCatMP_Nombre),
                              TpDoc = Convert.ToString("SALIDA"),
@@ -789,7 +789,7 @@ namespace PlasticaribeAPI.Controllers
                                  Codigo = Convert.ToString(asg.DtAsigBOPP_OrdenTrabajo),
                                  Movimiento = Convert.ToString(asg.Tipo_Documento.TpDoc_Id),
                                  Tipo_Movimiento = Convert.ToString(asg.Tipo_Documento.TpDoc_Nombre),
-                                 Fecha = asg.AsigBOPP.AsigBOPP_FechaEntrega,
+                                 Fecha = asg.AsigBOPP.AsigBOPP_FechaRealEntrega.Value,
                                  Hora = asg.AsigBOPP.AsigBOPP_Hora,
                                  Usuario = asg.AsigBOPP.Usua.Usua_Nombre,
                                  Materia_Prima_Id = Convert.ToInt16(84),
@@ -851,7 +851,7 @@ namespace PlasticaribeAPI.Controllers
                                   Codigo = Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo),
                                   Movimiento = Convert.ToString("ASIGTINTAS"),
                                   Tipo_Movimiento = Convert.ToString("Asignación de Tintas"),
-                                  Fecha = asg.AsigMp.AsigMp_FechaEntrega,
+                                  Fecha = asg.AsigMp.AsigMp_FechaRealEntrega.Value,
                                   Hora = asg.AsigMp.AsigMp_Hora,
                                   Usuario = asg.AsigMp.Usua.Usua_Nombre,
                                   Materia_Prima_Id = Convert.ToInt16(84),
@@ -862,7 +862,7 @@ namespace PlasticaribeAPI.Controllers
                                   Bopp = Convert.ToString(""),
                                   Cantidad = Convert.ToDecimal(asg.DtAsigTinta_Cantidad),
                                   Unidad_Medida = asg.UndMed_Id,
-                                  Precio = Convert.ToDecimal(asg.Tinta.Tinta_Precio),
+                                  Precio = asg.DtAsigTinta_Precio ?? 0m,
                                   Proveedor = Convert.ToString("PLASTICARIBE SAS"),
                                   Subcategoria = Convert.ToString(asg.Tinta.SubcategoriasMP.SubCatMP_Nombre),
                                   TpDoc = Convert.ToString("SALIDA"),
@@ -909,7 +909,8 @@ namespace PlasticaribeAPI.Controllers
                              emp.Empresa_Correo,
                              emp.Empresa_Direccion,
                              emp.Empresa_Telefono,
-                             emp.Empresa_Nombre
+                             emp.Empresa_Nombre,
+                             FechaReal = asg.AsigMp.AsigMp_FechaRealEntrega
                          };
 
             //Asignaciones de BOPP
@@ -945,7 +946,8 @@ namespace PlasticaribeAPI.Controllers
                                  emp.Empresa_Correo,
                                  emp.Empresa_Direccion,
                                  emp.Empresa_Telefono,
-                                 emp.Empresa_Nombre
+                                 emp.Empresa_Nombre,
+                                 FechaReal = asg.AsigBOPP.AsigBOPP_FechaRealEntrega
                              };
 
             //Asignacion de Tinta
@@ -981,7 +983,8 @@ namespace PlasticaribeAPI.Controllers
                                   emp.Empresa_Correo,
                                   emp.Empresa_Direccion,
                                   emp.Empresa_Telefono,
-                                  emp.Empresa_Nombre
+                                  emp.Empresa_Nombre,
+                                  FechaReal = asg.AsigMp.AsigMp_FechaRealEntrega
                               };
 
             return Ok(conAsg.Concat(conAsgBopp).Concat(conAsgTinta));
