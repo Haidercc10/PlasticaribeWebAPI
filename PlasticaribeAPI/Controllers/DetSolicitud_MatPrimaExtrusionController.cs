@@ -81,8 +81,21 @@ namespace PlasticaribeAPI.Controllers
                                                      Stock = (from mp in _context.Set<Materia_Prima>()
                                                                  where mp.SubCatMP_Id == dsmpe.SubCatMP_Id
                                                                  select (decimal?)mp.MatPri_Stock).Sum() ?? Convert.ToDecimal(0),
-                                                     Cantidad_Pedida = dsmpe.DtSolMpExt_Cantidad,  
-                                                     Cantidad_Restante = dsmpe.DtSolMpExt_Cantidad - 
+                                                     Cantidad_Pedida = dsmpe.DtSolMpExt_Cantidad, 
+                                                     Cantidad_Aprobada = (from d in _context.Set<DetalleAsignacion_MateriaPrima>()
+                                                                              where d.AsigMp.SolMpExt_Id == id &&
+                                                                              d.MatPri.SubCatMP_Id == dsmpe.SubCatMP_Id
+                                                                              group d by d.MatPri.SubCatMP_Id into g
+                                                                              select (decimal?)g.Sum(x => x.DtAsigMp_Cantidad)
+                                                                          ).Sum() ?? Convert.ToDecimal(0),
+                                                      Cantidad_Faltante = dsmpe.DtSolMpExt_Cantidad - (from d in _context.Set<DetalleAsignacion_MateriaPrima>()
+                                                                                                       where d.AsigMp.SolMpExt_Id == id &&
+                                                                                                       d.MatPri.SubCatMP_Id == dsmpe.SubCatMP_Id
+                                                                                                       group d by d.MatPri.SubCatMP_Id into g
+                                                                                                       select (decimal?)g.Sum(x => x.DtAsigMp_Cantidad)
+                                                                                                       ).Sum() ?? Convert.ToDecimal(0),
+
+                                                     /*Cantidad_Restante = dsmpe.DtSolMpExt_Cantidad - 
                                                      (
                                                          (
                                                             from d in _context.Set<DetalleAsignacion_MateriaPrima>()
@@ -101,7 +114,7 @@ namespace PlasticaribeAPI.Controllers
                                                             group d by d.MatPri_Id into g
                                                             select (decimal?)g.Sum(x => x.DtAsigMp_Cantidad)
                                                          ).Sum() ?? Convert.ToDecimal(0)
-                                                     ),
+                                                     ),*/
                                                      Medida = dsmpe.UndMed_Id,
                                                      //Empresa
                                                      emp.Empresa_Id,

@@ -22,6 +22,12 @@ namespace PlasticaribeAPI.Models
         [Precision(14, 2)]
         public decimal DtSolMpExt_Cantidad { get; set; }
 
+        [Precision(14, 2)]
+        public decimal? DtSolMpExt_CantidadEntregada { get; set; }
+
+        [Precision(14, 2)]
+        public decimal? DtSolMpExt_CantidadFaltante { get; set; }
+
         [Column(TypeName = "varchar(10)")]
         public string UndMed_Id { get; set; }
         public Unidad_Medida? UndMed { get; set; }

@@ -37,6 +37,10 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "varchar(max)")]
         public string? SolMpExt_Observacion { get; set; }
+
+
+        [Column(TypeName = "Date")]
+        public DateTime? SolMpExt_FechaEstimadaEntrega { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }
