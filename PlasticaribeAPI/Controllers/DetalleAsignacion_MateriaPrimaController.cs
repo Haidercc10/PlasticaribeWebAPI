@@ -73,7 +73,7 @@ namespace PlasticaribeAPI.Controllers
                              Asgmp.MatPri_Id,
                              Asgmp.MatPri.MatPri_Nombre,
                              Asgmp.UndMed_Id,
-                             Asgmp.MatPri.MatPri_Precio,
+                             Asgmp.DtAsigMp_Precio,
                              Asgmp.Proceso_Id,
                              Asgmp.Proceso.Proceso_Nombre
                          } into y
@@ -87,8 +87,8 @@ namespace PlasticaribeAPI.Controllers
                              NombreMP = y.Key.MatPri_Nombre,
                              CantMP = y.Sum(Asgmp => Asgmp.DtAsigMp_Cantidad),
                              UndMedida = y.Key.UndMed_Id,
-                             Precio = y.Key.MatPri_Precio,
-                             SubTotal = y.Sum(Asgmp => Asgmp.DtAsigMp_Cantidad) * y.Key.MatPri_Precio,
+                             Precio = y.Key.DtAsigMp_Precio?? 0m,
+                             SubTotal = y.Sum(Asgmp => Asgmp.DtAsigMp_Cantidad) * y.Key.DtAsigMp_Precio?? 0m,
                              Proceso = y.Key.Proceso_Id,
                              NombreProceso = y.Key.Proceso_Nombre
                          });
@@ -100,7 +100,7 @@ namespace PlasticaribeAPI.Controllers
                                 AsgTinta.Tinta_Id,
                                 AsgTinta.Tinta.Tinta_Nombre,
                                 AsgTinta.UndMed_Id,
-                                AsgTinta.Tinta.Tinta_Precio,
+                                AsgTinta.DtAsigTinta_Precio,
                                 AsgTinta.Proceso_Id,
                                 AsgTinta.Proceso.Proceso_Nombre
                             } into y
@@ -114,8 +114,8 @@ namespace PlasticaribeAPI.Controllers
                                 NombreMP = y.Key.Tinta_Nombre,
                                 CantMP = y.Sum(AsgTinta => AsgTinta.DtAsigTinta_Cantidad),
                                 UndMedida = y.Key.UndMed_Id,
-                                Precio = y.Key.Tinta_Precio,
-                                SubTotal = y.Sum(AsgTinta => AsgTinta.DtAsigTinta_Cantidad) * y.Key.Tinta_Precio,
+                                Precio = y.Key.DtAsigTinta_Precio?? 0m,
+                                SubTotal = y.Sum(AsgTinta => AsgTinta.DtAsigTinta_Cantidad) * y.Key.DtAsigTinta_Precio?? 0m,
                                 Proceso = y.Key.Proceso_Id,
                                 NombreProceso = y.Key.Proceso_Nombre
                             });
