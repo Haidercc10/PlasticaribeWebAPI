@@ -119,6 +119,14 @@ namespace PlasticaribeAPI.Controllers
                         // Opción 1: Si tiene FechaInicio, esta DEBE haber empezado antes o dentro del rango,
                         // pero la creación o el inicio no pueden ser más viejos que el límite deseado si no ha finalizado.
                         // O si ya finalizó, su intervalo [FechaInicio, FechaFinal] debe cruzarse con el rango.
+                        (orden.EstProcOT_FechaAsignacionMP != null
+                            && orden.EstProcOT_FechaAsignacionMP <= rangoFinal
+                            && (orden.EstProcOT_FechaFinal != null
+                                ? orden.EstProcOT_FechaFinal >= rangoInicial
+                                : orden.EstProcOT_FechaAsignacionMP >= rangoInicial))
+
+                        ||
+
                         (orden.EstProcOT_FechaInicio != null
                             && orden.EstProcOT_FechaInicio <= rangoFinal
                             && (orden.EstProcOT_FechaFinal != null
@@ -189,7 +197,10 @@ namespace PlasticaribeAPI.Controllers
                     Fecha_AsignacionMP = orden.EstProcOT_FechaAsignacionMP,
                     FechaInicio = orden.EstProcOT_FechaInicio.Value,
                     FechaFinal = orden.EstProcOT_FechaFinal.Value,
-                    Diff_Dias = orden.EstProcOT_FechaFinal != null ? (orden.EstProcOT_FechaFinal - orden.EstProcOT_FechaInicio).Value.Days : 0,
+                    Diff_Dias = orden.EstProcOT_FechaFinal != null && orden.EstProcOT_FechaAsignacionMP != null && orden.EstProcOT_FechaAsignacionMP <= orden.EstProcOT_FechaInicio ? (orden.EstProcOT_FechaFinal - orden.EstProcOT_FechaAsignacionMP).Value.Days :
+                                orden.EstProcOT_FechaFinal != null && orden.EstProcOT_FechaAsignacionMP != null && orden.EstProcOT_FechaAsignacionMP >= orden.EstProcOT_FechaInicio ? (orden.EstProcOT_FechaFinal - orden.EstProcOT_FechaInicio).Value.Days :
+                                orden.EstProcOT_FechaFinal != null && orden.EstProcOT_FechaAsignacionMP == null ? (orden.EstProcOT_FechaFinal - orden.EstProcOT_FechaInicio).Value.Days :
+                                0,
                     Cli = orden.Clientes.Cli_Nombre,
 
                     Ref = orden.Producto.Prod_Nombre,
@@ -208,13 +219,14 @@ namespace PlasticaribeAPI.Controllers
             // -------------------------------------------------------------
             foreach (var o in con)
             {
-                decimal baseSiguiente = o.Mp; 
+                decimal baseSiguiente = o.Mp;
+                decimal baseSiguienteBopp = o.Bopp.Value;
 
-                o.Balance_Ext = (o.Ext + o.Desp_ext) - baseSiguiente; 
+                o.Balance_Ext = (o.Ext + o.Desp_ext) - baseSiguiente; //500 + 50 - 580 = -30 
                 if (o.Ext > 0)
                 {
-                    o.Base_Ext = baseSiguiente; 
-                    baseSiguiente = o.Ext; 
+                    o.Base_Ext = baseSiguiente; //580
+                    baseSiguiente = o.Ext; //500
                 }
                 else {
                     o.Balance_Ext = 0;
@@ -222,10 +234,10 @@ namespace PlasticaribeAPI.Controllers
                 } 
 
 
-                o.Balance_Imp = (o.Imp + o.Desp_imp) - baseSiguiente;
+                o.Balance_Imp = baseSiguiente > 0 ? (o.Imp + o.Desp_imp) - baseSiguiente : (o.Imp + o.Desp_imp) - baseSiguienteBopp; //480 + 10 - 500 = -10
                 if (o.Imp > 0)
                 {
-                    o.Base_Imp = baseSiguiente;
+                    o.Base_Imp = baseSiguiente > 0 ? baseSiguiente : baseSiguienteBopp; 
                     baseSiguiente = o.Imp;
                     
                 }

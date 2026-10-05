@@ -76,6 +76,7 @@ namespace PlasticaribeAPI.Controllers
                                                      Fecha = smpe.SolMpExt_Fecha,
                                                      Hora = smpe.SolMpExt_Hora,
                                                      //Detalle
+                                                     Codigo = dsmpe.Codigo,
                                                      Id_Subcategoria = dsmpe.SubCatMP_Id,
                                                      Subcategoria = dsmpe.SubCatMP_Nombre,
                                                      Stock = (from mp in _context.Set<Materia_Prima>()
@@ -94,35 +95,16 @@ namespace PlasticaribeAPI.Controllers
                                                                                                        group d by d.MatPri.SubCatMP_Id into g
                                                                                                        select (decimal?)g.Sum(x => x.DtAsigMp_Cantidad)
                                                                                                        ).Sum() ?? Convert.ToDecimal(0),
-
-                                                     /*Cantidad_Restante = dsmpe.DtSolMpExt_Cantidad - 
-                                                     (
-                                                         (
-                                                            from d in _context.Set<DetalleAsignacion_MateriaPrima>()
-                                                            where d.AsigMp.SolMpExt_Id == id 
-                                                            //&& d.MatPri_Id != 84
-                                                            group d by d.MatPri_Id into g
-                                                            select (decimal?)g.Sum(x => x.DtAsigMp_Cantidad)
-                                                         ).Sum() ?? Convert.ToDecimal(0)
-                                                     ),
-                                                     Cantidad_Entregada =
-                                                     (
-                                                         (
-                                                            from d in _context.Set<DetalleAsignacion_MateriaPrima>()
-                                                            where d.AsigMp.SolMpExt_Id == id 
-                                                            //&& d.MatPri_Id != 84
-                                                            group d by d.MatPri_Id into g
-                                                            select (decimal?)g.Sum(x => x.DtAsigMp_Cantidad)
-                                                         ).Sum() ?? Convert.ToDecimal(0)
-                                                     ),*/
-                                                     Medida = dsmpe.UndMed_Id,
-                                                     //Empresa
-                                                     emp.Empresa_Id,
-                                                     emp.Empresa_Nombre,
-                                                     emp.Empresa_Direccion,
-                                                     emp.Empresa_Telefono,
-                                                     emp.Empresa_Ciudad,
-                                                     emp.Empresa_Correo
+                                                      Cantidad_Entregada = dsmpe.DtSolMpExt_CantidadEntregada,
+                                                      Cantidad_Restante = dsmpe.DtSolMpExt_CantidadFaltante,
+                                                      Medida = dsmpe.UndMed_Id,
+                                                      //Empresa
+                                                      emp.Empresa_Id,
+                                                      emp.Empresa_Nombre,
+                                                      emp.Empresa_Direccion,
+                                                      emp.Empresa_Telefono,
+                                                      emp.Empresa_Ciudad,
+                                                      emp.Empresa_Correo
                                                  };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             var result = await detSolicitud_MatPrimaExtrusion.ToListAsync();
@@ -174,6 +156,7 @@ namespace PlasticaribeAPI.Controllers
                                                      Nombre_Usuario = smpe.Usua.Usua_Nombre,
                                                      Fecha = smpe.SolMpExt_Fecha,
                                                      Hora = smpe.SolMpExt_Hora,
+                                                     Fecha_Entrega = smpe.SolMpExt_FechaEstimadaEntrega.Value,
                                                      //Detalle
                                                      Subcat_Id = dsmpe.SubCatMP_Id,
                                                      Subcategoria = dsmpe.SubCatMP_Nombre,
