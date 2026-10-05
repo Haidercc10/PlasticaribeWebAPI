@@ -611,7 +611,7 @@ namespace PlasticaribeAPI.Controllers
 
         //Movimientos de Materia Prima, Tintas, Biorientados ***
         [HttpGet("getMovimientos/{fecha1}/{fecha2}")]
-        public ActionResult GetMovimientos(DateTime fecha1, DateTime fecha2, string? codigo = "", string? tipoMov = "", string? materiaPrima = "", string? tipoDoc = "")
+        public async Task<ActionResult> GetMovimientos(DateTime fecha1, DateTime fecha2, string? codigo = "", string? tipoMov = "", string? materiaPrima = "", string? tipoDoc = "")
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
@@ -868,7 +868,26 @@ namespace PlasticaribeAPI.Controllers
                                   TpDoc = Convert.ToString("SALIDA"),
                               };
 
-            return Ok(conAsg.Concat(conAsgMPCreacionTintas).Concat(conDevoluciones).Concat(conFacturas).Concat(conRemisiones).Concat(conAsgBopp).Concat(conEntradaBOPP).Concat(conAsgTinta));
+            // Ejecutar consultas de lectura secuencialmente y usar AsNoTracking para mejorar rendimiento
+            var listAsg = await conAsg.AsNoTracking().ToListAsync();
+            var listAsgMPCreacionTintas = await conAsgMPCreacionTintas.AsNoTracking().ToListAsync();
+            var listDevoluciones = await conDevoluciones.AsNoTracking().ToListAsync();
+            var listFacturas = await conFacturas.AsNoTracking().ToListAsync();
+            var listRemisiones = await conRemisiones.AsNoTracking().ToListAsync();
+            var listAsgBopp = await conAsgBopp.AsNoTracking().ToListAsync();
+            var listEntradaBOPP = await conEntradaBOPP.AsNoTracking().ToListAsync();
+            var listAsgTinta = await conAsgTinta.AsNoTracking().ToListAsync();
+
+            var result = listAsg
+                .Concat(listAsgMPCreacionTintas)
+                .Concat(listDevoluciones)
+                .Concat(listFacturas)
+                .Concat(listRemisiones)
+                .Concat(listAsgBopp)
+                .Concat(listEntradaBOPP)
+                .Concat(listAsgTinta);
+
+            return Ok(result);
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
         }
 
