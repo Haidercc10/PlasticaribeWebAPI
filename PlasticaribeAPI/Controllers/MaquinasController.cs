@@ -40,6 +40,24 @@ namespace PlasticaribeAPI.Controllers
             return Maquinas;
         }
 
+        //Fuón para obtener las máquinas por proceso
+        [HttpGet("GetMaquinasPorProceso/{proceso}")]
+        public async Task<ActionResult<Maquinas>> GetMaquinasPorProceso(string proceso)
+        {
+            var Maquinas = await (
+                from m in _context.Maquinas.AsNoTracking()
+                where m.Proceso_Id == proceso
+                select m
+            ).ToListAsync();
+
+            if (Maquinas == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(Maquinas);
+        }
+
         //
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMaquinas(string id, Maquinas Maquinas)

@@ -672,7 +672,52 @@ namespace PlasticaribeAPI.Controllers
             return Ok(weightNet);
         }
 
-        [HttpGet("getDetailsForItem/{item}")]
+        //Función para encontrar los kilos facturados mes a mes.
+        [HttpGet("EstimarKilosFacturadosMesAMes/{year}/{month}")]
+        public async Task<ActionResult> EstimarKilosFacturadosMesAMes(int year, int month)
+        {
+            var fechaInicio = new DateTime(year, month, 1);
+            var fechaFin = fechaInicio.AddMonths(1);
+
+            var produccionFacturada =
+                from o in _context.OrdenFacturacion.AsNoTracking()
+                join d in _context.Detalles_OrdenFacturacion.AsNoTracking()
+                    on o.Id equals d.Id_OrdenFacturacion
+                join pp in _context.Produccion_Procesos.AsNoTracking()
+                    on new
+                    {
+                        d.Prod_Id,
+                        d.Numero_Rollo
+                    }
+                    equals new
+                    {
+                        pp.Prod_Id,
+                        Numero_Rollo = pp.NumeroRollo_BagPro
+                    }
+
+                where o.Estado_Id != 3
+                && o.Fecha.Value.Month == 9
+
+                group pp by new
+                {
+                    d.Prod_Id,
+                    o.Factura,
+                    Orden_Facturacion = o.Id,
+                }
+                into g
+
+                select new
+                {
+                    Prod_Id = g.Key.Prod_Id,
+                    Factura = g.Key.Factura,
+                    Peso = g.Sum(x => x.Peso_Neto),
+                    Orden_Facturacion = g.Key.Orden_Facturacion,
+                };
+
+            return Ok(await produccionFacturada.ToListAsync());
+        }
+
+            [HttpGet("getDetailsForItem/{item}")]
         public ActionResult getDetailsForItem(int item) 
         {
             List<int> statuses =  [19, 21] ;
