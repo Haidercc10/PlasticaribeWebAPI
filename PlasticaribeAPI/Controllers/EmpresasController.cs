@@ -26,6 +26,19 @@ namespace PlasticaribeAPI.Controllers
             return await _context.Empresas.ToListAsync();
         }
 
+        // GET: api/getNitIdNombreEmpresas
+        [HttpGet("getIdNombreEmpresas")]
+        public async Task<ActionResult> GetIdNombreEmpresas()
+        {
+            var empresas = await _context.Empresas
+                .AsNoTracking()
+                .Select(e => new {
+                    e.Empresa_Id,
+                    e.Empresa_Nombre
+                }).ToListAsync();
+            return Ok(empresas);
+        }
+
         // GET: api/Empresas/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Empresa>> GetEmpresa(long id)
