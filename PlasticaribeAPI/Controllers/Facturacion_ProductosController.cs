@@ -149,6 +149,289 @@ namespace PlasticaribeAPI.Controllers
             return fact.Any() ? Ok(fact) : NotFound();
         }
 
+        [HttpGet("getInfoOfDirectAsync/{id}")]
+        public async Task<ActionResult> GetInfoOfDirectAsync(int id)
+        {
+            // ============================================================
+            // 1. INFORMACIÓN PRINCIPAL DE LA ORDEN
+            // ============================================================
+
+            var order = await _context.Set<OrdenFacturacion>()
+                .AsNoTracking()
+                .Where(x => x.Id == id)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.Factura,
+                    x.Fecha,
+                    x.Hora,
+                    x.Observacion,
+                    x.Estado_Id,
+
+                    Of_Directa = x.Of_Directa == true ? "Si" : "No",
+
+                    Clientes = new
+                    {
+                        x.Clientes.Cli_Id,
+                        x.Clientes.Cli_Nombre,
+                        x.Clientes.Cli_Telefono,
+                        x.Clientes.Cli_Email,
+                        x.Clientes.TipoIdentificacion_Id
+                    },
+
+                    Usuario = new
+                    {
+                        x.Usuario.Usua_Id,
+                        x.Usuario.Usua_Nombre
+                    },
+
+                    Asesor = new
+                    {
+                        x.Asesor_Id,
+                        Nombre = x.Asesor_Comercial.Usua_Nombre
+                    },
+
+                    Cli_Id = x.Cli_Id
+                })
+                .FirstOrDefaultAsync();
+
+
+            // ============================================================
+            // 2. VALIDAR ORDEN
+            // ============================================================
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+
+            // ============================================================
+            // 3. PRODUCTOS FACTURADOS
+            // ============================================================
+
+            var factProducts = await _context.Set<Facturacion_Productos>()
+                .AsNoTracking()
+                .Where(fp => fp.Of_Id == id)
+                .Select(fp => new
+                {
+                    FactPro_Codigo = fp.FactPro_Codigo,
+                    FactPro_Cantidad = fp.FactPro_Cantidad,
+                    UndMed_Id = fp.UndMed_Id,
+                    FactPro_Pedido = fp.FactPro_Pedido,
+                    Peso_Bruto = fp.Peso_Bruto,
+                    Peso_Neto = fp.Peso_Neto,
+                    FactPro_Unidades = fp.FactPro_Unidades,
+
+                    Producto = new
+                    {
+                        fp.Producto.Prod_Id,
+                        fp.Producto.Prod_Nombre
+                    }
+                })
+                .ToListAsync();
+
+
+            // ============================================================
+            // 4. VALIDAR PRODUCTOS FACTURADOS
+            // ============================================================
+
+            if (factProducts.Count == 0)
+            {
+                return NotFound();
+            }
+
+
+            // ============================================================
+            // 5. DETALLES DE LA ORDEN
+            // ============================================================
+
+            var details = await _context.Set<Detalles_OrdenFacturacion>()
+                .AsNoTracking()
+                .Where(d => d.Id_OrdenFacturacion == id)
+                .Select(d => new
+                {
+                    dtOrder = new
+                    {
+                        d.Id,
+                        d.Cantidad,
+                        d.Presentacion,
+                        d.Numero_Rollo,
+                        d.Consecutivo_Pedido,
+                        d.Pallet_Id
+                    },
+
+                    Producto = new
+                    {
+                        d.Producto.Prod_Id,
+                        d.Producto.Prod_Nombre
+                    }
+                })
+                .ToListAsync();
+
+
+            // ============================================================
+            // 6. ROLLOS Y PRODUCTOS NECESARIOS PARA PRODUCCIÓN
+            // ============================================================
+
+            var rolls = details
+                .Where(x => x.dtOrder.Numero_Rollo != null)
+                .Select(x => x.dtOrder.Numero_Rollo)
+                .Distinct()
+                .ToList();
+
+            var products = details
+                .Select(x => x.Producto.Prod_Id)
+                .Distinct()
+                .ToList();
+
+
+            // ============================================================
+            // 7. PRODUCCIÓN
+            // ============================================================
+
+            var production = await _context.Set<Produccion_Procesos>()
+                .AsNoTracking()
+                .Where(pp =>
+                    rolls.Contains(pp.NumeroRollo_BagPro) &&
+                    products.Contains(pp.Prod_Id))
+                .Select(pp => new
+                {
+                    OrdenProduction = pp.OT,
+                    Weight = pp.Peso_Bruto,
+                    NetWeight = pp.Peso_Neto,
+                    Item = pp.Prod_Id,
+                    Etiqueta = pp.NumeroRollo_BagPro
+                })
+                .ToListAsync();
+
+
+            // ============================================================
+            // 8. DICCIONARIO DE PRODUCCIÓN
+            // ============================================================
+
+            var productionDict = production
+                .GroupBy(x => new
+                {
+                    x.Etiqueta,
+                    x.Item
+                })
+                .ToDictionary(
+                    g => (g.Key.Etiqueta, g.Key.Item),
+                    g => g.First()
+                );
+
+
+            // ============================================================
+            // 9. DATOS DE ENVÍO
+            // ============================================================
+
+            var dataSend = await _context.Set<AsignacionProducto_FacturaVenta>()
+                .AsNoTracking()
+                .Where(asg =>
+                    asg.NotaCredito_Id == $"Orden de Facturación #{id}")
+                .Select(asg => new
+                {
+                    Conductor = asg.Usuario.Usua_Nombre,
+                    Placa = asg.AsigProdFV_PlacaCamion,
+                    Observacion = asg.AsigProdFV_Observacion,
+                    Fecha = asg.AsigProdFV_Fecha,
+                    Hora = asg.AsigProdFV_Hora,
+                    CreadoPor = asg.Usua.Usua_Nombre
+                })
+                .FirstOrDefaultAsync();
+
+
+            // ============================================================
+            // 10. SEDE DEL CLIENTE
+            // ============================================================
+
+            var sede = await _context.Set<SedesClientes>()
+                .AsNoTracking()
+                .Where(s => s.Cli_Id == order.Cli_Id)
+                .Select(s => new
+                {
+                    City = s.SedeCliente_Ciudad,
+                    Direction = s.SedeCliente_Direccion
+                })
+                .FirstOrDefaultAsync();
+
+
+            // ============================================================
+            // 11. ARMAR DETAILS
+            // ============================================================
+
+            var detailsFact = details
+                .Select(detail =>
+                {
+                    productionDict.TryGetValue(
+                        (
+                            detail.dtOrder.Numero_Rollo,
+                            detail.Producto.Prod_Id
+                        ),
+                        out var productionData);
+
+                    return new
+                    {
+                        detail.dtOrder,
+                        detail.Producto,
+
+                        Ubication = "",
+
+                        dataProduction = productionData
+                    };
+                })
+                .ToList();
+
+
+            // ============================================================
+            // 12. ARMAR RESPUESTA FINAL
+            // ============================================================
+
+            var result = factProducts
+                .Select(fp => new
+                {
+                    order = new
+                    {
+                        order.Id,
+                        order.Factura,
+                        order.Fecha,
+                        order.Hora,
+                        order.Observacion,
+                        order.Estado_Id,
+                        order.Of_Directa
+                    },
+
+                    order.Clientes,
+
+                    order.Usuario,
+
+                    order.Asesor,
+
+                    dtOrder = new
+                    {
+                        fp.FactPro_Codigo,
+                        fp.FactPro_Cantidad,
+                        fp.UndMed_Id,
+                        fp.FactPro_Pedido,
+                        fp.Peso_Bruto,
+                        fp.Peso_Neto,
+                        fp.FactPro_Unidades
+                    },
+
+                    fp.Producto,
+
+                    datosEnvio = dataSend,
+
+                    detailsFact,
+
+                    Sede = sede
+                })
+                .ToList();
+
+            return Ok(result);
+        }
+
 
         //
         [HttpPut("{id}")]
