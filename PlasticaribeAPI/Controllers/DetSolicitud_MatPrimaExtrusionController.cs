@@ -55,6 +55,13 @@ namespace PlasticaribeAPI.Controllers
             if (_context.DetSolicitud_MatPrimaExtrusion == null) return NotFound();
 
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            var entregado = (from d in _context.Set<DetalleAsignacion_MateriaPrima>()
+                             where d.AsigMp.SolMpExt_Id == id
+                             group d by d.MatPri.SubCatMP_Id into g
+                             select (decimal?)g.Sum(x => x.DtAsigMp_Cantidad)
+                            ).Sum() ?? Convert.ToDecimal(0);
+
             var detSolicitud_MatPrimaExtrusion = from smpe in _context.Set<Solicitud_MatPrimaExtrusion>().AsNoTracking()
                                                  from emp in _context.Set<Empresa>().AsNoTracking()
                                                  join dsmpe in _context.Set<DetSolicitud_MatPrimaExtrusion>().AsNoTracking() on smpe.SolMpExt_Id equals dsmpe.SolMpExt_Id
@@ -82,29 +89,17 @@ namespace PlasticaribeAPI.Controllers
                                                      Stock = (from mp in _context.Set<Materia_Prima>()
                                                                  where mp.SubCatMP_Id == dsmpe.SubCatMP_Id
                                                                  select (decimal?)mp.MatPri_Stock).Sum() ?? Convert.ToDecimal(0),
-                                                     Cantidad_Pedida = dsmpe.DtSolMpExt_Cantidad, 
-                                                     Cantidad_Aprobada = (from d in _context.Set<DetalleAsignacion_MateriaPrima>()
-                                                                              where d.AsigMp.SolMpExt_Id == id &&
-                                                                              d.MatPri.SubCatMP_Id == dsmpe.SubCatMP_Id
-                                                                              group d by d.MatPri.SubCatMP_Id into g
-                                                                              select (decimal?)g.Sum(x => x.DtAsigMp_Cantidad)
-                                                                          ).Sum() ?? Convert.ToDecimal(0),
-                                                      Cantidad_Faltante = dsmpe.DtSolMpExt_Cantidad - (from d in _context.Set<DetalleAsignacion_MateriaPrima>()
-                                                                                                       where d.AsigMp.SolMpExt_Id == id &&
-                                                                                                       d.MatPri.SubCatMP_Id == dsmpe.SubCatMP_Id
-                                                                                                       group d by d.MatPri.SubCatMP_Id into g
-                                                                                                       select (decimal?)g.Sum(x => x.DtAsigMp_Cantidad)
-                                                                                                       ).Sum() ?? Convert.ToDecimal(0),
-                                                      Cantidad_Entregada = dsmpe.DtSolMpExt_CantidadEntregada,
-                                                      Cantidad_Restante = dsmpe.DtSolMpExt_CantidadFaltante,
-                                                      Medida = dsmpe.UndMed_Id,
+                                                     Cantidad_Pedida = dsmpe.DtSolMpExt_Cantidad,
+                                                     Cantidad_Entregada = entregado, 
+                                                     Cantidad_Restante = dsmpe.DtSolMpExt_Cantidad - entregado,
+                                                     Medida = dsmpe.UndMed_Id,
                                                       //Empresa
-                                                      emp.Empresa_Id,
-                                                      emp.Empresa_Nombre,
-                                                      emp.Empresa_Direccion,
-                                                      emp.Empresa_Telefono,
-                                                      emp.Empresa_Ciudad,
-                                                      emp.Empresa_Correo
+                                                     emp.Empresa_Id,
+                                                     emp.Empresa_Nombre,
+                                                     emp.Empresa_Direccion,
+                                                     emp.Empresa_Telefono,
+                                                     emp.Empresa_Ciudad,
+                                                     emp.Empresa_Correo
                                                  };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             var result = await detSolicitud_MatPrimaExtrusion.ToListAsync();
@@ -162,7 +157,8 @@ namespace PlasticaribeAPI.Controllers
                                                      Subcategoria = dsmpe.SubCatMP_Nombre,
                                                      Stock = 0,
                                                      Cantidad = dsmpe.DtSolMpExt_Cantidad,
-                                                     Cantidad_Aprobada = 0,
+                                                     Cantidad_Faltante = 0,
+                                                     Cantidad_Entregada = dsmpe.DtSolMpExt_CantidadEntregada,
                                                      Medida = dsmpe.UndMed_Id,
                                                  };
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
+using PlasticaribeAPI.Migrations;
 using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
@@ -79,6 +80,98 @@ namespace PlasticaribeAPI.Controllers
 
             if (ultima != 0) return Ok(ultima);
             else return BadRequest("No se encontraron registros de solicitudes de material de producción");
+        }
+
+        //Función para actualizar el estado de la solicitud según las cantidades asignadas
+        [HttpPut("PutEstadoSolicitud/{id}")]
+        public async Task<IActionResult> PutEstadoSolicitud(long id)
+        {
+            // Verificar que la solicitud exista
+            var solicitud = await _context.Set<Solicitud_MatPrimaExtrusion>()
+                .FirstOrDefaultAsync(s => s.SolMpExt_Id == id);
+
+            if (solicitud == null)
+                return NotFound();
+
+            // Cantidad solicitada por subcategoría
+            var solicitadas =
+                from d in _context.Set<DetSolicitud_MatPrimaExtrusion>()
+                    .AsNoTracking()
+                where d.SolMpExt_Id == id
+                group d by d.SubCatMP_Id into g
+                select new
+                {
+                    SubCatMP_Id = g.Key,
+                    CantidadSolicitada = g.Sum(x => x.DtSolMpExt_Cantidad)
+                };
+
+            // Cantidad asignada por subcategoría
+            var asignadas =
+                from d in _context.Set<DetalleAsignacion_MateriaPrima>()
+                    .AsNoTracking()
+                where d.AsigMp.SolMpExt_Id == id
+                group d by d.MatPri.SubCatMP_Id into g
+                select new
+                {
+                    SubCatMP_Id = g.Key,
+                    CantidadAsignada = g.Sum(x => x.DtAsigMp_Cantidad)
+                };
+
+            // Unificar solicitado vs asignado
+            var comparacion =
+                from solicitado in solicitadas
+                join asignado in asignadas
+                    on solicitado.SubCatMP_Id equals asignado.SubCatMP_Id
+                    into asignacionGroup
+
+                from asignado in asignacionGroup.DefaultIfEmpty()
+
+                select new
+                {
+                    solicitado.SubCatMP_Id,
+
+                    CantidadSolicitada = solicitado.CantidadSolicitada,
+
+                    CantidadAsignada = asignado != null
+                        ? asignado.CantidadAsignada
+                        : 0m
+                };
+
+            var cantidades = await comparacion.ToListAsync();
+
+            // No existen detalles para la solicitud
+            if (cantidades.Count == 0)
+                return BadRequest("La solicitud no tiene detalles.");
+
+            // ¿Todas las subcategorías tienen exactamente
+            // la cantidad solicitada?
+            var finalizada = cantidades.All(x =>
+                x.CantidadAsignada == x.CantidadSolicitada);
+
+            // ¿Existe al menos una cantidad asignada?
+            var tieneAsignaciones = cantidades.Any(x =>
+                x.CantidadAsignada > 0);
+
+            if (finalizada)
+            {
+                // Todas las referencias están completas
+                solicitud.Estado_Id = 5;
+            }
+            else if (tieneAsignaciones)
+            {
+                // Existe al menos una asignación,
+                // pero alguna referencia no está completa
+                solicitud.Estado_Id = 13;
+            }
+            else
+            {
+                // Ninguna referencia tiene asignación
+                solicitud.Estado_Id = 11;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
 
         // PUT: api/Solicitud_MatPrimaExtrusion/5
