@@ -51,10 +51,11 @@ namespace PlasticaribeAPI.Controllers
         }
 
         //Función que se encarga de mostrar el balance de las ordenes de trabajo, calculando el balance por proceso y el balance general
-        [HttpGet("getInfo_OrdenesTrabajoConBalance")]
+        [HttpGet("getInfo_OrdenesTrabajoConBalance/{fechaInicial}/{fechaFinal}/{vistaGerencial}")]
         public async Task<ActionResult> GetInfo_OrdenesTrabajoConBalance(
-            DateTime? fechaInicial = null,
-            DateTime? fechaFinal = null,
+            DateTime fechaInicial,
+            DateTime fechaFinal,
+            bool vistaGerencial,
             string? ot = "",
             string? cli = "",
             string? prod = "",
@@ -78,8 +79,8 @@ namespace PlasticaribeAPI.Controllers
             //    de las dos, la otra se completa con hoy / hace un mes.
             // -------------------------------------------------------------
 
-            var rangoInicial = fechaInicial ?? DateTime.Today.AddMonths(-1);
-            var rangoFinal = (fechaFinal ?? DateTime.Today).Date.AddDays(1).AddTicks(-1);
+            var rangoInicial = fechaInicial;
+            var rangoFinal = fechaFinal;
 
 
             var desperdiciosPorOt = _context.Set<Models.Desperdicio>()
@@ -116,9 +117,8 @@ namespace PlasticaribeAPI.Controllers
             var query =
                 from orden in _context.Set<Estados_ProcesosOT>().AsNoTracking()
                 where (
-                        // Opción 1: Si tiene FechaInicio, esta DEBE haber empezado antes o dentro del rango,
-                        // pero la creación o el inicio no pueden ser más viejos que el límite deseado si no ha finalizado.
-                        // O si ya finalizó, su intervalo [FechaInicio, FechaFinal] debe cruzarse con el rango.
+                        
+                     vistaGerencial ?   
                         (orden.EstProcOT_FechaAsignacionMP != null
                             && orden.EstProcOT_FechaAsignacionMP <= rangoFinal
                             && (orden.EstProcOT_FechaFinal != null
@@ -127,18 +127,15 @@ namespace PlasticaribeAPI.Controllers
 
                         ||
 
-                        (orden.EstProcOT_FechaInicio != null
+                        (orden.EstProcOT_FechaAsignacionMP == null
+                            && orden.EstProcOT_FechaInicio != null
                             && orden.EstProcOT_FechaInicio <= rangoFinal
                             && (orden.EstProcOT_FechaFinal != null
                                 ? orden.EstProcOT_FechaFinal >= rangoInicial
-                                : orden.EstProcOT_FechaInicio >= rangoInicial)) // Si no ha finalizado, exigimos que haya iniciado dentro del rango
-
-                        ||
-
-                        // Opción 2: Si nunca ha iniciado (FechaInicio es null), filtramos estrictamente por su FechaCreacion
-                        (orden.EstProcOT_FechaInicio == null
-                            && orden.EstProcOT_FechaCreacion >= rangoInicial
-                            && orden.EstProcOT_FechaCreacion <= rangoFinal)
+                                : orden.EstProcOT_FechaInicio >= rangoInicial)) 
+                     : 
+                           orden.EstProcOT_FechaCreacion >= rangoInicial
+                           && orden.EstProcOT_FechaCreacion <= rangoFinal
                     )
                       && (string.IsNullOrEmpty(ot) || Convert.ToString(orden.EstProcOT_OrdenTrabajo).Contains(ot))
                       && (string.IsNullOrEmpty(falla) || Convert.ToString(orden.Falla_Id) == falla)
@@ -154,7 +151,7 @@ namespace PlasticaribeAPI.Controllers
                     EstProcOT_Id = Convert.ToInt32(orden.EstProcOT_Id),
                     Ot = Convert.ToString(orden.EstProcOT_OrdenTrabajo),
                     Mp = orden.EstProcOT_CantMatPrimaAsignada,
-                    Bopp = orden.EstProcOT_CantBoppAsignado,
+                    Bopp = orden.EstProcOT_CantBoppAsignado ?? 0m,
                     Cant = orden.EstProcOT_CantidadPedida,
                     CantUnd = Convert.ToDecimal(orden.EstProcOT_CantidadPedidaUnd),
                     Und = orden.UndMed_Id,
@@ -219,7 +216,7 @@ namespace PlasticaribeAPI.Controllers
             // -------------------------------------------------------------
             foreach (var o in con)
             {
-                decimal baseSiguiente = o.Mp;
+                decimal baseSiguiente = o.Mp; 
                 decimal baseSiguienteBopp = o.Bopp.Value;
 
                 o.Balance_Ext = (o.Ext + o.Desp_ext) - baseSiguiente; //500 + 50 - 580 = -30 
@@ -234,30 +231,60 @@ namespace PlasticaribeAPI.Controllers
                 } 
 
 
-                o.Balance_Imp = baseSiguiente > 0 ? (o.Imp + o.Desp_imp) - baseSiguiente : (o.Imp + o.Desp_imp) - baseSiguienteBopp; //480 + 10 - 500 = -10
+                o.Balance_Imp = baseSiguiente > 0 ? 
+                                                    baseSiguienteBopp > 0 ? (o.Imp + o.Desp_imp) - baseSiguienteBopp : (o.Imp + o.Desp_imp) - baseSiguiente
+                                                  : baseSiguienteBopp > 0 ? (o.Imp + o.Desp_imp) - baseSiguienteBopp : (o.Imp + o.Desp_imp) - baseSiguiente; 
                 if (o.Imp > 0)
                 {
-                    o.Base_Imp = baseSiguiente > 0 ? baseSiguiente : baseSiguienteBopp; 
+                    o.Base_Imp = baseSiguiente > 0 ? baseSiguienteBopp > 0 ? baseSiguienteBopp : baseSiguiente : baseSiguienteBopp > 0 ? baseSiguiente : baseSiguiente; 
                     baseSiguiente = o.Imp;
                     
                 }
                 else {
                     o.Balance_Imp = 0;
                     o.Base_Imp = 0;
-                } 
-               
+                }
 
-                o.Balance_Lam = (o.Lam + o.Desp_lam) - baseSiguiente;
+                // -----------------------------------------------------------------
+                // Base de Laminado: Laminado puede recibir material de DOS líneas
+                // distintas (MP -> Extrusión, o BOPP -> Impresión directo).
+                //   - MP y BOPP, con Ext e Imp producidos         -> se suman ambas líneas
+                //   - Solo BOPP (sin MP) y solo pasó por Impresión -> base = Impresión
+                //   - Solo MP (sin BOPP) y solo pasó por Extrusión  -> base = Extrusión
+                //   - Cualquier otra combinación                    -> comportamiento
+                //     normal de la cadena (lo que traía baseSiguiente desde Impresión)
+                // -----------------------------------------------------------------
+
+                decimal baseLam;
+
+                if (o.Mp > 0 && o.Bopp > 0 && o.Ext > 0 && o.Imp > 0)
+                {
+                    baseLam = o.Ext + o.Imp;
+                }
+                else if (o.Bopp > 0 && o.Mp == 0 && o.Ext == 0 && o.Imp > 0)
+                {
+                    baseLam = o.Imp;
+                }
+                else if (o.Mp > 0 && o.Bopp == 0 && o.Imp == 0 && o.Ext > 0)
+                {
+                    baseLam = o.Ext;
+                }
+                else
+                {
+                    baseLam = baseSiguiente;
+                }
+
+                o.Balance_Lam = (o.Lam + o.Desp_lam) - baseLam;
                 if (o.Lam > 0)
                 {
-                    o.Base_Lam = baseSiguiente;
+                    o.Base_Lam = baseLam;
                     baseSiguiente = o.Lam;
                 }
-                else {
+                else
+                {
                     o.Balance_Lam = 0;
                     o.Base_Lam = 0;
-                } 
-                
+                }
 
                 o.Balance_Perf = (o.Perf + o.Desp_perf) - baseSiguiente;
                 if (o.Perf > 0)
