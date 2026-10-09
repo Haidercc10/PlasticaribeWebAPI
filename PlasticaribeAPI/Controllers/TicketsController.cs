@@ -105,6 +105,41 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
         }
 
+        [HttpGet("getTicketsAbiertosEnRevisionAsync")]
+        public async Task<ActionResult> getTicketsAbiertosEnRevisionAsync(bool? MostrarCompletados = false)
+        {
+            var tickets = await _context.Set<Tickets>()
+                .AsNoTracking()
+                .Where(tk =>
+                    tk.Estado_Id == 28 ||
+                    tk.Estado_Id == 29 ||
+                    (MostrarCompletados == true && tk.Estado_Id == 30)
+                )
+                .Select(tk => new
+                {
+                    Codigo = tk.Ticket_Id,
+                    Fecha = tk.Ticket_Fecha,
+                    Hora = tk.Ticket_Hora,
+
+                    Usuario = tk.Usuario == null
+                        ? null
+                        : new
+                        {
+                            Id = tk.Usuario.Usua_Id,
+                            Nombre = tk.Usuario.Usua_Nombre
+                        },
+
+                    Estado = tk.Estado == null
+                        ? ""
+                        : tk.Estado.Estado_Nombre,
+
+                    Descripcion = tk.Ticket_Descripcion
+                })
+                .ToListAsync();
+
+            return Ok(tickets);
+        }
+
         // Consulta que devolverá la cantidad de los tickets que estan abiertos, en revision y los resuletos en el mes
         [HttpGet("get_CantidadTickets")]
         public ActionResult Get_CantidadTickets()
