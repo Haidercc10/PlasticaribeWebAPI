@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
+using PlasticaribeAPI.DTOs;
 using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Controllers
@@ -27,6 +28,25 @@ namespace PlasticaribeAPI.Controllers
                 return NotFound();
             }
             return await _context.Clientes.ToListAsync();
+        }
+
+        [HttpGet("resumenReporteOT")]
+        public async Task<ActionResult<IEnumerable<ClienteReporteOTDto>>> GetClientesResumenReporteOT()
+        {
+            if (_context.Clientes == null)
+            {
+                return NotFound();
+            }
+
+            return await _context.Clientes
+                .AsNoTracking()
+                .Select(cliente => new ClienteReporteOTDto
+                {
+                    Cli_Id = cliente.Cli_Id,
+                    Cli_Nombre = cliente.Cli_Nombre,
+                    usua_Id = cliente.usua_Id
+                })
+                .ToListAsync();
         }
 
         // GET: api/Clientes/5
