@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Service;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -32,7 +33,11 @@ namespace PlasticaribeAPI.Controllers
                 var tokeOptions = new JwtSecurityToken(
                     issuer: ConfigurationManager.AppSetting["JWT:ValidIssuer"],
                     audience: ConfigurationManager.AppSetting["JWT:ValidAudience"],
-                    claims: new List<Claim>(),
+                    claims: new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, con.Usua_Id.ToString(CultureInfo.InvariantCulture)),
+                        new Claim(ClaimTypes.Role, con.RolUsu_Id.ToString(CultureInfo.InvariantCulture))
+                    },
                     expires: DateTime.Now.AddHours(24),
                     signingCredentials: signinCredentials
                 );

@@ -412,6 +412,73 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Asignacion_RollosOT");
                 });
 
+            modelBuilder.Entity("PlasticaribeAPI.Models.AutorizacionExcesoOT", b =>
+                {
+                    b.Property<long>("AutEx_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("AutEx_Id"));
+
+                    b.Property<long?>("AsigMp_Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("AutEx_CantidadKg")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("AutEx_FechaConsumoUtc")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime?>("AutEx_FechaRespuestaUtc")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime>("AutEx_FechaSolicitudUtc")
+                        .HasColumnType("date");
+
+                    b.Property<string>("AutEx_HoraConsumoUtc")
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<string>("AutEx_HoraRespuestaUtc")
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<string>("AutEx_HoraSolicitudUtc")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<string>("AutEx_Motivo")
+                        .IsRequired()
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<string>("AutEx_MotivoRespuesta")
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<long>("AutEx_OrdenTrabajo")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Estado_Id")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("UsuarioAutorizaId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("UsuarioSolicitaId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("AutEx_Id");
+
+                    b.HasIndex("AsigMp_Id");
+
+                    b.HasIndex("Estado_Id");
+
+                    b.HasIndex("UsuarioAutorizaId");
+
+                    b.HasIndex("UsuarioSolicitaId");
+
+                    b.HasIndex("AutEx_OrdenTrabajo", "Estado_Id");
+
+                    b.ToTable("Autorizaciones_ExcesoOT", (string)null);
+                });
+
             modelBuilder.Entity("PlasticaribeAPI.Models.BOPP", b =>
                 {
                     b.Property<long>("BOPP_Id")
@@ -10963,6 +11030,39 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("PlasticaribeAPI.Models.AutorizacionExcesoOT", b =>
+                {
+                    b.HasOne("PlasticaribeAPI.Models.Asignacion_MatPrima", "AsignacionMatPrima")
+                        .WithMany()
+                        .HasForeignKey("AsigMp_Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("PlasticaribeAPI.Models.Estado", "Estados")
+                        .WithMany()
+                        .HasForeignKey("Estado_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "UsuarioAutoriza")
+                        .WithMany()
+                        .HasForeignKey("UsuarioAutorizaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "UsuarioSolicita")
+                        .WithMany()
+                        .HasForeignKey("UsuarioSolicitaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AsignacionMatPrima");
+
+                    b.Navigation("Estados");
+
+                    b.Navigation("UsuarioAutoriza");
+
+                    b.Navigation("UsuarioSolicita");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.BOPP", b =>

@@ -54,6 +54,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<FacturaCompra_MateriaPrima> FacturasCompras_MateriaPrimas { get; set; }
         public DbSet<Proceso> Procesos { get; set; }
         public DbSet<Asignacion_MatPrima> Asignaciones_MatPrima { get; set; }
+        public DbSet<AutorizacionExcesoOT> AutorizacionesExcesoOT { get; set; }
         public DbSet<DetalleAsignacion_MateriaPrima> DetallesAsignaciones_MateriasPrimas { get; set; }
         public DbSet<Tipo_Documento> Tipos_Documentos { get; set; }
         public DbSet<Remision> Remisiones { get; set; }
@@ -382,6 +383,13 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.Usua).WithMany().HasForeignKey(asgmpr => asgmpr.Usua_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.EstadoOT).WithMany().HasForeignKey(asigmp => asigmp.Estado_OrdenTrabajo).OnDelete(DeleteBehavior.Restrict); //foranea estado OrdenTrabajo
             modelBuilder.Entity<Asignacion_MatPrima>().HasOne(asgmp => asgmp.SolMatPrima_Extrusion).WithMany().HasForeignKey(asigmp => asigmp.SolMpExt_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado OrdenTrabajo
+
+            modelBuilder.Entity<AutorizacionExcesoOT>().ToTable("Autorizaciones_ExcesoOT");
+            modelBuilder.Entity<AutorizacionExcesoOT>().HasIndex(a => new { a.AutEx_OrdenTrabajo, a.Estado_Id });
+            modelBuilder.Entity<AutorizacionExcesoOT>().HasOne(a => a.UsuarioSolicita).WithMany().HasForeignKey(a => a.UsuarioSolicitaId).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<AutorizacionExcesoOT>().HasOne(a => a.UsuarioAutoriza).WithMany().HasForeignKey(a => a.UsuarioAutorizaId).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<AutorizacionExcesoOT>().HasOne(a => a.AsignacionMatPrima).WithMany().HasForeignKey(a => a.AsigMp_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<AutorizacionExcesoOT>().HasOne(a => a.Estados).WithMany().HasForeignKey(a => a.Estado_Id).OnDelete(DeleteBehavior.Restrict);
 
             //Relaciones DetallesAsignaciones_MateriasPrimas
             //modelBuilder.Entity<DetalleAsignacion_MateriaPrima>().ToTable(tb => tb.HasTrigger("Auditoria_DetallesAsignaciones_MateriasPrimas"));

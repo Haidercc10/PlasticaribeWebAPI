@@ -246,25 +246,37 @@ namespace PlasticaribeAPI.Controllers
 
         //Consulta que traerá la cantidad de materia prima asignada, teniendo en cuenta la materia prima devuelta
         [HttpGet("getMateriaPrimaAsignada/{ot}")]
-        public ActionResult GetMateriaPrimaAsignada(int ot)
+        public ActionResult GetMateriaPrimaAsignada(int ot) => Ok(CalcularConsumoOT(ot, false));
+
+        /// <summary>
+        /// Calcula el consumo de una OT (materia prima + BOPP - devoluciones). Es la regla única para el límite de asignación por OT.
+        /// </summary>
+        /// <param name="ot">Número de la orden de trabajo.</param>
+        /// <param name="tracking">Indica si las consultas deben usar seguimiento de cambios.</param>
+        /// <returns>Cantidad neta consumida por la OT.</returns>
+        private decimal CalcularConsumoOT(int ot, bool tracking)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var asig = (from asg in _context.Set<DetalleAsignacion_MateriaPrima>()
+            var asignaciones = tracking ? _context.Set<DetalleAsignacion_MateriaPrima>().AsTracking() : _context.Set<DetalleAsignacion_MateriaPrima>().AsNoTracking();
+            var asignacionesBopp = tracking ? _context.Set<DetalleAsignacion_BOPP>().AsTracking() : _context.Set<DetalleAsignacion_BOPP>().AsNoTracking();
+            var devoluciones = tracking ? _context.Set<DetalleDevolucion_MateriaPrima>().AsTracking() : _context.Set<DetalleDevolucion_MateriaPrima>().AsNoTracking();
+
+            var asig = (from asg in asignaciones
                         where asg.AsigMp.AsigMP_OrdenTrabajo == ot
+                        && asg.MatPri.CatMP_Id != 18
                         select asg.DtAsigMp_Cantidad).Sum();
 
-            var asgBopp = (from asgbopp in _context.Set<DetalleAsignacion_BOPP>()
+            var asgBopp = (from asgbopp in asignacionesBopp
                            where asgbopp.DtAsigBOPP_OrdenTrabajo == ot
                            select asgbopp.DtAsigBOPP_Cantidad).Sum();
 
-            var devol = (from dev in _context.Set<DetalleDevolucion_MateriaPrima>()
+            var devol = (from dev in devoluciones
                          where dev.DevMatPri.DevMatPri_OrdenTrabajo == ot &&
                                dev.Tinta_Id == 2001
+                               && dev.MatPri.CatMP_Id != 18
                          select dev.DtDevMatPri_CantidadDevuelta).Sum();
-
-            var asigs = (asig + asgBopp) - devol;
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return Ok(asigs);
+            return (asig + asgBopp) - devol;
         }
 
         //Consulta que traerá la cantidad de materia prima asignada, teniendo en cuenta la materia prima devuelta
@@ -272,24 +284,15 @@ namespace PlasticaribeAPI.Controllers
         public async Task<ActionResult> getMateriaPrimaSolicitada(int ot)
         {
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var asig = (from asg in _context.Set<DetalleAsignacion_MateriaPrima>().AsTracking()
-                        where asg.AsigMp.AsigMP_OrdenTrabajo == ot
-                        select asg.DtAsigMp_Cantidad).Sum();
+            var asigs = CalcularConsumoOT(ot, true);
 
-            var asgBopp = (from asgbopp in _context.Set<DetalleAsignacion_BOPP>().AsTracking()
-                           where asgbopp.DtAsigBOPP_OrdenTrabajo == ot
-                           select asgbopp.DtAsigBOPP_Cantidad).Sum();
-
+            // Se excluyen solicitudes canceladas (4), finalizadas (5) y la solicitud genérica (1)
             var solicitud = (from sol in _context.Set<DetSolicitud_MatPrimaExtrusion>().AsTracking()
-                             where sol.SolMatPriExt.SolMpExt_OT == ot
+                             where sol.SolMatPriExt.SolMpExt_OT == ot &&
+                                   sol.SolMpExt_Id != 1 &&
+                                   sol.SolMatPriExt.Estado_Id != 4 &&
+                                   sol.SolMatPriExt.Estado_Id != 5
                              select sol.DtSolMpExt_Cantidad).Sum();
-
-            var devol = (from dev in _context.Set<DetalleDevolucion_MateriaPrima>().AsTracking()
-                         where dev.DevMatPri.DevMatPri_OrdenTrabajo == ot &&
-                               dev.Tinta_Id == 2001
-                         select dev.DtDevMatPri_CantidadDevuelta).Sum();
-
-            var asigs = (asig + asgBopp) - devol;
 
             var result = new
             {

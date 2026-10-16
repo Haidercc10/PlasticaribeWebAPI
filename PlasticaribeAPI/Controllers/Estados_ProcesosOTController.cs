@@ -237,16 +237,16 @@ namespace PlasticaribeAPI.Controllers
 
                 o.Balance_Imp = baseSiguiente > 0 ? 
                                                     baseSiguienteBopp > 0 ? (o.Imp + o.Desp_imp) - baseSiguienteBopp : (o.Imp + o.Desp_imp) - baseSiguiente
-                                                  : baseSiguienteBopp > 0 ? (o.Imp + o.Desp_imp) - baseSiguienteBopp : (o.Imp + o.Desp_imp) - baseSiguiente; 
+                                                  : baseSiguienteBopp == 0 ? (o.Imp + o.Desp_imp) - baseSiguiente : (o.Imp + o.Desp_imp) - baseSiguienteBopp; 
                 if (o.Imp > 0)
                 {
-                    o.Base_Imp = baseSiguiente > 0 ? baseSiguienteBopp > 0 ? baseSiguienteBopp : baseSiguiente : baseSiguienteBopp > 0 ? baseSiguiente : baseSiguiente; 
+                    o.Base_Imp = baseSiguiente > 0 ? baseSiguienteBopp > 0 ? baseSiguienteBopp : baseSiguiente : baseSiguienteBopp > 0 ? baseSiguienteBopp : baseSiguiente; 
                     baseSiguiente = o.Imp;
                     
                 }
                 else {
-                    o.Balance_Imp = 0;
-                    o.Base_Imp = 0;
+                    o.Balance_Imp = (o.Imp + o.Desp_imp) - baseSiguienteBopp;
+                    o.Base_Imp = baseSiguiente > 0 ? baseSiguienteBopp > 0 ? baseSiguienteBopp : baseSiguiente : baseSiguienteBopp > 0 ? baseSiguienteBopp : baseSiguiente;
                 }
 
                 // -----------------------------------------------------------------
@@ -272,6 +272,10 @@ namespace PlasticaribeAPI.Controllers
                 else if (o.Mp > 0 && o.Bopp == 0 && o.Imp == 0 && o.Ext > 0)
                 {
                     baseLam = o.Ext;
+                }
+                else if (o.Mp > 0 && o.Bopp > 0 && o.Imp == 0 && o.Ext > 0)
+                {
+                    baseLam = o.Ext + o.Bopp.Value;
                 }
                 else
                 {
