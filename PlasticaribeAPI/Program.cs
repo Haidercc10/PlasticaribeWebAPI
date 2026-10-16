@@ -48,6 +48,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<IReposiciones, ReposicionesController>();
 builder.Services.AddScoped<IPlanillas_Despacho, Planillas_DespachoController>();
 builder.Services.AddScoped<IAsignacionProducto_FacturaVenta, AsignacionProducto_FacturaVentaController>();
+builder.Services.AddScoped<IEstadoProcesoOT, EstadoProcesoOTService>();
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddDbContext<dataContext>(options =>
 {

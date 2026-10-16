@@ -94,7 +94,11 @@ namespace PlasticaribeAPI.Controllers
                     DespLam = g.Where(x => x.Proceso_Id == "LAM").Sum(x => (decimal?)x.Desp_PesoKg),
                     DespDbl = g.Where(x => x.Proceso_Id == "DBLD").Sum(x => (decimal?)x.Desp_PesoKg),
                     DespEmp = g.Where(x => x.Proceso_Id == "EMP").Sum(x => (decimal?)x.Desp_PesoKg),
+                    DespEmpRefile = g.Where(x => x.Proceso_Id == "EMP" && x.Falla_Id == 10).Sum(x => (decimal?)x.Desp_PesoKg),
+                    DespEmpProceso = g.Where(x => x.Proceso_Id == "EMP" && x.Falla_Id != 10).Sum(x => (decimal?)x.Desp_PesoKg),
                     DespSel = g.Where(x => x.Proceso_Id == "SELLA").Sum(x => (decimal?)x.Desp_PesoKg),
+                    DespSelRefile = g.Where(x => x.Proceso_Id == "SELLA" && x.Falla_Id == 62).Sum(x => (decimal?)x.Desp_PesoKg),
+                    DespSelProceso = g.Where(x => x.Proceso_Id == "SELLA" && x.Falla_Id != 62).Sum(x => (decimal?)x.Desp_PesoKg),
                     Desp = g.Sum(x => (decimal?)x.Desp_PesoKg),
                 });
 

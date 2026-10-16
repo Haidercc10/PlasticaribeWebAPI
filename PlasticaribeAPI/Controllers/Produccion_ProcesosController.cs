@@ -24,12 +24,14 @@ namespace PlasticaribeAPI.Controllers
         
         private readonly dataContext _context;
         private readonly IReposiciones _reposiciones;
+        private readonly IEstadoProcesoOT _estadoProcesoOT;
         private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(5, 5);
 
-        public Produccion_ProcesosController(dataContext context, IReposiciones reposiciones)
+        public Produccion_ProcesosController(dataContext context, IReposiciones reposiciones, IEstadoProcesoOT estadoProcesoOT)
         {
             _context = context;
             _reposiciones = reposiciones;
+            _estadoProcesoOT = estadoProcesoOT;
         }
 
         // GET: api/Produccion_Procesos
@@ -1846,31 +1848,117 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        //Función que cambiará el estado de los rollos a Eliminados.
+        /// <summary>
+        /// Marca los rollos especificados como eliminados (Estado_Rollo = 22) y actualiza los acumulados y estados de
+        /// proceso de las órdenes de trabajo afectadas dentro de una transacción.
+        /// </summary>
+        /// <remarks>Se ejecuta con la estrategia de ejecución de EF Core y una transacción; ajusta kilos
+        /// y unidades según el proceso (EXT, IMP, LAM, PERF, DBLD, EMP, SELLA), establece Estado_Rollo = 22 y llama a
+        /// ValidarYCambiarEstado_EstadoProcesoOT para validar y actualizar los estados por orden. La transacción se
+        /// revierte ante errores.</remarks>
+        /// <param name="rollsToDelete">Lista de elementos que identifican cada rollo y su proceso asociado (número de rollo y código de proceso)
+        /// que se deben marcar como eliminados.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación asincrónica.</param>
+        /// <returns>NoContent (204) si la operación se completa correctamente; NotFound (404) si falta el registro de estado de
+        /// alguna OT o si ocurre una colisión de concurrencia; otras excepciones se propagan tras deshacer la
+        /// transacción.</returns>
         [HttpPut("putStateDeletedRolls")]
-        public async Task<IActionResult> putStateDeletedRolls(List<rollsToDelete> rollsToDelete)
+        public async Task<IActionResult> putStateDeletedRolls(
+            List<rollsToDelete> rollsToDelete,
+            CancellationToken cancellationToken)
         {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            foreach (var rolls in rollsToDelete)
-            {
-                var roll = (from pp in _context.Set<Produccion_Procesos>() 
-                            where pp.NumeroRollo_BagPro == rolls.roll 
-                            && pp.Proceso_Id == rolls.process 
-                            select pp).FirstOrDefault();
+            var executionStrategy = _context.Database.CreateExecutionStrategy();
 
-                roll.Estado_Rollo = 22;
-                _context.Entry(roll).State = EntityState.Modified;
+            return await executionStrategy.ExecuteAsync<IActionResult>(async () =>
+            {
+                _context.ChangeTracker.Clear();
+                await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
                 try
                 {
-                    await _context.SaveChangesAsync();
+                    var requestedRolls = rollsToDelete
+                        .Select(roll => (Roll: roll.roll, Process: roll.process))
+                        .ToHashSet();
+                    var requestedRollNumbers = requestedRolls
+                        .Select(roll => roll.Roll)
+                        .Distinct()
+                        .ToArray();
+
+                    var rolls = requestedRollNumbers.Length == 0
+                        ? new List<Produccion_Procesos>()
+                        : (await _context.Set<Produccion_Procesos>()
+                            .Where(roll => requestedRollNumbers.Contains(roll.NumeroRollo_BagPro))
+                            .ToListAsync(cancellationToken))
+                        .Where(roll => requestedRolls.Contains((roll.NumeroRollo_BagPro, roll.Proceso_Id)))
+                        .ToList();
+
+                    var estadosOT = await _estadoProcesoOT.getEstadosProcesoOT(
+                        rolls.Select(roll => roll.OT),
+                        cancellationToken);
+                    var rolloSinEstadoOT = rolls.FirstOrDefault(roll => !estadosOT.ContainsKey(roll.OT));
+
+                    if (rolloSinEstadoOT is not null)
+                    {
+                        await transaction.RollbackAsync();
+                        return NotFound($"No existe el registro de estado para la OT {rolloSinEstadoOT.OT}.");
+                    }
+
+                    var estadosOTPorOrden = new Dictionary<long, (Estados_ProcesosOT EstadoOT, HashSet<string> Procesos)>();
+
+                    foreach (var roll in rolls)
+                    {
+                        roll.Estado_Rollo = 22; // 22: eliminado
+                        var estadoOT = estadosOT[roll.OT];
+
+                        switch (roll.Proceso_Id)
+                        {
+                            case "EXT":
+                                estadoOT.EstProcOT_ExtrusionKg -= roll.Peso_Neto;
+                                break;
+                            case "IMP":
+                                estadoOT.EstProcOT_ImpresionKg -= roll.Peso_Neto;
+                                break;
+                            case "LAM":
+                                estadoOT.EstProcOT_LaminadoKg -= roll.Peso_Neto;
+                                break;
+                            case "PERF":
+                                estadoOT.EstProcOT_PerforadoKg -= roll.Peso_Neto;
+                                break;
+                            case "DBLD":
+                                estadoOT.EstProcOT_DobladoKg -= roll.Peso_Neto;
+                                break;
+                            case "EMP":
+                                estadoOT.EstProcOT_EmpaqueKg -= roll.Peso_Neto;
+                                break;
+                            case "SELLA":
+                                estadoOT.EstProcOT_SelladoKg -= roll.Peso_Neto;
+                                estadoOT.EstProcOT_SelladoUnd -= roll.Cantidad;
+                                break;
+                        }
+
+                        if (!estadosOTPorOrden.TryGetValue(roll.OT, out var datosOT))
+                        {
+                            datosOT = (estadoOT, new HashSet<string>());
+                            estadosOTPorOrden.Add(roll.OT, datosOT);
+                        }
+
+                        datosOT.Procesos.Add(roll.Proceso_Id);
+                    }
+
+                    await _estadoProcesoOT.ValidarYCambiarEstado_EstadoProcesoOT(estadosOTPorOrden, cancellationToken);
+                    await transaction.CommitAsync(cancellationToken);
+                    return NoContent();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
+                    await transaction.RollbackAsync();
                     return NotFound();
                 }
-            }
-            return NoContent();
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
         }
 
         // Función que cambiará el estado de los rollos a Eliminados, esta función se diferencia de la anterior
