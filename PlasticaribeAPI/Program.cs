@@ -49,6 +49,8 @@ builder.Services.AddScoped<IReposiciones, ReposicionesController>();
 builder.Services.AddScoped<IPlanillas_Despacho, Planillas_DespachoController>();
 builder.Services.AddScoped<IAsignacionProducto_FacturaVenta, AsignacionProducto_FacturaVentaController>();
 builder.Services.AddScoped<ICacheService, CacheService>();
+builder.Services.AddScoped<ConsumoInventarioAsignacionService>();
+builder.Services.AddScoped<ReservasInventarioService>();
 builder.Services.AddDbContext<dataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlServerOptionsAction: SqlOptions => { SqlOptions.EnableRetryOnFailure(); });
@@ -73,6 +75,12 @@ builder.Services.AddAuthentication(opt =>
     };
 });
 #pragma warning restore CS8604 // Posible argumento de referencia nulo
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ExcederLimiteOT", policy =>
+        policy.RequireRole("1", "104"));
+});
 
 builder.Services.AddCors(options =>
 {

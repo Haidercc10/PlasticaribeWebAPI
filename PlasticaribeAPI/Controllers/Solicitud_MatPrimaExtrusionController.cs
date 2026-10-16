@@ -161,7 +161,7 @@ namespace PlasticaribeAPI.Controllers
             {
                 // Existe al menos una asignación,
                 // pero alguna referencia no está completa
-                solicitud.Estado_Id = 13;
+                solicitud.Estado_Id = 12;
             }
             else
             {
