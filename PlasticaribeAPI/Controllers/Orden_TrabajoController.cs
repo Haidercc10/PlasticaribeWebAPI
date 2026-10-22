@@ -315,6 +315,11 @@ namespace PlasticaribeAPI.Controllers
             return con.Any() ? Ok(con) : BadRequest($"¡No se encontró una Orden de Trabajo con el consecutivo {orden}!");
         }
 
+        /// <summary>
+        /// Consulta una orden de trabajo con la información de sus procesos y observaciones.
+        /// </summary>
+        /// <param name="orden">Número visible de la orden de trabajo.</param>
+        /// <returns>La orden consultada o un error si no existe.</returns>
         [HttpGet("getOrdenTrabajo/{orden}")]
         public ActionResult GetOrdenTrabajo(long orden)
         {
@@ -341,7 +346,7 @@ namespace PlasticaribeAPI.Controllers
                           Presentacion = ot.Unidad_Medida.UndMed_Nombre,
                           Margen = ot.Ot_MargenAdicional,
                           Fecha_Creacion = ot.Ot_FechaCreacion,
-                          Fecha_Entrega = ot.Ot_FechaCreacion,
+                          Fecha_Entrega = ot.Ot_FechaEntrega,
                           Estado_Orden = ot.Estado_Id,
                           Estado = ot.Estado.Estado_Nombre,
                           Id_Pedido = ot.PedExt_Id,
@@ -376,6 +381,8 @@ namespace PlasticaribeAPI.Controllers
                           Ancho2_Extrusion = otExt.Extrusion_Ancho2,
                           Ancho3_Extrusion = otExt.Extrusion_Ancho3,
                           Peso_Extrusion = otExt.Extrusion_Peso,
+                          otExt.Extrusion_Observacion,
+                          otExt.Extrusion_Grafilado,
 
                           // Información de Impresión
                           Id_Tipo_Imptesion = otImp.TpImpresion_Id,
@@ -398,6 +405,7 @@ namespace PlasticaribeAPI.Controllers
                           Tinta7 = otImp.Tinta7.Tinta_Nombre,
                           Id_Tinta8 = otImp.Tinta8_Id,
                           Tinta8 = otImp.Tinta8.Tinta_Nombre,
+                          otImp.Impresion_Observacion,
 
                           // Información de Laminado
                           Id_Capa1 = otLam.Capa_Id1,
@@ -412,6 +420,7 @@ namespace PlasticaribeAPI.Controllers
                           Laminado_Capa3 = otLam.Laminado_Capa3.LamCapa_Nombre,
                           Calibre_Laminado_Capa3 = otLam.LamCapa_Calibre3,
                           Cantidad_Laminado_Capa3 = otLam.LamCapa_Cantidad3,
+                          otLam.Laminado_Observacion,
 
                           // Información de Sellado
                           Id_Formato_Producto = otSelCor.Formato_Id,
@@ -419,6 +428,10 @@ namespace PlasticaribeAPI.Controllers
                           otSelCor.SelladoCorte_Ancho,
                           otSelCor.SelladoCorte_Largo,
                           otSelCor.SelladoCorte_Fuelle,
+                          otSelCor.SelladoCorte_Solapa,
+                          //otSelCor.SelladoCorte_Ancho1,
+                          //otSelCor.SelladoCorte_Ancho2,
+                          //otSelCor.SelladoCorte_Ancho3,
                           otSelCor.SelladoCorte_Etiqueta_Ancho,
                           otSelCor.SelladoCorte_Etiqueta_Largo,
                           otSelCor.SelladoCorte_Etiqueta_Fuelle,
@@ -436,6 +449,7 @@ namespace PlasticaribeAPI.Controllers
                           otSelCor.SelladoCorte_PrecioNoche_Wik_Mq50,
                           otSelCor.SelladoCorte_PrecioDia_Wik_Mq9,
                           otSelCor.SelladoCorte_PrecioNoche_Wik_Mq9,
+                          otSelCor.SelladoCorte_Observacion,
 
                           // Información de Mezclas
                           ot.Mezcla_Id,
@@ -614,7 +628,12 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore IDE0075 // Simplify conditional expression
         }
 
-        //Funcion que consultará la información de la ultima orden de trabajo que se hizo de un producto con una presentación en especifico
+        /// <summary>
+        /// Consulta la última orden de trabajo asociada a un producto y presentación.
+        /// </summary>
+        /// <param name="producto">Identificador del producto.</param>
+        /// <param name="presentacion">Unidad de presentación del producto.</param>
+        /// <returns>La última orden encontrada con los datos de sus procesos.</returns>
         [HttpGet("getInfoUltOT/{producto}/{presentacion}")]
         public ActionResult GetInfoUltOT(int producto, string presentacion)
         {
@@ -642,7 +661,7 @@ namespace PlasticaribeAPI.Controllers
                            Presentacion = ot.Unidad_Medida.UndMed_Nombre,
                            Margen = ot.Ot_MargenAdicional,
                            Fecha_Creacion = ot.Ot_FechaCreacion,
-                           Fecha_Entrega = ot.Ot_FechaCreacion,
+                           Fecha_Entrega = ot.Ot_FechaEntrega,
                            Estado_Orden = ot.Estado_Id,
                            Estado = ot.Estado.Estado_Nombre,
                            Id_Pedido = ot.PedExt_Id,
@@ -677,6 +696,8 @@ namespace PlasticaribeAPI.Controllers
                            Ancho2_Extrusion = otExt.Extrusion_Ancho2,
                            Ancho3_Extrusion = otExt.Extrusion_Ancho3,
                            Peso_Extrusion = otExt.Extrusion_Peso,
+                           otExt.Extrusion_Observacion,
+                           otExt.Extrusion_Grafilado,
 
                            // Información de Impresión
                            Id_Tipo_Imptesion = otImp.TpImpresion_Id,
@@ -699,6 +720,7 @@ namespace PlasticaribeAPI.Controllers
                            Tinta7 = otImp.Tinta7.Tinta_Nombre,
                            Id_Tinta8 = otImp.Tinta8_Id,
                            Tinta8 = otImp.Tinta8.Tinta_Nombre,
+                           otImp.Impresion_Observacion,
 
                            // Información de Laminado
                            Id_Capa1 = otLam.Capa_Id1,
@@ -713,6 +735,7 @@ namespace PlasticaribeAPI.Controllers
                            Laminado_Capa3 = otLam.Laminado_Capa3.LamCapa_Nombre,
                            Calibre_Laminado_Capa3 = otLam.LamCapa_Calibre3,
                            Cantidad_Laminado_Capa3 = otLam.LamCapa_Cantidad3,
+                           otLam.Laminado_Observacion,
 
                            // Información de Sellado y Corte
                            Id_Formato_Producto = otSelCor.Formato_Id,
@@ -720,6 +743,10 @@ namespace PlasticaribeAPI.Controllers
                            otSelCor.SelladoCorte_Ancho,
                            otSelCor.SelladoCorte_Largo,
                            otSelCor.SelladoCorte_Fuelle,
+                           otSelCor.SelladoCorte_Solapa,
+                           //otSelCor.SelladoCorte_Ancho1,
+                           //otSelCor.SelladoCorte_Ancho2,
+                           //otSelCor.SelladoCorte_Ancho3,
                            otSelCor.SelladoCorte_Etiqueta_Ancho,
                            otSelCor.SelladoCorte_Etiqueta_Largo,
                            otSelCor.SelladoCorte_Etiqueta_Fuelle,
@@ -736,6 +763,7 @@ namespace PlasticaribeAPI.Controllers
                            otSelCor.SelladoCorte_PrecioNoche_Wik_Mq50,
                            otSelCor.SelladoCorte_PrecioDia_Wik_Mq9,
                            otSelCor.SelladoCorte_PrecioNoche_Wik_Mq9,
+                           otSelCor.SelladoCorte_Observacion,
 
                            // Información de Mezclas
                            ot.Mezcla_Id,

@@ -26,6 +26,18 @@ namespace PlasticaribeAPI.Models
         public decimal? SelladoCorte_Fuelle { get; set; }
 
         [Precision(14, 2)]
+        public decimal? SelladoCorte_Solapa { get; set; }
+
+        //[Precision(14, 2)]
+        //public decimal? SelladoCorte_Ancho1 { get; set; }
+
+        //[Precision(14, 2)]
+        //public decimal? SelladoCorte_Ancho2 { get; set; }
+
+        //[Precision(14, 2)]
+        //public decimal? SelladoCorte_Ancho3 { get; set; }
+
+        [Precision(14, 2)]
         public decimal SelladoCorte_PesoMillar { get; set; }
         public int TpSellado_Id { get; set; }
         public Tipos_Sellados? TipoSellado { get; set; }
@@ -43,6 +55,7 @@ namespace PlasticaribeAPI.Models
 
         [Precision(14, 2)]
         public decimal SelladoCorte_PesoPaquete { get; set; }
+
         [Precision(14, 2)]
         public decimal SelladoCorte_PesoBulto { get; set; }
 
@@ -69,6 +82,12 @@ namespace PlasticaribeAPI.Models
 
         [Precision(14, 2)]
         public decimal SelladoCorte_PrecioNoche_Wik_Mq9 { get; set; }
+
+        [Column(TypeName = "varchar(max)")]
+        public string? SelladoCorte_Observacion { get; set; }
+
+        [Precision(14, 2)]
+        public decimal? SelladoCorte_Calibre { get; set; }
 
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

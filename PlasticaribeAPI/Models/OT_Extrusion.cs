@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlasticaribeAPI.Models
 {
@@ -36,9 +37,13 @@ namespace PlasticaribeAPI.Models
         public int Tratado_Id { get; set; }
         public Tratado? Tratado { get; set; }
 
-
         [Precision(14, 2)]
         public decimal Extrusion_Peso { get; set; }
+
+        public bool? Extrusion_Grafilado { get; set; }
+
+        [Column(TypeName = "varchar(max)")]
+        public string? Extrusion_Observacion { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

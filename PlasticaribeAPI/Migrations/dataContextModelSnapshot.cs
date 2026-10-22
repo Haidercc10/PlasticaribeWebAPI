@@ -6512,6 +6512,12 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
 
+                    b.Property<bool?>("Extrusion_Grafilado")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Extrusion_Observacion")
+                        .HasColumnType("varchar(max)");
+
                     b.Property<decimal>("Extrusion_Peso")
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
@@ -6567,6 +6573,9 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Impresion_Id"));
+
+                    b.Property<string>("Impresion_Observacion")
+                        .HasColumnType("varchar(max)");
 
                     b.Property<long>("Ot_Id")
                         .HasColumnType("bigint");
@@ -6677,6 +6686,9 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(14, 2)
                         .HasColumnType("float(14)");
 
+                    b.Property<string>("Laminado_Observacion")
+                        .HasColumnType("varchar(max)");
+
                     b.Property<long>("OT_Id")
                         .HasColumnType("bigint");
 
@@ -6724,6 +6736,10 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
 
+                    b.Property<decimal?>("SelladoCorte_Calibre")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("decimal(14,2)");
+
                     b.Property<decimal>("SelladoCorte_CantBolsasBulto")
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
@@ -6751,6 +6767,9 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<decimal>("SelladoCorte_Largo")
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
+
+                    b.Property<string>("SelladoCorte_Observacion")
+                        .HasColumnType("varchar(max)");
 
                     b.Property<decimal>("SelladoCorte_PesoBulto")
                         .HasPrecision(14, 2)
@@ -6789,6 +6808,10 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("decimal(14,2)");
 
                     b.Property<decimal>("SelladoCorte_PrecioSelladoNoche")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("decimal(14,2)");
+
+                    b.Property<decimal?>("SelladoCorte_Solapa")
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
 
@@ -7079,6 +7102,9 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<DateTime>("Ot_FechaCreacion")
                         .HasColumnType("Date")
                         .HasColumnOrder(20);
+
+                    b.Property<DateTime?>("Ot_FechaEntrega")
+                        .HasColumnType("date");
 
                     b.Property<string>("Ot_Hora")
                         .HasColumnType("varchar(10)")

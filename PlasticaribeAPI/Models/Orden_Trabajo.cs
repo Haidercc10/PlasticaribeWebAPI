@@ -102,6 +102,9 @@ namespace PlasticaribeAPI.Models
 
         [Column(Order = 26)]
         public bool MotrarEmpresaEtiquetas { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? Ot_FechaEntrega { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

@@ -36,6 +36,9 @@ namespace PlasticaribeAPI.Models
         public Tinta? Tinta7 { get; set; }
         public long Tinta8_Id { get; set; }
         public Tinta? Tinta8 { get; set; }
+
+        [Column (TypeName = "varchar(max)")]
+        public string? Impresion_Observacion { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }
