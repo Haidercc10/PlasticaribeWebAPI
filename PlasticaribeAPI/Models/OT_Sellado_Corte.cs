@@ -28,14 +28,14 @@ namespace PlasticaribeAPI.Models
         [Precision(14, 2)]
         public decimal? SelladoCorte_Solapa { get; set; }
 
-        //[Precision(14, 2)]
-        //public decimal? SelladoCorte_Ancho1 { get; set; }
+        [Precision(14, 2)]
+        public decimal? SelladoCorte_Ancho1 { get; set; }
 
-        //[Precision(14, 2)]
-        //public decimal? SelladoCorte_Ancho2 { get; set; }
+        [Precision(14, 2)]
+        public decimal? SelladoCorte_Ancho2 { get; set; }
 
-        //[Precision(14, 2)]
-        //public decimal? SelladoCorte_Ancho3 { get; set; }
+        [Precision(14, 2)]
+        public decimal? SelladoCorte_Ancho3 { get; set; }
 
         [Precision(14, 2)]
         public decimal SelladoCorte_PesoMillar { get; set; }

@@ -6736,6 +6736,18 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
 
+                    b.Property<decimal?>("SelladoCorte_Ancho1")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("decimal(14,2)");
+
+                    b.Property<decimal?>("SelladoCorte_Ancho2")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("decimal(14,2)");
+
+                    b.Property<decimal?>("SelladoCorte_Ancho3")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("decimal(14,2)");
+
                     b.Property<decimal?>("SelladoCorte_Calibre")
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
