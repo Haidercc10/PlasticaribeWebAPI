@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using PlasticaribeAPI.Service;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -13,10 +14,12 @@ namespace PlasticaribeAPI.Controllers
     public class Orden_TrabajoController : ControllerBase
     {
         private readonly dataContext _context;
+        private readonly OrdenTrabajoCompletaService _ordenCompletaService;
 
-        public Orden_TrabajoController(dataContext context)
+        public Orden_TrabajoController(dataContext context, OrdenTrabajoCompletaService ordenCompletaService)
         {
             _context = context;
+            _ordenCompletaService = ordenCompletaService;
         }
 
         // GET: api/Orden_Trabajo
@@ -321,9 +324,9 @@ namespace PlasticaribeAPI.Controllers
         /// <param name="orden">Número visible de la orden de trabajo.</param>
         /// <returns>La orden consultada o un error si no existe.</returns>
         [HttpGet("getOrdenTrabajo/{orden}")]
-        public ActionResult GetOrdenTrabajo(long orden)
+        public async Task<ActionResult> GetOrdenTrabajo(long orden)
         {
-            var con = from ot in _context.Set<Orden_Trabajo>()
+            var con = await (from ot in _context.Set<Orden_Trabajo>()
                       join otExt in _context.Set<OT_Extrusion>() on ot.Ot_Id equals otExt.Ot_Id
                       join otImp in _context.Set<OT_Impresion>() on ot.Ot_Id equals otImp.Ot_Id
                       join otLam in _context.Set<OT_Laminado>() on ot.Ot_Id equals otLam.OT_Id
@@ -335,7 +338,7 @@ namespace PlasticaribeAPI.Controllers
                           Id_OT = ot.Ot_Id,
                           Numero_Orden = ot.Numero_OT,
                           Id_SedeCliente = ot.SedeCli.SedeCli_CodBagPro,
-                          Id_Cliente = ot.SedeCli.Cli_Id,
+                          Id_Cliente = ot.SedeCli.SedeCli_Id,
                           NitCliente = ot.SedeCli.SedeCli_CodBagPro,
                           Cliente = ot.SedeCli.Cli.Cli_Nombre,
                           Ciudad = ot.SedeCli.SedeCliente_Ciudad,
@@ -530,7 +533,7 @@ namespace PlasticaribeAPI.Controllers
                           ot.Mezcla.Mezcla_PorcentajePigmto2_Capa3,
                           ot.Mezcla.MezPigmto_Id2xCapa3,
                           P2C3_Nombre = ot.Mezcla.MezPigmento2C3.MezPigmto_Nombre,
-                      };
+                      }).ToListAsync();
 
             return con.Any() ? Ok(con) : BadRequest($"¡No se encontró una Orden de Trabajo con el consecutivo {orden}!");
         }
@@ -893,6 +896,39 @@ namespace PlasticaribeAPI.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetOrden_Trabajo", new { id = orden_Trabajo.Ot_Id }, orden_Trabajo);
+        }
+
+        /// <summary>
+        /// Crea la OT y la información de todos sus procesos en una sola transacción.
+        /// </summary>
+        /// <param name="request">Orden de trabajo con extrusión, impresión, laminado y sellado/corte.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>201 con el Ot_Id y el Numero_OT creados; 409 si el número de OT ya existe.</returns>
+        [HttpPost("crearCompleta")]
+        public async Task<IActionResult> PostOrden_TrabajoCompleta(OrdenTrabajoCompletaRequest request, CancellationToken cancellationToken)
+        {
+            var result = await _ordenCompletaService.CrearAsync(request, cancellationToken);
+            if (!result.Succeeded)
+                return StatusCode(result.StatusCode, result.Message);
+
+            return CreatedAtAction("GetOrden_Trabajo", new { id = result.Ot_Id }, new { ot_Id = result.Ot_Id, numero_OT = result.Numero_OT });
+        }
+
+        /// <summary>
+        /// Actualiza la OT y la información de todos sus procesos de forma atómica; crea los procesos que le falten.
+        /// </summary>
+        /// <param name="id">Identificador interno (Ot_Id) de la orden de trabajo.</param>
+        /// <param name="request">Orden de trabajo con extrusión, impresión, laminado y sellado/corte.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>200 con el Ot_Id y el Numero_OT; 404 si la OT no existe.</returns>
+        [HttpPut("editarCompleta/{id}")]
+        public async Task<IActionResult> PutOrden_TrabajoCompleta(long id, OrdenTrabajoCompletaRequest request, CancellationToken cancellationToken)
+        {
+            var result = await _ordenCompletaService.EditarAsync(id, request, cancellationToken);
+            if (!result.Succeeded)
+                return StatusCode(result.StatusCode, result.Message);
+
+            return Ok(new { ot_Id = result.Ot_Id, numero_OT = result.Numero_OT });
         }
 
         // DELETE: api/Orden_Trabajo/5
