@@ -140,7 +140,8 @@ namespace PlasticaribeAPI.Controllers
                             cli.Cli_Id,
                             cli.Cli_Nombre,
                             sede.SedeCliente_Ciudad,
-                            cli.usua_Id
+                            cli.usua_Id,
+                            cli.Usua.Usua_Nombre
                         };
             return Ok(sedes);
         }

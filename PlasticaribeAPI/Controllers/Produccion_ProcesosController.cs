@@ -153,6 +153,7 @@ namespace PlasticaribeAPI.Controllers
                              pp.Envio_Zeus == true &&
                              process.Contains(pp.Proceso_Id) && 
                              p.Prod_Id == pp.Prod_Id && 
+                             pp.Presentacion == e.UndMed_Id &&
                              pp.Cli_Id == client
                        orderby pp.Id descending
                        select new

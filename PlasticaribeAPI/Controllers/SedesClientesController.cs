@@ -174,9 +174,9 @@ namespace PlasticaribeAPI.Controllers
         public ActionResult getSedeClientexNitBagPro(string cod)
         {
             var con = from sd in _context.Set<SedesClientes>()
-                      from cl in _context.Set<Clientes>()
+                      join cl in _context.Set<Clientes>() on sd.Cli_Id equals cl.Cli_Id
                       where cl.Cli_Id == sd.Cli_Id &&
-                      sd.SedeCli_CodBagPro == cod
+                      (sd.SedeCli_CodBagPro == cod || sd.SedeCli_Id == Convert.ToInt32(cod))
                       select new
                       {
                           idSede = sd.SedeCli_Id,       
