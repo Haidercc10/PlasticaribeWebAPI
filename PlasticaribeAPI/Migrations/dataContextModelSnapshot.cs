@@ -3162,8 +3162,25 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<long?>("DtlPcd_OT")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal?>("DtlPcd_PesoBruto")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("DtlPcd_PesoNeto")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("DtlPcd_Referencia")
+                        .HasColumnType("varchar(100)");
+
                     b.Property<long>("DtlPcd_Rollo")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("DtlPcd_Ubicacion")
+                        .HasColumnType("varchar(50)");
 
                     b.Property<long>("Pcd_Id")
                         .HasColumnType("bigint");
