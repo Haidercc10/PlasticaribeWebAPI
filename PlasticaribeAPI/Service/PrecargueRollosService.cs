@@ -54,15 +54,16 @@ namespace PlasticaribeAPI.Service
                 await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
                 var pcdId = request.Pcd_Id;
+                var cliente = request.Cli_Id;
                 if (pcdId != null)
                 {
                     var bloqueo = await BloquearPrecargueEnProcesoAsync(pcdId.Value, cancellationToken);
                     if (bloqueo != null) return bloqueo;
 
-                    var cliente = await _context.Set<Precargue_Despacho>().AsNoTracking()
+                    // El usuario puede cambiar el cliente en el formulario antes de generar el precargue (despachar a otro
+                    // cliente rollos pesados a nombre del original); los rollos se siguen buscando a nombre del cliente del encabezado.
+                    cliente = await _context.Set<Precargue_Despacho>().AsNoTracking()
                         .Where(p => p.Pcd_Id == pcdId).Select(p => p.Cli_Id).FirstAsync(cancellationToken);
-                    if (cliente != request.Cli_Id)
-                        return PrecargueRollosResult.Conflict($"El precargue N° {pcdId} pertenece a otro cliente.");
 
                     var registrado = (await ConsultarRollosAsync(pcdId.Value, request.Rollo, cancellationToken)).FirstOrDefault();
                     if (registrado != null)
@@ -72,7 +73,7 @@ namespace PlasticaribeAPI.Service
                     }
                 }
 
-                var clientes = request.ClienteStock ? ClientesStock : new[] { request.Cli_Id };
+                var clientes = request.ClienteStock ? ClientesStock : new[] { cliente };
                 var produccion = await (from pp in _context.Set<Produccion_Procesos>().AsNoTracking()
                                         from e in _context.Set<Existencia_Productos>()
                                         where pp.NumeroRollo_BagPro == request.Rollo &&
@@ -167,7 +168,7 @@ namespace PlasticaribeAPI.Service
 
                 var rollo = new RolloPrecargueDto(request.Rollo, produccion.Prod_Id, produccion.Referencia, produccion.Cli_Id, produccion.Cliente,
                     produccion.Cantidad, produccion.Peso_Bruto, produccion.Peso_Neto, produccion.Presentacion, produccion.OT,
-                    produccion.Proceso_Id, produccion.Proceso, detalle.DtlPcd_Ubicacion);
+                    produccion.Proceso_Id, produccion.Proceso, detalle.DtlPcd_Ubicacion, (int)EstadoEnum.Precargado);
                 return PrecargueRollosResult.Success(nuevo != null ? 201 : 200,
                     new AgregarRolloPrecargueResponse(pcdId.Value, nuevo != null, false, totalRollos, rollo));
             });
@@ -215,20 +216,39 @@ namespace PlasticaribeAPI.Service
 
         /// <summary>
         /// Finaliza un precargue en proceso que tenga al menos un rollo: pasa a Pendiente y queda disponible para facturación.
+        /// Si se envía un cliente distinto al del encabezado, el precargue queda a nombre de ese cliente y su vendedor.
         /// </summary>
         /// <param name="pcdId">Id del precargue.</param>
-        /// <param name="request">Usuario y observación final; si la observación es null se conserva la actual.</param>
+        /// <param name="request">Usuario, observación final (si es null se conserva la actual) y cliente final (si es null se conserva el actual).</param>
         /// <param name="cancellationToken">Token para cancelar la operación.</param>
-        /// <returns>200 si se finalizó; 404 si no existe; 409 si no está en proceso o no tiene rollos.</returns>
-        public async Task<PrecargueRollosResult> FinalizarAsync(long pcdId, CambiarEstadoPrecargueRequest request, CancellationToken cancellationToken)
+        /// <returns>200 si se finalizó; 404 si no existe; 409 si no está en proceso, no tiene rollos o alguno ya no está precargado.</returns>
+        public async Task<PrecargueRollosResult> FinalizarAsync(long pcdId, FinalizarPrecargueRequest request, CancellationToken cancellationToken)
         {
+            // Un rollo del precargue que otro proceso sacó del estado Precargado no se puede despachar con él.
+            var rollosNoDisponibles = await _context.Set<Detalles_PrecargueDespacho>().AsNoTracking()
+                .Where(d => d.Pcd_Id == pcdId &&
+                            d.Precargue!.Estado_Id == (int)EstadoEnum.EnProceso &&
+                            !_context.Set<Produccion_Procesos>().Any(pp => pp.NumeroRollo_BagPro == d.DtlPcd_Rollo &&
+                                                                          pp.Prod_Id == d.Prod_Id &&
+                                                                          pp.Estado_Rollo == (int)EstadoEnum.Precargado &&
+                                                                          ProcesosDespacho.Contains(pp.Proceso_Id)))
+                .Select(d => d.DtlPcd_Rollo)
+                .ToListAsync(cancellationToken);
+            if (rollosNoDisponibles.Count > 0)
+                return PrecargueRollosResult.Conflict($"Los rollos/bultos N° {string.Join(", ", rollosNoDisponibles)} ya no están disponibles en el precargue N° {pcdId}; quítelos antes de generarlo.");
+
             var (fecha, hora) = FechaHoraActual();
+            var clienteFinal = request.Cli_Id;
+            var vendedorFinal = request.Vendedor;
             var actualizados = await _context.Set<Precargue_Despacho>()
                 .Where(p => p.Pcd_Id == pcdId &&
                             p.Estado_Id == (int)EstadoEnum.EnProceso &&
                             _context.Set<Detalles_PrecargueDespacho>().Any(d => d.Pcd_Id == p.Pcd_Id))
                 .ExecuteUpdateAsync(s => s
                     .SetProperty(p => p.Estado_Id, (int)EstadoEnum.Pendiente)
+                    // El vendedor solo se reemplaza si cambió el cliente, para no perder el del encabezado al finalizar sin cambios.
+                    .SetProperty(p => p.Usua_Vendedor, p => clienteFinal != null && clienteFinal != p.Cli_Id ? vendedorFinal : p.Usua_Vendedor)
+                    .SetProperty(p => p.Cli_Id, p => clienteFinal ?? p.Cli_Id)
                     .SetProperty(p => p.Pcd_Observacion, p => request.Observacion ?? p.Pcd_Observacion)
                     .SetProperty(p => p.Pcd_FechaModifica, fecha)
                     .SetProperty(p => p.Pcd_HoraModifica, hora)
@@ -419,17 +439,19 @@ namespace PlasticaribeAPI.Service
                     pp.Peso_Neto,
                     pp.Proceso_Id,
                     Proceso = pp.Proceso!.Proceso_Nombre,
+                    pp.Estado_Rollo,
                 })
                 .ToListAsync(cancellationToken))
                 .GroupBy(pp => (pp.NumeroRollo_BagPro, pp.Prod_Id))
-                .ToDictionary(g => g.Key, g => g.First());
+                // Si el rollo tiene varios registros de producción, se toma el precargado, igual que al validar la finalización.
+                .ToDictionary(g => g.Key, g => g.FirstOrDefault(pp => pp.Estado_Rollo == (int)EstadoEnum.Precargado) ?? g.First());
 
             return detalles.Select(d =>
             {
                 produccion.TryGetValue((d.DtlPcd_Rollo, d.Prod_Id), out var pp);
                 return new RolloPrecargueDto(d.DtlPcd_Rollo, d.Prod_Id, d.Referencia, pp?.Cli_Id ?? 0, pp?.Cliente, d.DtlPcd_Cantidad,
                     d.DtlPcd_PesoBruto ?? pp?.Peso_Bruto, d.DtlPcd_PesoNeto ?? pp?.Peso_Neto, d.UndMed_Id, d.DtlPcd_OT ?? pp?.OT,
-                    pp?.Proceso_Id, pp?.Proceso, d.DtlPcd_Ubicacion);
+                    pp?.Proceso_Id, pp?.Proceso, d.DtlPcd_Ubicacion, pp?.Estado_Rollo);
             }).ToList();
         }
 

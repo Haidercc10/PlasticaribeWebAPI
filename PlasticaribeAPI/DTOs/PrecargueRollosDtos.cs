@@ -11,7 +11,7 @@ namespace PlasticaribeAPI.DTOs
         /// <summary>Precargue en proceso al que se agrega el rollo; null para crearlo.</summary>
         public long? Pcd_Id { get; set; }
 
-        /// <summary>Cliente real del precargue.</summary>
+        /// <summary>Cliente a nombre del cual se buscan los rollos; solo se usa al crear el precargue, después se usa el del encabezado.</summary>
         [Range(1, long.MaxValue)]
         public long Cli_Id { get; set; }
 
@@ -47,7 +47,29 @@ namespace PlasticaribeAPI.DTOs
     }
 
     /// <summary>
-    /// Rollo/bulto de un precargue de despacho.
+    /// Solicitud para finalizar un precargue de despacho en proceso. Si se envía Cli_Id distinto al del encabezado,
+    /// el precargue queda a nombre de ese cliente (los rollos se escanean a nombre del cliente original y se despachan a otro).
+    /// </summary>
+    public sealed class FinalizarPrecargueRequest
+    {
+        /// <summary>Usuario que realiza el cambio.</summary>
+        [Range(1, long.MaxValue)]
+        public long Usuario { get; set; }
+
+        /// <summary>Observación del precargue; si es null se conserva la actual.</summary>
+        public string? Observacion { get; set; }
+
+        /// <summary>Cliente final del precargue; null para conservar el cliente con el que se creó.</summary>
+        [Range(1, long.MaxValue)]
+        public long? Cli_Id { get; set; }
+
+        /// <summary>Vendedor del cliente final; solo se usa si cambia el cliente.</summary>
+        public long? Vendedor { get; set; }
+    }
+
+    /// <summary>
+    /// Rollo/bulto de un precargue de despacho. CurrentStatus es el estado actual del rollo en producción;
+    /// en un precargue en proceso debe ser Precargado (50), si no, el rollo ya no está disponible para el precargue.
     /// </summary>
     public sealed record RolloPrecargueDto(
         long Roll,
@@ -62,7 +84,8 @@ namespace PlasticaribeAPI.DTOs
         long? OT,
         string? ProcessId,
         string? Process,
-        string? Ubication);
+        string? Ubication,
+        int? CurrentStatus);
 
     /// <summary>
     /// Respuesta al agregar un rollo a un precargue.

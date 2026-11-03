@@ -68,11 +68,11 @@ namespace PlasticaribeAPI.Controllers
         /// Finaliza un precargue en proceso (pasa a pendiente).
         /// </summary>
         /// <param name="id">Id del precargue.</param>
-        /// <param name="request">Usuario y observación final.</param>
+        /// <param name="request">Usuario, observación final y cliente final si cambió.</param>
         /// <param name="cancellationToken">Token para cancelar la operación.</param>
         /// <returns>200 si se finalizó; 404 si no existe; 409 si no está en proceso o no tiene rollos.</returns>
         [HttpPut("{id}/finalizar")]
-        public async Task<IActionResult> PutFinalizar(long id, CambiarEstadoPrecargueRequest request, CancellationToken cancellationToken) =>
+        public async Task<IActionResult> PutFinalizar(long id, FinalizarPrecargueRequest request, CancellationToken cancellationToken) =>
             ToActionResult(await _service.FinalizarAsync(id, request, cancellationToken));
 
         /// <summary>
