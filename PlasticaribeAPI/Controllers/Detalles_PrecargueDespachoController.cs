@@ -1,15 +1,17 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using System.Security.Claims;
 
 namespace PlasticaribeAPI.Controllers
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class Detalles_PrecargueDespachoController : ControllerBase
     {
         private readonly dataContext _context;
@@ -39,7 +41,8 @@ namespace PlasticaribeAPI.Controllers
             return Detalles_PrecargueDespacho;
         }
 
-        
+        // NOTA: versión heredada que ejecuta varias subconsultas por fila. Usar GetPreloadIdAsync (getPreloadIdAsync/{id}).
+        // Aún la consume Precargue_RollosDespacho en el front; no marcar [Obsolete] ni eliminar hasta migrar ese consumidor.
         [HttpGet("getPreloadId/{id}")]
         public ActionResult getPreloadId(long id)
         {
@@ -194,6 +197,9 @@ namespace PlasticaribeAPI.Controllers
                 .Where(pp =>
                     rolls.Contains(pp.NumeroRollo_BagPro) &&
                     products.Contains(pp.Prod_Id))
+                // Orden explícito para que g.First() (paso 5) tome siempre el mismo registro cuando
+                // un rollo+producto tenga varios registros de producción: el de menor Id.
+                .OrderBy(pp => pp.Id)
                 .Select(pp => new
                 {
                     Roll = pp.NumeroRollo_BagPro,
@@ -347,18 +353,112 @@ namespace PlasticaribeAPI.Controllers
             return Ok(result);
         }
 
-        //
-        [HttpGet("getMovementsPreload/{date1}/{date2}")]
-        public ActionResult getMovementsPreload(DateTime date1, DateTime date2, string? client = "", string? status = "", string? id = "", string? sales = "")
+        /// <summary>
+        /// Obtiene un precargue en proceso (estado 2) para retomarlo desde el módulo de precargue de despacho.
+        /// Devuelve el encabezado y los rollos con la misma forma que getInformationDispatch, más el estado actual de cada rollo.
+        /// </summary>
+        /// <param name="id">Número del precargue.</param>
+        /// <returns>200 con { header, rolls } (rolls puede estar vacío); 400 si no está en proceso; 404 si no existe.</returns>
+        [HttpGet("getPreloadToResume/{id}")]
+        public async Task<ActionResult> GetPreloadToResume(long id)
         {
-            var preload = from p in _context.Set<Precargue_Despacho>()
+            var header = await _context.Set<Precargue_Despacho>()
+                .AsNoTracking()
+                .Where(p => p.Pcd_Id == id)
+                .Select(p => new
+                {
+                    Movement = p.Pcd_Id,
+                    StatusId = p.Estado_Id,
+                    IdClient = p.Cli_Id,
+                    Client = p.Cliente.Cli_Nombre,
+                    SalesId = p.Usua_Vendedor,
+                    Sales = p.Usuario3.Usua_Nombre,
+                    Observation = p.Pcd_Observacion
+                })
+                .FirstOrDefaultAsync();
+
+            if (header == null) return NotFound("El precargue no fue encontrado.");
+            if (header.StatusId != 2) return BadRequest("Solo se pueden retomar precargues en proceso.");
+
+            var details = await _context.Set<Detalles_PrecargueDespacho>()
+                .AsNoTracking()
+                .Where(d => d.Pcd_Id == id)
+                .Select(d => new
+                {
+                    Roll = d.DtlPcd_Rollo,
+                    Item = d.Prod_Id,
+                    Reference = d.Producto.Prod_Nombre,
+                    Qty = d.DtlPcd_Cantidad,
+                    Unit = d.UndMed_Id,
+                    d.DtlPcd_OT,
+                    d.DtlPcd_PesoBruto
+                })
+                .ToListAsync();
+
+            var rolls = details.Select(d => d.Roll).Distinct().ToList();
+            var items = details.Select(d => d.Item).Distinct().ToList();
+            string[] process = { "SELLA", "EMP", "EXT" };
+
+            // Una sola consulta de producción; por rollo + producto se toma el registro más reciente, como en getInformationDispatch.
+            var production = (await _context.Set<Produccion_Procesos>()
+                .AsNoTracking()
+                .Where(pp => rolls.Contains(pp.NumeroRollo_BagPro) && items.Contains(pp.Prod_Id) && process.Contains(pp.Proceso_Id))
+                .OrderByDescending(pp => pp.Id)
+                .Select(pp => new
+                {
+                    Roll = pp.NumeroRollo_BagPro,
+                    Item = pp.Prod_Id,
+                    RollPl = pp.Numero_Rollo,
+                    Weight = pp.Peso_Bruto,
+                    pp.OT,
+                    ProcessId = pp.Proceso_Id,
+                    Process = pp.Proceso.Proceso_Nombre,
+                    Price = pp.PrecioVenta_Producto,
+                    CurrentStatus = pp.Estado_Rollo
+                })
+                .ToListAsync())
+                .GroupBy(pp => (pp.Roll, pp.Item))
+                .ToDictionary(g => g.Key, g => g.First());
+
+            var result = details.Select(d =>
+            {
+                production.TryGetValue((d.Roll, d.Item), out var prod);
+                return new
+                {
+                    d.Roll,
+                    RollPl = prod?.RollPl,
+                    d.Item,
+                    d.Reference,
+                    header.IdClient,
+                    header.Client,
+                    d.Qty,
+                    Weight = d.DtlPcd_PesoBruto ?? prod?.Weight,
+                    d.Unit,
+                    OT = d.DtlPcd_OT ?? prod?.OT,
+                    ProcessId = prod?.ProcessId,
+                    Process = prod?.Process,
+                    Price = prod?.Price,
+                    CurrentStatus = prod?.CurrentStatus
+                };
+            }).ToList();
+
+            return Ok(new { header, rolls = result });
+        }
+
+        //Función para filtrar los precargues en mov. precargue rollos. 
+        [HttpGet("getMovementsPreload/{date1}/{date2}")]
+        public async Task <ActionResult> getMovementsPreload(DateTime date1, DateTime date2, long? client = null, int? status = null, long? id = null, long? sales = null)
+        {
+            if (date1 > date2) return BadRequest("La fecha inicial no puede ser mayor que la fecha final.");
+
+            var preload = await (from p in _context.Set<Precargue_Despacho>()
                           where
                           p.Pcd_FechaCrea >= date1 &&
                           p.Pcd_FechaCrea <= date2 &&
-                          (client != "" ? p.Cli_Id == Convert.ToInt32(client) : p.Cli_Id.ToString().Contains(client)) &&
-                          (status != "" ? p.Estado_Id == Convert.ToInt32(status) : p.Estado_Id.ToString().Contains(status)) &&
-                          (id != "" ? p.Pcd_Id == Convert.ToInt32(id) : p.Pcd_Id.ToString().Contains(id)) &&
-                          (sales != "" ? p.Usua_Vendedor == Convert.ToInt32(sales) : p.Usua_Vendedor.ToString().Contains(sales))
+                          (client == null || p.Cli_Id == client) &&
+                          (status == null || p.Estado_Id == status) &&
+                          (id == null || p.Pcd_Id == id) &&
+                          (sales == null || p.Usua_Vendedor == sales)
                           select new
                           {
                               //Header
@@ -380,11 +480,9 @@ namespace PlasticaribeAPI.Controllers
                               Client = p.Cliente.Cli_Nombre, 
                               SalesId = p.Usua_Vendedor,
                               Sales = p.Usuario3.Usua_Nombre,
-                          };
+                          }).ToListAsync();
 
-            if (preload == null) return NotFound();
-            else if (preload.Any()) return Ok(preload);
-            else return BadRequest();
+            return Ok(preload);
         }
 
         //
@@ -448,39 +546,41 @@ namespace PlasticaribeAPI.Controllers
             return _context.Detalles_PrecargueDespacho.Any(e => e.DtlPcd_Codigo == id);
         }
 
-        //PUT para editar el nombre del cliente en un precargue de despacho.
+        /// <summary>Roles autorizados para cambiar el cliente de un precargue de despacho.</summary>
+        private static readonly HashSet<string> RolesEditanClientePrecargue = new() { "1", "97", "10", "6", "96" };
+
+        /// <summary>
+        /// Cambia el cliente de un precargue de despacho y actualiza el vendedor al asesor del cliente nuevo.
+        /// Permitido en cualquier estado excepto anulado (3) y solo para los roles 1, 97, 10, 6 y 96.
+        /// </summary>
+        /// <param name="id">Número del precargue.</param>
+        /// <param name="idClient">Identificador del cliente nuevo.</param>
+        /// <param name="sales">Identificador del vendedor (usuario) asociado al cliente nuevo.</param>
+        /// <returns>200 si se actualiza; 400 si los datos no son válidos o el precargue está anulado;
+        /// 403 si el rol no está autorizado; 404 si el precargue no existe.</returns>
         [HttpPut("editPreloadClientName/{id}/{idClient}")]
-        public async Task<IActionResult> EditPreloadClientName(string id, string idClient)
+        public async Task<IActionResult> EditPreloadClientName(string id, string idClient, [FromQuery] long? sales = null)
         {
-            try
-            {
-                if (string.IsNullOrEmpty(id))
-                    throw new Exception("El ID del precargue es requerido.");
-                else if (!int.TryParse(id, out int Id))
-                    return BadRequest("El ID del precargue no es válido.");
+            if (!RolesEditanClientePrecargue.Contains(User.FindFirstValue(ClaimTypes.Role) ?? string.Empty))
+                return Forbid();
 
-                if (string.IsNullOrEmpty(idClient))
-                    throw new Exception("El ID del cliente es requerido.");
-                else if (!int.TryParse(idClient, out int clientId)) 
-                    return BadRequest("El ID del cliente no es válido.");
+            if (string.IsNullOrWhiteSpace(id) || !long.TryParse(id, out long preloadId))
+                return BadRequest("El ID del precargue no es válido.");
+            if (string.IsNullOrWhiteSpace(idClient) || !long.TryParse(idClient, out long clientId))
+                return BadRequest("El ID del cliente no es válido.");
+            if (sales == null)
+                return BadRequest("El vendedor del cliente es requerido.");
+            if (!await _context.Usuarios.AnyAsync(u => u.Usua_Id == sales))
+                return BadRequest($"El vendedor {sales} asociado al cliente no existe en Plasticaribe.");
 
-                // obtener la info del precargue
-                var preload = (from pcd in _context.Set<Precargue_Despacho>() where pcd.Pcd_Id == Convert.ToInt32(id) select pcd).FirstOrDefault();
-                // si no existe, envia error de no encontrado.
-                if (preload == null) return NotFound("El precargue no fue encontrado con los datos ingresados.");
+            var preload = await _context.Precargue_Despacho.FirstOrDefaultAsync(pcd => pcd.Pcd_Id == preloadId);
+            if (preload == null) return NotFound("El precargue no fue encontrado con los datos ingresados.");
+            if (preload.Estado_Id == 3) return BadRequest("No se puede editar un precargue anulado.");
 
-                // si bajó por aqui entonces si existe el precargue. Editamos solo el IdCliente
-                preload.Cli_Id = Convert.ToInt32(idClient);
-
-                // hacer el update con el nuevo cambio.
-                _context.Entry(preload).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            preload.Cli_Id = clientId;
+            preload.Usua_Vendedor = sales;
+            await _context.SaveChangesAsync();
+            return Ok();
         }
     }
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member

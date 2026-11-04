@@ -54,6 +54,7 @@ builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<ConsumoInventarioAsignacionService>();
 builder.Services.AddScoped<ReservasInventarioService>();
 builder.Services.AddScoped<OrdenTrabajoCompletaService>();
+builder.Services.AddScoped<PrecargueRollosService>();
 
 builder.Services.AddDbContext<dataContext>(options =>
 {
