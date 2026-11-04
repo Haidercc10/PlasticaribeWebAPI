@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using PlasticaribeAPI.Service;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -12,10 +13,12 @@ namespace PlasticaribeAPI.Controllers
     public class DetalleAsignacion_MateriaPrimaController : ControllerBase
     {
         private readonly dataContext _context;
+        private readonly SolicitudesMaterialService _solicitudes;
 
-        public DetalleAsignacion_MateriaPrimaController(dataContext context)
+        public DetalleAsignacion_MateriaPrimaController(dataContext context, SolicitudesMaterialService solicitudes)
         {
             _context = context;
+            _solicitudes = solicitudes;
         }
 
         // GET: api/DetalleAsignacion_MateriaPrima
@@ -244,66 +247,34 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
-        //Consulta que traerá la cantidad de materia prima asignada, teniendo en cuenta la materia prima devuelta
-        [HttpGet("getMateriaPrimaAsignada/{ot}")]
-        public ActionResult GetMateriaPrimaAsignada(int ot) => Ok(CalcularConsumoOT(ot, false));
-
         /// <summary>
-        /// Calcula el consumo de una OT (materia prima + BOPP - devoluciones). Es la regla única para el límite de asignación por OT.
+        /// Consulta el consumo neto de una OT (materia prima + BOPP - devoluciones), que es lo que cuenta para su límite de kg.
         /// </summary>
         /// <param name="ot">Número de la orden de trabajo.</param>
-        /// <param name="tracking">Indica si las consultas deben usar seguimiento de cambios.</param>
-        /// <returns>Cantidad neta consumida por la OT.</returns>
-        private decimal CalcularConsumoOT(int ot, bool tracking)
-        {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var asignaciones = tracking ? _context.Set<DetalleAsignacion_MateriaPrima>().AsTracking() : _context.Set<DetalleAsignacion_MateriaPrima>().AsNoTracking();
-            var asignacionesBopp = tracking ? _context.Set<DetalleAsignacion_BOPP>().AsTracking() : _context.Set<DetalleAsignacion_BOPP>().AsNoTracking();
-            var devoluciones = tracking ? _context.Set<DetalleDevolucion_MateriaPrima>().AsTracking() : _context.Set<DetalleDevolucion_MateriaPrima>().AsNoTracking();
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>Kg netos consumidos por la OT.</returns>
+        [HttpGet("getMateriaPrimaAsignada/{ot}")]
+        public async Task<ActionResult> GetMateriaPrimaAsignada(long ot, CancellationToken cancellationToken) =>
+            Ok(await _solicitudes.CalcularConsumoOTAsync(ot, cancellationToken));
 
-            var asig = (from asg in asignaciones
-                        where asg.AsigMp.AsigMP_OrdenTrabajo == ot
-                        && asg.MatPri.CatMP_Id != 18
-                        select asg.DtAsigMp_Cantidad).Sum();
-
-            var asgBopp = (from asgbopp in asignacionesBopp
-                           where asgbopp.DtAsigBOPP_OrdenTrabajo == ot
-                           select asgbopp.DtAsigBOPP_Cantidad).Sum();
-
-            var devol = (from dev in devoluciones
-                         where dev.DevMatPri.DevMatPri_OrdenTrabajo == ot &&
-                               dev.Tinta_Id == 2001
-                               && dev.MatPri.CatMP_Id != 18
-                         select dev.DtDevMatPri_CantidadDevuelta).Sum();
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
-            return (asig + asgBopp) - devol;
-        }
-
-        //Consulta que traerá la cantidad de materia prima asignada, teniendo en cuenta la materia prima devuelta
+        /// <summary>
+        /// Consulta el consumo de la OT y los kg de materia prima solicitados que aún no se han asignado
+        /// en solicitudes activas, para calcular lo que queda por solicitar sin contar dos veces lo ya entregado.
+        /// </summary>
+        /// <param name="ot">Número de la orden de trabajo.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>Kg asignados, kg solicitados pendientes de asignar y su suma.</returns>
         [HttpGet("getMateriaPrimaSolicitada/{ot}")]
-        public async Task<ActionResult> getMateriaPrimaSolicitada(int ot)
+        public async Task<ActionResult> getMateriaPrimaSolicitada(long ot, CancellationToken cancellationToken)
         {
-#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
-            var asigs = CalcularConsumoOT(ot, true);
-
-            // Se excluyen solicitudes canceladas (4), finalizadas (5) y la solicitud genérica (1)
-            var solicitud = (from sol in _context.Set<DetSolicitud_MatPrimaExtrusion>().AsTracking()
-                             where sol.SolMatPriExt.SolMpExt_OT == ot &&
-                                   sol.SolMpExt_Id != 1 &&
-                                   sol.SolMatPriExt.Estado_Id != 4 &&
-                                   sol.SolMatPriExt.Estado_Id != 5
-                             select sol.DtSolMpExt_Cantidad).Sum();
-
-            var result = new
+            var asignado = await _solicitudes.CalcularConsumoOTAsync(ot, cancellationToken);
+            var pendiente = await _solicitudes.ObtenerPendientePorAsignarOTAsync(ot, cancellationToken);
+            return Ok(new
             {
-                Cantidad_Asignada = asigs,
-                Cantidad_Solicitada = solicitud,
-                Cantidad_Total = (solicitud + asigs)
-            };
-
-           var data = await Task.FromResult(result);
-            return Ok(data);
-#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+                Cantidad_Asignada = asignado,
+                Cantidad_Solicitada = pendiente,
+                Cantidad_Total = asignado + pendiente
+            });
         }
 
         //Consulta que traerá la cantidad de materia prima asignada, teniendo en cuenta la materia prima devuelta

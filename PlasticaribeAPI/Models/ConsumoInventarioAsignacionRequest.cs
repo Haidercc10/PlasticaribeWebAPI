@@ -24,7 +24,7 @@ namespace PlasticaribeAPI.Models
         [Range(1, int.MaxValue)]
         public int ProductoId { get; set; }
 
-        [Range(typeof(decimal), "0", "9999999999999999")]
+        [Range(typeof(decimal), "0", "9999999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
         public decimal CantidadPedidaOT { get; set; }
 
         [Required]
@@ -50,7 +50,7 @@ namespace PlasticaribeAPI.Models
         [Range(1, int.MaxValue)]
         public int LoteId { get; set; }
 
-        [Range(typeof(decimal), "0.01", "9999999999999999")]
+        [Range(typeof(decimal), "0.01", "9999999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
         public decimal Cantidad { get; set; }
     }
 }
