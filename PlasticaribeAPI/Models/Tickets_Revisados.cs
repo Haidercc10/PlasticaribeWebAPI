@@ -4,6 +4,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace PlasticaribeAPI.Models
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+    /// <summary>
+    /// Historial de un ticket: cada cambio de estado o comentario es un registro.
+    /// EstadoNuevo_Id es null cuando el registro es solo un comentario.
+    /// </summary>
     public class Tickets_Revisados
     {
         [Key]
@@ -21,6 +25,9 @@ namespace PlasticaribeAPI.Models
         public string TicketRev_Descripcion { get; set; }
         public long Ticket_Id { get; set; }
         public Tickets? Tickets { get; set; }
+
+        public int? EstadoNuevo_Id { get; set; }
+        public Estado? EstadoNuevo { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

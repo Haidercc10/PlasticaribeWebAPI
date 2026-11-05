@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Imágenes adjuntas de tickets (se guardan en el servidor, no en el repositorio)
+PlasticaribeAPI/Archivos/

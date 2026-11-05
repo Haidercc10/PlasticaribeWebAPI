@@ -139,6 +139,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<OrdenMaquila_Facturacion> OrdenMaquila_Facturacion { get; set; }
         public DbSet<Tickets> Tickets { get; set; }
         public DbSet<Tickets_Revisados> Tickets_Revisados { get; set; }
+        public DbSet<Tickets_Tipos> Tickets_Tipos { get; set; }
+        public DbSet<Tickets_Adjuntos> Tickets_Adjuntos { get; set; }
         public DbSet<Detalles_SolicitudMateriaPrima> Detalles_SolicitudMateriaPrima { get; set; }
         public DbSet<Solicitud_MateriaPrima> Solicitud_MateriaPrima { get; set; }
         public DbSet<SolicitudesMP_OrdenesCompra> SolicitudesMP_OrdenesCompra { get; set; }
@@ -888,11 +890,27 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Tickets>().ToTable(tb => tb.HasTrigger("Auditoria_Tickets"));
             modelBuilder.Entity<Tickets>().HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Tickets>().HasOne(x => x.Estado).WithMany().HasForeignKey(x => x.Estado_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Tickets>().HasOne(x => x.UsuarioRegistra).WithMany().HasForeignKey(x => x.UsuaRegistra_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Tickets>().HasOne(x => x.TipoTicket).WithMany().HasForeignKey(x => x.TipoTicket_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Tickets>().HasIndex(x => x.Ticket_FechaCreacion);
+
+            // Tipos de Tickets
+            modelBuilder.Entity<Tickets_Tipos>().HasData(
+                new Tickets_Tipos { TipoTicket_Id = 1, TipoTicket_Nombre = "INCIDENTE", TipoTicket_Activo = true },
+                new Tickets_Tipos { TipoTicket_Id = 2, TipoTicket_Nombre = "SOLICITUD", TipoTicket_Activo = true },
+                new Tickets_Tipos { TipoTicket_Id = 3, TipoTicket_Nombre = "REQUERIMIENTO", TipoTicket_Activo = true },
+                new Tickets_Tipos { TipoTicket_Id = 4, TipoTicket_Nombre = "MEJORA", TipoTicket_Activo = true },
+                new Tickets_Tipos { TipoTicket_Id = 5, TipoTicket_Nombre = "OTRO", TipoTicket_Activo = true });
+
+            // Adjuntos de Tickets
+            modelBuilder.Entity<Tickets_Adjuntos>().HasOne(x => x.Ticket).WithMany().HasForeignKey(x => x.Ticket_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Tickets_Adjuntos>().HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             // Tickets Revisados
             modelBuilder.Entity<Tickets_Revisados>().ToTable(tb => tb.HasTrigger("Auditoria_Tickets_Revisados"));
             modelBuilder.Entity<Tickets_Revisados>().HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Tickets_Revisados>().HasOne(x => x.Tickets).WithMany().HasForeignKey(x => x.Ticket_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Tickets_Revisados>().HasOne(x => x.EstadoNuevo).WithMany().HasForeignKey(x => x.EstadoNuevo_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
 
             //Solicitud de Materia Prima
             modelBuilder.Entity<Solicitud_MateriaPrima>().ToTable(tb => tb.HasTrigger("Auditoria_Solicitud_MateriaPrima"));

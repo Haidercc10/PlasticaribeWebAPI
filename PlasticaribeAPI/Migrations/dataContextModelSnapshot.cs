@@ -9515,12 +9515,22 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("Estado_Id")
                         .HasColumnType("int");
 
+                    b.Property<string>("Ticket_Asunto")
+                        .IsRequired()
+                        .HasColumnType("varchar(150)");
+
                     b.Property<string>("Ticket_Descripcion")
                         .IsRequired()
                         .HasColumnType("varchar(max)");
 
                     b.Property<DateTime>("Ticket_Fecha")
                         .HasColumnType("date");
+
+                    b.Property<DateTime>("Ticket_FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Ticket_FechaResolucion")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Ticket_Hora")
                         .IsRequired()
@@ -9534,12 +9544,24 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(max)");
 
+                    b.Property<int>("TipoTicket_Id")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("UsuaRegistra_Id")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("Usua_Id")
                         .HasColumnType("bigint");
 
                     b.HasKey("Ticket_Id");
 
                     b.HasIndex("Estado_Id");
+
+                    b.HasIndex("Ticket_FechaCreacion");
+
+                    b.HasIndex("TipoTicket_Id");
+
+                    b.HasIndex("UsuaRegistra_Id");
 
                     b.HasIndex("Usua_Id");
 
@@ -9551,6 +9573,47 @@ namespace PlasticaribeAPI.Migrations
                     b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
                 });
 
+            modelBuilder.Entity("PlasticaribeAPI.Models.Tickets_Adjuntos", b =>
+                {
+                    b.Property<long>("Adj_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Adj_Id"));
+
+                    b.Property<DateTime>("Adj_Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Adj_NombreOriginal")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Adj_RutaRelativa")
+                        .IsRequired()
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<long>("Adj_TamanoBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Adj_TipoContenido")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<long>("Ticket_Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Usua_Id")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Adj_Id");
+
+                    b.HasIndex("Ticket_Id");
+
+                    b.HasIndex("Usua_Id");
+
+                    b.ToTable("Tickets_Adjuntos");
+                });
+
             modelBuilder.Entity("PlasticaribeAPI.Models.Tickets_Revisados", b =>
                 {
                     b.Property<long>("TicketRev_Id")
@@ -9558,6 +9621,9 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("TicketRev_Id"));
+
+                    b.Property<int?>("EstadoNuevo_Id")
+                        .HasColumnType("int");
 
                     b.Property<string>("TicketRev_Descripcion")
                         .IsRequired()
@@ -9578,6 +9644,8 @@ namespace PlasticaribeAPI.Migrations
 
                     b.HasKey("TicketRev_Id");
 
+                    b.HasIndex("EstadoNuevo_Id");
+
                     b.HasIndex("Ticket_Id");
 
                     b.HasIndex("Usua_Id");
@@ -9588,6 +9656,58 @@ namespace PlasticaribeAPI.Migrations
                         });
 
                     b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
+                });
+
+            modelBuilder.Entity("PlasticaribeAPI.Models.Tickets_Tipos", b =>
+                {
+                    b.Property<int>("TipoTicket_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TipoTicket_Id"));
+
+                    b.Property<bool>("TipoTicket_Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("TipoTicket_Nombre")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.HasKey("TipoTicket_Id");
+
+                    b.ToTable("Tickets_Tipos");
+
+                    b.HasData(
+                        new
+                        {
+                            TipoTicket_Id = 1,
+                            TipoTicket_Activo = true,
+                            TipoTicket_Nombre = "INCIDENTE"
+                        },
+                        new
+                        {
+                            TipoTicket_Id = 2,
+                            TipoTicket_Activo = true,
+                            TipoTicket_Nombre = "SOLICITUD"
+                        },
+                        new
+                        {
+                            TipoTicket_Id = 3,
+                            TipoTicket_Activo = true,
+                            TipoTicket_Nombre = "REQUERIMIENTO"
+                        },
+                        new
+                        {
+                            TipoTicket_Id = 4,
+                            TipoTicket_Activo = true,
+                            TipoTicket_Nombre = "MEJORA"
+                        },
+                        new
+                        {
+                            TipoTicket_Id = 5,
+                            TipoTicket_Activo = true,
+                            TipoTicket_Nombre = "OTRO"
+                        });
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tinta", b =>
@@ -15557,6 +15677,17 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("PlasticaribeAPI.Models.Tickets_Tipos", "TipoTicket")
+                        .WithMany()
+                        .HasForeignKey("TipoTicket_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "UsuarioRegistra")
+                        .WithMany()
+                        .HasForeignKey("UsuaRegistra_Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("Usua_Id")
@@ -15565,11 +15696,39 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Navigation("Estado");
 
+                    b.Navigation("TipoTicket");
+
+                    b.Navigation("Usuario");
+
+                    b.Navigation("UsuarioRegistra");
+                });
+
+            modelBuilder.Entity("PlasticaribeAPI.Models.Tickets_Adjuntos", b =>
+                {
+                    b.HasOne("PlasticaribeAPI.Models.Tickets", "Ticket")
+                        .WithMany()
+                        .HasForeignKey("Ticket_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("Usua_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Ticket");
+
                     b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Tickets_Revisados", b =>
                 {
+                    b.HasOne("PlasticaribeAPI.Models.Estado", "EstadoNuevo")
+                        .WithMany()
+                        .HasForeignKey("EstadoNuevo_Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("PlasticaribeAPI.Models.Tickets", "Tickets")
                         .WithMany()
                         .HasForeignKey("Ticket_Id")
@@ -15581,6 +15740,8 @@ namespace PlasticaribeAPI.Migrations
                         .HasForeignKey("Usua_Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("EstadoNuevo");
 
                     b.Navigation("Tickets");
 
