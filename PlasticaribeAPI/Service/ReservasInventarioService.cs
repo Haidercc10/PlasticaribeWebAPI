@@ -10,24 +10,18 @@ namespace PlasticaribeAPI.Service
     /// </summary>
     public sealed class ReservasInventarioService
     {
-        /// <summary>Estado de solicitud pendiente.</summary>
-        public const int EstadoSolicitudPendiente = 11;
-
-        /// <summary>Estado de solicitud parcialmente atendida.</summary>
-        public const int EstadoSolicitudParcial = 12;
-
-        /// <summary>Solicitud genérica que no genera reserva.</summary>
-        public const long SolicitudGenericaId = 1;
-
         private readonly dataContext _context;
+        private readonly SolicitudesMaterialService _solicitudes;
 
         /// <summary>
-        /// Inicializa el servicio con el contexto de datos.
+        /// Inicializa el servicio con el contexto de datos y las reglas de solicitudes.
         /// </summary>
         /// <param name="context">Contexto de base de datos de Plasticaribe.</param>
-        public ReservasInventarioService(dataContext context)
+        /// <param name="solicitudes">Servicio que calcula lo asignado por solicitud.</param>
+        public ReservasInventarioService(dataContext context, SolicitudesMaterialService solicitudes)
         {
             _context = context;
+            _solicitudes = solicitudes;
         }
 
         /// <summary>
@@ -47,32 +41,15 @@ namespace PlasticaribeAPI.Service
 
             var detalles = await _context.DetSolicitud_MatPrimaExtrusion
                 .AsNoTracking()
-                .Where(d => d.SolMatPriExt!.SolMpExt_Id != SolicitudGenericaId &&
-                    (d.SolMatPriExt.Estado_Id == EstadoSolicitudPendiente || d.SolMatPriExt.Estado_Id == EstadoSolicitudParcial) &&
+                .Where(d => d.SolMatPriExt!.SolMpExt_Id != EstadosSolicitudMaterial.SolicitudGenericaId &&
+                    (d.SolMatPriExt.Estado_Id == EstadosSolicitudMaterial.Pendiente || d.SolMatPriExt.Estado_Id == EstadosSolicitudMaterial.Parcial) &&
                     (!filtrar || ids.Contains(d.SubCatMP_Id)))
                 .GroupBy(d => new { d.SolMpExt_Id, d.SubCatMP_Id })
                 .Select(g => new { g.Key.SolMpExt_Id, g.Key.SubCatMP_Id, Solicitado = g.Sum(x => x.DtSolMpExt_Cantidad) })
                 .ToListAsync(cancellationToken);
 
-            var solicitudes = detalles.Select(d => d.SolMpExt_Id).Distinct().ToList();
-
-            var asignadoMp = await _context.DetallesAsignaciones_MateriasPrimas
-                .AsNoTracking()
-                .Where(d => d.AsigMp!.SolMpExt_Id != null && solicitudes.Contains(d.AsigMp.SolMpExt_Id.Value) && d.MatPri!.SubCatMP_Id != null)
-                .GroupBy(d => new { SolMpExt_Id = d.AsigMp!.SolMpExt_Id!.Value, SubCatMP_Id = d.MatPri!.SubCatMP_Id!.Value })
-                .Select(g => new { g.Key.SolMpExt_Id, g.Key.SubCatMP_Id, Asignado = g.Sum(x => x.DtAsigMp_Cantidad) })
-                .ToListAsync(cancellationToken);
-
-            var asignadoTinta = await _context.DetalleAsignaciones_Tintas
-                .AsNoTracking()
-                .Where(d => d.AsigMp!.SolMpExt_Id != null && solicitudes.Contains(d.AsigMp.SolMpExt_Id.Value) && d.Tinta!.SubCatMP_Id != null)
-                .GroupBy(d => new { SolMpExt_Id = d.AsigMp!.SolMpExt_Id!.Value, SubCatMP_Id = d.Tinta!.SubCatMP_Id!.Value })
-                .Select(g => new { g.Key.SolMpExt_Id, g.Key.SubCatMP_Id, Asignado = g.Sum(x => x.DtAsigTinta_Cantidad) })
-                .ToListAsync(cancellationToken);
-
-            var asignado = asignadoMp.Concat(asignadoTinta)
-                .GroupBy(a => (a.SolMpExt_Id, a.SubCatMP_Id))
-                .ToDictionary(g => g.Key, g => g.Sum(x => x.Asignado));
+            var asignado = await _solicitudes.ObtenerAsignadoAsync(
+                detalles.Select(d => d.SolMpExt_Id).Distinct().ToList(), cancellationToken);
 
             var reservas = detalles
                 .GroupBy(d => d.SubCatMP_Id)

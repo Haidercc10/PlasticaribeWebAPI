@@ -621,7 +621,7 @@ namespace PlasticaribeAPI.Controllers
                          where asg.AsigMp.AsigMp_FechaRealEntrega >= fecha1
                                && asg.AsigMp.AsigMp_FechaRealEntrega <= fecha2
                                && Convert.ToString(asg.AsigMp.AsigMP_OrdenTrabajo).Contains(codigo)
-                               && "ASIGMP".Contains(tipoMov)
+                               && tipoMov == "ASIGMP"
                                && "SALIDA".Contains(tipoDoc)
                                && (materiaPrima != "" ? Convert.ToString(asg.MatPri_Id) == materiaPrima : Convert.ToString(asg.MatPri_Id).Contains(materiaPrima))
                          select new
@@ -894,12 +894,15 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getInfoMovimientoAsignaciones/{codigo}/{tipoMov}")]
         public ActionResult GetInfoMovimientoAsignaciones(string codigo, string tipoMov)
         {
+            // Coincidencia exacta: con Contains el PDF de la asignación 7 incluía también la 17, 70, 107, etc.
+            if (!long.TryParse(codigo, out var id)) return BadRequest("El código de la asignación no es válido.");
+
 #pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
             //Asignaciones de Materia Prima
             var conAsg = from asg in _context.Set<DetalleAsignacion_MateriaPrima>()
                          from emp in _context.Set<Empresa>()
-                         where Convert.ToString(asg.AsigMp.AsigMp_Id).Contains(codigo)
-                               && "ASIGMP".Contains(tipoMov)
+                         where asg.AsigMp_Id == id
+                               && tipoMov == "ASIGMP"
                                && emp.Empresa_Id == 800188732
                          select new
                          {
@@ -922,6 +925,7 @@ namespace PlasticaribeAPI.Controllers
                              Precio = Convert.ToDecimal(asg.MatPri.MatPri_Precio),
                              SubTotal = Convert.ToDecimal(asg.MatPri.MatPri_Precio * asg.DtAsigMp_Cantidad),
                              Observacion = asg.AsigMp.AsigMp_Observacion,
+                             Solicitud_Id = asg.AsigMp.SolMpExt_Id ?? 0,
                              emp.Empresa_Id,
                              emp.Empresa_Ciudad,
                              emp.Empresa_COdigoPostal,
@@ -935,7 +939,7 @@ namespace PlasticaribeAPI.Controllers
             //Asignaciones de BOPP
             var conAsgBopp = from asg in _context.Set<DetalleAsignacion_BOPP>()
                              from emp in _context.Set<Empresa>()
-                             where Convert.ToString(asg.AsigBOPP_Id).Contains(codigo)
+                             where asg.AsigBOPP_Id == id
                                    && asg.TpDoc_Id.Contains(tipoMov)
                                    && emp.Empresa_Id == 800188732
                              select new
@@ -959,6 +963,7 @@ namespace PlasticaribeAPI.Controllers
                                  Precio = Convert.ToDecimal(asg.BOPP.BOPP_Precio),
                                  SubTotal = Convert.ToDecimal(asg.BOPP.BOPP_Precio * asg.DtAsigBOPP_Cantidad),
                                  Observacion = asg.AsigBOPP.AsigBOPP_Observacion,
+                                 Solicitud_Id = Convert.ToInt64(0),
                                  emp.Empresa_Id,
                                  emp.Empresa_Ciudad,
                                  emp.Empresa_COdigoPostal,
@@ -972,8 +977,8 @@ namespace PlasticaribeAPI.Controllers
             //Asignacion de Tinta
             var conAsgTinta = from asg in _context.Set<DetalleAsignacion_Tinta>()
                               from emp in _context.Set<Empresa>()
-                              where "ASIGTINTAS".Contains(tipoMov)
-                                    && Convert.ToString(asg.AsigMp_Id).Contains(codigo)
+                              where tipoMov == "ASIGTINTAS"
+                                    && asg.AsigMp_Id == id
                                     && emp.Empresa_Id == 800188732
                               select new
                               {
@@ -996,6 +1001,7 @@ namespace PlasticaribeAPI.Controllers
                                   Precio = Convert.ToDecimal(asg.Tinta.Tinta_Precio),
                                   SubTotal = Convert.ToDecimal(asg.Tinta.Tinta_Precio * asg.DtAsigTinta_Cantidad),
                                   Observacion = asg.AsigMp.AsigMp_Observacion,
+                                  Solicitud_Id = asg.AsigMp.SolMpExt_Id ?? 0,
                                   emp.Empresa_Id,
                                   emp.Empresa_Ciudad,
                                   emp.Empresa_COdigoPostal,

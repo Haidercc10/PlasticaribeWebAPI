@@ -33,6 +33,30 @@ namespace PlasticaribeAPI.Models
     }
 
     /// <summary>
+    /// Datos para editar una solicitud de material activa. La OT y el proceso no cambian;
+    /// los detalles enviados reemplazan a los guardados.
+    /// </summary>
+    public sealed class EditarSolicitudExtrusionRequest
+    {
+        [Range(0, int.MaxValue)]
+        public int Maquina { get; set; }
+
+        public string? Observacion { get; set; }
+
+        public DateTime? FechaEstimadaEntrega { get; set; }
+
+        /// <summary>
+        /// Indica que el usuario vio la advertencia de disponibilidad informativa y decidió continuar.
+        /// </summary>
+        public bool ConfirmarSaldoNegativo { get; set; }
+
+        [Required]
+        [MinLength(1)]
+        [MaxLength(100)]
+        public List<SolicitudExtrusionDetalleRequest> Detalles { get; set; } = [];
+    }
+
+    /// <summary>
     /// Subcategoría y cantidad solicitada dentro de una solicitud de Extrusión.
     /// </summary>
     public sealed class SolicitudExtrusionDetalleRequest
@@ -40,7 +64,7 @@ namespace PlasticaribeAPI.Models
         [Range(1, int.MaxValue)]
         public int SubCatMP_Id { get; set; }
 
-        [Range(typeof(decimal), "0.01", "9999999999999999")]
+        [Range(typeof(decimal), "0.01", "9999999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
         public decimal Cantidad { get; set; }
 
         [Required]

@@ -186,7 +186,7 @@ namespace PlasticaribeAPI.Controllers
         [Range(1, long.MaxValue)]
         public long OrdenTrabajo { get; set; }
 
-        [Range(typeof(decimal), "0.01", "9999999999999999")]
+        [Range(typeof(decimal), "0.01", "9999999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
         public decimal CantidadExcesoKg { get; set; }
 
         [Required]
