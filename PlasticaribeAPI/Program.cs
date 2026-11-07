@@ -56,6 +56,9 @@ builder.Services.AddScoped<ReservasInventarioService>();
 builder.Services.AddScoped<SolicitudesMaterialService>();
 builder.Services.AddScoped<AsignacionMateriaPrimaService>();
 builder.Services.AddScoped<OrdenTrabajoCompletaService>();
+// F2-12: los errores no controlados responden 500 en formato ProblemDetails (sin reclasificar excepciones).
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<ManejadorExcepcionesNoControladas>();
 
 builder.Services.AddDbContext<dataContext>(options =>
 {
@@ -156,6 +159,8 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment() ||
     app.Configuration.GetValue<bool>("EnableSwagger"))
