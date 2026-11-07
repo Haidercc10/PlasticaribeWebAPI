@@ -1,115 +1,427 @@
+using System.Data;
+using System.Data.Common;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using PlasticaribeAPI.Data;
+using PlasticaribeAPI.DTOs;
 using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Service
 {
     /// <summary>
     /// Crea y edita de forma atómica una orden de trabajo con la información de extrusión, impresión, laminado y sellado/corte.
+    /// <para>
+    /// REGLA F2-15 (triggers de una sola fila): TR_CrearOTs, TR_ActualizarCampos_* y los triggers de BagPro leen
+    /// <c>inserted</c> como si tuviera una sola fila. Sobre Orden_Trabajo y las tablas OT_* está PROHIBIDO usar
+    /// ExecuteUpdate/ExecuteDelete, UPDATE o DELETE masivos, o AddRange de varias OT en un mismo SaveChanges.
+    /// Cualquier cambio de estado o anulación se hace OT por OT.
+    /// </para>
+    /// <para>
+    /// BagPro y Zeus se consultan por sinónimos de la BD (<c>dbo.bp_ClientesOT</c>, <c>dbo.bp_ClientesOT_Item</c>,
+    /// <c>dbo.zeus_Articulo</c>), los mismos que usa TR_CrearOTs (scripts en PlasticaribeDB, Cambios/2026-11-07-ot-f2-creacion).
+    /// </para>
     /// </summary>
     public sealed class OrdenTrabajoCompletaService
     {
+        /// <summary>Recurso del bloqueo de aplicación que serializa la asignación de números de OT.</summary>
+        public const string RecursoBloqueoNumero = "Plasticaribe_NumeroOT";
+
+        /// <summary>Clave de configuración que activa la comprobación posterior de la réplica en BagPro (F2-14).</summary>
+        public const string ClaveValidarReplicacion = "OrdenTrabajo:ValidarReplicacionBagPro";
+
+        private const int TiempoEsperaBloqueoMs = 10000;
+
         private readonly dataContext _context;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Inicializa el servicio con el contexto de datos.
+        /// Inicializa el servicio con el contexto de datos y la configuración.
         /// </summary>
         /// <param name="context">Contexto de base de datos de Plasticaribe.</param>
-        public OrdenTrabajoCompletaService(dataContext context)
+        /// <param name="configuration">Configuración de la aplicación (interruptor de F2-14).</param>
+        public OrdenTrabajoCompletaService(dataContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         /// <summary>
-        /// Guarda la OT y sus cuatro procesos en una sola transacción; si algún registro falla no queda nada guardado.
-        /// Rechaza la solicitud si el número de OT ya existe.
+        /// Crea la OT y sus cuatro procesos en una sola transacción (F2-01, F2-02, F2-13, F2-14):
+        /// valida los datos y los costos, comprueba que el item exista en BagPro y el artículo en Zeus, toma el bloqueo
+        /// <see cref="RecursoBloqueoNumero"/>, calcula el número como MAX(BagPro, Plasticaribe) + 1, inserta y, si está activo
+        /// <see cref="ClaveValidarReplicacion"/>, comprueba que el trigger haya creado la OT en BagPro. Si algo falla no queda nada guardado.
         /// </summary>
-        /// <param name="request">Orden de trabajo y la información de cada proceso.</param>
+        /// <param name="request">Datos de la OT y de cada proceso.</param>
+        /// <param name="usuarioId">Usuario del token, que queda como creador.</param>
         /// <param name="cancellationToken">Token para cancelar la operación.</param>
-        /// <returns>Resultado con el código HTTP, el mensaje y los identificadores de la OT creada.</returns>
-        public async Task<OrdenTrabajoCompletaResult> CrearAsync(OrdenTrabajoCompletaRequest request, CancellationToken cancellationToken)
+        /// <returns>201 con los identificadores; 400, 409, 422 o 502 con el motivo.</returns>
+        public async Task<OrdenTrabajoCompletaResult> CrearAsync(CrearOrdenTrabajoCompletaDto request, long usuarioId, CancellationToken cancellationToken)
         {
-            var strategy = _context.Database.CreateExecutionStrategy();
-            return await strategy.ExecuteAsync(async () =>
+            var datos = request.OrdenTrabajo;
+            var ahora = DateTime.Now;
+
+            var errores = OrdenTrabajoReglas.ValidarRangos(datos, ahora);
+            if (errores.Count > 0)
+                return OrdenTrabajoCompletaResult.Invalid(errores);
+
+            if (!OrdenTrabajoReglas.PresentacionesPermitidasCrear.Contains(datos.UndMed_Id))
+                return OrdenTrabajoCompletaResult.Unprocessable(
+                    $"No se puede crear una OT con la presentación '{datos.UndMed_Id}'. Presentaciones permitidas: {string.Join(", ", OrdenTrabajoReglas.PresentacionesPermitidasCrear)}.");
+
+            var faltantes = await ReferenciasInexistentesAsync(datos.SedeCli_Id, datos.Prod_Id, datos.UndMed_Id, datos.Mezcla_Id, datos.Id_Vendedor, cancellationToken);
+            if (faltantes.Count > 0)
+                return OrdenTrabajoCompletaResult.Unprocessable($"No existen: {string.Join(", ", faltantes)}.");
+
+            var costos = await ValidarCostosAsync(datos, datos.UndMed_Id, request.SelladoCorte, cancellationToken);
+            if (costos.Error != null)
+                return costos.Error;
+            // MTS: Valor Kg por definir; al crear se guarda 0, como en el front.
+            var valorKg = costos.ValorKgCalculado ?? (datos.UndMed_Id == "MTS" ? 0m : datos.Ot_ValorKg);
+
+            // F2-14 (comprobación previa, siempre activa): sin item en BagPro o sin artículo en Zeus el trigger no replica.
+            var replicable = await ComprobarItemBagProYArticuloZeusAsync(datos.Prod_Id, datos.UndMed_Id, cancellationToken);
+            if (replicable != null)
+                return replicable;
+
+            try
+            {
+                var strategy = _context.Database.CreateExecutionStrategy();
+                return await strategy.ExecuteAsync(async () =>
+                {
+                    _context.ChangeTracker.Clear();
+                    // Los triggers de estas tablas (TR_CrearOTs, TR_ActualizarCampos_*) escriben por linked server y promueven la
+                    // transacción a distribuida; SQL Server no lo permite si EF Core dejó un savepoint activo en SaveChanges.
+                    _context.Database.AutoSavepointsEnabled = false;
+                    await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+
+                    // F2-01: serializa las creaciones desde Plasticaribe hasta el commit.
+                    if (!await TomarBloqueoNumeroAsync(cancellationToken))
+                        return OrdenTrabajoCompletaResult.Conflict("Otro usuario está creando una OT, reintente.");
+
+                    var numeroOT = await SiguienteNumeroOTAsync(cancellationToken);
+
+                    // F2-13 (defensa 1): nunca insertar un número que ya existe en BagPro (el trigger sobrescribiría esa OT).
+                    if (await ExisteEnBagProAsync(numeroOT, null, cancellationToken))
+                        return OrdenTrabajoCompletaResult.Conflict($"El número de OT {numeroOT} ya existe en BagPro. Intente crear la OT de nuevo.");
+
+                    var orden = OrdenTrabajoMapeo.NuevaOrden(datos, numeroOT, usuarioId, ahora, valorKg);
+                    _context.Add(orden);
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                    // Una fila por tabla (F2-15): cada INSERT dispara su trigger con una sola fila.
+                    _context.Add(OrdenTrabajoMapeo.Extrusion(request.Extrusion, orden.Ot_Id));
+                    _context.Add(OrdenTrabajoMapeo.Impresion(request.Impresion, orden.Ot_Id));
+                    _context.Add(OrdenTrabajoMapeo.Laminado(request.Laminado, orden.Ot_Id));
+                    _context.Add(OrdenTrabajoMapeo.SelladoCorte(request.SelladoCorte, orden.Ot_Id));
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                    // F2-14 (comprobación posterior, configurable): en producción va en false hasta el corte (hallazgo H-A).
+                    if (ValidarReplicacionBagPro && !await ExisteEnBagProAsync(numeroOT, datos.Prod_Id, cancellationToken))
+                    {
+                        await transaction.RollbackAsync(cancellationToken);
+                        return OrdenTrabajoCompletaResult.BadGateway(
+                            $"La OT no se pudo replicar en BagPro y no se creó. Revise que el item {datos.Prod_Id} en {datos.UndMed_Id}, " +
+                            "la mezcla (mezclas predefinidas de BagPro), el cliente y el usuario existan en BagPro.");
+                    }
+
+                    await transaction.CommitAsync(cancellationToken);
+                    return OrdenTrabajoCompletaResult.Success(201, "Orden de trabajo creada.", orden.Ot_Id, orden.Numero_OT);
+                });
+            }
+            catch (Exception ex) when (ClasificarError(ex) is { } clasificado)
             {
                 _context.ChangeTracker.Clear();
-                // Los triggers de estas tablas (TR_CrearOTs, TR_ActualizarCampos_*) escriben por linked server y promueven la
-                // transacción a distribuida; SQL Server no lo permite si EF Core dejó un savepoint activo en SaveChanges.
-                _context.Database.AutoSavepointsEnabled = false;
-                await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-
-                var orden = request.OrdenTrabajo;
-                if (await _context.Set<Orden_Trabajo>().AnyAsync(ot => ot.Numero_OT == orden.Numero_OT, cancellationToken))
-                    return OrdenTrabajoCompletaResult.Conflict($"Ya existe una orden de trabajo con el número {orden.Numero_OT}.");
-
-                orden.Ot_Id = 0;
-                _context.Add(orden);
-                await _context.SaveChangesAsync(cancellationToken);
-
-                request.Extrusion.Extrusion_Id = 0;
-                request.Extrusion.Ot_Id = orden.Ot_Id;
-                request.Impresion.Impresion_Id = 0;
-                request.Impresion.Ot_Id = orden.Ot_Id;
-                request.Laminado.LamCapa_Id = 0;
-                request.Laminado.OT_Id = orden.Ot_Id;
-                request.SelladoCorte.SelladoCorte_Id = 0;
-                request.SelladoCorte.Ot_Id = orden.Ot_Id;
-
-                _context.AddRange(request.Extrusion, request.Impresion, request.Laminado, request.SelladoCorte);
-                await _context.SaveChangesAsync(cancellationToken);
-                await transaction.CommitAsync(cancellationToken);
-
-                return OrdenTrabajoCompletaResult.Success(201, "Orden de trabajo creada.", orden.Ot_Id, orden.Numero_OT);
-            });
+                return clasificado;
+            }
         }
 
         /// <summary>
-        /// Actualiza la OT y sus cuatro procesos en un único SaveChanges (atómico); si algún registro falla no se modifica nada.
-        /// El número, la fecha y la hora de creación de la OT se conservan. Si a la OT le falta algún proceso, se crea.
+        /// Actualiza la OT y sus cuatro procesos en un único SaveChanges (atómico) aplicando solo la lista blanca de edición (F2-03).
+        /// Conserva el número, el creador, la fecha y la hora de creación; producto, presentación, sede y estado no se pueden cambiar.
+        /// Registra al último editor y usa <c>Ot_RowVersion</c> para detectar ediciones concurrentes (409).
+        /// Si a la OT le falta algún proceso, se crea.
         /// </summary>
         /// <param name="otId">Identificador interno de la orden de trabajo.</param>
-        /// <param name="request">Orden de trabajo y la información de cada proceso.</param>
+        /// <param name="request">Datos de la OT y de cada proceso, con la versión de la fila.</param>
+        /// <param name="usuarioId">Usuario del token, que queda como último editor.</param>
         /// <param name="cancellationToken">Token para cancelar la operación.</param>
-        /// <returns>Resultado con el código HTTP, el mensaje y los identificadores de la OT editada.</returns>
-        public async Task<OrdenTrabajoCompletaResult> EditarAsync(long otId, OrdenTrabajoCompletaRequest request, CancellationToken cancellationToken)
+        /// <returns>200 con los identificadores; 400, 404, 409, 422 o 502 con el motivo.</returns>
+        public async Task<OrdenTrabajoCompletaResult> EditarAsync(long otId, EditarOrdenTrabajoCompletaDto request, long usuarioId, CancellationToken cancellationToken)
         {
             _context.ChangeTracker.Clear();
+
+            byte[] rowVersion;
+            try
+            {
+                rowVersion = Convert.FromBase64String(request.Ot_RowVersion);
+            }
+            catch (FormatException)
+            {
+                return OrdenTrabajoCompletaResult.Invalid(new Dictionary<string, string[]> { ["Ot_RowVersion"] = new[] { "La versión de la OT no es válida." } });
+            }
 
             var orden = await _context.Set<Orden_Trabajo>().FirstOrDefaultAsync(ot => ot.Ot_Id == otId, cancellationToken);
             if (orden == null)
                 return OrdenTrabajoCompletaResult.NotFound($"No existe la orden de trabajo con Id {otId}.");
 
-            request.OrdenTrabajo.Ot_Id = otId;
-            request.OrdenTrabajo.Numero_OT = orden.Numero_OT;
-            request.OrdenTrabajo.Ot_FechaCreacion = orden.Ot_FechaCreacion;
-            request.OrdenTrabajo.Ot_Hora = orden.Ot_Hora;
-            _context.Entry(orden).CurrentValues.SetValues(request.OrdenTrabajo);
+            var datos = request.OrdenTrabajo;
+            var errores = OrdenTrabajoReglas.ValidarRangos(datos, orden.Ot_FechaCreacion, orden.Ot_FechaEntrega);
+            if (errores.Count > 0)
+                return OrdenTrabajoCompletaResult.Invalid(errores);
 
-            request.Extrusion.Extrusion_Id = 0;
-            request.Extrusion.Ot_Id = otId;
-            await ActualizarOCrearProcesoAsync(_context.Set<OT_Extrusion>().Where(p => p.Ot_Id == otId), request.Extrusion,
+            var noEditables = new List<string>();
+            if (datos.Prod_Id.HasValue && datos.Prod_Id.Value != orden.Prod_Id) noEditables.Add("producto");
+            if (datos.UndMed_Id != null && datos.UndMed_Id != orden.UndMed_Id) noEditables.Add("presentación");
+            if (datos.SedeCli_Id.HasValue && datos.SedeCli_Id.Value != orden.SedeCli_Id) noEditables.Add("cliente");
+            if (datos.Estado_Id.HasValue && datos.Estado_Id.Value != orden.Estado_Id) noEditables.Add("estado");
+            if (noEditables.Count > 0)
+                return OrdenTrabajoCompletaResult.Unprocessable($"Al editar una OT no se puede cambiar: {string.Join(", ", noEditables)}.");
+
+            var faltantes = await ReferenciasInexistentesAsync(null, null, null, datos.Mezcla_Id, datos.Id_Vendedor, cancellationToken);
+            if (faltantes.Count > 0)
+                return OrdenTrabajoCompletaResult.Unprocessable($"No existen: {string.Join(", ", faltantes)}.");
+
+            var costos = await ValidarCostosAsync(datos, orden.UndMed_Id, request.SelladoCorte, cancellationToken);
+            if (costos.Error != null)
+                return costos.Error;
+            // MTS (Valor Kg por definir) y presentaciones sin regla: se conserva el Valor Kg guardado.
+            var valorKg = costos.ValorKgCalculado ?? orden.Ot_ValorKg;
+
+            OrdenTrabajoMapeo.AplicarEdicion(datos, orden, usuarioId, DateTime.Now, valorKg);
+            _context.Entry(orden).Property(o => o.Ot_RowVersion).OriginalValue = rowVersion;
+
+            await ActualizarOCrearProcesoAsync(_context.Set<OT_Extrusion>().Where(p => p.Ot_Id == otId), OrdenTrabajoMapeo.Extrusion(request.Extrusion, otId),
                 (registro, valores) => valores.Extrusion_Id = registro.Extrusion_Id, cancellationToken);
-
-            request.Impresion.Impresion_Id = 0;
-            request.Impresion.Ot_Id = otId;
-            await ActualizarOCrearProcesoAsync(_context.Set<OT_Impresion>().Where(p => p.Ot_Id == otId), request.Impresion,
+            await ActualizarOCrearProcesoAsync(_context.Set<OT_Impresion>().Where(p => p.Ot_Id == otId), OrdenTrabajoMapeo.Impresion(request.Impresion, otId),
                 (registro, valores) => valores.Impresion_Id = registro.Impresion_Id, cancellationToken);
-
-            request.Laminado.LamCapa_Id = 0;
-            request.Laminado.OT_Id = otId;
-            await ActualizarOCrearProcesoAsync(_context.Set<OT_Laminado>().Where(p => p.OT_Id == otId), request.Laminado,
+            await ActualizarOCrearProcesoAsync(_context.Set<OT_Laminado>().Where(p => p.OT_Id == otId), OrdenTrabajoMapeo.Laminado(request.Laminado, otId),
                 (registro, valores) => valores.LamCapa_Id = registro.LamCapa_Id, cancellationToken);
-
-            request.SelladoCorte.SelladoCorte_Id = 0;
-            request.SelladoCorte.Ot_Id = otId;
-            await ActualizarOCrearProcesoAsync(_context.Set<OT_Sellado_Corte>().Where(p => p.Ot_Id == otId), request.SelladoCorte,
+            await ActualizarOCrearProcesoAsync(_context.Set<OT_Sellado_Corte>().Where(p => p.Ot_Id == otId), OrdenTrabajoMapeo.SelladoCorte(request.SelladoCorte, otId),
                 (registro, valores) => valores.SelladoCorte_Id = registro.SelladoCorte_Id, cancellationToken);
 
-            // Un solo SaveChanges: EF Core lo envuelve en su propia transacción, sin savepoints, por lo que los triggers
-            // que escriben por linked server pueden promoverla a distribuida.
-            await _context.SaveChangesAsync(cancellationToken);
+            try
+            {
+                // Un solo SaveChanges: EF Core lo envuelve en su propia transacción, sin savepoints, por lo que los triggers
+                // que escriben por linked server pueden promoverla a distribuida.
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                _context.ChangeTracker.Clear();
+                return OrdenTrabajoCompletaResult.Conflict("La OT fue modificada por otro usuario después de cargarla. Vuelva a cargarla y repita los cambios.");
+            }
+            catch (Exception ex) when (ClasificarError(ex) is { } clasificado)
+            {
+                _context.ChangeTracker.Clear();
+                return clasificado;
+            }
 
             return OrdenTrabajoCompletaResult.Success(200, "Orden de trabajo actualizada.", orden.Ot_Id, orden.Numero_OT);
+        }
+
+        /// <summary>Indica si está activa la comprobación posterior de la réplica en BagPro (por defecto, true).</summary>
+        private bool ValidarReplicacionBagPro => _configuration.GetValue(ClaveValidarReplicacion, true);
+
+        /// <summary>
+        /// Comprueba que existan las referencias principales de la OT. Los parámetros null no se comprueban.
+        /// </summary>
+        /// <param name="sedeId">Sede del cliente.</param>
+        /// <param name="prodId">Producto.</param>
+        /// <param name="presentacion">Presentación (Unidades_Medidas).</param>
+        /// <param name="mezclaId">Mezcla.</param>
+        /// <param name="vendedorId">Vendedor (Usuarios).</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>Nombres de las referencias que no existen.</returns>
+        private async Task<List<string>> ReferenciasInexistentesAsync(long? sedeId, int? prodId, string? presentacion, long mezclaId, long vendedorId, CancellationToken cancellationToken)
+        {
+            var faltantes = new List<string>();
+            if (sedeId.HasValue && !await _context.Set<SedesClientes>().AnyAsync(s => s.SedeCli_Id == sedeId.Value, cancellationToken))
+                faltantes.Add($"la sede del cliente {sedeId}");
+            if (prodId.HasValue && !await _context.Set<Producto>().AnyAsync(p => p.Prod_Id == prodId.Value, cancellationToken))
+                faltantes.Add($"el producto {prodId}");
+            if (presentacion != null && !await _context.Set<Unidad_Medida>().AnyAsync(u => u.UndMed_Id == presentacion, cancellationToken))
+                faltantes.Add($"la presentación {presentacion}");
+            if (!await _context.Set<Mezcla>().AnyAsync(m => m.Mezcla_Id == mezclaId, cancellationToken))
+                faltantes.Add($"la mezcla {mezclaId}");
+            if (!await _context.Set<Usuario>().AnyAsync(u => u.Usua_Id == vendedorId, cancellationToken))
+                faltantes.Add($"el vendedor {vendedorId}");
+            return faltantes;
+        }
+
+        /// <summary>
+        /// Valida que Valor OT, Valor Kg y Neto Kg coincidan con <see cref="OtCalculoCostos"/> (mismas reglas que el front).
+        /// Usa el Peso Millar y las bolsas por paquete de sellado/corte (las que se guardan) y el nombre del formato para la regla D2.
+        /// </summary>
+        /// <param name="datos">Datos generales recibidos.</param>
+        /// <param name="presentacion">Presentación de la OT (al editar, la guardada).</param>
+        /// <param name="sellado">Datos de sellado/corte recibidos.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>Error 422 si no coinciden; si coinciden, el Valor Kg calculado (null en MTS o sin regla).</returns>
+        private async Task<(OrdenTrabajoCompletaResult? Error, decimal? ValorKgCalculado)> ValidarCostosAsync(
+            OrdenTrabajoDatosBaseDto datos, string presentacion, OtSelladoCorteDto sellado, CancellationToken cancellationToken)
+        {
+            string? tipoProducto = null;
+            if (OtCalculoCostos.PresentacionesD2.Contains(presentacion))
+            {
+                tipoProducto = await _context.Set<Tipo_Producto>().Where(t => t.TpProd_Id == sellado.Formato_Id)
+                    .Select(t => t.TpProd_Nombre).FirstOrDefaultAsync(cancellationToken);
+                if (tipoProducto == null)
+                    return (OrdenTrabajoCompletaResult.Unprocessable($"No existe el formato {sellado.Formato_Id} de sellado/corte."), null);
+            }
+
+            var calculado = OtCalculoCostos.Calcular(new EntradaCostosOT(
+                presentacion, datos.Ot_CantidadPedida, datos.Ot_ValorUnidad, datos.Ot_MargenAdicional,
+                sellado.SelladoCorte_PesoMillar, tipoProducto, sellado.SelladoCorte_CantBolsasPaquete));
+            if (calculado == null)
+                return (null, null);
+
+            var diferencias = OtCalculoCostos.Diferencias(calculado, datos.Ot_PesoNetoKg, datos.Ot_ValorKg, datos.Ot_ValorOT);
+            if (diferencias.Count > 0)
+                return (OrdenTrabajoCompletaResult.Unprocessable(
+                    $"Los costos de la OT no coinciden con el cálculo del servidor ({string.Join("; ", diferencias)}). Recalcule la OT e intente de nuevo."), null);
+
+            return (null, calculado.ValorKg.HasValue ? datos.Ot_ValorKg : null);
+        }
+
+        /// <summary>
+        /// F2-14, comprobación previa: el item debe existir en BagPro (ClientesOT_Item, producto + presentación) y el artículo
+        /// en Zeus (Articulo, código + presentación), con las mismas equivalencias que TR_CrearOTs. Se consulta fuera de la
+        /// transacción para no retener el bloqueo del número mientras se consulta el linked server.
+        /// </summary>
+        /// <param name="prodId">Producto de la OT.</param>
+        /// <param name="presentacion">Presentación de la OT.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>null si se puede replicar; 422 con el motivo si falta alguno.</returns>
+        private async Task<OrdenTrabajoCompletaResult?> ComprobarItemBagProYArticuloZeusAsync(int prodId, string presentacion, CancellationToken cancellationToken)
+        {
+            const string sql = @"
+SELECT CAST(CASE WHEN EXISTS (SELECT 1 FROM dbo.bp_ClientesOT_Item WHERE ClienteItems = @prod AND PtPresentacionNom = @presBagPro) THEN 1 ELSE 0 END AS int) AS ItemBagPro,
+       CAST(CASE WHEN EXISTS (SELECT 1 FROM dbo.zeus_Articulo WHERE Codigo = @codigo AND Presentacion = @presZeus) THEN 1 ELSE 0 END AS int) AS ArticuloZeus;";
+
+            int itemBagPro = 0, articuloZeus = 0;
+            try
+            {
+                await EjecutarAsync(sql, async cmd =>
+                {
+                    await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+                    if (await reader.ReadAsync(cancellationToken))
+                    {
+                        itemBagPro = reader.GetInt32(0);
+                        articuloZeus = reader.GetInt32(1);
+                    }
+                    return 0;
+                }, cancellationToken,
+                    new SqlParameter("@prod", SqlDbType.Int) { Value = prodId },
+                    new SqlParameter("@presBagPro", SqlDbType.VarChar, 50) { Value = OrdenTrabajoReglas.PresentacionBagPro(presentacion) },
+                    new SqlParameter("@codigo", SqlDbType.VarChar, 50) { Value = prodId.ToString() },
+                    new SqlParameter("@presZeus", SqlDbType.VarChar, 50) { Value = OrdenTrabajoReglas.PresentacionZeus(presentacion) });
+            }
+            catch (Exception ex) when (ClasificarError(ex) is { } clasificado)
+            {
+                return clasificado;
+            }
+
+            var faltan = new List<string>();
+            if (itemBagPro == 0) faltan.Add($"el item {prodId} en presentación {OrdenTrabajoReglas.PresentacionBagPro(presentacion)} en BagPro");
+            if (articuloZeus == 0) faltan.Add($"el artículo {prodId} en presentación {OrdenTrabajoReglas.PresentacionZeus(presentacion)} en Zeus");
+            return faltan.Count == 0
+                ? null
+                : OrdenTrabajoCompletaResult.Unprocessable($"No se puede crear la OT porque no existe {string.Join(" ni ", faltan)}.");
+        }
+
+        /// <summary>
+        /// Toma el bloqueo de aplicación exclusivo <see cref="RecursoBloqueoNumero"/> ligado a la transacción actual.
+        /// </summary>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>true si se obtuvo; false si otro usuario lo tiene después del tiempo de espera.</returns>
+        private async Task<bool> TomarBloqueoNumeroAsync(CancellationToken cancellationToken)
+        {
+            const string sql = @"
+DECLARE @r int;
+EXEC @r = sp_getapplock @Resource = @recurso, @LockMode = 'Exclusive', @LockOwner = 'Transaction', @LockTimeout = @espera;
+SELECT @r;";
+            var resultado = await EjecutarAsync(sql, async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync(cancellationToken)), cancellationToken,
+                new SqlParameter("@recurso", SqlDbType.NVarChar, 255) { Value = RecursoBloqueoNumero },
+                new SqlParameter("@espera", SqlDbType.Int) { Value = TiempoEsperaBloqueoMs });
+            return resultado >= 0;
+        }
+
+        /// <summary>
+        /// D5/F2-01: siguiente número de OT = MAX(MAX(BagPro ClientesOT.Item), MAX(Orden_Trabajo.Numero_OT)) + 1.
+        /// BagPro se lee por el sinónimo bp_ClientesOT, la misma base a la que escribe TR_CrearOTs. Debe llamarse con el bloqueo tomado.
+        /// </summary>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>El número que se asignará a la nueva OT.</returns>
+        private Task<long> SiguienteNumeroOTAsync(CancellationToken cancellationToken)
+        {
+            const string sql = @"
+SELECT CASE WHEN ISNULL(b.M, 0) > ISNULL(p.M, 0) THEN ISNULL(b.M, 0) ELSE ISNULL(p.M, 0) END + 1
+FROM (SELECT MAX(CAST(Item AS bigint)) AS M FROM dbo.bp_ClientesOT) AS b
+CROSS JOIN (SELECT MAX(Numero_OT) AS M FROM dbo.Orden_Trabajo) AS p;";
+            return EjecutarAsync(sql, async cmd => Convert.ToInt64(await cmd.ExecuteScalarAsync(cancellationToken)), cancellationToken);
+        }
+
+        /// <summary>
+        /// Indica si el número de OT existe en BagPro (ClientesOT) y, si se indica, con ese producto.
+        /// </summary>
+        /// <param name="numeroOT">Número de OT.</param>
+        /// <param name="prodId">Producto que debe tener la OT en BagPro; null para no comprobarlo.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>true si existe.</returns>
+        private async Task<bool> ExisteEnBagProAsync(long numeroOT, int? prodId, CancellationToken cancellationToken)
+        {
+            const string sql = @"
+SELECT CASE WHEN EXISTS (SELECT 1 FROM dbo.bp_ClientesOT WHERE Item = @numero AND (@prod IS NULL OR ClienteItems = @prod)) THEN 1 ELSE 0 END;";
+            var existe = await EjecutarAsync(sql, async cmd => Convert.ToInt32(await cmd.ExecuteScalarAsync(cancellationToken)), cancellationToken,
+                new SqlParameter("@numero", SqlDbType.BigInt) { Value = numeroOT },
+                new SqlParameter("@prod", SqlDbType.Int) { Value = (object?)prodId ?? DBNull.Value });
+            return existe == 1;
+        }
+
+        /// <summary>
+        /// Ejecuta un comando SQL con la conexión del contexto y, si hay una, dentro de la transacción actual.
+        /// Abre y cierra la conexión solo si estaba cerrada.
+        /// </summary>
+        /// <typeparam name="T">Tipo del resultado.</typeparam>
+        /// <param name="sql">Texto del comando.</param>
+        /// <param name="ejecutar">Función que ejecuta el comando y obtiene el resultado.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <param name="parametros">Parámetros del comando.</param>
+        /// <returns>El resultado de <paramref name="ejecutar"/>.</returns>
+        private async Task<T> EjecutarAsync<T>(string sql, Func<DbCommand, Task<T>> ejecutar, CancellationToken cancellationToken, params SqlParameter[] parametros)
+        {
+            var conexion = _context.Database.GetDbConnection();
+            var abrir = conexion.State != ConnectionState.Open;
+            if (abrir)
+                await conexion.OpenAsync(cancellationToken);
+            try
+            {
+                await using var cmd = conexion.CreateCommand();
+                cmd.CommandText = sql;
+                cmd.Transaction = _context.Database.CurrentTransaction?.GetDbTransaction();
+                cmd.Parameters.AddRange(parametros);
+                return await ejecutar(cmd);
+            }
+            finally
+            {
+                if (abrir)
+                    await conexion.CloseAsync();
+            }
+        }
+
+        /// <summary>
+        /// Convierte los errores previstos de SQL Server (trigger, PK, FK, linked server/MSDTC) en un resultado legible (F2-12).
+        /// </summary>
+        /// <param name="ex">Excepción capturada.</param>
+        /// <returns>El resultado, o null si el error no es de los previstos y debe propagarse.</returns>
+        private static OrdenTrabajoCompletaResult? ClasificarError(Exception ex)
+        {
+            var sqlEx = ex as SqlException ?? ex.InnerException as SqlException ?? ex.GetBaseException() as SqlException;
+            if (sqlEx == null)
+                return null;
+            var clasificado = OrdenTrabajoReglas.ClasificarErrorSql(sqlEx.Number);
+            return clasificado == null ? null : new OrdenTrabajoCompletaResult(false, clasificado.Value.StatusCode, clasificado.Value.Mensaje, null, null);
         }
 
         /// <summary>
@@ -149,7 +461,8 @@ namespace PlasticaribeAPI.Service
     /// <param name="Message">Mensaje descriptivo del resultado.</param>
     /// <param name="Ot_Id">Identificador interno de la OT, si la operación fue exitosa.</param>
     /// <param name="Numero_OT">Número visible de la OT, si la operación fue exitosa.</param>
-    public sealed record OrdenTrabajoCompletaResult(bool Succeeded, int StatusCode, string Message, long? Ot_Id, long? Numero_OT)
+    /// <param name="Errores">Errores por campo (solo en 400).</param>
+    public sealed record OrdenTrabajoCompletaResult(bool Succeeded, int StatusCode, string Message, long? Ot_Id, long? Numero_OT, IDictionary<string, string[]>? Errores = null)
     {
         /// <summary>Crea un resultado exitoso.</summary>
         /// <param name="statusCode">Código HTTP de éxito (201 al crear, 200 al editar).</param>
@@ -158,6 +471,11 @@ namespace PlasticaribeAPI.Service
         /// <param name="numeroOT">Número visible de la OT.</param>
         /// <returns>Resultado exitoso.</returns>
         public static OrdenTrabajoCompletaResult Success(int statusCode, string message, long otId, long numeroOT) => new(true, statusCode, message, otId, numeroOT);
+
+        /// <summary>Crea un resultado por datos fuera de rango.</summary>
+        /// <param name="errores">Errores por campo.</param>
+        /// <returns>Resultado con código 400.</returns>
+        public static OrdenTrabajoCompletaResult Invalid(IDictionary<string, string[]> errores) => new(false, 400, "Los datos de la OT no son válidos.", null, null, errores);
 
         /// <summary>Crea un resultado por recurso inexistente.</summary>
         /// <param name="message">Descripción del recurso no encontrado.</param>
@@ -168,5 +486,15 @@ namespace PlasticaribeAPI.Service
         /// <param name="message">Descripción del conflicto.</param>
         /// <returns>Resultado con código 409.</returns>
         public static OrdenTrabajoCompletaResult Conflict(string message) => new(false, 409, message, null, null);
+
+        /// <summary>Crea un resultado por una regla de negocio incumplida.</summary>
+        /// <param name="message">Descripción de la regla incumplida.</param>
+        /// <returns>Resultado con código 422.</returns>
+        public static OrdenTrabajoCompletaResult Unprocessable(string message) => new(false, 422, message, null, null);
+
+        /// <summary>Crea un resultado por un fallo de BagPro o Zeus.</summary>
+        /// <param name="message">Descripción del fallo.</param>
+        /// <returns>Resultado con código 502.</returns>
+        public static OrdenTrabajoCompletaResult BadGateway(string message) => new(false, 502, message, null, null);
     }
 }

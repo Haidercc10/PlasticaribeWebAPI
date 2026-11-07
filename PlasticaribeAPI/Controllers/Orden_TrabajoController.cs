@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
+using PlasticaribeAPI.DTOs;
 using PlasticaribeAPI.Models;
 using PlasticaribeAPI.Service;
+using System.Security.Claims;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -337,6 +339,8 @@ namespace PlasticaribeAPI.Controllers
                           // Información de la OT
                           Id_OT = ot.Ot_Id,
                           Numero_Orden = ot.Numero_OT,
+                          // F2-03: versión de la fila (base64) que el front devuelve al editar para detectar ediciones concurrentes.
+                          RowVersion = ot.Ot_RowVersion,
                           Id_SedeCliente = ot.SedeCli.SedeCli_CodBagPro,
                           Id_Cliente = ot.SedeCli.SedeCli_Id,
                           NitCliente = ot.SedeCli.SedeCli_CodBagPro,
@@ -901,36 +905,69 @@ namespace PlasticaribeAPI.Controllers
         }
 
         /// <summary>
-        /// Crea la OT y la información de todos sus procesos en una sola transacción.
+        /// Crea la OT y la información de todos sus procesos en una sola transacción. El número de OT lo asigna el servidor
+        /// (MAX de BagPro y Plasticaribe + 1) y el creador es el usuario del token; el body no puede fijarlos.
         /// </summary>
-        /// <param name="request">Orden de trabajo con extrusión, impresión, laminado y sellado/corte.</param>
+        /// <param name="request">Datos planos de la OT y de extrusión, impresión, laminado y sellado/corte.</param>
         /// <param name="cancellationToken">Token para cancelar la operación.</param>
-        /// <returns>201 con el Ot_Id y el Numero_OT creados; 409 si el número de OT ya existe.</returns>
+        /// <returns>201 con el Ot_Id y el Numero_OT creados; 400, 409, 422 o 502 (ProblemDetails) con el motivo.</returns>
         [HttpPost("crearCompleta")]
-        public async Task<IActionResult> PostOrden_TrabajoCompleta(OrdenTrabajoCompletaRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> PostOrden_TrabajoCompleta(CrearOrdenTrabajoCompletaDto request, CancellationToken cancellationToken)
         {
-            var result = await _ordenCompletaService.CrearAsync(request, cancellationToken);
+            if (!TryObtenerUsuarioToken(out var usuarioId))
+                return Unauthorized();
+
+            var result = await _ordenCompletaService.CrearAsync(request, usuarioId, cancellationToken);
             if (!result.Succeeded)
-                return StatusCode(result.StatusCode, result.Message);
+                return RespuestaError(result);
 
             return CreatedAtAction("GetOrden_Trabajo", new { id = result.Ot_Id }, new { ot_Id = result.Ot_Id, numero_OT = result.Numero_OT });
         }
 
         /// <summary>
         /// Actualiza la OT y la información de todos sus procesos de forma atómica; crea los procesos que le falten.
+        /// Solo aplica la lista blanca de edición, conserva al creador y registra al usuario del token como último editor.
         /// </summary>
         /// <param name="id">Identificador interno (Ot_Id) de la orden de trabajo.</param>
-        /// <param name="request">Orden de trabajo con extrusión, impresión, laminado y sellado/corte.</param>
+        /// <param name="request">Datos planos de la OT y de cada proceso, con la versión de la fila (Ot_RowVersion).</param>
         /// <param name="cancellationToken">Token para cancelar la operación.</param>
-        /// <returns>200 con el Ot_Id y el Numero_OT; 404 si la OT no existe.</returns>
+        /// <returns>200 con el Ot_Id y el Numero_OT; 400, 404, 409 (edición concurrente), 422 o 502 (ProblemDetails).</returns>
         [HttpPut("editarCompleta/{id}")]
-        public async Task<IActionResult> PutOrden_TrabajoCompleta(long id, OrdenTrabajoCompletaRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> PutOrden_TrabajoCompleta(long id, EditarOrdenTrabajoCompletaDto request, CancellationToken cancellationToken)
         {
-            var result = await _ordenCompletaService.EditarAsync(id, request, cancellationToken);
+            if (!TryObtenerUsuarioToken(out var usuarioId))
+                return Unauthorized();
+
+            var result = await _ordenCompletaService.EditarAsync(id, request, usuarioId, cancellationToken);
             if (!result.Succeeded)
-                return StatusCode(result.StatusCode, result.Message);
+                return RespuestaError(result);
 
             return Ok(new { ot_Id = result.Ot_Id, numero_OT = result.Numero_OT });
+        }
+
+        /// <summary>
+        /// Obtiene el Usua_Id del token (claim NameIdentifier).
+        /// </summary>
+        /// <param name="usuarioId">Usuario del token, si se pudo leer.</param>
+        /// <returns>true si el token tiene un Usua_Id válido.</returns>
+        private bool TryObtenerUsuarioToken(out long usuarioId) =>
+            long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out usuarioId);
+
+        /// <summary>
+        /// Convierte un resultado fallido de crear/editar OT en ProblemDetails (ValidationProblemDetails si trae errores por campo).
+        /// </summary>
+        /// <param name="result">Resultado fallido.</param>
+        /// <returns>Respuesta con el código y el detalle del resultado.</returns>
+        private IActionResult RespuestaError(OrdenTrabajoCompletaResult result)
+        {
+            if (result.Errores != null)
+            {
+                foreach (var error in result.Errores)
+                    foreach (var mensaje in error.Value)
+                        ModelState.AddModelError(error.Key, mensaje);
+                return ValidationProblem(ModelState);
+            }
+            return Problem(detail: result.Message, statusCode: result.StatusCode);
         }
 
         // DELETE: api/Orden_Trabajo/5
