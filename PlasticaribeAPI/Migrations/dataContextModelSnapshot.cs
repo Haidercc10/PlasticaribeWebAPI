@@ -7118,6 +7118,9 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<DateTime?>("Ot_FechaEntrega")
                         .HasColumnType("date");
 
+                    b.Property<DateTime?>("Ot_FechaModifica")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Ot_Hora")
                         .HasColumnType("varchar(10)")
                         .HasColumnOrder(21);
@@ -7136,6 +7139,14 @@ namespace PlasticaribeAPI.Migrations
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)")
                         .HasColumnOrder(8);
+
+                    b.Property<byte[]>("Ot_RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<long?>("Ot_UsuarioModifica")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("Ot_ValorKg")
                         .HasPrecision(14, 2)
@@ -7188,6 +7199,8 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Id_Vendedor");
 
                     b.HasIndex("Mezcla_Id");
+
+                    b.HasIndex("Ot_UsuarioModifica");
 
                     b.HasIndex("PedExt_Id");
 
@@ -14450,6 +14463,11 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "UsuarioModifica")
+                        .WithMany()
+                        .HasForeignKey("Ot_UsuarioModifica")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("PlasticaribeAPI.Models.PedidoExterno", "PedidoExterno")
                         .WithMany()
                         .HasForeignKey("PedExt_Id")
@@ -14493,6 +14511,8 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Unidad_Medida");
 
                     b.Navigation("Usuario");
+
+                    b.Navigation("UsuarioModifica");
 
                     b.Navigation("Vendedor");
                 });

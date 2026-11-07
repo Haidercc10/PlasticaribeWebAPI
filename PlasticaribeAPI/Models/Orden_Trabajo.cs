@@ -105,6 +105,25 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "date")]
         public DateTime? Ot_FechaEntrega { get; set; }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+
+        /// <summary>
+        /// Último usuario que editó la OT (D4). Usua_Id conserva al creador. Null si la OT no se ha editado desde la API.
+        /// </summary>
+        public long? Ot_UsuarioModifica { get; set; }
+
+        /// <summary>Navegación al último usuario que editó la OT.</summary>
+        public Usuario? UsuarioModifica { get; set; }
+
+        /// <summary>Fecha y hora de la última edición de la OT desde la API.</summary>
+        public DateTime? Ot_FechaModifica { get; set; }
+
+        /// <summary>
+        /// Versión de la fila para control de concurrencia optimista: si otra edición la cambió, la API responde 409.
+        /// </summary>
+        [Timestamp]
+        public byte[]? Ot_RowVersion { get; set; }
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }
