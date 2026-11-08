@@ -28,6 +28,12 @@ namespace PlasticaribeAPI.Controllers
             return await _context.OT_Sellado_Corte.ToListAsync();
         }
 
+        /// <summary>
+        /// Obtiene los Ids del tipo de sellado y del formato (tipo de producto) a partir de sus nombres.
+        /// </summary>
+        /// <param name="tipoSellado">Nombre del tipo de sellado.</param>
+        /// <param name="formato">Nombre del formato (tipo de producto).</param>
+        /// <returns>200 con TpSellado_Id y TpProd_Id; 404 si no existe el tipo de sellado o el formato.</returns>
         [HttpGet("getTipoSellado_Formato/{tipoSellado}/{formato}")]
         public ActionResult GetTipoSellado_Formato(string tipoSellado, string formato)
         {
@@ -42,11 +48,16 @@ namespace PlasticaribeAPI.Controllers
                        }).FirstOrDefault();
 
             if (con != null) return Ok(con);
-            return NoContent();
+            return NotFound($"No existe la combinación de tipo de sellado '{tipoSellado}' y formato '{formato}'.");
         }
 
+        /// <summary>
+        /// Consulta un registro de sellado/corte por su Id.
+        /// </summary>
+        /// <param name="id">Identificador del registro (SelladoCorte_Id, bigint).</param>
+        /// <returns>200 con el registro; 404 si no existe.</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<OT_Sellado_Corte>> GetOT_Sellado_Corte(int id)
+        public async Task<ActionResult<OT_Sellado_Corte>> GetOT_Sellado_Corte(long id)
         {
             if (_context.OT_Sellado_Corte == null)
             {
@@ -103,6 +114,11 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Crea un registro de sellado/corte.
+        /// </summary>
+        /// <param name="OT_Sellado_Corte">Datos del registro a crear.</param>
+        /// <returns>201 con el registro creado y la ruta de GetOT_Sellado_Corte con su SelladoCorte_Id.</returns>
         [HttpPost]
         public async Task<ActionResult<OT_Sellado_Corte>> PostOT_Sellado_Corte(OT_Sellado_Corte OT_Sellado_Corte)
         {
@@ -113,7 +129,7 @@ namespace PlasticaribeAPI.Controllers
             _context.OT_Sellado_Corte.Add(OT_Sellado_Corte);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetOT_Sellado_Corte", new { id = OT_Sellado_Corte.Sellado }, OT_Sellado_Corte);
+            return CreatedAtAction(nameof(GetOT_Sellado_Corte), new { id = OT_Sellado_Corte.SelladoCorte_Id }, OT_Sellado_Corte);
         }
 
         [HttpDelete("{id}")]
