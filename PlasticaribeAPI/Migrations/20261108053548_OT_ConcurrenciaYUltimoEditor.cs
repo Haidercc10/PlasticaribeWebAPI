@@ -11,6 +11,12 @@ namespace PlasticaribeAPI.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<Guid>(
+                name: "Ot_ClaveSolicitud",
+                table: "Orden_Trabajo",
+                type: "uniqueidentifier",
+                nullable: true);
+
             migrationBuilder.AddColumn<DateTime>(
                 name: "Ot_FechaModifica",
                 table: "Orden_Trabajo",
@@ -29,6 +35,16 @@ namespace PlasticaribeAPI.Migrations
                 table: "Orden_Trabajo",
                 type: "bigint",
                 nullable: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orden_Trabajo_Numero_OT",
+                table: "Orden_Trabajo",
+                column: "Numero_OT");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orden_Trabajo_Ot_ClaveSolicitud",
+                table: "Orden_Trabajo",
+                column: "Ot_ClaveSolicitud");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orden_Trabajo_Ot_UsuarioModifica",
@@ -52,7 +68,19 @@ namespace PlasticaribeAPI.Migrations
                 table: "Orden_Trabajo");
 
             migrationBuilder.DropIndex(
+                name: "IX_Orden_Trabajo_Numero_OT",
+                table: "Orden_Trabajo");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Orden_Trabajo_Ot_ClaveSolicitud",
+                table: "Orden_Trabajo");
+
+            migrationBuilder.DropIndex(
                 name: "IX_Orden_Trabajo_Ot_UsuarioModifica",
+                table: "Orden_Trabajo");
+
+            migrationBuilder.DropColumn(
+                name: "Ot_ClaveSolicitud",
                 table: "Orden_Trabajo");
 
             migrationBuilder.DropColumn(

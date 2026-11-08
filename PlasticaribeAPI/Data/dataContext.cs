@@ -543,6 +543,11 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.Mezcla).WithMany().HasForeignKey(ot => ot.Mezcla_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.Vendedor).WithMany().HasForeignKey(ot => ot.Id_Vendedor).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Orden_Trabajo>().HasOne(ot => ot.UsuarioModifica).WithMany().HasForeignKey(ot => ot.Ot_UsuarioModifica).OnDelete(DeleteBehavior.Restrict);
+            // Índices NO únicos: cálculo del siguiente número (MAX) y búsqueda de la clave de idempotencia. La unicidad de
+            // Numero_OT va en la migración OT_IndicesUnicos (después de F0-02). La clave no lleva índice único filtrado para
+            // no exigir QUOTED_IDENTIFIER ON a los SPs que insertan en Orden_Trabajo (CrearOrden_TrabajoDesdeBagPro).
+            modelBuilder.Entity<Orden_Trabajo>().HasIndex(ot => ot.Numero_OT);
+            modelBuilder.Entity<Orden_Trabajo>().HasIndex(ot => ot.Ot_ClaveSolicitud);
 
             //OT_Extrusion
             modelBuilder.Entity<OT_Extrusion>().ToTable(tb => tb.HasTrigger("TR_ActualizarCampos_OTExtrusion"));

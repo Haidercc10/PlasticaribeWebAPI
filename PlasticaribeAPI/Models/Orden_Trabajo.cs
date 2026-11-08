@@ -123,6 +123,12 @@ namespace PlasticaribeAPI.Models
         /// </summary>
         [Timestamp]
         public byte[]? Ot_RowVersion { get; set; }
+
+        /// <summary>
+        /// Clave de idempotencia (GUID) que envía el front al crear la OT. Si la misma solicitud llega dos veces
+        /// (doble envío o reintento después del commit), la API devuelve la OT ya creada en lugar de crear otra.
+        /// </summary>
+        public Guid? Ot_ClaveSolicitud { get; set; }
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

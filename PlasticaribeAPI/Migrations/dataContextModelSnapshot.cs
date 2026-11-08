@@ -7103,6 +7103,9 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("decimal(14,2)")
                         .HasColumnOrder(5);
 
+                    b.Property<Guid?>("Ot_ClaveSolicitud")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("Ot_Corte")
                         .HasColumnType("bit")
                         .HasColumnOrder(15);
@@ -7199,6 +7202,10 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Id_Vendedor");
 
                     b.HasIndex("Mezcla_Id");
+
+                    b.HasIndex("Numero_OT");
+
+                    b.HasIndex("Ot_ClaveSolicitud");
 
                     b.HasIndex("Ot_UsuarioModifica");
 
