@@ -220,8 +220,12 @@ namespace PlasticaribeAPI.Service
             return OrdenTrabajoCompletaResult.Success(200, "Orden de trabajo actualizada.", orden.Ot_Id, orden.Numero_OT);
         }
 
-        /// <summary>Indica si está activa la comprobación posterior de la réplica en BagPro (por defecto, true).</summary>
-        private bool ValidarReplicacionBagPro => _configuration.GetValue(ClaveValidarReplicacion, true);
+        /// <summary>
+        /// Indica si está activa la comprobación posterior de la réplica en BagPro. Por defecto es false (B1): producción
+        /// no la activa por omisión mientras plasticaribe2 lea PlasticaribeBDD_Test (hallazgo H-A); Development la activa
+        /// explícitamente en appsettings.Development.json.
+        /// </summary>
+        private bool ValidarReplicacionBagPro => _configuration.GetValue(ClaveValidarReplicacion, false);
 
         /// <summary>
         /// Comprueba que existan las referencias principales de la OT. Los parámetros null no se comprueban.
