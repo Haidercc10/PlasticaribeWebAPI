@@ -1366,6 +1366,68 @@ namespace PlasticaribeAPI.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// Busca subcategorías de materias primas (proceso EXT) o de tintas (demás procesos) por Id o por nombre,
+        /// con su stock total y unidad de medida, para el módulo de solicitud de materia prima.
+        /// Versión optimizada de <c>getAllSubcategoriesForName</c>:
+        /// - El texto viaja por query string, así nombres con '/', '%' o '#' no rompen la ruta.
+        /// - Si el texto es numérico también busca por Id exacto de subcategoría.
+        /// - Agrupa por las columnas de la subcategoría ya unida (sin navegación adicional) y obtiene la unidad
+        ///   con MAX en lugar de FirstOrDefault, que EF traduce como subconsulta correlacionada por grupo.
+        /// - Ordena primero la coincidencia exacta por Id, luego los nombres que empiezan por el texto, y limita los resultados.
+        /// </summary>
+        /// <param name="proceso">EXT para materias primas; cualquier otro proceso para tintas.</param>
+        /// <param name="texto">Id de la subcategoría o parte de su nombre.</param>
+        /// <param name="cancellationToken">Cancela la consulta si el cliente aborta la petición.</param>
+        [HttpGet("buscarSubcategorias/{proceso}")]
+        public async Task<ActionResult> buscarSubcategorias(string proceso, [FromQuery] string texto, CancellationToken cancellationToken)
+        {
+            const int maxResultados = 50;
+            texto = texto?.Trim() ?? string.Empty;
+            if (texto.Length == 0) return BadRequest("Debe ingresar el Id o parte del nombre de la subcategoría.");
+
+            bool esId = int.TryParse(texto, out int id);
+
+            if (proceso == "EXT")
+            {
+                var materiasPrimas = await (from mp in _context.Set<Materia_Prima>().AsNoTracking()
+                                            join s in _context.Set<Subcategorias_MatPrima>().AsNoTracking() on mp.SubCatMP_Id equals s.SubCatMP_Id
+                                            where mp.MatPri_Id != 84
+                                            && ((esId && s.SubCatMP_Id == id) || s.SubCatMP_Nombre.Contains(texto))
+                                            group mp by new { s.SubCatMP_Id, s.SubCatMP_Nombre } into g
+                                            orderby (esId && g.Key.SubCatMP_Id == id) descending,
+                                                    g.Key.SubCatMP_Nombre.StartsWith(texto) descending,
+                                                    g.Key.SubCatMP_Nombre
+                                            select new
+                                            {
+                                                Id_Subcategoria = g.Key.SubCatMP_Id,
+                                                Subcategoria = g.Key.SubCatMP_Nombre,
+                                                Stock = g.Sum(x => x.MatPri_Stock),
+                                                Und = g.Max(x => x.UndMed_Id),
+                                            }).Take(maxResultados).ToListAsync(cancellationToken);
+
+                return Ok(materiasPrimas);
+            }
+
+            var tintas = await (from tt in _context.Set<Tinta>().AsNoTracking()
+                                join s in _context.Set<Subcategorias_MatPrima>().AsNoTracking() on tt.SubCatMP_Id equals s.SubCatMP_Id
+                                where tt.Tinta_Id != 2001
+                                && ((esId && s.SubCatMP_Id == id) || s.SubCatMP_Nombre.Contains(texto))
+                                group tt by new { s.SubCatMP_Id, s.SubCatMP_Nombre } into g
+                                orderby (esId && g.Key.SubCatMP_Id == id) descending,
+                                        g.Key.SubCatMP_Nombre.StartsWith(texto) descending,
+                                        g.Key.SubCatMP_Nombre
+                                select new
+                                {
+                                    Id_Subcategoria = g.Key.SubCatMP_Id,
+                                    Subcategoria = g.Key.SubCatMP_Nombre,
+                                    Stock = g.Sum(x => x.Tinta_Stock),
+                                    Und = g.Max(x => x.UndMed_Id),
+                                }).Take(maxResultados).ToListAsync(cancellationToken);
+
+            return Ok(tintas);
+        }
+
         // PUT: api/Materia_Prima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
