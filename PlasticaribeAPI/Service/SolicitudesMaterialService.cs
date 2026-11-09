@@ -22,13 +22,16 @@ namespace PlasticaribeAPI.Service
         /// <summary>Solicitud con asignaciones que no cubren todo lo solicitado.</summary>
         public const int Parcial = 12;
 
+        /// <summary>Solicitud finalizada que un administrador o superior de extrusión revisó y marcó como verificada.</summary>
+        public const int Verificada = 55;
+
         /// <summary>Solicitud genérica que se asocia a las asignaciones hechas sin solicitud.</summary>
         public const long SolicitudGenericaId = 1;
 
         /// <summary>Indica si el estado ya no admite asignaciones ni ediciones.</summary>
         /// <param name="estado">Estado de la solicitud.</param>
-        /// <returns>True si la solicitud está cancelada o finalizada.</returns>
-        public static bool EstaCerrada(int estado) => estado is Cancelada or Finalizada;
+        /// <returns>True si la solicitud está cancelada, finalizada o verificada.</returns>
+        public static bool EstaCerrada(int estado) => estado is Cancelada or Finalizada or Verificada;
     }
 
     /// <summary>
@@ -163,7 +166,7 @@ namespace PlasticaribeAPI.Service
 
         /// <summary>
         /// Recalcula el estado de la solicitud y las cantidades entregadas y faltantes de sus detalles, y guarda los cambios.
-        /// Las solicitudes canceladas y la solicitud genérica no se modifican.
+        /// Las solicitudes canceladas, las verificadas y la solicitud genérica no se modifican.
         /// </summary>
         /// <param name="solicitudId">Identificador de la solicitud.</param>
         /// <param name="cancellationToken">Token para cancelar la operación.</param>
@@ -174,7 +177,8 @@ namespace PlasticaribeAPI.Service
                 .AsTracking()
                 .FirstOrDefaultAsync(s => s.SolMpExt_Id == solicitudId, cancellationToken);
             if (solicitud == null) return null;
-            if (solicitudId == EstadosSolicitudMaterial.SolicitudGenericaId || solicitud.Estado_Id == EstadosSolicitudMaterial.Cancelada)
+            if (solicitudId == EstadosSolicitudMaterial.SolicitudGenericaId ||
+                solicitud.Estado_Id is EstadosSolicitudMaterial.Cancelada or EstadosSolicitudMaterial.Verificada)
                 return solicitud.Estado_Id;
 
             var detalles = await _context.DetSolicitud_MatPrimaExtrusion

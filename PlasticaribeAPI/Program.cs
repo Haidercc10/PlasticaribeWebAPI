@@ -138,6 +138,10 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("ExcederLimiteOT", policy =>
         policy.RequireRole("1", "104"));
+
+    // Marcar solicitudes de material como verificadas: ADMINISTRADOR (1) y SUPERIOR EXTRUSION 2 (85).
+    options.AddPolicy("VerificarSolicitudMaterial", policy =>
+        policy.RequireRole("1", "85"));
 });
 
 builder.Services.AddCors(options =>
