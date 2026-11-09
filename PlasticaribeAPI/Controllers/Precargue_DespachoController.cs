@@ -1,14 +1,16 @@
 ﻿using Intercom.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using System.Security.Claims;
 
 namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class Precargue_DespachoController : ControllerBase
     {
         private readonly dataContext _context;
@@ -86,12 +88,18 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Actualiza estado, OF asociada, observación, usuario y fecha/hora de modificación de un precargue.
+        /// Cada elemento del cuerpo se aplica y guarda en orden (en la práctica el front envía uno solo).
+        /// </summary>
+        /// <param name="id">Número del precargue.</param>
+        /// <param name="Preload">Datos a aplicar (OF, usuario, observación y estado).</param>
+        /// <returns>204 si se actualiza; 404 si el precargue no existe.</returns>
         [HttpPut("putPreloadDispatch/{id}")]
         public async Task<IActionResult> putPreloadDispatch(long id, List<Preload> Preload)
         {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            int count = 0;
-            var preload = (from pre in _context.Set<Precargue_Despacho>() where pre.Pcd_Id == id select pre).FirstOrDefault();
+            var preload = await _context.Set<Precargue_Despacho>().FirstOrDefaultAsync(pre => pre.Pcd_Id == id);
+            if (preload == null) return NotFound();
 
             foreach (var load in Preload)
             {
@@ -101,32 +109,65 @@ namespace PlasticaribeAPI.Controllers
                 preload.OF_Id = load.of;
                 preload.Pcd_Observacion = load.observation;
                 preload.Usua_Modifica = load.user;
-            
-                _context.Entry(preload).State = EntityState.Modified;
-                _context.SaveChanges();
 
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
-                count++;
-                if (count == Preload.Count) return NoContent();
+                _context.Entry(preload).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
             }
             return NoContent();
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
-        //Actualizar registros por orden de facturación
+        /// <summary>
+        /// Anula un precargue de despacho pendiente (11) o en proceso (2) y libera sus rollos,
+        /// devolviéndolos del estado 50 (en precargue) al estado 19 (disponible). Solo el rol 1 puede anular.
+        /// Todos los cambios se guardan en una única transacción.
+        /// </summary>
+        /// <param name="id">Número del precargue a anular.</param>
+        /// <returns>200 con la cantidad de rollos liberados; 400 si el estado no permite anular;
+        /// 401 si el token no trae el usuario; 403 si el rol no es 1; 404 si el precargue no existe.</returns>
+        [HttpPut("anular/{id}")]
+        public async Task<IActionResult> AnularPrecargue(long id)
+        {
+            if (!long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var usuarioId))
+                return Unauthorized();
+            if (User.FindFirstValue(ClaimTypes.Role) != "1")
+                return Forbid();
+
+            var precargue = await _context.Precargue_Despacho.FirstOrDefaultAsync(p => p.Pcd_Id == id);
+            if (precargue == null) return NotFound("El precargue no fue encontrado.");
+            if (precargue.Estado_Id != 11 && precargue.Estado_Id != 2)
+                return BadRequest("Solo se pueden anular precargues pendientes o en proceso.");
+
+            // Una sola consulta: rollos del precargue que siguen en estado 50 (mismo producto y número de rollo).
+            var rollos = (await (from d in _context.Detalles_PrecargueDespacho
+                                 join pp in _context.Produccion_Procesos
+                                     on new { Rollo = d.DtlPcd_Rollo, d.Prod_Id } equals new { Rollo = pp.NumeroRollo_BagPro, pp.Prod_Id }
+                                 where d.Pcd_Id == id && pp.Estado_Rollo == 50
+                                 select pp).ToListAsync())
+                         .Distinct()
+                         .ToList();
+
+            foreach (var rollo in rollos) rollo.Estado_Rollo = 19;
+
+            precargue.Estado_Id = 3;
+            precargue.Usua_Modifica = usuarioId;
+            precargue.Pcd_FechaModifica = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));
+            precargue.Pcd_HoraModifica = Convert.ToString(DateTime.Now.ToString("HH:mm:ss"));
+
+            await _context.SaveChangesAsync();
+            return Ok(new { rollosLiberados = rollos.Count });
+        }
+
+        /// <summary>
+        /// Actualiza todos los precargues asociados a una orden de facturación con el estado, observación,
+        /// usuario y OF del primer elemento del cuerpo.
+        /// </summary>
+        /// <param name="order">Número de la orden de facturación asociada a los precargues.</param>
+        /// <param name="Preload">Datos a aplicar; solo se usa el primer elemento.</param>
+        /// <returns>204 siempre que no ocurra un error (también si no hay precargues asociados).</returns>
         [HttpPut("putPreloadForOrderFact/{order}")]
         public async Task<IActionResult> putPreloadForOrderFact(long order, List<Preload> Preload)
         {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            int count = 0;
-            var preload = (from pre in _context.Set<Precargue_Despacho>() where pre.OF_Id == order select pre).ToList();
+            var preload = await _context.Set<Precargue_Despacho>().Where(pre => pre.OF_Id == order).ToListAsync();
 
             foreach (var load in preload)
             {
@@ -138,21 +179,9 @@ namespace PlasticaribeAPI.Controllers
                 load.OF_Id = Preload[0].of;
 
                 _context.Entry(load).State = EntityState.Modified;
-                _context.SaveChanges();
-
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
-                count++;
-                if (count == preload.Count) return NoContent();
+                await _context.SaveChangesAsync();
             }
             return NoContent();
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         //

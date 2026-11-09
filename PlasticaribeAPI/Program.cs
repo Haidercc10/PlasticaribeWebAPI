@@ -56,6 +56,7 @@ builder.Services.AddScoped<ReservasInventarioService>();
 builder.Services.AddScoped<SolicitudesMaterialService>();
 builder.Services.AddScoped<AsignacionMateriaPrimaService>();
 builder.Services.AddScoped<OrdenTrabajoCompletaService>();
+builder.Services.AddScoped<PrecargueRollosService>();
 
 builder.Services.AddDbContext<dataContext>(options =>
 {

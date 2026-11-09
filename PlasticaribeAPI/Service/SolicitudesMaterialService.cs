@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
+using PlasticaribeAPI.DTOs;
 using PlasticaribeAPI.Models;
 
 namespace PlasticaribeAPI.Service
@@ -50,6 +51,15 @@ namespace PlasticaribeAPI.Service
     {
         /// <summary>Categoría de materia prima que no cuenta para el límite de kg de la OT.</summary>
         public const int CategoriaExcluidaLimiteOT = 18;
+
+        /// <summary>Materia prima genérica que se guarda cuando el material asignado o devuelto es tinta o BOPP.</summary>
+        public const long MateriaPrimaGenericaId = 84;
+
+        /// <summary>Tinta genérica que se guarda cuando el material asignado o devuelto no es tinta.</summary>
+        public const long TintaGenericaId = 2001;
+
+        /// <summary>BOPP genérico que se guarda cuando el material asignado o devuelto no es BOPP.</summary>
+        public const long BoppGenericoId = 449;
 
         private readonly dataContext _context;
 
@@ -272,6 +282,113 @@ namespace PlasticaribeAPI.Service
                 .ToListAsync(cancellationToken);
 
             return conTintas.Except(conMateriaPrima).ToHashSet();
+        }
+
+        /// <summary>
+        /// Consulta el detalle de los materiales (materias primas, tintas y BOPP) asignados a una OT y sus devoluciones,
+        /// agrupados en el servidor. Reemplaza las consultas por cada devolución que hacía el reporte de costos.
+        /// </summary>
+        /// <param name="ot">Número de la orden de trabajo.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>Materiales asignados y devueltos, ordenados por proceso y nombre.</returns>
+        public async Task<List<MaterialAsignadoOTDto>> ObtenerMaterialesAsignadosOTAsync(long ot, CancellationToken cancellationToken)
+        {
+            var materiasPrimas = await _context.DetallesAsignaciones_MateriasPrimas
+                .AsNoTracking()
+                .Where(d => d.AsigMp!.AsigMP_OrdenTrabajo == ot)
+                .GroupBy(d => new { d.MatPri_Id, d.MatPri!.MatPri_Nombre, d.UndMed_Id, d.DtAsigMp_Precio, d.Proceso_Id, d.Proceso!.Proceso_Nombre })
+                .Select(g => new
+                {
+                    g.Key.MatPri_Id,
+                    g.Key.MatPri_Nombre,
+                    g.Key.UndMed_Id,
+                    Precio = g.Key.DtAsigMp_Precio ?? 0m,
+                    g.Key.Proceso_Id,
+                    g.Key.Proceso_Nombre,
+                    Cantidad = g.Sum(x => x.DtAsigMp_Cantidad),
+                })
+                .ToListAsync(cancellationToken);
+
+            var tintas = await _context.Set<DetalleAsignacion_Tinta>()
+                .AsNoTracking()
+                .Where(d => d.AsigMp!.AsigMP_OrdenTrabajo == ot)
+                .GroupBy(d => new { d.Tinta_Id, d.Tinta!.Tinta_Nombre, d.UndMed_Id, d.DtAsigTinta_Precio, d.Proceso_Id, d.Proceso!.Proceso_Nombre })
+                .Select(g => new
+                {
+                    g.Key.Tinta_Id,
+                    g.Key.Tinta_Nombre,
+                    g.Key.UndMed_Id,
+                    Precio = g.Key.DtAsigTinta_Precio ?? 0m,
+                    g.Key.Proceso_Id,
+                    g.Key.Proceso_Nombre,
+                    Cantidad = g.Sum(x => x.DtAsigTinta_Cantidad),
+                })
+                .ToListAsync(cancellationToken);
+
+            var bopp = await _context.Set<DetalleAsignacion_BOPP>()
+                .AsNoTracking()
+                .Where(d => d.DtAsigBOPP_OrdenTrabajo == ot)
+                .GroupBy(d => new { d.BOPP_Id, d.BOPP!.BOPP_Nombre, d.UndMed_Id, d.BOPP.BOPP_Precio, d.Proceso_Id, d.Proceso!.Proceso_Nombre })
+                .Select(g => new
+                {
+                    g.Key.BOPP_Id,
+                    g.Key.BOPP_Nombre,
+                    g.Key.UndMed_Id,
+                    g.Key.BOPP_Precio,
+                    g.Key.Proceso_Id,
+                    g.Key.Proceso_Nombre,
+                    Cantidad = g.Sum(x => x.DtAsigBOPP_Cantidad),
+                })
+                .ToListAsync(cancellationToken);
+
+            var devoluciones = await _context.Set<DetalleDevolucion_MateriaPrima>()
+                .AsNoTracking()
+                .Where(d => d.DevMatPri!.DevMatPri_OrdenTrabajo == ot)
+                .GroupBy(d => new
+                {
+                    d.MatPri_Id,
+                    d.MatPri!.MatPri_Nombre,
+                    d.MatPri.MatPri_Precio,
+                    d.Tinta_Id,
+                    TintaNombre = d.Tinta!.Tinta_Nombre,
+                    TintaPrecio = (decimal?)d.Tinta.Tinta_Precio,
+                    d.BOPP_Id,
+                    BoppNombre = d.Bopp!.BOPP_Nombre,
+                    BoppPrecio = (decimal?)d.Bopp.BOPP_Precio,
+                    d.UndMed_Id,
+                })
+                .Select(g => new { g.Key, Cantidad = g.Sum(x => x.DtDevMatPri_CantidadDevuelta) })
+                .ToListAsync(cancellationToken);
+
+            var resultado = new List<MaterialAsignadoOTDto>(materiasPrimas.Count + tintas.Count + bopp.Count + devoluciones.Count);
+            resultado.AddRange(materiasPrimas.Select(m => new MaterialAsignadoOTDto(
+                "MP", m.MatPri_Id, m.MatPri_Nombre, m.Cantidad, m.UndMed_Id, m.Precio, m.Cantidad * m.Precio, m.Proceso_Id, m.Proceso_Nombre, false)));
+            resultado.AddRange(tintas.Select(t => new MaterialAsignadoOTDto(
+                "TINTA", t.Tinta_Id, t.Tinta_Nombre, t.Cantidad, t.UndMed_Id, t.Precio, t.Cantidad * t.Precio, t.Proceso_Id, t.Proceso_Nombre, false)));
+            resultado.AddRange(bopp.Select(b => new MaterialAsignadoOTDto(
+                "BOPP", b.BOPP_Id, b.BOPP_Nombre, b.Cantidad, b.UndMed_Id, b.BOPP_Precio, b.Cantidad * b.BOPP_Precio, b.Proceso_Id, b.Proceso_Nombre, false)));
+
+            // Cada devolución guarda en un solo registro el material real y los genéricos de los otros dos tipos.
+            foreach (var d in devoluciones)
+            {
+                var k = d.Key;
+                var esMp = k.MatPri_Id != MateriaPrimaGenericaId && k.Tinta_Id == TintaGenericaId && k.BOPP_Id == BoppGenericoId;
+                var esTinta = k.MatPri_Id == MateriaPrimaGenericaId && k.Tinta_Id != TintaGenericaId && k.BOPP_Id == BoppGenericoId;
+                var esBopp = k.MatPri_Id == MateriaPrimaGenericaId && k.Tinta_Id == TintaGenericaId && k.BOPP_Id != BoppGenericoId;
+
+                if (esMp) resultado.Add(Devolucion("MP", k.MatPri_Id, k.MatPri_Nombre, d.Cantidad, k.UndMed_Id, k.MatPri_Precio));
+                else if (esTinta) resultado.Add(Devolucion("TINTA", k.Tinta_Id!.Value, k.TintaNombre, d.Cantidad, k.UndMed_Id, k.TintaPrecio ?? 0m));
+                else if (esBopp) resultado.Add(Devolucion("BOPP", k.BOPP_Id!.Value, k.BoppNombre, d.Cantidad, k.UndMed_Id, k.BoppPrecio ?? 0m));
+            }
+
+            return resultado
+                .OrderBy(m => m.EsDevolucion)
+                .ThenBy(m => m.Proceso)
+                .ThenBy(m => m.Nombre)
+                .ToList();
+
+            static MaterialAsignadoOTDto Devolucion(string tipo, long id, string nombre, decimal cantidad, string und, decimal precio) =>
+                new(tipo, id, nombre, cantidad, und, precio, cantidad * precio, "DEV", "Devolución", true);
         }
     }
 }
