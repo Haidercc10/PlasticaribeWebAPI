@@ -322,17 +322,19 @@ namespace PlasticaribeAPI.Controllers
 
         /// <summary>
         /// Consulta una orden de trabajo con la información de sus procesos y observaciones.
+        /// Cada proceso se une con LEFT JOIN y se toma solo su primera fila (menor Id), de modo que una OT sin algún proceso
+        /// se devuelve igual (con los campos de ese proceso en null) y los procesos duplicados no generan filas repetidas.
         /// </summary>
         /// <param name="orden">Número visible de la orden de trabajo.</param>
-        /// <returns>La orden consultada o un error si no existe.</returns>
+        /// <returns>200 con una fila por OT encontrada; 404 si no existe una OT con ese número.</returns>
         [HttpGet("getOrdenTrabajo/{orden}")]
         public async Task<ActionResult> GetOrdenTrabajo(long orden)
         {
             var con = await (from ot in _context.Set<Orden_Trabajo>()
-                      join otExt in _context.Set<OT_Extrusion>() on ot.Ot_Id equals otExt.Ot_Id
-                      join otImp in _context.Set<OT_Impresion>() on ot.Ot_Id equals otImp.Ot_Id
-                      join otLam in _context.Set<OT_Laminado>() on ot.Ot_Id equals otLam.OT_Id
-                      join otSelCor in _context.Set<OT_Sellado_Corte>() on ot.Ot_Id equals otSelCor.Ot_Id
+                      from otExt in _context.Set<OT_Extrusion>().Where(e => e.Ot_Id == ot.Ot_Id).OrderBy(e => e.Extrusion_Id).Take(1).DefaultIfEmpty()
+                      from otImp in _context.Set<OT_Impresion>().Where(i => i.Ot_Id == ot.Ot_Id).OrderBy(i => i.Impresion_Id).Take(1).DefaultIfEmpty()
+                      from otLam in _context.Set<OT_Laminado>().Where(l => l.OT_Id == ot.Ot_Id).OrderBy(l => l.LamCapa_Id).Take(1).DefaultIfEmpty()
+                      from otSelCor in _context.Set<OT_Sellado_Corte>().Where(s => s.Ot_Id == ot.Ot_Id).OrderBy(s => s.SelladoCorte_Id).Take(1).DefaultIfEmpty()
                       where ot.Numero_OT == orden
                       select new
                       {
@@ -374,66 +376,66 @@ namespace PlasticaribeAPI.Controllers
                           ValorUnidad = ot.Ot_ValorUnidad,
 
                           // Información de Extrusión
-                          Id_Material = otExt.Material_Id,
+                          Id_Material = (int?)otExt.Material_Id,
                           Material = otExt.Material_MatPrima.Material_Nombre,
-                          Id_Pigmento_Extrusion = otExt.Pigmt_Id,
+                          Id_Pigmento_Extrusion = (int?)otExt.Pigmt_Id,
                           Pigmento_Extrusion = otExt.Pigmento.Pigmt_Nombre,
-                          Id_Formato_Extrusion = otExt.Formato_Id,
+                          Id_Formato_Extrusion = (long?)otExt.Formato_Id,
                           Formato_Extrusin = otExt.Formato.Formato_Nombre,
-                          Id_Tratado = otExt.Tratado_Id,
+                          Id_Tratado = (int?)otExt.Tratado_Id,
                           Tratado = otExt.Tratado.Tratado_Nombre,
-                          Calibre_Extrusion = otExt.Extrusion_Calibre,
+                          Calibre_Extrusion = (decimal?)otExt.Extrusion_Calibre,
                           Und_Extrusion = otExt.UndMed_Id,
-                          Ancho1_Extrusion = otExt.Extrusion_Ancho1,
-                          Ancho2_Extrusion = otExt.Extrusion_Ancho2,
-                          Ancho3_Extrusion = otExt.Extrusion_Ancho3,
-                          Peso_Extrusion = otExt.Extrusion_Peso,
+                          Ancho1_Extrusion = (decimal?)otExt.Extrusion_Ancho1,
+                          Ancho2_Extrusion = (decimal?)otExt.Extrusion_Ancho2,
+                          Ancho3_Extrusion = (decimal?)otExt.Extrusion_Ancho3,
+                          Peso_Extrusion = (decimal?)otExt.Extrusion_Peso,
                           otExt.Extrusion_Observacion,
                           otExt.Extrusion_Grafilado,
 
                           // Información de Impresión
-                          Id_Tipo_Imptesion = otImp.TpImpresion_Id,
+                          Id_Tipo_Imptesion = (int?)otImp.TpImpresion_Id,
                           Tipo_Impresion = otImp.Tipos_Impresion.TpImpresion_Nombre,
-                          Rodillo = otImp.Rodillo_Id,
-                          Pista = otImp.Pista_Id,
-                          Id_Tinta1 = otImp.Tinta1_Id,
+                          Rodillo = (int?)otImp.Rodillo_Id,
+                          Pista = (int?)otImp.Pista_Id,
+                          Id_Tinta1 = (long?)otImp.Tinta1_Id,
                           Tinta1 = otImp.Tinta1.Tinta_Nombre,
-                          Id_Tinta2 = otImp.Tinta2_Id,
+                          Id_Tinta2 = (long?)otImp.Tinta2_Id,
                           Tinta2 = otImp.Tinta2.Tinta_Nombre,
-                          Id_Tinta3 = otImp.Tinta3_Id,
+                          Id_Tinta3 = (long?)otImp.Tinta3_Id,
                           Tinta3 = otImp.Tinta3.Tinta_Nombre,
-                          Id_Tinta4 = otImp.Tinta4_Id,
+                          Id_Tinta4 = (long?)otImp.Tinta4_Id,
                           Tinta4 = otImp.Tinta4.Tinta_Nombre,
-                          Id_Tinta5 = otImp.Tinta5_Id,
+                          Id_Tinta5 = (long?)otImp.Tinta5_Id,
                           Tinta5 = otImp.Tinta5.Tinta_Nombre,
-                          Id_Tinta6 = otImp.Tinta6_Id,
+                          Id_Tinta6 = (long?)otImp.Tinta6_Id,
                           Tinta6 = otImp.Tinta6.Tinta_Nombre,
-                          Id_Tinta7 = otImp.Tinta7_Id,
+                          Id_Tinta7 = (long?)otImp.Tinta7_Id,
                           Tinta7 = otImp.Tinta7.Tinta_Nombre,
-                          Id_Tinta8 = otImp.Tinta8_Id,
+                          Id_Tinta8 = (long?)otImp.Tinta8_Id,
                           Tinta8 = otImp.Tinta8.Tinta_Nombre,
                           otImp.Impresion_Observacion,
 
                           // Información de Laminado
-                          Id_Capa1 = otLam.Capa_Id1,
+                          Id_Capa1 = (int?)otLam.Capa_Id1,
                           Laminado_Capa1 = otLam.Laminado_Capa.LamCapa_Nombre,
-                          Calibre_Laminado_Capa1 = otLam.LamCapa_Calibre1,
-                          Cantidad_Laminado_Capa1 = otLam.LamCapa_Cantidad1,
-                          Id_Capa2 = otLam.Capa_Id2,
+                          Calibre_Laminado_Capa1 = (double?)otLam.LamCapa_Calibre1,
+                          Cantidad_Laminado_Capa1 = (double?)otLam.LamCapa_Cantidad1,
+                          Id_Capa2 = (int?)otLam.Capa_Id2,
                           Laminado_Capa2 = otLam.Laminado_Capa2.LamCapa_Nombre,
-                          Calibre_Laminado_Capa2 = otLam.LamCapa_Calibre2,
-                          Cantidad_Laminado_Capa2 = otLam.LamCapa_Cantidad2,
-                          Id_Capa3 = otLam.Capa_Id3,
+                          Calibre_Laminado_Capa2 = (double?)otLam.LamCapa_Calibre2,
+                          Cantidad_Laminado_Capa2 = (double?)otLam.LamCapa_Cantidad2,
+                          Id_Capa3 = (int?)otLam.Capa_Id3,
                           Laminado_Capa3 = otLam.Laminado_Capa3.LamCapa_Nombre,
-                          Calibre_Laminado_Capa3 = otLam.LamCapa_Calibre3,
-                          Cantidad_Laminado_Capa3 = otLam.LamCapa_Cantidad3,
+                          Calibre_Laminado_Capa3 = (double?)otLam.LamCapa_Calibre3,
+                          Cantidad_Laminado_Capa3 = (double?)otLam.LamCapa_Cantidad3,
                           otLam.Laminado_Observacion,
 
                           // Información de Sellado
-                          Id_Formato_Producto = otSelCor.Formato_Id,
+                          Id_Formato_Producto = (int?)otSelCor.Formato_Id,
                           Formato_Producto = otSelCor.Formato.TpProd_Nombre,
-                          otSelCor.SelladoCorte_Ancho,
-                          otSelCor.SelladoCorte_Largo,
+                          SelladoCorte_Ancho = (decimal?)otSelCor.SelladoCorte_Ancho,
+                          SelladoCorte_Largo = (decimal?)otSelCor.SelladoCorte_Largo,
                           otSelCor.SelladoCorte_Fuelle,
                           otSelCor.SelladoCorte_Solapa,
                           otSelCor.SelladoCorte_Calibre,
@@ -443,20 +445,20 @@ namespace PlasticaribeAPI.Controllers
                           otSelCor.SelladoCorte_Etiqueta_Ancho,
                           otSelCor.SelladoCorte_Etiqueta_Largo,
                           otSelCor.SelladoCorte_Etiqueta_Fuelle,
-                          otSelCor.TpSellado_Id,
+                          TpSellado_Id = (int?)otSelCor.TpSellado_Id,
                           otSelCor.TipoSellado.TpSellados_Nombre,
-                          otSelCor.SelladoCorte_PesoMillar,
-                          otSelCor.SelladoCorte_PesoBulto,
-                          otSelCor.SelladoCorte_CantBolsasBulto,
-                          otSelCor.SelladoCorte_CantBolsasPaquete,
-                          otSelCor.SelladoCorte_PesoPaquete,
-                          otSelCor.SelladoCorte_PesoProducto,
-                          otSelCor.SelladoCorte_PrecioSelladoDia,
-                          otSelCor.SelladoCorte_PrecioSelladoNoche,
-                          otSelCor.SelladoCorte_PrecioDia_Wik_Mq50,
-                          otSelCor.SelladoCorte_PrecioNoche_Wik_Mq50,
-                          otSelCor.SelladoCorte_PrecioDia_Wik_Mq9,
-                          otSelCor.SelladoCorte_PrecioNoche_Wik_Mq9,
+                          SelladoCorte_PesoMillar = (decimal?)otSelCor.SelladoCorte_PesoMillar,
+                          SelladoCorte_PesoBulto = (decimal?)otSelCor.SelladoCorte_PesoBulto,
+                          SelladoCorte_CantBolsasBulto = (decimal?)otSelCor.SelladoCorte_CantBolsasBulto,
+                          SelladoCorte_CantBolsasPaquete = (decimal?)otSelCor.SelladoCorte_CantBolsasPaquete,
+                          SelladoCorte_PesoPaquete = (decimal?)otSelCor.SelladoCorte_PesoPaquete,
+                          SelladoCorte_PesoProducto = (decimal?)otSelCor.SelladoCorte_PesoProducto,
+                          SelladoCorte_PrecioSelladoDia = (decimal?)otSelCor.SelladoCorte_PrecioSelladoDia,
+                          SelladoCorte_PrecioSelladoNoche = (decimal?)otSelCor.SelladoCorte_PrecioSelladoNoche,
+                          SelladoCorte_PrecioDia_Wik_Mq50 = (decimal?)otSelCor.SelladoCorte_PrecioDia_Wik_Mq50,
+                          SelladoCorte_PrecioNoche_Wik_Mq50 = (decimal?)otSelCor.SelladoCorte_PrecioNoche_Wik_Mq50,
+                          SelladoCorte_PrecioDia_Wik_Mq9 = (decimal?)otSelCor.SelladoCorte_PrecioDia_Wik_Mq9,
+                          SelladoCorte_PrecioNoche_Wik_Mq9 = (decimal?)otSelCor.SelladoCorte_PrecioNoche_Wik_Mq9,
                           otSelCor.SelladoCorte_Observacion,
 
                           // Información de Mezclas
@@ -540,7 +542,7 @@ namespace PlasticaribeAPI.Controllers
                           P2C3_Nombre = ot.Mezcla.MezPigmento2C3.MezPigmto_Nombre,
                       }).ToListAsync();
 
-            return con.Any() ? Ok(con) : BadRequest($"¡No se encontró una Orden de Trabajo con el consecutivo {orden}!");
+            return con.Any() ? Ok(con) : NotFound($"¡No se encontró una Orden de Trabajo con el consecutivo {orden}!");
         }
 
         [HttpGet("getOrdenesTrabajo/{fechaInicial}/{fechaFinal}")]
@@ -638,18 +640,19 @@ namespace PlasticaribeAPI.Controllers
 
         /// <summary>
         /// Consulta la última orden de trabajo asociada a un producto y presentación.
+        /// Los procesos se unen con LEFT JOIN (primera fila de cada uno), así la última OT se encuentra aunque le falte algún proceso.
         /// </summary>
         /// <param name="producto">Identificador del producto.</param>
         /// <param name="presentacion">Unidad de presentación del producto.</param>
-        /// <returns>La última orden encontrada con los datos de sus procesos.</returns>
+        /// <returns>200 con la última orden encontrada y los datos de sus procesos (null si le falta alguno); 404 si no hay ninguna.</returns>
         [HttpGet("getInfoUltOT/{producto}/{presentacion}")]
         public ActionResult GetInfoUltOT(int producto, string presentacion)
         {
             var con = (from ot in _context.Set<Orden_Trabajo>()
-                       join otExt in _context.Set<OT_Extrusion>() on ot.Ot_Id equals otExt.Ot_Id
-                       join otImp in _context.Set<OT_Impresion>() on ot.Ot_Id equals otImp.Ot_Id
-                       join otLam in _context.Set<OT_Laminado>() on ot.Ot_Id equals otLam.OT_Id
-                       join otSelCor in _context.Set<OT_Sellado_Corte>() on ot.Ot_Id equals otSelCor.Ot_Id
+                       from otExt in _context.Set<OT_Extrusion>().Where(e => e.Ot_Id == ot.Ot_Id).OrderBy(e => e.Extrusion_Id).Take(1).DefaultIfEmpty()
+                       from otImp in _context.Set<OT_Impresion>().Where(i => i.Ot_Id == ot.Ot_Id).OrderBy(i => i.Impresion_Id).Take(1).DefaultIfEmpty()
+                       from otLam in _context.Set<OT_Laminado>().Where(l => l.OT_Id == ot.Ot_Id).OrderBy(l => l.LamCapa_Id).Take(1).DefaultIfEmpty()
+                       from otSelCor in _context.Set<OT_Sellado_Corte>().Where(s => s.Ot_Id == ot.Ot_Id).OrderBy(s => s.SelladoCorte_Id).Take(1).DefaultIfEmpty()
                        where ot.Prod_Id == producto
                              && ot.UndMed_Id == presentacion
                        orderby ot.Ot_Id descending
@@ -690,66 +693,66 @@ namespace PlasticaribeAPI.Controllers
                            Peso_Neto = ot.Ot_PesoNetoKg,
 
                            // Información de Extrusión
-                           Id_Material = otExt.Material_Id,
+                           Id_Material = (int?)otExt.Material_Id,
                            Material = otExt.Material_MatPrima.Material_Nombre,
-                           Id_Pigmento_Extrusion = otExt.Pigmt_Id,
+                           Id_Pigmento_Extrusion = (int?)otExt.Pigmt_Id,
                            Pigmento_Extrusion = otExt.Pigmento.Pigmt_Nombre,
-                           Id_Formato_Extrusion = otExt.Formato_Id,
+                           Id_Formato_Extrusion = (long?)otExt.Formato_Id,
                            Formato_Extrusin = otExt.Formato.Formato_Nombre,
-                           Id_Tratado = otExt.Tratado_Id,
+                           Id_Tratado = (int?)otExt.Tratado_Id,
                            Tratado = otExt.Tratado.Tratado_Nombre,
-                           Calibre_Extrusion = otExt.Extrusion_Calibre,
+                           Calibre_Extrusion = (decimal?)otExt.Extrusion_Calibre,
                            Und_Extrusion = otExt.UndMed_Id,
-                           Ancho1_Extrusion = otExt.Extrusion_Ancho1,
-                           Ancho2_Extrusion = otExt.Extrusion_Ancho2,
-                           Ancho3_Extrusion = otExt.Extrusion_Ancho3,
-                           Peso_Extrusion = otExt.Extrusion_Peso,
+                           Ancho1_Extrusion = (decimal?)otExt.Extrusion_Ancho1,
+                           Ancho2_Extrusion = (decimal?)otExt.Extrusion_Ancho2,
+                           Ancho3_Extrusion = (decimal?)otExt.Extrusion_Ancho3,
+                           Peso_Extrusion = (decimal?)otExt.Extrusion_Peso,
                            otExt.Extrusion_Observacion,
                            otExt.Extrusion_Grafilado,
 
                            // Información de Impresión
-                           Id_Tipo_Imptesion = otImp.TpImpresion_Id,
+                           Id_Tipo_Imptesion = (int?)otImp.TpImpresion_Id,
                            Tipo_Impresion = otImp.Tipos_Impresion.TpImpresion_Nombre,
-                           Rodillo = otImp.Rodillo_Id,
-                           Pista = otImp.Pista_Id,
-                           Id_Tinta1 = otImp.Tinta1_Id,
+                           Rodillo = (int?)otImp.Rodillo_Id,
+                           Pista = (int?)otImp.Pista_Id,
+                           Id_Tinta1 = (long?)otImp.Tinta1_Id,
                            Tinta1 = otImp.Tinta1.Tinta_Nombre,
-                           Id_Tinta2 = otImp.Tinta2_Id,
+                           Id_Tinta2 = (long?)otImp.Tinta2_Id,
                            Tinta2 = otImp.Tinta2.Tinta_Nombre,
-                           Id_Tinta3 = otImp.Tinta3_Id,
+                           Id_Tinta3 = (long?)otImp.Tinta3_Id,
                            Tinta3 = otImp.Tinta3.Tinta_Nombre,
-                           Id_Tinta4 = otImp.Tinta4_Id,
+                           Id_Tinta4 = (long?)otImp.Tinta4_Id,
                            Tinta4 = otImp.Tinta4.Tinta_Nombre,
-                           Id_Tinta5 = otImp.Tinta5_Id,
+                           Id_Tinta5 = (long?)otImp.Tinta5_Id,
                            Tinta5 = otImp.Tinta5.Tinta_Nombre,
-                           Id_Tinta6 = otImp.Tinta6_Id,
+                           Id_Tinta6 = (long?)otImp.Tinta6_Id,
                            Tinta6 = otImp.Tinta6.Tinta_Nombre,
-                           Id_Tinta7 = otImp.Tinta7_Id,
+                           Id_Tinta7 = (long?)otImp.Tinta7_Id,
                            Tinta7 = otImp.Tinta7.Tinta_Nombre,
-                           Id_Tinta8 = otImp.Tinta8_Id,
+                           Id_Tinta8 = (long?)otImp.Tinta8_Id,
                            Tinta8 = otImp.Tinta8.Tinta_Nombre,
                            otImp.Impresion_Observacion,
 
                            // Información de Laminado
-                           Id_Capa1 = otLam.Capa_Id1,
+                           Id_Capa1 = (int?)otLam.Capa_Id1,
                            Laminado_Capa1 = otLam.Laminado_Capa.LamCapa_Nombre,
-                           Calibre_Laminado_Capa1 = otLam.LamCapa_Calibre1,
-                           Cantidad_Laminado_Capa1 = otLam.LamCapa_Cantidad1,
-                           Id_Capa2 = otLam.Capa_Id2,
+                           Calibre_Laminado_Capa1 = (double?)otLam.LamCapa_Calibre1,
+                           Cantidad_Laminado_Capa1 = (double?)otLam.LamCapa_Cantidad1,
+                           Id_Capa2 = (int?)otLam.Capa_Id2,
                            Laminado_Capa2 = otLam.Laminado_Capa2.LamCapa_Nombre,
-                           Calibre_Laminado_Capa2 = otLam.LamCapa_Calibre2,
-                           Cantidad_Laminado_Capa2 = otLam.LamCapa_Cantidad2,
-                           Id_Capa3 = otLam.Capa_Id3,
+                           Calibre_Laminado_Capa2 = (double?)otLam.LamCapa_Calibre2,
+                           Cantidad_Laminado_Capa2 = (double?)otLam.LamCapa_Cantidad2,
+                           Id_Capa3 = (int?)otLam.Capa_Id3,
                            Laminado_Capa3 = otLam.Laminado_Capa3.LamCapa_Nombre,
-                           Calibre_Laminado_Capa3 = otLam.LamCapa_Calibre3,
-                           Cantidad_Laminado_Capa3 = otLam.LamCapa_Cantidad3,
+                           Calibre_Laminado_Capa3 = (double?)otLam.LamCapa_Calibre3,
+                           Cantidad_Laminado_Capa3 = (double?)otLam.LamCapa_Cantidad3,
                            otLam.Laminado_Observacion,
 
                            // Información de Sellado y Corte
-                           Id_Formato_Producto = otSelCor.Formato_Id,
+                           Id_Formato_Producto = (int?)otSelCor.Formato_Id,
                            Formato_Producto = otSelCor.Formato.TpProd_Nombre,
-                           otSelCor.SelladoCorte_Ancho,
-                           otSelCor.SelladoCorte_Largo,
+                           SelladoCorte_Ancho = (decimal?)otSelCor.SelladoCorte_Ancho,
+                           SelladoCorte_Largo = (decimal?)otSelCor.SelladoCorte_Largo,
                            otSelCor.SelladoCorte_Fuelle,
                            otSelCor.SelladoCorte_Solapa,
                            otSelCor.SelladoCorte_Calibre,
@@ -759,19 +762,19 @@ namespace PlasticaribeAPI.Controllers
                            otSelCor.SelladoCorte_Etiqueta_Ancho,
                            otSelCor.SelladoCorte_Etiqueta_Largo,
                            otSelCor.SelladoCorte_Etiqueta_Fuelle,
-                           otSelCor.TpSellado_Id,
+                           TpSellado_Id = (int?)otSelCor.TpSellado_Id,
                            otSelCor.TipoSellado.TpSellados_Nombre,
                            ot.Prod.Prod_Peso_Millar,
-                           otSelCor.SelladoCorte_PesoMillar,
-                           otSelCor.SelladoCorte_PesoBulto,
-                           otSelCor.SelladoCorte_CantBolsasBulto,
-                           otSelCor.SelladoCorte_CantBolsasPaquete,
-                           otSelCor.SelladoCorte_PrecioSelladoDia,
-                           otSelCor.SelladoCorte_PrecioSelladoNoche,
-                           otSelCor.SelladoCorte_PrecioDia_Wik_Mq50,
-                           otSelCor.SelladoCorte_PrecioNoche_Wik_Mq50,
-                           otSelCor.SelladoCorte_PrecioDia_Wik_Mq9,
-                           otSelCor.SelladoCorte_PrecioNoche_Wik_Mq9,
+                           SelladoCorte_PesoMillar = (decimal?)otSelCor.SelladoCorte_PesoMillar,
+                           SelladoCorte_PesoBulto = (decimal?)otSelCor.SelladoCorte_PesoBulto,
+                           SelladoCorte_CantBolsasBulto = (decimal?)otSelCor.SelladoCorte_CantBolsasBulto,
+                           SelladoCorte_CantBolsasPaquete = (decimal?)otSelCor.SelladoCorte_CantBolsasPaquete,
+                           SelladoCorte_PrecioSelladoDia = (decimal?)otSelCor.SelladoCorte_PrecioSelladoDia,
+                           SelladoCorte_PrecioSelladoNoche = (decimal?)otSelCor.SelladoCorte_PrecioSelladoNoche,
+                           SelladoCorte_PrecioDia_Wik_Mq50 = (decimal?)otSelCor.SelladoCorte_PrecioDia_Wik_Mq50,
+                           SelladoCorte_PrecioNoche_Wik_Mq50 = (decimal?)otSelCor.SelladoCorte_PrecioNoche_Wik_Mq50,
+                           SelladoCorte_PrecioDia_Wik_Mq9 = (decimal?)otSelCor.SelladoCorte_PrecioDia_Wik_Mq9,
+                           SelladoCorte_PrecioNoche_Wik_Mq9 = (decimal?)otSelCor.SelladoCorte_PrecioNoche_Wik_Mq9,
                            otSelCor.SelladoCorte_Observacion,
 
                            // Información de Mezclas
