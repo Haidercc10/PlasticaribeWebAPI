@@ -51,6 +51,8 @@ namespace PlasticaribeAPI.Service
         /// valida los datos y los costos, comprueba que el item exista en BagPro y el artículo en Zeus, toma el bloqueo
         /// <see cref="RecursoBloqueoNumero"/>, calcula el número como MAX(BagPro, Plasticaribe) + 1, inserta y, si está activo
         /// <see cref="ClaveValidarReplicacion"/>, comprueba que el trigger haya creado la OT en BagPro. Si algo falla no queda nada guardado.
+        /// Si se envía otro nombre de producto (referencia), lo cambia en el maestro antes de insertar la OT (el trigger lo lleva
+        /// a BagPro y Zeus) y registra el cambio en Productos_HistorialNombres.
         /// </summary>
         /// <param name="request">Datos de la OT y de cada proceso.</param>
         /// <param name="usuarioId">Usuario del token, que queda como creador.</param>
@@ -105,9 +107,20 @@ namespace PlasticaribeAPI.Service
                     if (await ExisteEnBagProAsync(numeroOT, null, cancellationToken))
                         return OrdenTrabajoCompletaResult.Conflict($"El número de OT {numeroOT} ya existe en BagPro. Intente crear la OT de nuevo.");
 
+                    // Nombre (referencia) del producto: se cambia antes de insertar la OT porque TR_CrearOTs y el SP de BagPro
+                    // leen Productos.Prod_Nombre al crearla. Se lee dentro de la transacción por si la estrategia reintenta.
+                    var nombreProductoActual = await _context.Set<Producto>().AsNoTracking().Where(p => p.Prod_Id == datos.Prod_Id)
+                        .Select(p => p.Prod_Nombre).FirstOrDefaultAsync(cancellationToken);
+                    var nombreProductoNuevo = OrdenTrabajoNombres.NombreProductoACambiar(datos.Prod_Nombre, nombreProductoActual);
+                    if (nombreProductoNuevo != null)
+                        await RenombrarProductoAsync(datos.Prod_Id, nombreProductoNuevo, cancellationToken);
+
                     var orden = OrdenTrabajoMapeo.NuevaOrden(datos, numeroOT, usuarioId, ahora, valorKg);
                     _context.Add(orden);
                     await _context.SaveChangesAsync(cancellationToken);
+
+                    if (nombreProductoNuevo != null)
+                        _context.Add(HistorialNombre(datos.Prod_Id, nombreProductoActual, nombreProductoNuevo, orden.Ot_Id, "Creación", usuarioId, ahora));
 
                     // Una fila por tabla (F2-15): cada INSERT dispara su trigger con una sola fila.
                     _context.Add(OrdenTrabajoMapeo.Extrusion(request.Extrusion, orden.Ot_Id));
@@ -138,9 +151,10 @@ namespace PlasticaribeAPI.Service
 
         /// <summary>
         /// Actualiza la OT y sus cuatro procesos en un único SaveChanges (atómico) aplicando solo la lista blanca de edición (F2-03).
-        /// Conserva el número, el creador, la fecha y la hora de creación; producto, presentación, sede y estado no se pueden cambiar.
+        /// Conserva el número, el creador, la fecha y la hora de creación; producto, presentación y estado no se pueden cambiar (la sede del cliente sí).
         /// Registra al último editor y usa <c>Ot_RowVersion</c> para detectar ediciones concurrentes (409).
-        /// Si a la OT le falta algún proceso, se crea.
+        /// Si a la OT le falta algún proceso, se crea. Si cambió el nombre del producto, lo actualiza en el maestro en la misma
+        /// transacción; el nombre del cliente se guarda solo en la OT (<c>Ot_NombreCliente</c>, ver <see cref="OrdenTrabajoNombres"/>).
         /// </summary>
         /// <param name="otId">Identificador interno de la orden de trabajo.</param>
         /// <param name="request">Datos de la OT y de cada proceso, con la versión de la fila.</param>
@@ -173,12 +187,13 @@ namespace PlasticaribeAPI.Service
             var noEditables = new List<string>();
             if (datos.Prod_Id.HasValue && datos.Prod_Id.Value != orden.Prod_Id) noEditables.Add("producto");
             if (datos.UndMed_Id != null && datos.UndMed_Id != orden.UndMed_Id) noEditables.Add("presentación");
-            if (datos.SedeCli_Id.HasValue && datos.SedeCli_Id.Value != orden.SedeCli_Id) noEditables.Add("cliente");
             if (datos.Estado_Id.HasValue && datos.Estado_Id.Value != orden.Estado_Id) noEditables.Add("estado");
             if (noEditables.Count > 0)
                 return OrdenTrabajoCompletaResult.Unprocessable($"Al editar una OT no se puede cambiar: {string.Join(", ", noEditables)}.");
 
-            var faltantes = await ReferenciasInexistentesAsync(null, null, null, datos.Mezcla_Id, datos.Id_Vendedor, cancellationToken);
+            // El cliente (sede) sí se puede cambiar al editar: TR_CrearOTs lleva el nuevo cliente a ClientesOT de BagPro.
+            long? sedeNueva = datos.SedeCli_Id.HasValue && datos.SedeCli_Id.Value != orden.SedeCli_Id ? datos.SedeCli_Id.Value : null;
+            var faltantes = await ReferenciasInexistentesAsync(sedeNueva, null, null, datos.Mezcla_Id, datos.Id_Vendedor, cancellationToken);
             if (faltantes.Count > 0)
                 return OrdenTrabajoCompletaResult.Unprocessable($"No existen: {string.Join(", ", faltantes)}.");
 
@@ -188,7 +203,24 @@ namespace PlasticaribeAPI.Service
             // MTS (Valor Kg por definir) y presentaciones sin regla: se conserva el Valor Kg guardado.
             var valorKg = costos.ValorKgCalculado ?? orden.Ot_ValorKg;
 
-            OrdenTrabajoMapeo.AplicarEdicion(datos, orden, usuarioId, DateTime.Now, valorKg);
+            // Nombres: el del producto se cambia en el maestro; el del cliente solo en esta OT (Clientes no cambia).
+            var nombreProductoActual = await _context.Set<Producto>().Where(p => p.Prod_Id == orden.Prod_Id)
+                .Select(p => p.Prod_Nombre).FirstOrDefaultAsync(cancellationToken);
+            if (sedeNueva.HasValue)
+            {
+                // Otro cliente: el nombre propio que tuviera la OT era del cliente anterior y se descarta.
+                orden.SedeCli_Id = sedeNueva.Value;
+                orden.Ot_NombreCliente = null;
+            }
+            var nombreClienteMaestro = await _context.Set<SedesClientes>().Where(s => s.SedeCli_Id == orden.SedeCli_Id)
+                .Select(s => s.Cli!.Cli_Nombre).FirstOrDefaultAsync(cancellationToken);
+            var nombreProductoNuevo = OrdenTrabajoNombres.NombreProductoACambiar(datos.Prod_Nombre, nombreProductoActual);
+
+            var ahoraEdicion = DateTime.Now;
+            OrdenTrabajoMapeo.AplicarEdicion(datos, orden, usuarioId, ahoraEdicion, valorKg);
+            if (nombreProductoNuevo != null)
+                _context.Add(HistorialNombre(orden.Prod_Id, nombreProductoActual, nombreProductoNuevo, otId, "Edición", usuarioId, ahoraEdicion));
+            orden.Ot_NombreCliente = OrdenTrabajoNombres.NombreClienteOt(datos.Ot_NombreCliente, orden.Ot_NombreCliente, nombreClienteMaestro);
             _context.Entry(orden).Property(o => o.Ot_RowVersion).OriginalValue = rowVersion;
 
             await ActualizarOCrearProcesoAsync(_context.Set<OT_Extrusion>().Where(p => p.Ot_Id == otId), OrdenTrabajoMapeo.Extrusion(request.Extrusion, otId),
@@ -202,9 +234,24 @@ namespace PlasticaribeAPI.Service
 
             try
             {
-                // Un solo SaveChanges: EF Core lo envuelve en su propia transacción, sin savepoints, por lo que los triggers
-                // que escriben por linked server pueden promoverla a distribuida.
-                await _context.SaveChangesAsync(cancellationToken);
+                var strategy = _context.Database.CreateExecutionStrategy();
+                await strategy.ExecuteAsync(async () =>
+                {
+                    // Sin savepoints, como al crear: los triggers que escriben por linked server promueven la transacción a distribuida.
+                    _context.Database.AutoSavepointsEnabled = false;
+                    await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+
+                    // El producto se renombra antes de guardar la OT porque TR_CrearOTs lee Productos.Prod_Nombre al
+                    // actualizarla. Es un UPDATE idempotente de una sola fila, así que se puede repetir si la estrategia reintenta.
+                    if (nombreProductoNuevo != null)
+                        await RenombrarProductoAsync(orden.Prod_Id, nombreProductoNuevo, cancellationToken);
+
+                    // Un solo SaveChanges para la OT y sus procesos. Los cambios se aceptan después del commit para que,
+                    // si la estrategia reintenta, se vuelvan a enviar.
+                    await _context.SaveChangesAsync(acceptAllChangesOnSuccess: false, cancellationToken);
+                    await transaction.CommitAsync(cancellationToken);
+                });
+                _context.ChangeTracker.AcceptAllChanges();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -226,6 +273,39 @@ namespace PlasticaribeAPI.Service
         /// explícitamente en appsettings.Development.json.
         /// </summary>
         private bool ValidarReplicacionBagPro => _configuration.GetValue(ClaveValidarReplicacion, false);
+
+        /// <summary>
+        /// Cambia el nombre del producto en el maestro con un UPDATE directo (idempotente, se puede repetir si la estrategia
+        /// reintenta). Debe ir dentro de la transacción y antes de guardar la OT, porque TR_CrearOTs lee Productos.Prod_Nombre.
+        /// </summary>
+        /// <param name="prodId">Producto.</param>
+        /// <param name="nombre">Nombre nuevo, ya validado y sin espacios extremos.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        private Task<int> RenombrarProductoAsync(int prodId, string nombre, CancellationToken cancellationToken) =>
+            _context.Database.ExecuteSqlInterpolatedAsync(
+                $"UPDATE dbo.Productos SET Prod_Nombre = {nombre} WHERE Prod_Id = {prodId};", cancellationToken);
+
+        /// <summary>
+        /// Arma el registro del historial de nombres de un producto.
+        /// </summary>
+        /// <param name="prodId">Producto.</param>
+        /// <param name="anterior">Nombre antes del cambio.</param>
+        /// <param name="nuevo">Nombre después del cambio.</param>
+        /// <param name="otId">OT en la que se cambió.</param>
+        /// <param name="origen">"Creación" o "Edición".</param>
+        /// <param name="usuarioId">Usuario del token.</param>
+        /// <param name="fecha">Fecha y hora del cambio.</param>
+        /// <returns>Registro listo para agregar al contexto.</returns>
+        private static Producto_HistorialNombre HistorialNombre(int prodId, string? anterior, string nuevo, long otId, string origen, long usuarioId, DateTime fecha) => new()
+        {
+            Prod_Id = prodId,
+            ProdHN_NombreAnterior = (anterior ?? "").Trim(),
+            ProdHN_NombreNuevo = nuevo,
+            Ot_Id = otId,
+            ProdHN_Origen = origen,
+            Usua_Id = usuarioId,
+            ProdHN_Fecha = fecha,
+        };
 
         /// <summary>
         /// Comprueba que existan las referencias principales de la OT. Los parámetros null no se comprueban.

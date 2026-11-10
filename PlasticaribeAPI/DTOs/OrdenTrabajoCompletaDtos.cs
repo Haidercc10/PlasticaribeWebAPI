@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using PlasticaribeAPI.Service;
 
 namespace PlasticaribeAPI.DTOs
 {
@@ -70,7 +71,7 @@ namespace PlasticaribeAPI.DTOs
         /// <summary>Cantidad pedida en la presentación de la OT; debe ser mayor que 0.</summary>
         public decimal Ot_CantidadPedida { get; set; }
 
-        /// <summary>Precio por unidad de la presentación; no puede ser negativo.</summary>
+        /// <summary>Precio por unidad de la presentación; debe ser mayor que 0.</summary>
         public decimal Ot_ValorUnidad { get; set; }
 
         /// <summary>Margen adicional en porcentaje; no puede ser negativo.</summary>
@@ -136,15 +137,38 @@ namespace PlasticaribeAPI.DTOs
 
         /// <summary>Pedido externo asociado (hoy el front envía 517, sin pedido).</summary>
         public long PedExt_Id { get; set; }
+
+        /// <summary>
+        /// Opcional. Nombre (referencia) del producto: si difiere del guardado, se actualiza Productos.Prod_Nombre antes de
+        /// crear la OT (TR_CrearOTs lo lleva a ClientesOT, ClientesOT_Item y Zeus) y queda el cambio en Productos_HistorialNombres.
+        /// Null o vacío: no se cambia.
+        /// </summary>
+        [MaxLength(OrdenTrabajoNombres.LargoMaximoProducto)]
+        public string? Prod_Nombre { get; set; }
     }
 
     /// <summary>
-    /// Datos generales para editar una OT. Producto, presentación, sede y estado no son editables: si se envían
+    /// Datos generales para editar una OT. Producto, presentación y estado no son editables: si se envían
     /// y difieren de los guardados, la API responde 422 (la anulación y los cambios de estado van en PR4).
+    /// Sí se pueden cambiar la sede del cliente y los nombres: el del producto en el maestro y el del cliente solo en esta OT.
     /// </summary>
     public sealed class EditarOrdenTrabajoDatosDto : OrdenTrabajoDatosBaseDto
     {
-        /// <summary>Opcional, solo para comprobar que no cambió.</summary>
+        /// <summary>
+        /// Opcional. Nombre del producto: si difiere del guardado, se actualiza Productos.Prod_Nombre (maestro) y TR_CrearOTs
+        /// lo lleva a ClientesOT, ClientesOT_Item y al artículo de Zeus. Null o vacío: no se cambia.
+        /// </summary>
+        [MaxLength(OrdenTrabajoNombres.LargoMaximoProducto)]
+        public string? Prod_Nombre { get; set; }
+
+        /// <summary>
+        /// Opcional. Nombre del cliente solo para esta OT (ClientesOT y ClientesOT_Item en BagPro); Clientes.Cli_Nombre no cambia.
+        /// Igual al del maestro: la OT vuelve a usar el del maestro. Null o vacío: no se cambia.
+        /// </summary>
+        [MaxLength(OrdenTrabajoNombres.LargoMaximoCliente)]
+        public string? Ot_NombreCliente { get; set; }
+
+        /// <summary>Opcional. Sede del cliente: si difiere de la guardada, la OT pasa a ese cliente (debe existir; si no, 422).</summary>
         public long? SedeCli_Id { get; set; }
 
         /// <summary>Opcional, solo para comprobar que no cambió.</summary>

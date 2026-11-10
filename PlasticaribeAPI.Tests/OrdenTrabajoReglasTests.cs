@@ -72,6 +72,55 @@ public class OrdenTrabajoReglasTests
     }
 
     [Fact]
+    public void ValidarRangos_rechaza_precio_unitario_en_cero()
+    {
+        var datos = DatosValidos();
+        datos.Ot_ValorUnidad = 0m;
+
+        var errores = OrdenTrabajoReglas.ValidarRangos(datos, Hoy);
+
+        Assert.Equal(new[] { "Ot_ValorUnidad" }, errores.Keys);
+    }
+
+    [Theory]
+    [InlineData(null, "BOLSA 20X30")]
+    [InlineData("", "BOLSA 20X30")]
+    [InlineData("   ", "BOLSA 20X30")]
+    [InlineData("BOLSA 20X30", "BOLSA 20X30")]
+    [InlineData("  BOLSA 20X30 ", "BOLSA 20X30")]
+    [InlineData("BOLSA 20X30", "BOLSA 20X30  ")]
+    public void NombreProductoACambiar_sin_cambio_real_no_renombra(string? enviado, string actual)
+    {
+        Assert.Null(OrdenTrabajoNombres.NombreProductoACambiar(enviado, actual));
+    }
+
+    [Fact]
+    public void NombreProductoACambiar_devuelve_el_nombre_nuevo_sin_espacios_extremos()
+    {
+        Assert.Equal("BOLSA 25X35", OrdenTrabajoNombres.NombreProductoACambiar("  BOLSA 25X35 ", "BOLSA 20X30"));
+    }
+
+    [Fact]
+    public void NombreClienteOt_sin_nombre_enviado_conserva_el_guardado()
+    {
+        Assert.Equal("ACME OT", OrdenTrabajoNombres.NombreClienteOt(null, "ACME OT", "ACME S.A.S."));
+        Assert.Equal("ACME OT", OrdenTrabajoNombres.NombreClienteOt("  ", "ACME OT", "ACME S.A.S."));
+        Assert.Null(OrdenTrabajoNombres.NombreClienteOt(null, null, "ACME S.A.S."));
+    }
+
+    [Fact]
+    public void NombreClienteOt_igual_al_maestro_vuelve_a_null()
+    {
+        Assert.Null(OrdenTrabajoNombres.NombreClienteOt(" ACME S.A.S. ", "ACME OT", "ACME S.A.S."));
+    }
+
+    [Fact]
+    public void NombreClienteOt_distinto_al_maestro_se_guarda_en_la_ot()
+    {
+        Assert.Equal("ACME PLANTA 2", OrdenTrabajoNombres.NombreClienteOt(" ACME PLANTA 2", null, "ACME S.A.S."));
+    }
+
+    [Fact]
     public void ValidarRangos_exige_fecha_de_entrega()
     {
         var datos = DatosValidos();

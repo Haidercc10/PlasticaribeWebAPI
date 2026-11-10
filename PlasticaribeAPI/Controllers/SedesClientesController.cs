@@ -173,10 +173,14 @@ namespace PlasticaribeAPI.Controllers
         [HttpGet("getSedeClientexNitBagPro/{cod}")]
         public ActionResult getSedeClientexNitBagPro(string cod)
         {
+            // cod puede ser el código BagPro del cliente (no numérico) o un Id de sede; Convert.ToInt32 lanzaba
+            // FormatException/OverflowException (500) con códigos no numéricos o mayores que int.
+            cod = (cod ?? "").Trim();
+            bool esNumero = long.TryParse(cod, out long idSede);
             var con = from sd in _context.Set<SedesClientes>()
                       join cl in _context.Set<Clientes>() on sd.Cli_Id equals cl.Cli_Id
                       where cl.Cli_Id == sd.Cli_Id &&
-                      (sd.SedeCli_CodBagPro == cod || sd.SedeCli_Id == Convert.ToInt32(cod))
+                      (sd.SedeCli_CodBagPro == cod || (esNumero && sd.SedeCli_Id == idSede))
                       select new
                       {
                           idSede = sd.SedeCli_Id,       

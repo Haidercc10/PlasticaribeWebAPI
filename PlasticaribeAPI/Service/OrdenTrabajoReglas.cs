@@ -54,8 +54,8 @@ namespace PlasticaribeAPI.Service
             var errores = new Dictionary<string, string[]>();
             if (datos.Ot_CantidadPedida <= 0)
                 errores["Ot_CantidadPedida"] = new[] { "La cantidad debe ser mayor que 0." };
-            if (datos.Ot_ValorUnidad < 0)
-                errores["Ot_ValorUnidad"] = new[] { "El precio no puede ser negativo." };
+            if (datos.Ot_ValorUnidad <= 0)
+                errores["Ot_ValorUnidad"] = new[] { "El precio unitario debe ser mayor que 0." };
             if (datos.Ot_MargenAdicional < 0)
                 errores["Ot_MargenAdicional"] = new[] { "El margen no puede ser negativo." };
             if (datos.Ot_PesoNetoKg < 0 || datos.Ot_ValorKg < 0 || datos.Ot_ValorOT < 0)

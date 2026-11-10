@@ -24,6 +24,64 @@ namespace PlasticaribeAPI.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// PDF del arte del item, guardado por Aseguramiento de la Calidad en la carpeta <c>Artes:Carpeta</c> de la
+        /// configuración con el nombre <c>{prodId}.pdf</c>. Se devuelve para mostrarlo (inline); el front puede descargarlo.
+        /// </summary>
+        /// <param name="prodId">Producto (item). Al ser entero, el nombre del archivo no puede salirse de la carpeta.</param>
+        /// <param name="configuration">Configuración de la aplicación.</param>
+        /// <returns>200 con el PDF; 404 si el item no tiene arte; 503 si la carpeta no está configurada o no se puede leer.</returns>
+        [HttpGet("arte/{prodId:int}")]
+        public IActionResult GetArte(int prodId, [FromServices] IConfiguration configuration)
+        {
+            var carpeta = configuration["Artes:Carpeta"];
+            if (string.IsNullOrWhiteSpace(carpeta))
+                return Problem("La carpeta de artes no está configurada (Artes:Carpeta).", statusCode: StatusCodes.Status503ServiceUnavailable);
+
+            var ruta = Path.Combine(carpeta.Trim(), $"{prodId}.pdf");
+            try
+            {
+                if (!System.IO.File.Exists(ruta))
+                {
+                    // File.Exists también da false si la carpeta no es accesible: se distingue para avisar bien
+                    if (!Directory.Exists(carpeta.Trim()))
+                        return Problem($"No se puede acceder a la carpeta de artes ({carpeta}).", statusCode: StatusCodes.Status503ServiceUnavailable);
+                    return Problem($"El item {prodId} no tiene arte cargado ({prodId}.pdf) en la carpeta de artes de Aseguramiento de la Calidad.",
+                        statusCode: StatusCodes.Status404NotFound);
+                }
+                return PhysicalFile(ruta, "application/pdf");
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                return Problem($"No se pudo leer el arte del item {prodId}: {ex.Message}", statusCode: StatusCodes.Status503ServiceUnavailable);
+            }
+        }
+
+        /// <summary>
+        /// Historial de nombres (referencia) de un producto: cada cambio hecho al crear o editar una OT, del más reciente al más antiguo.
+        /// </summary>
+        /// <param name="prodId">Producto (item).</param>
+        /// <param name="cancellationToken">Token para cancelar la consulta.</param>
+        /// <returns>Lista (vacía si el nombre nunca cambió).</returns>
+        [HttpGet("historialNombres/{prodId}")]
+        public async Task<ActionResult> GetHistorialNombres(int prodId, CancellationToken cancellationToken)
+        {
+            var historial = await _context.Productos_HistorialNombres.AsNoTracking()
+                .Where(h => h.Prod_Id == prodId)
+                .OrderByDescending(h => h.ProdHN_Fecha).ThenByDescending(h => h.ProdHN_Id)
+                .Select(h => new
+                {
+                    fecha = h.ProdHN_Fecha,
+                    nombreAnterior = h.ProdHN_NombreAnterior,
+                    nombreNuevo = h.ProdHN_NombreNuevo,
+                    numero_OT = h.Ot!.Numero_OT,
+                    origen = h.ProdHN_Origen,
+                    usuario = h.Usua!.Usua_Nombre,
+                })
+                .ToListAsync(cancellationToken);
+            return Ok(historial);
+        }
+
         // GET: api/Producto
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Producto>>> GetProductos()

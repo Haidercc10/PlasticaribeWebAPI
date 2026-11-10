@@ -129,6 +129,13 @@ namespace PlasticaribeAPI.Models
         /// (doble envío o reintento después del commit), la API devuelve la OT ya creada en lugar de crear otra.
         /// </summary>
         public Guid? Ot_ClaveSolicitud { get; set; }
+
+        /// <summary>
+        /// Nombre del cliente solo para esta OT (y su item en BagPro: ClientesOT.ClienteNom y ClientesOT_Item.ClienteNom).
+        /// Null si la OT usa el nombre del maestro (Clientes.Cli_Nombre), que no se modifica. TR_CrearOTs lo prefiere sobre el del maestro.
+        /// </summary>
+        [Column(TypeName = "varchar(150)")]
+        public string? Ot_NombreCliente { get; set; }
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

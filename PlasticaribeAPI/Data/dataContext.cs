@@ -77,6 +77,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<Archivos> Archivos { get; set; }
         public DbSet<Categorias_Archivos> Categorias_Archivos { get; set; }
         public DbSet<Orden_Trabajo>? Orden_Trabajo { get; set; }
+        public DbSet<Producto_HistorialNombre> Productos_HistorialNombres { get; set; }
         public DbSet<Tratado>? Tratado { get; set; }
         public DbSet<Formato>? Formato { get; set; }
         public DbSet<Tipos_Impresion>? Tipos_Impresion { get; set; }
@@ -245,6 +246,11 @@ namespace PlasticaribeAPI.Data
         {
             //Relaciones de productos
             //modelBuilder.Entity<Producto>().ToTable(tb => tb.HasTrigger("Auditoria_Productos"));
+            // Historial de nombres de productos (cambiados al crear o editar una OT)
+            modelBuilder.Entity<Producto_HistorialNombre>().HasOne(h => h.Prod).WithMany().HasForeignKey(h => h.Prod_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto_HistorialNombre>().HasOne(h => h.Ot).WithMany().HasForeignKey(h => h.Ot_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto_HistorialNombre>().HasOne(h => h.Usua).WithMany().HasForeignKey(h => h.Usua_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Producto_HistorialNombre>().HasIndex(h => h.Prod_Id);
             modelBuilder.Entity<Producto>().HasOne(Prd => Prd.TpProd).WithMany().HasForeignKey(Prd => Prd.TpProd_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto>().HasOne(Prd => Prd.Estado).WithMany().HasForeignKey(Prd => Prd.Estado_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Producto>().HasOne(Prd => Prd.Pigmt).WithMany().HasForeignKey(Prd => Prd.Pigmt_Id).OnDelete(DeleteBehavior.Restrict);

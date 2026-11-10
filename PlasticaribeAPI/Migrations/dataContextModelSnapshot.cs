@@ -7133,6 +7133,9 @@ namespace PlasticaribeAPI.Migrations
                         .HasColumnType("decimal(14,2)")
                         .HasColumnOrder(9);
 
+                    b.Property<string>("Ot_NombreCliente")
+                        .HasColumnType("varchar(150)");
+
                     b.Property<string>("Ot_Observacion")
                         .IsRequired()
                         .HasColumnType("varchar(max)")
@@ -8270,6 +8273,49 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("UndMedPeso");
 
                     b.ToTable("Productos");
+                });
+
+            modelBuilder.Entity("PlasticaribeAPI.Models.Producto_HistorialNombre", b =>
+                {
+                    b.Property<long>("ProdHN_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ProdHN_Id"));
+
+                    b.Property<long>("Ot_Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ProdHN_Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProdHN_NombreAnterior")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("ProdHN_NombreNuevo")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("ProdHN_Origen")
+                        .IsRequired()
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<int>("Prod_Id")
+                        .HasColumnType("int");
+
+                    b.Property<long>("Usua_Id")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ProdHN_Id");
+
+                    b.HasIndex("Ot_Id");
+
+                    b.HasIndex("Prod_Id");
+
+                    b.HasIndex("Usua_Id");
+
+                    b.ToTable("Productos_HistorialNombres");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Producto_Terminado", b =>
@@ -14970,6 +15016,33 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("UndMed2");
 
                     b.Navigation("Unidad_Calibre");
+                });
+
+            modelBuilder.Entity("PlasticaribeAPI.Models.Producto_HistorialNombre", b =>
+                {
+                    b.HasOne("PlasticaribeAPI.Models.Orden_Trabajo", "Ot")
+                        .WithMany()
+                        .HasForeignKey("Ot_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Producto", "Prod")
+                        .WithMany()
+                        .HasForeignKey("Prod_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usua")
+                        .WithMany()
+                        .HasForeignKey("Usua_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Ot");
+
+                    b.Navigation("Prod");
+
+                    b.Navigation("Usua");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Producto_Terminado", b =>
