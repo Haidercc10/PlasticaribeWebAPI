@@ -729,6 +729,7 @@ namespace PlasticaribeAPI.Controllers
                     CatMP_Nombre = mp.CatMP.CatMP_Nombre,
                     mp.SubCatMP_Id,
                     SubCatMP_Nombre = mp.SubcategoriasMP.SubCatMP_Nombre,
+                    mp.MatPri_Fecha,
                 }).ToListAsync();
 
             var tintas = await _context.Set<Tinta>().AsNoTracking()
@@ -775,10 +776,16 @@ namespace PlasticaribeAPI.Controllers
 
             var resultado = new List<object>(materiasPrimas.Count + tintas.Count + bopps.Count);
 
-            // Materias primas (solo las que tienen inventario inicial del día, igual que la versión anterior).
+            // Materias primas con inventario inicial del día (igual que la versión anterior). Las creadas dentro del rango
+            // todavía no tienen ese registro (se genera aparte), así que se incluyen con inventario inicial en cero.
             foreach (var mp in materiasPrimas)
             {
-                if (IdsExcluidosInventario.Contains(mp.MatPri_Id) || !inicialMp.TryGetValue(mp.MatPri_Id, out var inicial)) continue;
+                if (IdsExcluidosInventario.Contains(mp.MatPri_Id)) continue;
+                if (!inicialMp.TryGetValue(mp.MatPri_Id, out var inicial))
+                {
+                    if (mp.MatPri_Fecha == null || mp.MatPri_Fecha.Value.Date < fecha1) continue;
+                    inicial = 0;
+                }
                 resultado.Add(new
                 {
                     Tipo = "MP",
@@ -1731,6 +1738,52 @@ namespace PlasticaribeAPI.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetMateria_Prima", new { id = materia_Prima.MatPri_Id }, materia_Prima);
+        }
+
+        //Categorías que corresponden a tintas, chips y solventes (se crean desde el endpoint de tintas).
+        internal static readonly HashSet<int> CategoriasTintas = new() { 7, 8, 13 };
+
+        /// <summary>
+        /// Crea una materia prima validando los datos (a diferencia del POST genérico, que guarda lo que reciba).
+        /// Responde 400 si falta un dato o no es válido y 409 si ya existe una materia prima con el mismo nombre.
+        /// </summary>
+        [HttpPost("crear")]
+        public async Task<ActionResult> CrearMateriaPrima(CrearMateriaPrimaRequest request)
+        {
+            var nombre = (request.Nombre ?? string.Empty).Trim().ToUpper();
+            var descripcion = string.IsNullOrWhiteSpace(request.Descripcion) ? nombre : request.Descripcion.Trim().ToUpper();
+            if (nombre.Length == 0) return BadRequest("El nombre de la materia prima es obligatorio.");
+            if (request.Precio < 0) return BadRequest("El precio no puede ser negativo.");
+            if (CategoriasTintas.Contains(request.CatMP_Id)) return BadRequest("Las tintas, chips y solventes se crean desde la opción de tintas.");
+            if (!await _context.Categorias_MatPrima.AnyAsync(c => c.CatMP_Id == request.CatMP_Id)) return BadRequest("La categoría no existe.");
+            if (request.SubCatMP_Id == null) return BadRequest("La subcategoría es obligatoria.");
+            if (!await _context.Subcategorias_MatPrima.AnyAsync(s => s.SubCatMP_Id == request.SubCatMP_Id && s.CatMP_Id == request.CatMP_Id))
+                return BadRequest("La subcategoría no pertenece a la categoría elegida.");
+
+            var existente = await _context.Materias_Primas.AsNoTracking()
+                .Where(m => m.MatPri_Nombre.Trim().ToUpper() == nombre)
+                .Select(m => new { m.MatPri_Id })
+                .FirstOrDefaultAsync();
+            if (existente != null) return Conflict($"Ya existe una materia prima con el nombre {nombre} (Id {existente.MatPri_Id}).");
+
+            var ahora = DateTime.Now;
+            var materiaPrima = new Materia_Prima
+            {
+                MatPri_Nombre = nombre,
+                MatPri_Descripcion = descripcion,
+                MatPri_Stock = 0,
+                UndMed_Id = "Kg",
+                CatMP_Id = request.CatMP_Id,
+                MatPri_Precio = request.Precio,
+                TpBod_Id = 4,
+                MatPri_Fecha = ahora.Date,
+                MatPri_Hora = ahora.ToString("H:mm:ss"),
+                SubCatMP_Id = request.SubCatMP_Id,
+            };
+            _context.Materias_Primas.Add(materiaPrima);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetMateria_Prima", new { id = materiaPrima.MatPri_Id }, materiaPrima);
         }
 
         // DELETE: api/Materia_Prima/5
