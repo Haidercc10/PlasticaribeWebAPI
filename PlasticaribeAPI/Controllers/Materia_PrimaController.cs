@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using System.Security.Claims;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PlasticaribeAPI.Controllers
@@ -607,6 +608,271 @@ namespace PlasticaribeAPI.Controllers
 
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
             return Ok(con.Concat(conBopp).Concat(conTinta));
+        }
+
+        /* ===================================================================================================
+         * VERSIÓN CONSOLIDADA DEL INVENTARIO (reporte de materia prima).
+         * Reemplaza el flujo getInventarioMateriasPrimas + getInventario/{id} (una petición por material)
+         * por una sola petición que calcula todos los movimientos agrupados por material.
+         * Los endpoints anteriores se conservan sin cambios para no afectar otras versiones del proyecto web.
+         * =================================================================================================== */
+
+        //Ids de materiales comodín que no deben mostrarse en el reporte (antes se excluían en el front).
+        private static readonly HashSet<long> IdsExcluidosInventario = new() { 2001, 2072, 84, 88, 89 };
+
+        //Roles que pueden ver precios y subtotales del inventario.
+        private static readonly HashSet<string> RolesVenPreciosInventario = new() { "1", "104" };
+
+        //Clase auxiliar para agrupar movimientos por material en SQL.
+        private class MovimientoCantidad
+        {
+            public long Id { get; set; }
+            public decimal Cantidad { get; set; }
+        }
+
+        //Agrupa y suma en SQL las cantidades por material. Devuelve un diccionario Id -> cantidad.
+        private static async Task<Dictionary<long, decimal>> SumarPorMaterial(IQueryable<MovimientoCantidad> query) =>
+            await query.GroupBy(x => x.Id)
+                       .Select(g => new { g.Key, Total = g.Sum(x => x.Cantidad) })
+                       .ToDictionaryAsync(x => x.Key, x => x.Total);
+
+        private static decimal Valor(Dictionary<long, decimal> dic, long id) => dic.TryGetValue(id, out var v) ? v : 0;
+
+        [HttpGet("getInventarioConsolidado/{fecha1}/{fecha2}")]
+        public async Task<ActionResult> GetInventarioConsolidado(DateTime fecha1, DateTime fecha2)
+        {
+            fecha1 = fecha1.Date;
+            fecha2 = fecha2.Date;
+            var hoy = DateTime.Today;
+            if (fecha1 > fecha2) return BadRequest("La fecha inicial no puede ser mayor que la fecha final.");
+            if (fecha2 > hoy) return BadRequest("La fecha final no puede ser mayor que el día de hoy.");
+            bool verPrecios = RolesVenPreciosInventario.Contains(User.FindFirstValue(ClaimTypes.Role) ?? string.Empty);
+
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            // ---------- Salidas de Materia Prima ----------
+            var asgMp = await SumarPorMaterial(_context.DetallesAsignaciones_MateriasPrimas.AsNoTracking()
+                .Where(x => x.AsigMp.AsigMp_FechaEntrega >= fecha1 && x.AsigMp.AsigMp_FechaEntrega <= fecha2)
+                .Select(x => new MovimientoCantidad { Id = x.MatPri_Id, Cantidad = x.DtAsigMp_Cantidad }));
+
+            var asgMpCreacionTintas = await SumarPorMaterial(_context.DetallesAsignaciones_MatPrimasXTintas.AsNoTracking()
+                .Where(x => x.AsigMPxTinta.AsigMPxTinta_FechaEntrega >= fecha1 && x.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= fecha2)
+                .Select(x => new MovimientoCantidad { Id = x.MatPri_Id, Cantidad = x.DetAsigMPxTinta_Cantidad }));
+
+            // ---------- Entradas de Materia Prima ----------
+            var devolucionesMp = await SumarPorMaterial(_context.DetallesDevoluciones_MateriasPrimas.AsNoTracking()
+                .Where(x => x.DevMatPri.DevMatPri_Fecha >= fecha1 && x.DevMatPri.DevMatPri_Fecha <= fecha2)
+                .Select(x => new MovimientoCantidad { Id = x.MatPri_Id, Cantidad = x.DtDevMatPri_CantidadDevuelta }));
+
+            var facturasMp = await SumarPorMaterial(_context.FacturasCompras_MateriaPrimas.AsNoTracking()
+                .Where(x => x.Facco.Facco_FechaFactura >= fecha1 && x.Facco.Facco_FechaFactura <= fecha2)
+                .Select(x => new MovimientoCantidad { Id = x.MatPri_Id, Cantidad = x.FaccoMatPri_Cantidad }));
+
+            var remisionesMp = await SumarPorMaterial(_context.Remisiones_MateriasPrimas.AsNoTracking()
+                .Where(x => x.Rem.Rem_Fecha >= fecha1 && x.Rem.Rem_Fecha <= fecha2)
+                .Select(x => new MovimientoCantidad { Id = x.MatPri_Id, Cantidad = x.RemiMatPri_Cantidad }));
+
+            var recuperadoMp = await SumarPorMaterial(_context.DetallesRecuperados_MateriasPrimas.AsNoTracking()
+                .Where(x => x.RecMp.RecMp_FechaIngreso >= fecha1 && x.RecMp.RecMp_FechaIngreso <= fecha2)
+                .Select(x => new MovimientoCantidad { Id = x.MatPri_Id, Cantidad = x.RecMatPri_Cantidad }));
+
+            // ---------- Salidas de Tintas ----------
+            var asgTintas = await SumarPorMaterial(_context.DetalleAsignaciones_Tintas.AsNoTracking()
+                .Where(x => x.AsigMp.AsigMp_FechaEntrega >= fecha1 && x.AsigMp.AsigMp_FechaEntrega <= fecha2)
+                .Select(x => new MovimientoCantidad { Id = x.Tinta_Id, Cantidad = x.DtAsigTinta_Cantidad }));
+
+            var asgTintasCreacionTintas = await SumarPorMaterial(_context.DetallesAsignaciones_MatPrimasXTintas.AsNoTracking()
+                .Where(x => x.AsigMPxTinta.AsigMPxTinta_FechaEntrega >= fecha1 && x.AsigMPxTinta.AsigMPxTinta_FechaEntrega <= fecha2)
+                .Select(x => new MovimientoCantidad { Id = x.Tinta_Id, Cantidad = x.DetAsigMPxTinta_Cantidad }));
+
+            // ---------- Entradas de Tintas ----------
+            var facturasTintas = await SumarPorMaterial(_context.FacturasCompras_MateriaPrimas.AsNoTracking()
+                .Where(x => x.Facco.Facco_FechaFactura >= fecha1 && x.Facco.Facco_FechaFactura <= fecha2)
+                .Select(x => new MovimientoCantidad { Id = x.Tinta_Id, Cantidad = x.FaccoMatPri_Cantidad }));
+
+            var remisionesTintas = await SumarPorMaterial(_context.Remisiones_MateriasPrimas.AsNoTracking()
+                .Where(x => x.Rem.Rem_Fecha >= fecha1 && x.Rem.Rem_Fecha <= fecha2)
+                .Select(x => new MovimientoCantidad { Id = x.Tinta_Id, Cantidad = x.RemiMatPri_Cantidad }));
+
+            var creacionTintas = await SumarPorMaterial(_context.Asignaciones_MatPrimasXTintas.AsNoTracking()
+                .Where(x => x.AsigMPxTinta_FechaEntrega >= fecha1 && x.AsigMPxTinta_FechaEntrega <= fecha2)
+                .Select(x => new MovimientoCantidad { Id = x.Tinta_Id, Cantidad = x.AsigMPxTinta_Cantidad }));
+
+            // ---------- Movimientos de BOPP (por rollo: BOPP_Id) ----------
+            var asgBopp = await SumarPorMaterial(_context.DetallesAsignaciones_BOPP.AsNoTracking()
+                .Where(x => x.AsigBOPP.AsigBOPP_FechaEntrega >= fecha1 && x.AsigBOPP.AsigBOPP_FechaEntrega <= fecha2)
+                .Select(x => new MovimientoCantidad { Id = x.BOPP_Id, Cantidad = x.DtAsigBOPP_Cantidad }));
+
+            var entradaBopp = await SumarPorMaterial(_context.BOPP.AsNoTracking()
+                .Where(x => x.BOPP_FechaIngreso >= fecha1 && x.BOPP_FechaIngreso <= fecha2)
+                .Select(x => new MovimientoCantidad { Id = x.BOPP_Id, Cantidad = x.BOPP_CantidadInicialKg }));
+
+            // ---------- Inventario inicial del día de Materia Prima ----------
+            // Si un material tiene más de un registro se toma el más reciente (mayor Codigo).
+            var inicialMp = (await _context.Set<InventarioInicialXDia_MatPrima>().AsNoTracking()
+                .Select(x => new { x.Codigo, x.MatPri_Id, x.InvInicial_Stock })
+                .ToListAsync())
+                .GroupBy(x => x.MatPri_Id)
+                .ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.Codigo).First().InvInicial_Stock);
+
+            // ---------- Maestros ----------
+            var materiasPrimas = await _context.Set<Materia_Prima>().AsNoTracking()
+                .Select(mp => new
+                {
+                    mp.MatPri_Id,
+                    mp.MatPri_Nombre,
+                    mp.MatPri_Descripcion,
+                    mp.MatPri_Stock,
+                    mp.UndMed_Id,
+                    mp.MatPri_Precio,
+                    mp.MatPri_PrecioEstandar,
+                    mp.CatMP_Id,
+                    CatMP_Nombre = mp.CatMP.CatMP_Nombre,
+                    mp.SubCatMP_Id,
+                    SubCatMP_Nombre = mp.SubcategoriasMP.SubCatMP_Nombre,
+                    mp.MatPri_Fecha,
+                }).ToListAsync();
+
+            var tintas = await _context.Set<Tinta>().AsNoTracking()
+                .Select(t => new
+                {
+                    t.Tinta_Id,
+                    t.Tinta_Nombre,
+                    t.Tinta_Descripcion,
+                    t.Tinta_InvInicial,
+                    t.Tinta_Stock,
+                    t.UndMed_Id,
+                    t.Tinta_Precio,
+                    t.Tinta_PrecioEstandar,
+                    t.CatMP_Id,
+                    CatMP_Nombre = t.CatMP.CatMP_Nombre,
+                    t.SubCatMP_Id,
+                    SubCatMP_Nombre = t.SubcategoriasMP.SubCatMP_Nombre,
+                }).ToListAsync();
+
+            // Rollos con stock o con movimientos dentro del rango (así aparecen los rollos consumidos en el periodo).
+            var idsBoppConMovimiento = asgBopp.Keys.Concat(entradaBopp.Keys).Distinct().ToList();
+            var bopps = await (from b in _context.BOPP.AsNoTracking()
+                               join bg in _context.Set<Bopp_Generico>() on b.BoppGen_Id equals bg.BoppGen_Id
+                               where b.BOPP_Stock > 0 || idsBoppConMovimiento.Contains(b.BOPP_Id)
+                               select new
+                               {
+                                   b.BOPP_Id,
+                                   b.BOPP_Serial,
+                                   b.BOPP_Nombre,
+                                   b.BOPP_Descripcion,
+                                   b.BOPP_Ancho,
+                                   b.BOPP_CantidadMicras,
+                                   b.BOPP_CantidadInicialKg,
+                                   b.BOPP_Stock,
+                                   b.UndMed_Kg,
+                                   b.BOPP_Precio,
+                                   bg.BoppGen_PrecioEstandar,
+                                   b.CatMP_Id,
+                                   CatMP_Nombre = b.CatMP.CatMP_Nombre,
+                                   b.SubCatMP_Id,
+                                   SubCatMP_Nombre = b.SubcategoriasMP.SubCatMP_Nombre,
+                               }).ToListAsync();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            var resultado = new List<object>(materiasPrimas.Count + tintas.Count + bopps.Count);
+
+            // Materias primas con inventario inicial del día (igual que la versión anterior). Las creadas dentro del rango
+            // todavía no tienen ese registro (se genera aparte), así que se incluyen con inventario inicial en cero.
+            foreach (var mp in materiasPrimas)
+            {
+                if (IdsExcluidosInventario.Contains(mp.MatPri_Id)) continue;
+                if (!inicialMp.TryGetValue(mp.MatPri_Id, out var inicial))
+                {
+                    if (mp.MatPri_Fecha == null || mp.MatPri_Fecha.Value.Date < fecha1) continue;
+                    inicial = 0;
+                }
+                resultado.Add(new
+                {
+                    Tipo = "MP",
+                    Clave = $"MP-{mp.MatPri_Id}",
+                    Id = mp.MatPri_Id,
+                    Id2 = mp.MatPri_Id,
+                    Nombre = mp.MatPri_Nombre,
+                    Descripcion = mp.MatPri_Descripcion,
+                    Ancho = 0d,
+                    Micras = 0d,
+                    Inicial = inicial,
+                    Entrada = Valor(devolucionesMp, mp.MatPri_Id) + Valor(facturasMp, mp.MatPri_Id) + Valor(remisionesMp, mp.MatPri_Id) + Valor(recuperadoMp, mp.MatPri_Id),
+                    Salida = Valor(asgMp, mp.MatPri_Id) + Valor(asgMpCreacionTintas, mp.MatPri_Id),
+                    Stock = mp.MatPri_Stock,
+                    Diferencia = mp.MatPri_Stock - inicial,
+                    Presentacion = mp.UndMed_Id,
+                    Precio = verPrecios ? mp.MatPri_Precio : 0,
+                    PrecioEstandar = mp.MatPri_PrecioEstandar,
+                    SubTotal = verPrecios ? mp.MatPri_Stock * mp.MatPri_Precio : 0,
+                    Categoria = mp.CatMP_Nombre,
+                    Categoria_Id = mp.CatMP_Id,
+                    Subcategoria = mp.SubCatMP_Nombre,
+                    Subcategoria_Id = mp.SubCatMP_Id,
+                });
+            }
+
+            // Tintas
+            foreach (var t in tintas)
+            {
+                if (IdsExcluidosInventario.Contains(t.Tinta_Id)) continue;
+                resultado.Add(new
+                {
+                    Tipo = "TINTA",
+                    Clave = $"TINTA-{t.Tinta_Id}",
+                    Id = t.Tinta_Id,
+                    Id2 = t.Tinta_Id,
+                    Nombre = t.Tinta_Nombre,
+                    Descripcion = t.Tinta_Descripcion,
+                    Ancho = 0d,
+                    Micras = 0d,
+                    Inicial = t.Tinta_InvInicial,
+                    Entrada = Valor(facturasTintas, t.Tinta_Id) + Valor(remisionesTintas, t.Tinta_Id) + Valor(creacionTintas, t.Tinta_Id),
+                    Salida = Valor(asgTintas, t.Tinta_Id) + Valor(asgTintasCreacionTintas, t.Tinta_Id),
+                    Stock = t.Tinta_Stock,
+                    Diferencia = t.Tinta_Stock - t.Tinta_InvInicial,
+                    Presentacion = t.UndMed_Id,
+                    Precio = verPrecios ? t.Tinta_Precio : 0,
+                    PrecioEstandar = t.Tinta_PrecioEstandar,
+                    SubTotal = verPrecios ? t.Tinta_Stock * t.Tinta_Precio : 0,
+                    Categoria = t.CatMP_Nombre,
+                    Categoria_Id = t.CatMP_Id,
+                    Subcategoria = t.SubCatMP_Nombre,
+                    Subcategoria_Id = t.SubCatMP_Id,
+                });
+            }
+
+            // Biorientados (un registro por rollo)
+            foreach (var b in bopps)
+            {
+                if (IdsExcluidosInventario.Contains(b.BOPP_Serial)) continue;
+                resultado.Add(new
+                {
+                    Tipo = "BOPP",
+                    Clave = $"BOPP-{b.BOPP_Id}",
+                    Id = b.BOPP_Serial,
+                    Id2 = b.BOPP_Id,
+                    Nombre = b.BOPP_Nombre,
+                    Descripcion = b.BOPP_Descripcion,
+                    Ancho = (double)b.BOPP_Ancho,
+                    Micras = (double)b.BOPP_CantidadMicras,
+                    Inicial = b.BOPP_CantidadInicialKg,
+                    Entrada = Valor(entradaBopp, b.BOPP_Id),
+                    Salida = Valor(asgBopp, b.BOPP_Id),
+                    Stock = b.BOPP_Stock,
+                    Diferencia = b.BOPP_Stock - b.BOPP_CantidadInicialKg,
+                    Presentacion = b.UndMed_Kg,
+                    Precio = verPrecios ? b.BOPP_Precio : 0,
+                    PrecioEstandar = b.BoppGen_PrecioEstandar,
+                    SubTotal = verPrecios ? b.BOPP_Stock * b.BOPP_Precio : 0,
+                    Categoria = b.CatMP_Nombre,
+                    Categoria_Id = b.CatMP_Id,
+                    Subcategoria = b.SubCatMP_Nombre,
+                    Subcategoria_Id = b.SubCatMP_Id,
+                });
+            }
+
+            return Ok(resultado);
         }
 
         //Movimientos de Materia Prima, Tintas, Biorientados ***
@@ -1366,6 +1632,68 @@ namespace PlasticaribeAPI.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// Busca subcategorías de materias primas (proceso EXT) o de tintas (demás procesos) por Id o por nombre,
+        /// con su stock total y unidad de medida, para el módulo de solicitud de materia prima.
+        /// Versión optimizada de <c>getAllSubcategoriesForName</c>:
+        /// - El texto viaja por query string, así nombres con '/', '%' o '#' no rompen la ruta.
+        /// - Si el texto es numérico también busca por Id exacto de subcategoría.
+        /// - Agrupa por las columnas de la subcategoría ya unida (sin navegación adicional) y obtiene la unidad
+        ///   con MAX en lugar de FirstOrDefault, que EF traduce como subconsulta correlacionada por grupo.
+        /// - Ordena primero la coincidencia exacta por Id, luego los nombres que empiezan por el texto, y limita los resultados.
+        /// </summary>
+        /// <param name="proceso">EXT para materias primas; cualquier otro proceso para tintas.</param>
+        /// <param name="texto">Id de la subcategoría o parte de su nombre.</param>
+        /// <param name="cancellationToken">Cancela la consulta si el cliente aborta la petición.</param>
+        [HttpGet("buscarSubcategorias/{proceso}")]
+        public async Task<ActionResult> buscarSubcategorias(string proceso, [FromQuery] string texto, CancellationToken cancellationToken)
+        {
+            const int maxResultados = 50;
+            texto = texto?.Trim() ?? string.Empty;
+            if (texto.Length == 0) return BadRequest("Debe ingresar el Id o parte del nombre de la subcategoría.");
+
+            bool esId = int.TryParse(texto, out int id);
+
+            if (proceso == "EXT")
+            {
+                var materiasPrimas = await (from mp in _context.Set<Materia_Prima>().AsNoTracking()
+                                            join s in _context.Set<Subcategorias_MatPrima>().AsNoTracking() on mp.SubCatMP_Id equals s.SubCatMP_Id
+                                            where mp.MatPri_Id != 84
+                                            && ((esId && s.SubCatMP_Id == id) || s.SubCatMP_Nombre.Contains(texto))
+                                            group mp by new { s.SubCatMP_Id, s.SubCatMP_Nombre } into g
+                                            orderby (esId && g.Key.SubCatMP_Id == id) descending,
+                                                    g.Key.SubCatMP_Nombre.StartsWith(texto) descending,
+                                                    g.Key.SubCatMP_Nombre
+                                            select new
+                                            {
+                                                Id_Subcategoria = g.Key.SubCatMP_Id,
+                                                Subcategoria = g.Key.SubCatMP_Nombre,
+                                                Stock = g.Sum(x => x.MatPri_Stock),
+                                                Und = g.Max(x => x.UndMed_Id),
+                                            }).Take(maxResultados).ToListAsync(cancellationToken);
+
+                return Ok(materiasPrimas);
+            }
+
+            var tintas = await (from tt in _context.Set<Tinta>().AsNoTracking()
+                                join s in _context.Set<Subcategorias_MatPrima>().AsNoTracking() on tt.SubCatMP_Id equals s.SubCatMP_Id
+                                where tt.Tinta_Id != 2001
+                                && ((esId && s.SubCatMP_Id == id) || s.SubCatMP_Nombre.Contains(texto))
+                                group tt by new { s.SubCatMP_Id, s.SubCatMP_Nombre } into g
+                                orderby (esId && g.Key.SubCatMP_Id == id) descending,
+                                        g.Key.SubCatMP_Nombre.StartsWith(texto) descending,
+                                        g.Key.SubCatMP_Nombre
+                                select new
+                                {
+                                    Id_Subcategoria = g.Key.SubCatMP_Id,
+                                    Subcategoria = g.Key.SubCatMP_Nombre,
+                                    Stock = g.Sum(x => x.Tinta_Stock),
+                                    Und = g.Max(x => x.UndMed_Id),
+                                }).Take(maxResultados).ToListAsync(cancellationToken);
+
+            return Ok(tintas);
+        }
+
         // PUT: api/Materia_Prima/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -1410,6 +1738,52 @@ namespace PlasticaribeAPI.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetMateria_Prima", new { id = materia_Prima.MatPri_Id }, materia_Prima);
+        }
+
+        //Categorías que corresponden a tintas, chips y solventes (se crean desde el endpoint de tintas).
+        internal static readonly HashSet<int> CategoriasTintas = new() { 7, 8, 13 };
+
+        /// <summary>
+        /// Crea una materia prima validando los datos (a diferencia del POST genérico, que guarda lo que reciba).
+        /// Responde 400 si falta un dato o no es válido y 409 si ya existe una materia prima con el mismo nombre.
+        /// </summary>
+        [HttpPost("crear")]
+        public async Task<ActionResult> CrearMateriaPrima(CrearMateriaPrimaRequest request)
+        {
+            var nombre = (request.Nombre ?? string.Empty).Trim().ToUpper();
+            var descripcion = string.IsNullOrWhiteSpace(request.Descripcion) ? nombre : request.Descripcion.Trim().ToUpper();
+            if (nombre.Length == 0) return BadRequest("El nombre de la materia prima es obligatorio.");
+            if (request.Precio < 0) return BadRequest("El precio no puede ser negativo.");
+            if (CategoriasTintas.Contains(request.CatMP_Id)) return BadRequest("Las tintas, chips y solventes se crean desde la opción de tintas.");
+            if (!await _context.Categorias_MatPrima.AnyAsync(c => c.CatMP_Id == request.CatMP_Id)) return BadRequest("La categoría no existe.");
+            if (request.SubCatMP_Id == null) return BadRequest("La subcategoría es obligatoria.");
+            if (!await _context.Subcategorias_MatPrima.AnyAsync(s => s.SubCatMP_Id == request.SubCatMP_Id && s.CatMP_Id == request.CatMP_Id))
+                return BadRequest("La subcategoría no pertenece a la categoría elegida.");
+
+            var existente = await _context.Materias_Primas.AsNoTracking()
+                .Where(m => m.MatPri_Nombre.Trim().ToUpper() == nombre)
+                .Select(m => new { m.MatPri_Id })
+                .FirstOrDefaultAsync();
+            if (existente != null) return Conflict($"Ya existe una materia prima con el nombre {nombre} (Id {existente.MatPri_Id}).");
+
+            var ahora = DateTime.Now;
+            var materiaPrima = new Materia_Prima
+            {
+                MatPri_Nombre = nombre,
+                MatPri_Descripcion = descripcion,
+                MatPri_Stock = 0,
+                UndMed_Id = "Kg",
+                CatMP_Id = request.CatMP_Id,
+                MatPri_Precio = request.Precio,
+                TpBod_Id = 4,
+                MatPri_Fecha = ahora.Date,
+                MatPri_Hora = ahora.ToString("H:mm:ss"),
+                SubCatMP_Id = request.SubCatMP_Id,
+            };
+            _context.Materias_Primas.Add(materiaPrima);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetMateria_Prima", new { id = materiaPrima.MatPri_Id }, materiaPrima);
         }
 
         // DELETE: api/Materia_Prima/5

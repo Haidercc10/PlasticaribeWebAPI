@@ -56,6 +56,7 @@ builder.Services.AddScoped<ReservasInventarioService>();
 builder.Services.AddScoped<SolicitudesMaterialService>();
 builder.Services.AddScoped<AsignacionMateriaPrimaService>();
 builder.Services.AddScoped<OrdenTrabajoCompletaService>();
+builder.Services.AddScoped<PrecargueRollosService>();
 // F2-12: los errores no controlados responden 500 en formato ProblemDetails (sin reclasificar excepciones).
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ManejadorExcepcionesNoControladas>();
@@ -140,6 +141,10 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("ExcederLimiteOT", policy =>
         policy.RequireRole("1", "104"));
+
+    // Marcar solicitudes de material como verificadas: ADMINISTRADOR (1) y SUPERIOR EXTRUSION 2 (85).
+    options.AddPolicy("VerificarSolicitudMaterial", policy =>
+        policy.RequireRole("1", "85"));
 });
 
 builder.Services.AddCors(options =>

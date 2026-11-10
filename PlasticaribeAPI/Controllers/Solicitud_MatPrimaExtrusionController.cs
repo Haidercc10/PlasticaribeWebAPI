@@ -98,6 +98,34 @@ namespace PlasticaribeAPI.Controllers
             return estado == null ? NotFound() : NoContent();
         }
 
+        /// <summary>
+        /// Marca como verificada (estado 55) una solicitud finalizada. Solo para ADMINISTRADOR y SUPERIOR EXTRUSION 2.
+        /// La actualización es condicional al estado finalizada, así dos usuarios no la verifican a la vez ni se
+        /// verifica una solicitud que otra acción cambió mientras tanto.
+        /// </summary>
+        /// <param name="id">Identificador de la solicitud.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>204 si se verificó; 404 si no existe; 409 si no está finalizada.</returns>
+        [HttpPut("verificar/{id}")]
+        [Authorize(Policy = "VerificarSolicitudMaterial")]
+        public async Task<IActionResult> VerificarSolicitud(long id, CancellationToken cancellationToken)
+        {
+            var actualizadas = await _context.Solicitud_MatPrimaExtrusion
+                .Where(s => s.SolMpExt_Id == id && s.Estado_Id == EstadosSolicitudMaterial.Finalizada)
+                .ExecuteUpdateAsync(s => s.SetProperty(x => x.Estado_Id, EstadosSolicitudMaterial.Verificada), cancellationToken);
+            if (actualizadas > 0) return NoContent();
+
+            var estado = await _context.Solicitud_MatPrimaExtrusion
+                .Where(s => s.SolMpExt_Id == id)
+                .Select(s => (int?)s.Estado_Id)
+                .FirstOrDefaultAsync(cancellationToken);
+            if (estado == null) return NotFound($"No existe la solicitud N° {id}.");
+
+            return Conflict(estado == EstadosSolicitudMaterial.Verificada
+                ? $"La solicitud N° {id} ya está verificada."
+                : $"Solo se pueden verificar solicitudes finalizadas.");
+        }
+
         // PUT: api/Solicitud_MatPrimaExtrusion/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

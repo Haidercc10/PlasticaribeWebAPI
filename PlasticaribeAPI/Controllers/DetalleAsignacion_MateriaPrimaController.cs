@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
+using PlasticaribeAPI.DTOs;
 using PlasticaribeAPI.Models;
 using PlasticaribeAPI.Service;
 
@@ -154,6 +155,17 @@ namespace PlasticaribeAPI.Controllers
 
             return Ok(con);
         }
+
+        /// <summary>
+        /// Versión asíncrona y sin seguimiento de AsignacionesTotales: devuelve las materias primas, tintas y BOPP
+        /// asignados a la OT junto con sus devoluciones, en una sola llamada.
+        /// </summary>
+        /// <param name="ot">Número de la orden de trabajo.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>Materiales asignados y devueltos a la OT.</returns>
+        [HttpGet("getMaterialesAsignadosOT/{ot}")]
+        public async Task<ActionResult<IEnumerable<MaterialAsignadoOTDto>>> GetMaterialesAsignadosOT(long ot, CancellationToken cancellationToken) =>
+            Ok(await _solicitudes.ObtenerMaterialesAsignadosOTAsync(ot, cancellationToken));
 
         //Consulta que devolverá las materias primas asignadas y devueltas a una orden de trabajo
         [HttpGet("getAsginacionDevolucionOrden/{ot}")]

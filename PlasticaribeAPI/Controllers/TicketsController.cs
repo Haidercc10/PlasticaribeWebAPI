@@ -218,26 +218,36 @@ namespace PlasticaribeAPI.Controllers
         /// <summary>
         /// Tickets del usuario autenticado (como reportante) y los que registró a nombre de otros, del más reciente al más antiguo.
         /// </summary>
+        /// <param name="fechaInicio">Fecha de creación desde (inclusive). Por defecto, un año antes de <paramref name="fechaFin"/>.</param>
+        /// <param name="fechaFin">Fecha de creación hasta (inclusive, día completo). Por defecto, hoy.</param>
         [HttpGet("misTickets")]
-        public async Task<ActionResult> GetMisTickets()
+        public async Task<ActionResult> GetMisTickets(DateTime? fechaInicio = null, DateTime? fechaFin = null)
         {
             if (!TryObtenerUsuarioId(out var usuarioId)) return Unauthorized();
+            if (!TryRangoFechas(fechaInicio, fechaFin, out var desde, out var hasta, out var error)) return BadRequest(error);
             var tickets = await ProyectarListado(_context.Tickets.AsNoTracking()
-                .Where(t => t.Usua_Id == usuarioId || t.UsuaRegistra_Id == usuarioId)).ToListAsync();
+                .Where(t => t.Usua_Id == usuarioId || t.UsuaRegistra_Id == usuarioId)
+                .Where(t => t.Ticket_FechaCreacion >= desde && t.Ticket_FechaCreacion < hasta)).ToListAsync();
             return Ok(tickets);
         }
 
         /// <summary>
-        /// Tickets para soporte. Por defecto solo abiertos y en revisión.
+        /// Tickets para soporte. Los abiertos y en revisión salen siempre, sin importar la fecha;
+        /// con <paramref name="incluirFinalizados"/> se agregan los resueltos y cancelados creados en el rango.
         /// </summary>
         /// <param name="incluirFinalizados">Si es true también devuelve resueltos y cancelados.</param>
+        /// <param name="fechaInicio">Fecha de creación desde (inclusive). Por defecto, un año antes de <paramref name="fechaFin"/>.</param>
+        /// <param name="fechaFin">Fecha de creación hasta (inclusive, día completo). Por defecto, hoy.</param>
         [HttpGet("gestion")]
-        public async Task<ActionResult> GetGestion(bool incluirFinalizados = false)
+        public async Task<ActionResult> GetGestion(bool incluirFinalizados = false, DateTime? fechaInicio = null, DateTime? fechaFin = null)
         {
             if (!await EsSoporteAsync()) return Forbid();
-            var consulta = _context.Tickets.AsNoTracking();
-            if (!incluirFinalizados)
-                consulta = consulta.Where(t => t.Estado_Id == (int)EstadoTicket.ABIERTO || t.Estado_Id == (int)EstadoTicket.EN_REVISION);
+            if (!TryRangoFechas(fechaInicio, fechaFin, out var desde, out var hasta, out var error)) return BadRequest(error);
+            // TEMPORAL: los pendientes (abiertos y en revisión) salen siempre, sin importar la fecha, para que
+            // ningún ticket sin atender quede oculto por el rango. El rango solo limita a resueltos y cancelados.
+            var consulta = _context.Tickets.AsNoTracking()
+                .Where(t => t.Estado_Id == (int)EstadoTicket.ABIERTO || t.Estado_Id == (int)EstadoTicket.EN_REVISION
+                    || (incluirFinalizados && t.Ticket_FechaCreacion >= desde && t.Ticket_FechaCreacion < hasta));
             return Ok(await ProyectarListado(consulta).ToListAsync());
         }
 
@@ -446,6 +456,20 @@ namespace PlasticaribeAPI.Controllers
                     Area = t.Usuario != null && t.Usuario.Area != null ? t.Usuario.Area.Area_Nombre : "",
                     RegistradoPor = t.UsuarioRegistra != null ? t.UsuarioRegistra.Usua_Nombre : null,
                 });
+
+        /// <summary>
+        /// Arma el rango [desde, hasta) sobre Ticket_FechaCreacion. Sin fechas: del mismo día de hace un año hasta hoy.
+        /// <paramref name="hasta"/> es el día siguiente a <paramref name="fechaFin"/> a las 00:00 para incluir todo ese día.
+        /// </summary>
+        private static bool TryRangoFechas(DateTime? fechaInicio, DateTime? fechaFin, out DateTime desde, out DateTime hasta, out string? error)
+        {
+            var fin = (fechaFin ?? DateTime.Today).Date;
+            var inicio = (fechaInicio ?? fin.AddYears(-1)).Date;
+            desde = inicio;
+            hasta = fin.AddDays(1);
+            error = inicio > fin ? "La fecha inicial no puede ser mayor que la fecha final." : null;
+            return error == null;
+        }
 
         private bool TryObtenerUsuarioId(out long usuarioId) =>
             long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out usuarioId);

@@ -24,5 +24,19 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName="varchar(10)")]
         public string UndMed_Id { get; set; }
         public Unidad_Medida? Und { get; set; }
+
+        public long? DtlPcd_OT { get; set; }
+
+        [Precision(18,2)]
+        public decimal? DtlPcd_PesoNeto { get; set; }
+
+        [Precision(18,2)]
+        public decimal? DtlPcd_PesoBruto { get; set; }
+
+        [Column(TypeName="varchar(100)")]
+        public string? DtlPcd_Referencia { get; set; }
+
+        [Column(TypeName="varchar(50)")]
+        public string? DtlPcd_Ubicacion { get; set; }
     }
 }
