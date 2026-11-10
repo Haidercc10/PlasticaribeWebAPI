@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using System.Security.Claims;
 
 namespace PlasticaribeAPI.Controllers
 {
@@ -263,6 +264,126 @@ namespace PlasticaribeAPI.Controllers
             if (con != null) return Ok(con);
             else return BadRequest("No se encontraron BOPPs asociados");
 #pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+        }
+
+        /* ===================================================================================================
+         * VERSIONES NUEVAS para el reporte de materia prima. Los endpoints anteriores se conservan sin cambios.
+         * =================================================================================================== */
+
+        //Roles que pueden ver precios y subtotales del inventario.
+        private static readonly HashSet<string> RolesVenPreciosInventario = new() { "1", "104" };
+
+        private bool PuedeVerPrecios() => RolesVenPreciosInventario.Contains(User.FindFirstValue(ClaimTypes.Role) ?? string.Empty);
+
+        //Inventario de BOPP agrupado por genérico.
+        //A diferencia de la versión anterior NO agrupa por precio ni unidad, así cada genérico sale en una sola fila por categoría.
+        [HttpGet("getInventarioBoppsGenericosV2")]
+        public async Task<ActionResult> GetInventarioBoppsGenericosV2()
+        {
+            bool verPrecios = PuedeVerPrecios();
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var con = await (from b in _context.BOPP.AsNoTracking()
+                             join bg in _context.Set<Bopp_Generico>() on b.BoppGen_Id equals bg.BoppGen_Id
+                             join cat in _context.Set<Categoria_MatPrima>() on b.CatMP_Id equals cat.CatMP_Id
+                             where b.BOPP_Stock > 0
+                             group b by new { b.BoppGen_Id, bg.BoppGen_Nombre, bg.BoppGen_Micra, bg.BoppGen_Ancho, cat.CatMP_Id, cat.CatMP_Nombre } into g
+                             select new
+                             {
+                                 Id = g.Key.BoppGen_Id,
+                                 Nombre = g.Key.BoppGen_Nombre,
+                                 Micras = g.Key.BoppGen_Micra,
+                                 Ancho = g.Key.BoppGen_Ancho,
+                                 IdCategoria = g.Key.CatMP_Id,
+                                 NombreCategoria = g.Key.CatMP_Nombre,
+                                 Rollos = g.Count(),
+                                 Medida = g.Max(x => x.UndMed_Kg),
+                                 Stock = g.Sum(x => x.BOPP_Stock),
+                                 Subtotal = g.Sum(x => x.BOPP_Stock * x.BOPP_Precio),
+                             })
+                             .OrderBy(x => x.Nombre)
+                             .ToListAsync();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            return Ok(con.Select(x => new
+            {
+                x.Id,
+                x.Nombre,
+                x.Micras,
+                x.Ancho,
+                x.IdCategoria,
+                x.NombreCategoria,
+                x.Rollos,
+                x.Medida,
+                x.Stock,
+                //Precio promedio ponderado por stock
+                Precio = verPrecios && x.Stock != 0 ? Math.Round(x.Subtotal / x.Stock, 2) : 0,
+                Subtotal = verPrecios ? x.Subtotal : 0,
+            }));
+        }
+
+        //Rollos asociados a un BOPP genérico con sus entradas y salidas dentro del rango.
+        //Corrige la versión anterior, que filtraba entradas/salidas por BOPP_Serial usando el Id del genérico.
+        [HttpGet("getInventarioBoppsV2/{fecha1}/{fecha2}/{id}")]
+        public async Task<ActionResult> GetInventarioBoppsV2(DateTime fecha1, DateTime fecha2, long id)
+        {
+            fecha1 = fecha1.Date;
+            fecha2 = fecha2.Date;
+            if (fecha1 > fecha2) return BadRequest("La fecha inicial no puede ser mayor que la fecha final.");
+            bool verPrecios = PuedeVerPrecios();
+
+#pragma warning disable CS8602 // Desreferencia de una referencia posiblemente NULL.
+            var salidas = await _context.DetallesAsignaciones_BOPP.AsNoTracking()
+                .Where(x => x.BOPP.BoppGen_Id == id
+                         && x.AsigBOPP.AsigBOPP_FechaEntrega >= fecha1
+                         && x.AsigBOPP.AsigBOPP_FechaEntrega <= fecha2)
+                .GroupBy(x => x.BOPP_Id)
+                .Select(g => new { g.Key, Total = g.Sum(x => x.DtAsigBOPP_Cantidad) })
+                .ToDictionaryAsync(x => x.Key, x => x.Total);
+
+            var idsConSalida = salidas.Keys.ToList();
+
+            var rollos = await _context.BOPP.AsNoTracking()
+                .Where(b => b.BoppGen_Id == id
+                         && (b.BOPP_Stock > 0
+                             || (b.BOPP_FechaIngreso >= fecha1 && b.BOPP_FechaIngreso <= fecha2)
+                             || idsConSalida.Contains(b.BOPP_Id)))
+                .Select(b => new
+                {
+                    b.BOPP_Id,
+                    b.BOPP_Serial,
+                    b.BOPP_Nombre,
+                    b.BOPP_Ancho,
+                    b.BOPP_CantidadMicras,
+                    b.BOPP_CantidadInicialKg,
+                    b.BOPP_FechaIngreso,
+                    b.BOPP_Stock,
+                    b.UndMed_Id,
+                    b.BOPP_Precio,
+                    b.CatMP_Id,
+                    Categoria = b.CatMP.CatMP_Nombre,
+                })
+                .OrderBy(b => b.BOPP_Nombre)
+                .ToListAsync();
+#pragma warning restore CS8602 // Desreferencia de una referencia posiblemente NULL.
+
+            return Ok(rollos.Select(b => new
+            {
+                Id = b.BOPP_Id,
+                Serial = b.BOPP_Serial,
+                Nombre = b.BOPP_Nombre,
+                Ancho = b.BOPP_Ancho,
+                Micras = b.BOPP_CantidadMicras,
+                Inicial = b.BOPP_CantidadInicialKg,
+                Entrada = b.BOPP_FechaIngreso >= fecha1 && b.BOPP_FechaIngreso <= fecha2 ? b.BOPP_CantidadInicialKg : 0,
+                Salida = salidas.TryGetValue(b.BOPP_Id, out var s) ? s : 0,
+                Stock = b.BOPP_Stock,
+                Diferencia = b.BOPP_Stock - b.BOPP_CantidadInicialKg,
+                Medida = b.UndMed_Id,
+                Precio = verPrecios ? b.BOPP_Precio : 0,
+                Subtotal = verPrecios ? b.BOPP_Stock * b.BOPP_Precio : 0,
+                CategoriaId = b.CatMP_Id,
+                b.Categoria,
+            }));
         }
 
         [HttpGet("getEntryBOPP/{fecha1}/{fecha2}/{hora}")]
