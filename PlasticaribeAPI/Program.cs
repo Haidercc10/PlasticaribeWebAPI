@@ -57,6 +57,8 @@ builder.Services.AddScoped<SolicitudesMaterialService>();
 builder.Services.AddScoped<AsignacionMateriaPrimaService>();
 builder.Services.AddScoped<OrdenTrabajoCompletaService>();
 builder.Services.AddScoped<PrecargueRollosService>();
+builder.Services.Configure<ZeusSoapOptions>(builder.Configuration.GetSection(ZeusSoapOptions.Seccion));
+builder.Services.AddScoped<IZeusArticuloService, ZeusArticuloService>();
 // F2-12: los errores no controlados responden 500 en formato ProblemDetails (sin reclasificar excepciones).
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ManejadorExcepcionesNoControladas>();
