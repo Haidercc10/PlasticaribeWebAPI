@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Service;
+using System.Data.Common;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -17,18 +19,37 @@ namespace PlasticaribeAPI.Controllers
     {
 
         private readonly dataContext _context;
-        public AuthenticationController(dataContext context) { _context = context; }
+        private readonly ILogger<AuthenticationController> _logger;
+        public AuthenticationController(dataContext context, ILogger<AuthenticationController> logger)
+        {
+            _context = context;
+            _logger = logger;
+        }
 
+        /// <summary>
+        /// Inicia sesión. Respuestas: 200 con el token; 400 datos incompletos; 401 usuario, contraseña o empresa
+        /// incorrectos (sin decir cuál, para no dar pistas); 403 usuario inactivo; 503 base de datos no disponible.
+        /// Los errores van en formato ProblemDetails (title, detail, traceId).
+        /// </summary>
         [HttpPost("login")]
         public IActionResult Login([FromBody] Login user)
         {
-            if (user is null) return BadRequest("Usuario Invalido");
-            var con = _context.Usuarios.Where(x => x.Usua_Id == user.Id_Usuario && x.Usua_Contrasena == user.Contrasena && x.Empresa_Id == user.Empresa && x.Estado_Id == 1).First();
+            if (user is null || user.Id_Usuario is null || user.Empresa is null || string.IsNullOrEmpty(user.Contrasena))
+                return Problema(StatusCodes.Status400BadRequest, "Datos incompletos.", "Debe enviar la identificación, la contraseña y la empresa.");
+
+            try
+            {
+                var con = _context.Usuarios.FirstOrDefault(x => x.Usua_Id == user.Id_Usuario && x.Usua_Contrasena == user.Contrasena && x.Empresa_Id == user.Empresa);
+
+                if (con is null)
+                    return Problema(StatusCodes.Status401Unauthorized, "Credenciales incorrectas.", "Usuario, contraseña o empresa incorrectos.");
+
+                if (con.Estado_Id != 1)
+                    return Problema(StatusCodes.Status403Forbidden, "Usuario inactivo.", "El usuario está inactivo. Comuníquese con el administrador del sistema.");
 
 #pragma warning disable CS8604 // Posible argumento de referencia nulo
-            if (con != null)
-            {
                 var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ConfigurationManager.AppSetting["JWT:Secret"]));
+#pragma warning restore CS8604 // Posible argumento de referencia nulo
                 var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
                 var tokeOptions = new JwtSecurityToken(
                     issuer: ConfigurationManager.AppSetting["JWT:ValidIssuer"],
@@ -50,8 +71,27 @@ namespace PlasticaribeAPI.Controllers
                     Token = tokenString
                 });
             }
-            return Unauthorized();
-#pragma warning restore CS8604 // Posible argumento de referencia nulo
+            catch (Exception ex) when (EsFallaBaseDatos(ex))
+            {
+                _logger.LogError(ex, "Login: no se pudo consultar la base de datos (traceId {TraceId}).", HttpContext.TraceIdentifier);
+                return Problema(StatusCodes.Status503ServiceUnavailable, "Base de datos no disponible.", "No fue posible conectarse a la base de datos de Plasticaribe. Intente de nuevo en unos minutos.");
+            }
+        }
+
+        /// <summary>Falla de conexión con SQL Server (directa o envuelta por los reintentos de EF).</summary>
+        private static bool EsFallaBaseDatos(Exception ex)
+        {
+            for (var e = ex; e != null; e = e.InnerException)
+                if (e is DbException || e is RetryLimitExceededException) return true;
+            return false;
+        }
+
+        /// <summary>Respuesta de error en formato ProblemDetails con el traceId de la petición.</summary>
+        private ObjectResult Problema(int status, string titulo, string detalle)
+        {
+            var problema = new ProblemDetails { Status = status, Title = titulo, Detail = detalle };
+            problema.Extensions["traceId"] = HttpContext.TraceIdentifier;
+            return new ObjectResult(problema) { StatusCode = status, ContentTypes = { "application/problem+json" } };
         }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
