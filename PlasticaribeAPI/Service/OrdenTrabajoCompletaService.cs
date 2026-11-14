@@ -138,6 +138,13 @@ namespace PlasticaribeAPI.Service
                             "la mezcla (mezclas predefinidas de BagPro), el cliente y el usuario existan en BagPro.");
                     }
 
+                    if (await NombreRevertidoAsync(datos.Prod_Id, nombreProductoNuevo, cancellationToken) is { } revertido)
+                    {
+                        await transaction.RollbackAsync(cancellationToken);
+                        _context.ChangeTracker.Clear();
+                        return revertido;
+                    }
+
                     await transaction.CommitAsync(cancellationToken);
                     return OrdenTrabajoCompletaResult.Success(201, "Orden de trabajo creada.", orden.Ot_Id, orden.Numero_OT);
                 });
@@ -150,7 +157,9 @@ namespace PlasticaribeAPI.Service
         }
 
         /// <summary>
-        /// Actualiza la OT y sus cuatro procesos en un único SaveChanges (atómico) aplicando solo la lista blanca de edición (F2-03).
+        /// Actualiza la OT y sus cuatro procesos en una sola transacción (atómica) aplicando solo la lista blanca de edición (F2-03).
+        /// La OT se guarda antes que los procesos para que TR_CrearOTs lleve el nombre nuevo a BagPro antes de que los triggers
+        /// de los procesos toquen ClientesOT_Item; si al final el nombre no quedó, se revierte todo (502).
         /// Conserva el número, el creador, la fecha y la hora de creación; producto, presentación y estado no se pueden cambiar (la sede del cliente sí).
         /// Registra al último editor y usa <c>Ot_RowVersion</c> para detectar ediciones concurrentes (409).
         /// Si a la OT le falta algún proceso, se crea. Si cambió el nombre del producto, lo actualiza en el maestro en la misma
@@ -175,7 +184,8 @@ namespace PlasticaribeAPI.Service
                 return OrdenTrabajoCompletaResult.Invalid(new Dictionary<string, string[]> { ["Ot_RowVersion"] = new[] { "La versión de la OT no es válida." } });
             }
 
-            var orden = await _context.Set<Orden_Trabajo>().FirstOrDefaultAsync(ot => ot.Ot_Id == otId, cancellationToken);
+            // Solo para validar; la OT que se guarda se vuelve a leer dentro de la estrategia de ejecución.
+            var orden = await _context.Set<Orden_Trabajo>().AsNoTracking().FirstOrDefaultAsync(ot => ot.Ot_Id == otId, cancellationToken);
             if (orden == null)
                 return OrdenTrabajoCompletaResult.NotFound($"No existe la orden de trabajo con Id {otId}.");
 
@@ -204,54 +214,71 @@ namespace PlasticaribeAPI.Service
             var valorKg = costos.ValorKgCalculado ?? orden.Ot_ValorKg;
 
             // Nombres: el del producto se cambia en el maestro; el del cliente solo en esta OT (Clientes no cambia).
-            var nombreProductoActual = await _context.Set<Producto>().Where(p => p.Prod_Id == orden.Prod_Id)
+            var nombreProductoActual = await _context.Set<Producto>().AsNoTracking().Where(p => p.Prod_Id == orden.Prod_Id)
                 .Select(p => p.Prod_Nombre).FirstOrDefaultAsync(cancellationToken);
-            if (sedeNueva.HasValue)
-            {
-                // Otro cliente: el nombre propio que tuviera la OT era del cliente anterior y se descarta.
-                orden.SedeCli_Id = sedeNueva.Value;
-                orden.Ot_NombreCliente = null;
-            }
-            var nombreClienteMaestro = await _context.Set<SedesClientes>().Where(s => s.SedeCli_Id == orden.SedeCli_Id)
+            var sedeFinal = sedeNueva ?? orden.SedeCli_Id;
+            var nombreClienteMaestro = await _context.Set<SedesClientes>().AsNoTracking().Where(s => s.SedeCli_Id == sedeFinal)
                 .Select(s => s.Cli!.Cli_Nombre).FirstOrDefaultAsync(cancellationToken);
             var nombreProductoNuevo = OrdenTrabajoNombres.NombreProductoACambiar(datos.Prod_Nombre, nombreProductoActual);
-
             var ahoraEdicion = DateTime.Now;
-            OrdenTrabajoMapeo.AplicarEdicion(datos, orden, usuarioId, ahoraEdicion, valorKg);
-            if (nombreProductoNuevo != null)
-                _context.Add(HistorialNombre(orden.Prod_Id, nombreProductoActual, nombreProductoNuevo, otId, "Edición", usuarioId, ahoraEdicion));
-            orden.Ot_NombreCliente = OrdenTrabajoNombres.NombreClienteOt(datos.Ot_NombreCliente, orden.Ot_NombreCliente, nombreClienteMaestro);
-            _context.Entry(orden).Property(o => o.Ot_RowVersion).OriginalValue = rowVersion;
-
-            await ActualizarOCrearProcesoAsync(_context.Set<OT_Extrusion>().Where(p => p.Ot_Id == otId), OrdenTrabajoMapeo.Extrusion(request.Extrusion, otId),
-                (registro, valores) => valores.Extrusion_Id = registro.Extrusion_Id, cancellationToken);
-            await ActualizarOCrearProcesoAsync(_context.Set<OT_Impresion>().Where(p => p.Ot_Id == otId), OrdenTrabajoMapeo.Impresion(request.Impresion, otId),
-                (registro, valores) => valores.Impresion_Id = registro.Impresion_Id, cancellationToken);
-            await ActualizarOCrearProcesoAsync(_context.Set<OT_Laminado>().Where(p => p.OT_Id == otId), OrdenTrabajoMapeo.Laminado(request.Laminado, otId),
-                (registro, valores) => valores.LamCapa_Id = registro.LamCapa_Id, cancellationToken);
-            await ActualizarOCrearProcesoAsync(_context.Set<OT_Sellado_Corte>().Where(p => p.Ot_Id == otId), OrdenTrabajoMapeo.SelladoCorte(request.SelladoCorte, otId),
-                (registro, valores) => valores.SelladoCorte_Id = registro.SelladoCorte_Id, cancellationToken);
 
             try
             {
                 var strategy = _context.Database.CreateExecutionStrategy();
-                await strategy.ExecuteAsync(async () =>
+                return await strategy.ExecuteAsync(async () =>
                 {
+                    // Los cambios se arman dentro de la estrategia: la OT y los procesos se guardan en dos SaveChanges, así que,
+                    // si la estrategia reintenta, se parte de cero con lo que hay en la base (la transacción anterior se revirtió).
+                    _context.ChangeTracker.Clear();
                     // Sin savepoints, como al crear: los triggers que escriben por linked server promueven la transacción a distribuida.
                     _context.Database.AutoSavepointsEnabled = false;
                     await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
                     // El producto se renombra antes de guardar la OT porque TR_CrearOTs lee Productos.Prod_Nombre al
-                    // actualizarla. Es un UPDATE idempotente de una sola fila, así que se puede repetir si la estrategia reintenta.
+                    // actualizarla. Es un UPDATE idempotente de una sola fila.
                     if (nombreProductoNuevo != null)
                         await RenombrarProductoAsync(orden.Prod_Id, nombreProductoNuevo, cancellationToken);
 
-                    // Un solo SaveChanges para la OT y sus procesos. Los cambios se aceptan después del commit para que,
-                    // si la estrategia reintenta, se vuelvan a enviar.
-                    await _context.SaveChangesAsync(acceptAllChangesOnSuccess: false, cancellationToken);
+                    // 1) La OT sola. Debe ir antes que los procesos: con un solo SaveChanges, EF ordena por nombre de tabla y
+                    // los OT_* van antes que Orden_Trabajo; sus triggers actualizan ClientesOT_Item con el nombre viejo y el
+                    // trigger de BagPro (TR_ActualizarCaracteristicasProductosXCLOT_Items) lo devolvía a Productos.Prod_Nombre.
+                    // Guardando primero la OT, TR_CrearOTs lleva el nombre nuevo a ClientesOT y ClientesOT_Item.
+                    var ot = await _context.Set<Orden_Trabajo>().FirstAsync(o => o.Ot_Id == otId, cancellationToken);
+                    if (sedeNueva.HasValue)
+                    {
+                        // Otro cliente: el nombre propio que tuviera la OT era del cliente anterior y se descarta.
+                        ot.SedeCli_Id = sedeNueva.Value;
+                        ot.Ot_NombreCliente = null;
+                    }
+                    OrdenTrabajoMapeo.AplicarEdicion(datos, ot, usuarioId, ahoraEdicion, valorKg);
+                    ot.Ot_NombreCliente = OrdenTrabajoNombres.NombreClienteOt(datos.Ot_NombreCliente, ot.Ot_NombreCliente, nombreClienteMaestro);
+                    _context.Entry(ot).Property(o => o.Ot_RowVersion).OriginalValue = rowVersion;
+                    if (nombreProductoNuevo != null)
+                        _context.Add(HistorialNombre(ot.Prod_Id, nombreProductoActual, nombreProductoNuevo, otId, "Edición", usuarioId, ahoraEdicion));
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                    // 2) Los procesos, cuando BagPro ya tiene el nombre nuevo.
+                    await ActualizarOCrearProcesoAsync(_context.Set<OT_Extrusion>().Where(p => p.Ot_Id == otId), OrdenTrabajoMapeo.Extrusion(request.Extrusion, otId),
+                        (registro, valores) => valores.Extrusion_Id = registro.Extrusion_Id, cancellationToken);
+                    await ActualizarOCrearProcesoAsync(_context.Set<OT_Impresion>().Where(p => p.Ot_Id == otId), OrdenTrabajoMapeo.Impresion(request.Impresion, otId),
+                        (registro, valores) => valores.Impresion_Id = registro.Impresion_Id, cancellationToken);
+                    await ActualizarOCrearProcesoAsync(_context.Set<OT_Laminado>().Where(p => p.OT_Id == otId), OrdenTrabajoMapeo.Laminado(request.Laminado, otId),
+                        (registro, valores) => valores.LamCapa_Id = registro.LamCapa_Id, cancellationToken);
+                    await ActualizarOCrearProcesoAsync(_context.Set<OT_Sellado_Corte>().Where(p => p.Ot_Id == otId), OrdenTrabajoMapeo.SelladoCorte(request.SelladoCorte, otId),
+                        (registro, valores) => valores.SelladoCorte_Id = registro.SelladoCorte_Id, cancellationToken);
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                    // 3) Si algún trigger devolvió el nombre anterior, no se confirma nada.
+                    if (await NombreRevertidoAsync(ot.Prod_Id, nombreProductoNuevo, cancellationToken) is { } revertido)
+                    {
+                        await transaction.RollbackAsync(cancellationToken);
+                        _context.ChangeTracker.Clear();
+                        return revertido;
+                    }
+
                     await transaction.CommitAsync(cancellationToken);
+                    return OrdenTrabajoCompletaResult.Success(200, "Orden de trabajo actualizada.", ot.Ot_Id, ot.Numero_OT);
                 });
-                _context.ChangeTracker.AcceptAllChanges();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -263,8 +290,27 @@ namespace PlasticaribeAPI.Service
                 _context.ChangeTracker.Clear();
                 return clasificado;
             }
+        }
 
-            return OrdenTrabajoCompletaResult.Success(200, "Orden de trabajo actualizada.", orden.Ot_Id, orden.Numero_OT);
+        /// <summary>
+        /// Comprueba, dentro de la transacción y después de guardar, que Productos.Prod_Nombre quedó con el nombre nuevo.
+        /// Los triggers de BagPro pueden devolverlo al anterior (SPActualizarDatosProductos toma ClientesOT_Item.ClienteItemsNom).
+        /// </summary>
+        /// <param name="prodId">Producto.</param>
+        /// <param name="nombreNuevo">Nombre que se quiso guardar; null si no se cambió el nombre.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>null si no se cambió el nombre o quedó bien; 502 con el motivo si quedó otro nombre.</returns>
+        private async Task<OrdenTrabajoCompletaResult?> NombreRevertidoAsync(int prodId, string? nombreNuevo, CancellationToken cancellationToken)
+        {
+            if (nombreNuevo == null)
+                return null;
+            var nombreFinal = await _context.Set<Producto>().AsNoTracking().Where(p => p.Prod_Id == prodId)
+                .Select(p => p.Prod_Nombre).FirstOrDefaultAsync(cancellationToken);
+            if (string.Equals(nombreFinal?.Trim(), nombreNuevo, StringComparison.Ordinal))
+                return null;
+            return OrdenTrabajoCompletaResult.BadGateway(
+                $"No se guardó la OT: el nombre del item {prodId} volvió a \"{nombreFinal?.Trim()}\" al sincronizar con BagPro. " +
+                "Revise el item en BagPro (ClientesOT_Item) e intente de nuevo.");
         }
 
         /// <summary>
