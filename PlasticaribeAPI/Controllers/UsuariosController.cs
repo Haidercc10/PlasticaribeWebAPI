@@ -296,6 +296,23 @@ namespace PlasticaribeAPI.Controllers
             return authorizedUsers.Any() ? Ok(authorizedUsers) : NotFound();
         }
 
+        //Consulta que devuelve solo id y nombre de los usuarios indicados (evita descargar la tabla completa de usuarios).
+        //Uso: getUsuariosPorIds?ids=1&ids=2
+        [HttpGet("getUsuariosPorIds")]
+        public async Task<ActionResult> getUsuariosPorIds([FromQuery] long[] ids, CancellationToken cancellationToken)
+        {
+            if (ids == null || ids.Length == 0) return Ok(Array.Empty<object>());
+
+            var usuarios = await _context.Set<Usuario>()
+                .AsNoTracking()
+                .Where(u => ids.Contains(u.Usua_Id))
+                .OrderBy(u => u.Usua_Nombre)
+                .Select(u => new { u.Usua_Id, u.Usua_Nombre })
+                .ToListAsync(cancellationToken);
+
+            return Ok(usuarios);
+        }
+
         //Consulta para obtener los supervisores activos por area y rol
         [HttpGet("getSupervisors/{area}")]
         public async Task<ActionResult> getSupervisors(long area)
