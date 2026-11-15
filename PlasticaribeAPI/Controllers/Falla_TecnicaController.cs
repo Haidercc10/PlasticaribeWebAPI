@@ -29,6 +29,20 @@ namespace PlasticaribeAPI.Controllers
             return await _context.Fallas_Tecnicas.ToListAsync();
         }
 
+        // Fallas de un tipo, solo con id y nombre, ordenadas por nombre (evita descargar todas las fallas para filtrarlas en el front).
+        [HttpGet("getFallasPorTipo/{tipo}")]
+        public async Task<ActionResult> getFallasPorTipo(int tipo, CancellationToken cancellationToken)
+        {
+            var fallas = await _context.Set<Falla_Tecnica>()
+                .AsNoTracking()
+                .Where(falla => falla.TipoFalla_Id == tipo)
+                .OrderBy(falla => falla.Falla_Nombre)
+                .Select(falla => new { falla.Falla_Id, falla.Falla_Nombre })
+                .ToListAsync(cancellationToken);
+
+            return Ok(fallas);
+        }
+
         // GET: api/Falla_Tecnica/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Falla_Tecnica>> GetFalla_Tecnica(int id)

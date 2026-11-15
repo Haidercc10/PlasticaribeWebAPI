@@ -745,6 +745,24 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
+        // TEMPORAL: rollos eliminados en el rango de fechas que siguen eliminados (estado 22) en Produccion_Procesos,
+        // para reenviar la observación a BagPro. No incluye rollos que se eliminaron y luego se recuperaron.
+        [HttpGet("getDeletedRollsForBagPro/{date1}/{date2}")]
+        public async Task<ActionResult> getDeletedRollsForBagPro(DateTime date1, DateTime date2, CancellationToken cancellationToken)
+        {
+            var rolls = await (from rd in _context.Set<Rollo_Desecho>().AsNoTracking()
+                               where rd.Rollo_FechaEliminacion >= date1.Date &&
+                                     rd.Rollo_FechaEliminacion <= date2.Date &&
+                                     _context.Set<Produccion_Procesos>().Any(pp => pp.NumeroRollo_BagPro == rd.Rollo_Id &&
+                                                                                    pp.Proceso_Id == rd.Proceso_Id &&
+                                                                                    pp.Estado_Rollo == 22)
+                               select new { roll = rd.Rollo_Id, process = rd.Proceso_Id, ot = rd.Rollo_OT })
+                              .Distinct()
+                              .ToListAsync(cancellationToken);
+
+            return Ok(rolls);
+        }
+
         // POST: api/Rollo_Desecho
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

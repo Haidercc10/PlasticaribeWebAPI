@@ -755,6 +755,63 @@ namespace PlasticaribeAPI.Controllers
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
+        /// <summary>
+        /// Versión optimizada de <c>getInfoProduction</c> para la vista de eliminar rollos: OT y rollo se comparan por igualdad
+        /// (permite usar índices y no trae OTs/rollos parecidos), cada filtro se agrega solo si viene, se consulta una sola vez
+        /// sin seguimiento de cambios y si no hay datos devuelve una lista vacía en vez de 404.
+        /// </summary>
+        [HttpGet("getInfoProductionToDelete/{date1}/{date2}")]
+        public async Task<ActionResult> getInfoProductionToDelete(
+            DateTime date1,
+            DateTime date2,
+            long? ot,
+            string? process,
+            long? roll,
+            CancellationToken cancellationToken)
+        {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var production = _context.Set<Produccion_Procesos>()
+                .AsNoTracking()
+                .Where(pp => pp.Fecha >= date1 &&
+                             pp.Fecha <= date2 &&
+                             pp.Envio_Zeus == false &&
+                             pp.Estado_Rollo == 19);
+
+            if (ot.HasValue) production = production.Where(pp => pp.OT == ot.Value);
+            if (!string.IsNullOrWhiteSpace(process)) production = production.Where(pp => pp.Proceso_Id == process);
+            if (roll.HasValue) production = production.Where(pp => pp.NumeroRollo_BagPro == roll.Value);
+
+            var data = await (from pp in production
+                              join epot in _context.Set<Estados_ProcesosOT>().AsNoTracking()
+                                  on pp.OT equals epot.EstProcOT_OrdenTrabajo
+                              orderby pp.Fecha, pp.NumeroRollo_BagPro
+                              select new
+                              {
+                                  pp.Id,
+                                  pp.OT,
+                                  pp.Cli_Id,
+                                  pp.Clientes.Cli_Nombre,
+                                  pp.Prod_Id,
+                                  pp.Producto.Prod_Nombre,
+                                  Cantidad_Pedida = pp.Presentacion == "Kg" ? epot.EstProcOT_CantidadPedida : epot.EstProcOT_CantidadPedidaUnd,
+                                  pp.Numero_Rollo,
+                                  pp.NumeroRollo_BagPro,
+                                  pp.Fecha,
+                                  pp.Hora,
+                                  pp.Maquina,
+                                  pp.Proceso_Id,
+                                  pp.Estado_Rollo,
+                                  pp.Peso_Bruto,
+                                  pp.Peso_Neto,
+                                  pp.Cantidad,
+                                  pp.Presentacion,
+                                  pp.Proceso.Proceso_Nombre,
+                              }).ToListAsync(cancellationToken);
+
+            return Ok(data);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
         //Consulta que devuelve la información de la producción disponible de empaque y sellado.
         [HttpGet("getInfoProductionAvailable")]
         public ActionResult getInfoProductionAvailable()
@@ -1984,6 +2041,195 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Versión optimizada de <c>putStateDeletedRolls</c> + <c>POST Rollo_Desecho</c>: en una sola transacción marca los rollos
+        /// como eliminados (estado 22), descuenta las cantidades en Estados_ProcesosOT y crea en bloque los registros de
+        /// Rollo_Desecho con la información tomada de la base de datos (no del cliente).
+        /// Solo procesa rollos disponibles (estado 19 y sin envío a Zeus), así un reintento o dos usuarios eliminando el mismo
+        /// rollo no descuentan dos veces.
+        /// </summary>
+        /// <returns>200 con los rollos eliminados (para enviarlos a BagPro); 409 con los rollos que ya no están disponibles,
+        /// en cuyo caso no se elimina ninguno; 400 si la petición no es válida.</returns>
+        [HttpPut("putDeleteRolls")]
+        public async Task<IActionResult> putDeleteRolls(
+            [FromBody] deleteRollsRequest request,
+            CancellationToken cancellationToken)
+        {
+            if (request?.Rolls == null || request.Rolls.Count == 0)
+                return BadRequest("Debe enviar al menos un rollo a eliminar.");
+            if (string.IsNullOrWhiteSpace(request.Observation) || request.Fail == null || request.UserAuthorize == null)
+                return BadRequest("Debe enviar el motivo, la observación y el usuario que autoriza la eliminación.");
+
+            var executionStrategy = _context.Database.CreateExecutionStrategy();
+
+            return await executionStrategy.ExecuteAsync<IActionResult>(async () =>
+            {
+                _context.ChangeTracker.Clear();
+                await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+                try
+                {
+                    var requestedRolls = request.Rolls
+                        .Select(roll => (Roll: roll.roll, Process: roll.process))
+                        .ToHashSet();
+                    var requestedRollNumbers = requestedRolls
+                        .Select(roll => roll.Roll)
+                        .Distinct()
+                        .ToArray();
+
+                    var foundRolls = (await _context.Set<Produccion_Procesos>()
+                            .AsNoTracking()
+                            .Include(roll => roll.Clientes)
+                            .Include(roll => roll.Producto)
+                            .Include(roll => roll.Operario1)
+                            .Where(roll => requestedRollNumbers.Contains(roll.NumeroRollo_BagPro))
+                            .ToListAsync(cancellationToken))
+                        .Where(roll => requestedRolls.Contains((roll.NumeroRollo_BagPro, roll.Proceso_Id)))
+                        .ToList();
+
+                    var rolls = foundRolls
+                        .Where(roll => roll.Estado_Rollo == 19 && !roll.Envio_Zeus)
+                        .ToList();
+
+                    var availableRolls = rolls
+                        .Select(roll => (roll.NumeroRollo_BagPro, roll.Proceso_Id))
+                        .ToHashSet();
+                    var notAvailable = requestedRolls
+                        .Where(roll => !availableRolls.Contains(roll))
+                        .Select(roll => new { roll = roll.Roll, process = roll.Process })
+                        .ToList();
+
+                    if (notAvailable.Count > 0)
+                    {
+                        await transaction.RollbackAsync();
+                        return Conflict(new { message = "Algunos rollos ya no están disponibles para eliminar.", notAvailable });
+                    }
+
+                    // Cambio de estado atómico: si otro usuario los eliminó entre la lectura y esta línea, no coinciden las filas.
+                    var rollIds = rolls.Select(roll => roll.Id).ToArray();
+                    var updatedRows = await _context.Set<Produccion_Procesos>()
+                        .Where(roll => rollIds.Contains(roll.Id) && roll.Estado_Rollo == 19)
+                        .ExecuteUpdateAsync(setters => setters.SetProperty(roll => roll.Estado_Rollo, 22), cancellationToken);
+
+                    if (updatedRows != rollIds.Length)
+                    {
+                        await transaction.RollbackAsync();
+                        return Conflict(new { message = "Otro usuario modificó alguno de los rollos. Vuelva a consultar.", notAvailable });
+                    }
+
+                    var estadosOT = await _estadoProcesoOT.getEstadosProcesoOT(
+                        rolls.Select(roll => roll.OT),
+                        cancellationToken);
+                    var rolloSinEstadoOT = rolls.FirstOrDefault(roll => !estadosOT.ContainsKey(roll.OT));
+
+                    if (rolloSinEstadoOT is not null)
+                    {
+                        await transaction.RollbackAsync();
+                        return NotFound($"No existe el registro de estado para la OT {rolloSinEstadoOT.OT}.");
+                    }
+
+                    var estadosOTPorOrden = new Dictionary<long, (Estados_ProcesosOT EstadoOT, HashSet<string> Procesos)>();
+                    var now = DateTime.Now;
+                    var discardRolls = new List<Rollo_Desecho>(rolls.Count);
+
+                    foreach (var roll in rolls)
+                    {
+                        var estadoOT = estadosOT[roll.OT];
+
+                        switch (roll.Proceso_Id)
+                        {
+                            case "EXT":
+                                estadoOT.EstProcOT_ExtrusionKg -= roll.Peso_Neto;
+                                break;
+                            case "IMP":
+                                estadoOT.EstProcOT_ImpresionKg -= roll.Peso_Neto;
+                                break;
+                            case "LAM":
+                                estadoOT.EstProcOT_LaminadoKg -= roll.Peso_Neto;
+                                break;
+                            case "PERF":
+                                estadoOT.EstProcOT_PerforadoKg -= roll.Peso_Neto;
+                                break;
+                            case "DBLD":
+                                estadoOT.EstProcOT_DobladoKg -= roll.Peso_Neto;
+                                break;
+                            case "EMP":
+                                estadoOT.EstProcOT_EmpaqueKg -= roll.Peso_Neto;
+                                break;
+                            case "SELLA":
+                                estadoOT.EstProcOT_SelladoKg -= roll.Peso_Neto;
+                                estadoOT.EstProcOT_SelladoUnd -= roll.Cantidad;
+                                break;
+                        }
+
+                        if (!estadosOTPorOrden.TryGetValue(roll.OT, out var datosOT))
+                        {
+                            datosOT = (estadoOT, new HashSet<string>());
+                            estadosOTPorOrden.Add(roll.OT, datosOT);
+                        }
+
+                        datosOT.Procesos.Add(roll.Proceso_Id);
+
+                        discardRolls.Add(new Rollo_Desecho
+                        {
+                            Rollo_OT = roll.OT,
+                            Rollo_Cliente = roll.Clientes?.Cli_Nombre ?? "",
+                            Prod_Id = roll.Prod_Id,
+                            Rollo_TotalPedidoOT = roll.Presentacion == "Kg"
+                                ? estadoOT.EstProcOT_CantidadPedida
+                                : estadoOT.EstProcOT_CantidadPedidaUnd ?? 0,
+                            Rollo_Id = roll.NumeroRollo_BagPro,
+                            Rollo_Ancho = roll.Producto?.Prod_Ancho ?? 0,
+                            Rollo_Largo = roll.Producto?.Prod_Largo ?? 0,
+                            Rollo_Fuelle = roll.Producto?.Prod_Fuelle ?? 0,
+                            UndMed_Id = roll.Presentacion,
+                            Rollo_PesoBruto = roll.Peso_Bruto,
+                            Rollo_PesoNeto = roll.Peso_Neto,
+                            Rollo_Tara = roll.Tara_Cono,
+                            Cono_Id = roll.Cono_Id,
+                            Material_Id = roll.Producto?.Material_Id ?? 0,
+                            Rollo_Calibre = roll.Producto?.Prod_Calibre ?? 0,
+                            Rollo_FechaIngreso = roll.Fecha,
+                            Rollo_Hora = roll.Hora,
+                            Rollo_Maquina = roll.Maquina,
+                            Rollo_Operario = roll.Operario1?.Usua_Nombre ?? "",
+                            Proceso_Id = roll.Proceso_Id,
+                            Turno_Id = roll.Turno_Id,
+                            Estado_Id = 22,
+                            Rollo_FechaEliminacion = now.Date,
+                            Rollo_HoraEliminacion = now.ToString("HH:mm:ss"),
+                            Rollo_Observacion = request.Observation,
+                            Falla_Id = request.Fail,
+                            UsuaElimina_Id = request.UserDelete,
+                            UsuaAutoriza_Id = request.UserAuthorize,
+                        });
+                    }
+
+                    _context.Rollos_Desechos.AddRange(discardRolls);
+
+                    // Guarda Estados_ProcesosOT y Rollo_Desecho en un solo SaveChanges.
+                    await _estadoProcesoOT.ValidarYCambiarEstado_EstadoProcesoOT(estadosOTPorOrden, cancellationToken);
+                    await transaction.CommitAsync(cancellationToken);
+
+                    var deleted = rolls
+                        .Select(roll => new { roll = roll.NumeroRollo_BagPro, process = roll.Proceso_Id })
+                        .Distinct()
+                        .ToList();
+
+                    return Ok(new { deleted });
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    await transaction.RollbackAsync();
+                    return Conflict(new { message = "Otro usuario modificó alguno de los rollos. Vuelva a consultar." });
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
+        }
+
         [HttpPut("putAvailableFromReposition/{repo}/{user}")]
         async public Task<IActionResult> putAvailableFromReposition(int repo, long user)
         {
@@ -2231,6 +2477,16 @@ public class rollsToDelete
     public long roll { get; set; }
     public string process { get; set; }
 
+}
+
+// Petición de putDeleteRolls: los datos de la eliminación van una sola vez, no repetidos por cada rollo.
+public class deleteRollsRequest
+{
+    public List<rollsToDelete> Rolls { get; set; } = new();
+    public int? Fail { get; set; }
+    public string Observation { get; set; } = "";
+    public long? UserAuthorize { get; set; }
+    public long? UserDelete { get; set; }
 }
 
 public class rollsReturned
