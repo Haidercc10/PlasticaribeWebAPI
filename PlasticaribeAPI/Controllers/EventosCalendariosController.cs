@@ -61,14 +61,20 @@ namespace PlasticaribeAPI.Controllers
 
         //Get que devolverá la cantidad de eventos que hay para el mes actual
         [HttpGet("getCantidadEventos/{id}/{rol}/{fechaInicio}/{fechaFin}")]
-        public ActionResult GetCantidadEventos(long id, string rol, DateTime fechaInicio, DateTime fechaFin)
+        public async Task<ActionResult> GetCantidadEventos(long id, string rol, DateTime fechaInicio, DateTime fechaFin)
         {
-            var con = from ev in _context.Set<EventosCalendario>()
-                      where ev.EventoCal_FechaInicial >= fechaInicio
-                            && ev.EventoCal_FechaFinal <= fechaFin
-                            && (ev.Usua_Id == id || ev.EventoCal_Visibilidad.Contains("|" + rol + "|"))
-                      select ev;
-            return Ok(con.Count());
+            // Cuenta los eventos que se cruzan con el rango (días completos): incluye los que ya están en curso
+            // al inicio del rango y los que terminan después del fin, no solo los contenidos por completo.
+            var desde = fechaInicio.Date;
+            var hastaExclusivo = fechaFin.Date.AddDays(1);
+            var patronRol = "|" + rol + "|";
+
+            var cantidad = await _context.Set<EventosCalendario>().AsNoTracking()
+                .Where(ev => ev.EventoCal_FechaInicial < hastaExclusivo
+                          && ev.EventoCal_FechaFinal >= desde
+                          && (ev.Usua_Id == id || ev.EventoCal_Visibilidad.Contains(patronRol)))
+                .CountAsync();
+            return Ok(cantidad);
         }
 
         //Get que devolverá la cantidad de eventos que hay para el dia actual

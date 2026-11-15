@@ -18,6 +18,14 @@ namespace PlasticaribeAPI.Models
         [Column(TypeName = "Date")]
         public DateTime Fecha_Envio { get; set; }
         public string Hora_Envio { get; set; }
+
+        /// <summary>Solo para Envio_Correo (no se guarda): true cuando es una respuesta de Plasticaribe al cliente.</summary>
+        [NotMapped]
+        public bool EsRespuesta { get; set; }
+
+        /// <summary>Solo para Envio_Correo (no se guarda): versión en texto plano del mensaje; si viene vacía se usa Mensaje.</summary>
+        [NotMapped]
+        public string? MensajeTexto { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

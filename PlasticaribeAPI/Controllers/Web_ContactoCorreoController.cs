@@ -13,10 +13,12 @@ namespace PlasticaribeAPI.Controllers
     public class Web_ContactoCorreoController : ControllerBase
     {
         private readonly dataContext _context;
+        private readonly IConfiguration _configuration;
 
-        public Web_ContactoCorreoController(dataContext context)
+        public Web_ContactoCorreoController(dataContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         // GET: api/Web_ContactoCorreo
@@ -90,7 +92,7 @@ namespace PlasticaribeAPI.Controllers
             }
             _context.Web_ContactoCorreo.Add(web_ContactoCorreo);
             await _context.SaveChangesAsync();
-            Envio_Correo(web_ContactoCorreo);
+            await Envio_Correo(web_ContactoCorreo);
             return CreatedAtAction("GetWeb_ContactoCorreo", new { id = web_ContactoCorreo.Id }, web_ContactoCorreo);
         }
 
@@ -116,13 +118,18 @@ namespace PlasticaribeAPI.Controllers
 
         //ENVIO DE CORREO ELECTRONICO
         [HttpPost("Envio_Correo")]
-        public ActionResult<Web_ContactoCorreo> Envio_Correo(Web_ContactoCorreo web_ContactoCorreo)
+        public async Task<ActionResult> Envio_Correo(Web_ContactoCorreo web_ContactoCorreo)
         {
             // Información de contacto de la empresa
             int idEmpresa = 800188732;
-            var correoEmpresa = (from emp in _context.Set<Empresa>() where emp.Empresa_Id == idEmpresa select emp.Empresa_Correo).First();
-            var telefonos = (from emp in _context.Set<Empresa>() where emp.Empresa_Id == idEmpresa select emp.Empresa_Telefono).First();
-            var direccion = (from emp in _context.Set<Empresa>() where emp.Empresa_Id == idEmpresa select emp.Empresa_Direccion).First();
+            // Una sola consulta para los datos de contacto de la empresa (antes eran tres)
+            var empresa = await _context.Set<Empresa>().AsNoTracking()
+                .Where(emp => emp.Empresa_Id == idEmpresa)
+                .Select(emp => new { emp.Empresa_Correo, emp.Empresa_Telefono, emp.Empresa_Direccion })
+                .FirstAsync();
+            var correoEmpresa = empresa.Empresa_Correo;
+            var telefonos = empresa.Empresa_Telefono;
+            var direccion = empresa.Empresa_Direccion;
 
             //Configuracion de envio de correo
             string destinos = web_ContactoCorreo.Correo + ";prueba20230227@gmail.com";
@@ -137,10 +144,13 @@ namespace PlasticaribeAPI.Controllers
 
             //Configuracion del cuerpo del correo
             var builder = new BodyBuilder();
-            builder.TextBody = web_ContactoCorreo.Mensaje;
+            // Versión para programas que no muestran HTML: las respuestas desde la app mandan su propio texto plano
+            builder.TextBody = string.IsNullOrWhiteSpace(web_ContactoCorreo.MensajeTexto) ? web_ContactoCorreo.Mensaje : web_ContactoCorreo.MensajeTexto;
 
             //Imagenes
-            string rutaImg = "C:\\inetpub\\WebApi\\Assets\\";
+            // Carpeta de las imágenes del correo: configurable con "Correo:RutaImagenes" en appsettings (por defecto la del servidor)
+            string rutaImg = _configuration["Correo:RutaImagenes"] ?? @"C:\inetpub\WebApi\Assets\";
+            if (!rutaImg.EndsWith('\\') && !rutaImg.EndsWith('/')) rutaImg += Path.DirectorySeparatorChar;
             string logo = "" + rutaImg + "logo-footer.png";
             string iconoTelefono = "" + rutaImg + "telefono.png";
             string iconoMapa = "" + rutaImg + "mapa.png";
@@ -169,7 +179,10 @@ namespace PlasticaribeAPI.Controllers
             builder.HtmlBody += string.Format(@"<br>");
             builder.HtmlBody += string.Format(@"<br>");
             builder.HtmlBody += string.Format(@"<p>");
-            builder.HtmlBody += string.Format(@"Correo enviado por: <b>" + web_ContactoCorreo.Nombre + ".</b><br>Número de contacto: <b>" + web_ContactoCorreo.Telefono + ".</b><br>Correo de contacto: <b>" + web_ContactoCorreo.Correo + "</b>.");
+            // En las respuestas de Plasticaribe al cliente la firma ya viene en el mensaje (antes de la cita del correo original)
+            // y los datos de la empresa van en "Contactanos": no se repiten los datos de contacto del cliente.
+            if (!web_ContactoCorreo.EsRespuesta)
+                builder.HtmlBody += string.Format(@"Correo enviado por: <b>" + web_ContactoCorreo.Nombre + ".</b><br>Número de contacto: <b>" + web_ContactoCorreo.Telefono + ".</b><br>Correo de contacto: <b>" + web_ContactoCorreo.Correo + "</b>.");
             builder.HtmlBody += string.Format(@"</p>");
             builder.HtmlBody += string.Format(@"</div>");
             builder.HtmlBody += string.Format(@"<section style=""text-align: center;"">");
@@ -219,10 +232,10 @@ namespace PlasticaribeAPI.Controllers
             //Credenciales del correo
             using (var client = new SmtpClient())
             {
-                client.Connect("smtp.gmail.com", 587, false);
+                await client.ConnectAsync("smtp.gmail.com", 587, false);
                 client.Authenticate("prueba20230227@gmail.com", "cvspiiikzqxeggjk");
-                client.Send(message);
-                client.Disconnect(true);
+                await client.SendAsync(message);
+                await client.DisconnectAsync(true);
             }
             return Ok("El correo ha sido enviado");
         }
