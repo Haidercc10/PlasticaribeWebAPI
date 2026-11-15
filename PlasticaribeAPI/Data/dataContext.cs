@@ -802,6 +802,7 @@ namespace PlasticaribeAPI.Data
             //Vistas Favoritas
             modelBuilder.Entity<VistasFavoritas>().ToTable(tb => tb.HasTrigger("Auditoria_VistasFavoritas"));
             modelBuilder.Entity<VistasFavoritas>().HasOne(erp => erp.Usuario).WithMany().HasForeignKey(erp => erp.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<VistasFavoritas>().HasIndex(vf => vf.Usua_Id).IsUnique(); // una sola fila de favoritos por usuario
 
             //Activos
             //modelBuilder.Entity<Activo>().ToTable(tb => tb.HasTrigger("Auditoria_Activos"));

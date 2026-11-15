@@ -10902,9 +10902,16 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<int>("VistaFav_Num5")
                         .HasColumnType("int");
 
+                    b.Property<int>("VistaFav_Num6")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VistaFav_Num7")
+                        .HasColumnType("int");
+
                     b.HasKey("VistasFav_Id");
 
-                    b.HasIndex("Usua_Id");
+                    b.HasIndex("Usua_Id")
+                        .IsUnique();
 
                     b.ToTable("VistasFavoritas", t =>
                         {
