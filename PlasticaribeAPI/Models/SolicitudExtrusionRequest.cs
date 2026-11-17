@@ -19,12 +19,28 @@ namespace PlasticaribeAPI.Models
 
         public string? Observacion { get; set; }
 
+        /// <summary>
+        /// Fecha en que se necesita el material. Obligatoria.
+        /// </summary>
+        [Required(ErrorMessage = "Debe indicar la fecha estimada de entrega.")]
         public DateTime? FechaEstimadaEntrega { get; set; }
 
         /// <summary>
         /// Indica que el usuario vio la advertencia de disponibilidad informativa y decidió continuar.
         /// </summary>
         public bool ConfirmarSaldoNegativo { get; set; }
+
+        /// <summary>
+        /// Kg máximos que se pueden solicitar para la OT (kg de la OT más el adicional permitido).
+        /// Obligatorio en Extrusión, donde las materias primas cuentan para el límite de la OT.
+        /// </summary>
+        [Range(typeof(decimal), "0", "9999999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
+        public decimal? LimiteKgOT { get; set; }
+
+        /// <summary>
+        /// Indica que un usuario con la policy ExcederLimiteOT confirmó solicitar por encima del límite de la OT.
+        /// </summary>
+        public bool ConfirmarExcesoLimite { get; set; }
 
         [Required]
         [MinLength(1)]
@@ -43,12 +59,28 @@ namespace PlasticaribeAPI.Models
 
         public string? Observacion { get; set; }
 
+        /// <summary>
+        /// Fecha en que se necesita el material. Obligatoria.
+        /// </summary>
+        [Required(ErrorMessage = "Debe indicar la fecha estimada de entrega.")]
         public DateTime? FechaEstimadaEntrega { get; set; }
 
         /// <summary>
         /// Indica que el usuario vio la advertencia de disponibilidad informativa y decidió continuar.
         /// </summary>
         public bool ConfirmarSaldoNegativo { get; set; }
+
+        /// <summary>
+        /// Kg máximos que se pueden solicitar para la OT (kg de la OT más el adicional permitido).
+        /// Obligatorio en Extrusión, donde las materias primas cuentan para el límite de la OT.
+        /// </summary>
+        [Range(typeof(decimal), "0", "9999999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
+        public decimal? LimiteKgOT { get; set; }
+
+        /// <summary>
+        /// Indica que un usuario con la policy ExcederLimiteOT confirmó solicitar por encima del límite de la OT.
+        /// </summary>
+        public bool ConfirmarExcesoLimite { get; set; }
 
         [Required]
         [MinLength(1)]

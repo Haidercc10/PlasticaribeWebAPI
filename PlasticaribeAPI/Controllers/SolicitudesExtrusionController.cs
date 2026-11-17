@@ -18,6 +18,10 @@ namespace PlasticaribeAPI.Controllers
         private readonly dataContext _context;
         private readonly ReservasInventarioService _reservas;
         private readonly SolicitudesMaterialService _solicitudes;
+        private readonly IAuthorizationService _authorization;
+
+        /// <summary>Proceso en el que se solicitan materias primas, que cuentan para el límite de kg de la OT.</summary>
+        private const string ProcesoExtrusion = "EXT";
 
         /// <summary>
         /// Inicializa el controlador con el contexto de datos y los servicios de reservas y solicitudes.
@@ -25,11 +29,13 @@ namespace PlasticaribeAPI.Controllers
         /// <param name="context">Contexto de base de datos de Plasticaribe.</param>
         /// <param name="reservas">Servicio que calcula las reservas informativas.</param>
         /// <param name="solicitudes">Reglas de estado y cantidades de las solicitudes.</param>
-        public SolicitudesExtrusionController(dataContext context, ReservasInventarioService reservas, SolicitudesMaterialService solicitudes)
+        /// <param name="authorization">Evalúa la policy ExcederLimiteOT del usuario.</param>
+        public SolicitudesExtrusionController(dataContext context, ReservasInventarioService reservas, SolicitudesMaterialService solicitudes, IAuthorizationService authorization)
         {
             _context = context;
             _reservas = reservas;
             _solicitudes = solicitudes;
+            _authorization = authorization;
         }
 
         /// <summary>
@@ -95,7 +101,7 @@ namespace PlasticaribeAPI.Controllers
         /// <param name="cancellationToken">Token para cancelar la operación.</param>
         /// <returns>
         /// 201 con la solicitud creada; 400 si los datos no son válidos; 401 si el token no trae el usuario;
-        /// 409 con las advertencias de disponibilidad si falta confirmar.
+        /// 409 si supera el límite de kg de la OT (o falta confirmarlo) o con las advertencias de disponibilidad si falta confirmar.
         /// </returns>
         [HttpPost]
         public async Task<IActionResult> CrearSolicitud(SolicitudExtrusionRequest request, CancellationToken cancellationToken)
@@ -105,18 +111,34 @@ namespace PlasticaribeAPI.Controllers
 
             var errorFormato = ValidarFormatoDetalles(request.Detalles);
             if (errorFormato != null) return BadRequest(errorFormato);
+            if (request.FechaEstimadaEntrega!.Value.Date < DateTime.Today)
+                return BadRequest("La fecha estimada de entrega no puede ser anterior a hoy.");
 
             var strategy = _context.Database.CreateExecutionStrategy();
             return await strategy.ExecuteAsync<IActionResult>(async () =>
             {
                 _context.ChangeTracker.Clear();
-                await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+                // Serializable, igual que la edición, para que dos solicitudes simultáneas no superen juntas el límite de la OT.
+                await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
 
                 if (!await _context.Procesos.AnyAsync(p => p.Proceso_Id == request.ProcesoId, cancellationToken))
                     return BadRequest("El proceso indicado no existe.");
 
+                if (!await MaquinaPerteneceAlProcesoAsync(request.Maquina, request.ProcesoId, cancellationToken))
+                    return BadRequest($"La máquina {request.Maquina} no pertenece al proceso {request.ProcesoId}.");
+
                 var (errorCatalogos, nombres) = await ValidarCatalogosAsync(request.Detalles, cancellationToken);
                 if (errorCatalogos != null) return BadRequest(errorCatalogos);
+
+                var errorTipo = await ValidarTipoSubcategoriasAsync(request.ProcesoId, request.Detalles.Select(d => d.SubCatMP_Id).ToList(), nombres!, cancellationToken);
+                if (errorTipo != null) return BadRequest(errorTipo);
+
+                if (request.ProcesoId == ProcesoExtrusion)
+                {
+                    var errorLimite = await ValidarLimiteOTAsync(request.OrdenTrabajo, request.LimiteKgOT, request.ConfirmarExcesoLimite,
+                        request.Detalles, new Dictionary<int, CantidadSubcategoria>(), cancellationToken);
+                    if (errorLimite != null) return errorLimite;
+                }
 
                 var advertencias = await CalcularAdvertenciasAsync(request.Detalles, nombres!, new Dictionary<int, decimal>(), cancellationToken);
                 if (advertencias.Count > 0 && !request.ConfirmarSaldoNegativo)
@@ -159,9 +181,11 @@ namespace PlasticaribeAPI.Controllers
         /// <param name="cancellationToken">Token para cancelar la operación.</param>
         /// <returns>
         /// 200 con el estado resultante; 400 si los datos no son válidos; 404 si no existe;
-        /// 409 si la solicitud está cerrada, si se reduce por debajo de lo entregado o si falta confirmar la disponibilidad.
+        /// 409 si la solicitud está cerrada, si se reduce por debajo de lo entregado, si supera el límite de kg de la OT
+        /// o si falta confirmar la disponibilidad. Solo para la policy EditarSolicitudMaterial.
         /// </returns>
         [HttpPut("{id:long}")]
+        [Authorize(Policy = "EditarSolicitudMaterial")]
         public async Task<IActionResult> EditarSolicitud(long id, EditarSolicitudExtrusionRequest request, CancellationToken cancellationToken)
         {
             if (id == EstadosSolicitudMaterial.SolicitudGenericaId)
@@ -181,13 +205,28 @@ namespace PlasticaribeAPI.Controllers
                     .FirstOrDefaultAsync(s => s.SolMpExt_Id == id, cancellationToken);
                 if (solicitud == null) return NotFound($"La solicitud N° {id} no existe.");
                 if (EstadosSolicitudMaterial.EstaCerrada(solicitud.Estado_Id))
-                    return Conflict($"La solicitud N° {id} está finalizada o cancelada y no se puede editar.");
+                    return Conflict($"La solicitud N° {id} está finalizada, verificada o cancelada y no se puede editar.");
+
+                // Solo se exige fecha futura si se cambia, para poder editar solicitudes cuya fecha ya pasó sin moverla.
+                var fechaEntrega = request.FechaEstimadaEntrega!.Value.Date;
+                if (fechaEntrega != solicitud.SolMpExt_FechaEstimadaEntrega?.Date && fechaEntrega < DateTime.Today)
+                    return BadRequest("La fecha estimada de entrega no puede ser anterior a hoy.");
+
+                // La máquina solo se valida si cambia, para no bloquear solicitudes antiguas con máquinas que ya no están en el catálogo.
+                if (request.Maquina != solicitud.SolMpExt_Maquina &&
+                    !await MaquinaPerteneceAlProcesoAsync(request.Maquina, solicitud.Proceso_Id, cancellationToken))
+                    return BadRequest($"La máquina {request.Maquina} no pertenece al proceso {solicitud.Proceso_Id}.");
 
                 var (errorCatalogos, nombres) = await ValidarCatalogosAsync(request.Detalles, cancellationToken);
                 if (errorCatalogos != null) return BadRequest(errorCatalogos);
 
                 var cantidades = (await _solicitudes.ObtenerCantidadesAsync(id, cancellationToken)).ToDictionary(c => c.SubCatMP_Id);
                 var nuevas = request.Detalles.ToDictionary(d => d.SubCatMP_Id);
+
+                // Solo se valida el tipo de las subcategorías agregadas; las que ya tenía la solicitud se respetan.
+                var agregadas = request.Detalles.Select(d => d.SubCatMP_Id).Where(s => !cantidades.ContainsKey(s)).ToList();
+                var errorTipo = await ValidarTipoSubcategoriasAsync(solicitud.Proceso_Id, agregadas, nombres!, cancellationToken);
+                if (errorTipo != null) return BadRequest(errorTipo);
 
                 var eliminadaConEntrega = cantidades.Values.FirstOrDefault(c => !nuevas.ContainsKey(c.SubCatMP_Id) && c.Asignado > 0m);
                 if (eliminadaConEntrega != null)
@@ -203,6 +242,13 @@ namespace PlasticaribeAPI.Controllers
                 var reducidaBajoEntrega = request.Detalles.FirstOrDefault(d => cantidades.TryGetValue(d.SubCatMP_Id, out var c) && d.Cantidad < c.Asignado);
                 if (reducidaBajoEntrega != null)
                     return Conflict($"La cantidad de {nombres![reducidaBajoEntrega.SubCatMP_Id]} no puede ser menor a lo ya entregado ({cantidades[reducidaBajoEntrega.SubCatMP_Id].Asignado.ToString("N2", CultureInfo.InvariantCulture)}).");
+
+                if (solicitud.Proceso_Id == ProcesoExtrusion)
+                {
+                    var errorLimite = await ValidarLimiteOTAsync(solicitud.SolMpExt_OT, request.LimiteKgOT, request.ConfirmarExcesoLimite,
+                        request.Detalles, cantidades, cancellationToken);
+                    if (errorLimite != null) return errorLimite;
+                }
 
                 var pendienteAnterior = cantidades.ToDictionary(c => c.Key, c => c.Value.Faltante);
                 var advertencias = await CalcularAdvertenciasAsync(request.Detalles, nombres!, pendienteAnterior, cancellationToken, cantidades);
@@ -244,6 +290,101 @@ namespace PlasticaribeAPI.Controllers
                 await transaction.CommitAsync(cancellationToken);
 
                 return Ok(new { SolMpExt_Id = id, Estado_Id = estado, Advertencias = advertencias });
+            });
+        }
+
+        /// <summary>Indica si la máquina (por su número) pertenece al proceso.</summary>
+        private Task<bool> MaquinaPerteneceAlProcesoAsync(int maquina, string proceso, CancellationToken cancellationToken) =>
+            _context.Maquinas.AsNoTracking().AnyAsync(m => m.Maq_Numero == maquina && m.Proceso_Id == proceso, cancellationToken);
+
+        /// <summary>
+        /// Comprueba que las subcategorías correspondan al proceso, con el mismo criterio de la búsqueda de subcategorías:
+        /// en Extrusión deben agrupar materias primas y en los demás procesos deben agrupar tintas.
+        /// </summary>
+        /// <returns>Mensaje de error, o null si todas corresponden.</returns>
+        private async Task<string?> ValidarTipoSubcategoriasAsync(
+            string proceso,
+            IReadOnlyCollection<int> subcategorias,
+            IReadOnlyDictionary<int, string> nombres,
+            CancellationToken cancellationToken)
+        {
+            if (subcategorias.Count == 0) return null;
+
+            var ids = subcategorias.ToList();
+            var esExtrusion = proceso == ProcesoExtrusion;
+            var validas = esExtrusion
+                ? await _context.Materias_Primas
+                    .AsNoTracking()
+                    .Where(m => m.MatPri_Id != SolicitudesMaterialService.MateriaPrimaGenericaId && m.SubCatMP_Id != null && ids.Contains(m.SubCatMP_Id.Value))
+                    .Select(m => m.SubCatMP_Id!.Value)
+                    .Distinct()
+                    .ToListAsync(cancellationToken)
+                : await _context.Tintas
+                    .AsNoTracking()
+                    .Where(t => t.Tinta_Id != SolicitudesMaterialService.TintaGenericaId && t.SubCatMP_Id != null && ids.Contains(t.SubCatMP_Id.Value))
+                    .Select(t => t.SubCatMP_Id!.Value)
+                    .Distinct()
+                    .ToListAsync(cancellationToken);
+
+            var invalida = ids.FirstOrDefault(s => !validas.Contains(s));
+            if (invalida == 0) return null;
+            var nombre = nombres.TryGetValue(invalida, out var n) ? n.Trim() : invalida.ToString(CultureInfo.InvariantCulture);
+            return esExtrusion
+                ? $"La subcategoría {nombre} no tiene materias primas; en Extrusión solo se solicitan materias primas."
+                : $"La subcategoría {nombre} no tiene tintas; en el proceso {proceso} solo se solicitan tintas.";
+        }
+
+        /// <summary>
+        /// Valida que la solicitud no haga superar el límite de kg de la OT: lo asignado más lo solicitado pendiente de la OT
+        /// más el aumento de pendiente que genera esta operación (solo materias primas; las tintas no cuentan).
+        /// Si lo supera, solo la policy ExcederLimiteOT puede continuar, y debe confirmarlo.
+        /// </summary>
+        /// <param name="ot">Orden de trabajo.</param>
+        /// <param name="limite">Kg máximos de la OT enviados por el cliente (kg de la OT más el adicional).</param>
+        /// <param name="confirmar">El usuario confirmó superar el límite.</param>
+        /// <param name="detalles">Detalles finales de la solicitud.</param>
+        /// <param name="cantidades">Cantidades que ya tenía la solicitud (vacío al crear).</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>Respuesta de error, o null si puede continuar.</returns>
+        private async Task<IActionResult?> ValidarLimiteOTAsync(
+            long ot,
+            decimal? limite,
+            bool confirmar,
+            IReadOnlyCollection<SolicitudExtrusionDetalleRequest> detalles,
+            IReadOnlyDictionary<int, CantidadSubcategoria> cantidades,
+            CancellationToken cancellationToken)
+        {
+            if (limite == null)
+                return BadRequest("Debe indicar el límite de kg de la OT para solicitar materias primas de Extrusión.");
+
+            var ids = detalles.Select(d => d.SubCatMP_Id).Concat(cantidades.Keys).Distinct().ToList();
+            var tintas = await _solicitudes.ObtenerSubcategoriasDeTintaAsync(ids, cancellationToken);
+
+            var pendienteNuevo = detalles
+                .Where(d => !tintas.Contains(d.SubCatMP_Id))
+                .Sum(d => Math.Max(0m, d.Cantidad - (cantidades.TryGetValue(d.SubCatMP_Id, out var c) ? c.Asignado : 0m)));
+            var pendienteAnterior = cantidades.Values
+                .Where(c => !tintas.Contains(c.SubCatMP_Id))
+                .Sum(c => c.Faltante);
+            var aumento = pendienteNuevo - pendienteAnterior;
+            if (aumento <= 0m) return null;
+
+            var consumo = await _solicitudes.CalcularConsumoOTAsync(ot, cancellationToken);
+            var pendienteOT = await _solicitudes.ObtenerPendientePorAsignarOTAsync(ot, cancellationToken);
+            var exceso = consumo + pendienteOT + aumento - limite.Value;
+            if (exceso <= 0m) return null;
+
+            var puedeExceder = (await _authorization.AuthorizeAsync(User, "ExcederLimiteOT")).Succeeded;
+            if (puedeExceder && confirmar) return null;
+
+            var kg = exceso.ToString("N2", CultureInfo.InvariantCulture);
+            return Conflict(new
+            {
+                RequiereConfirmacionLimite = puedeExceder,
+                Mensaje = puedeExceder
+                    ? $"La solicitud supera en {kg} kg el límite de la OT {ot}."
+                    : $"La solicitud supera en {kg} kg el límite de la OT {ot}. Debe solicitar permisos al administrador.",
+                ExcesoKg = exceso
             });
         }
 
