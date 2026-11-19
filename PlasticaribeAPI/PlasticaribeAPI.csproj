@@ -7,6 +7,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <DocumentationFile></DocumentationFile>
 	<NoWarn>$(NoWarn);NU1701</NoWarn>
+    <UserSecretsId>b0c0cf1f-b94d-4d7a-99ca-1d04668bfd6c</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Migrations\20220428230504_AdiciosEmpresa.cs" />
