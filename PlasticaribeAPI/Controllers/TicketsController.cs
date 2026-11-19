@@ -238,36 +238,63 @@ namespace PlasticaribeAPI.Controllers
         /// <param name="incluirFinalizados">Si es true también devuelve resueltos y cancelados.</param>
         /// <param name="fechaInicio">Fecha de creación desde (inclusive). Por defecto, un año antes de <paramref name="fechaFin"/>.</param>
         /// <param name="fechaFin">Fecha de creación hasta (inclusive, día completo). Por defecto, hoy.</param>
+        /// <param name="incluirResueltosMes">
+        /// Si es true también devuelve los resueltos en el mes actual (por fecha de resolución, sin importar la fecha de creación),
+        /// para que la lista coincida con la tarjeta "Resueltos en el mes".
+        /// </param>
         [HttpGet("gestion")]
-        public async Task<ActionResult> GetGestion(bool incluirFinalizados = false, DateTime? fechaInicio = null, DateTime? fechaFin = null)
+        public async Task<ActionResult> GetGestion(bool incluirFinalizados = false, DateTime? fechaInicio = null, DateTime? fechaFin = null,
+            bool incluirResueltosMes = false)
         {
             if (!await EsSoporteAsync()) return Forbid();
             if (!TryRangoFechas(fechaInicio, fechaFin, out var desde, out var hasta, out var error)) return BadRequest(error);
+            var (inicioMes, inicioMesSiguiente) = RangoMesActual();
             // TEMPORAL: los pendientes (abiertos y en revisión) salen siempre, sin importar la fecha, para que
             // ningún ticket sin atender quede oculto por el rango. El rango solo limita a resueltos y cancelados.
             var consulta = _context.Tickets.AsNoTracking()
                 .Where(t => t.Estado_Id == (int)EstadoTicket.ABIERTO || t.Estado_Id == (int)EstadoTicket.EN_REVISION
-                    || (incluirFinalizados && t.Ticket_FechaCreacion >= desde && t.Ticket_FechaCreacion < hasta));
+                    || (incluirFinalizados && t.Ticket_FechaCreacion >= desde && t.Ticket_FechaCreacion < hasta)
+                    || (incluirResueltosMes && t.Estado_Id == (int)EstadoTicket.RESUELTO
+                        && t.Ticket_FechaResolucion >= inicioMes && t.Ticket_FechaResolucion < inicioMesSiguiente));
             return Ok(await ProyectarListado(consulta).ToListAsync());
         }
 
         /// <summary>
-        /// Cantidades para las tarjetas de soporte: abiertos, en revisión y resueltos en el mes actual.
+        /// Cantidades para las tarjetas de soporte: abiertos, en revisión, resueltos en el mes actual y
+        /// el promedio de días (con decimales) entre la creación y la resolución de esos resueltos (null si no hay).
         /// </summary>
         [HttpGet("cantidades")]
         public async Task<ActionResult> GetCantidades()
         {
             if (!await EsSoporteAsync()) return Forbid();
-            var hoy = DateTime.Now;
-            var inicioMes = new DateTime(hoy.Year, hoy.Month, 1);
-            var inicioMesSiguiente = inicioMes.AddMonths(1);
+            var (inicioMes, inicioMesSiguiente) = RangoMesActual();
 
             var abiertos = await _context.Tickets.CountAsync(t => t.Estado_Id == (int)EstadoTicket.ABIERTO);
             var enRevision = await _context.Tickets.CountAsync(t => t.Estado_Id == (int)EstadoTicket.EN_REVISION);
-            var resueltosMes = await _context.Tickets.CountAsync(t => t.Estado_Id == (int)EstadoTicket.RESUELTO
-                && t.Ticket_FechaResolucion >= inicioMes && t.Ticket_FechaResolucion < inicioMesSiguiente);
+            // Pocos registros por mes: se traen las dos fechas y el promedio se calcula en memoria.
+            var resueltos = await _context.Tickets.AsNoTracking()
+                .Where(t => t.Estado_Id == (int)EstadoTicket.RESUELTO
+                    && t.Ticket_FechaResolucion >= inicioMes && t.Ticket_FechaResolucion < inicioMesSiguiente)
+                .Select(t => new { t.Ticket_FechaCreacion, t.Ticket_FechaResolucion })
+                .ToListAsync();
+            double? promedioDiasResolucion = resueltos.Count == 0 ? null
+                : Math.Round(resueltos.Average(r => (r.Ticket_FechaResolucion!.Value - r.Ticket_FechaCreacion).TotalDays), 1);
 
-            return Ok(new { Abiertos = abiertos, EnRevision = enRevision, ResueltosMes = resueltosMes });
+            return Ok(new
+            {
+                Abiertos = abiertos,
+                EnRevision = enRevision,
+                ResueltosMes = resueltos.Count,
+                PromedioDiasResolucion = promedioDiasResolucion,
+            });
+        }
+
+        /// <summary>Del primer día del mes actual (00:00) al primer día del mes siguiente, sin incluirlo.</summary>
+        private static (DateTime Inicio, DateTime Fin) RangoMesActual()
+        {
+            var hoy = DateTime.Today;
+            var inicio = new DateTime(hoy.Year, hoy.Month, 1);
+            return (inicio, inicio.AddMonths(1));
         }
 
         /// <summary>
@@ -439,7 +466,11 @@ namespace PlasticaribeAPI.Controllers
 
         // ---------------------------------------------------------------- utilidades
 
-        private static IQueryable<object> ProyectarListado(IQueryable<Tickets> consulta) =>
+        /// <summary>
+        /// Columnas del listado de tickets. Incluye el último movimiento del historial (fecha, hora y autor) para que
+        /// soporte vea la última actividad y si el reportante comentó después de la última respuesta de soporte.
+        /// </summary>
+        private IQueryable<object> ProyectarListado(IQueryable<Tickets> consulta) =>
             consulta
                 .OrderByDescending(t => t.Ticket_Id)
                 .Select(t => new
@@ -455,6 +486,14 @@ namespace PlasticaribeAPI.Controllers
                     Usuario = t.Usuario != null ? t.Usuario.Usua_Nombre : "",
                     Area = t.Usuario != null && t.Usuario.Area != null ? t.Usuario.Area.Area_Nombre : "",
                     RegistradoPor = t.UsuarioRegistra != null ? t.UsuarioRegistra.Usua_Nombre : null,
+                    // Último movimiento del historial (null si aún no tiene respuestas ni cambios). Subconsultas escalares:
+                    // EF las traduce directo a SQL, a diferencia de comparar con null un objeto anónimo de FirstOrDefault.
+                    UltimaActividadFecha = _context.Tickets_Revisados.Where(r => r.Ticket_Id == t.Ticket_Id)
+                        .OrderByDescending(r => r.TicketRev_Id).Select(r => (DateTime?)r.TicketRev_Fecha).FirstOrDefault(),
+                    UltimaActividadHora = _context.Tickets_Revisados.Where(r => r.Ticket_Id == t.Ticket_Id)
+                        .OrderByDescending(r => r.TicketRev_Id).Select(r => r.TicketRev_Hora).FirstOrDefault(),
+                    UltimoAutorId = _context.Tickets_Revisados.Where(r => r.Ticket_Id == t.Ticket_Id)
+                        .OrderByDescending(r => r.TicketRev_Id).Select(r => (long?)r.Usua_Id).FirstOrDefault(),
                 });
 
         /// <summary>
