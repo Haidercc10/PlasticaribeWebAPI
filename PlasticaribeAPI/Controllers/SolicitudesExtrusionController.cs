@@ -111,6 +111,8 @@ namespace PlasticaribeAPI.Controllers
 
             var errorFormato = ValidarFormatoDetalles(request.Detalles);
             if (errorFormato != null) return BadRequest(errorFormato);
+            var (maquinas, errorMaquinas) = ReglasSolicitudMaterial.ValidarMaquinas(request.Maquinas, request.Maquina);
+            if (errorMaquinas != null) return BadRequest(errorMaquinas);
             if (request.FechaEstimadaEntrega!.Value.Date < DateTime.Today)
                 return BadRequest("La fecha estimada de entrega no puede ser anterior a hoy.");
 
@@ -124,14 +126,18 @@ namespace PlasticaribeAPI.Controllers
                 if (!await _context.Procesos.AnyAsync(p => p.Proceso_Id == request.ProcesoId, cancellationToken))
                     return BadRequest("El proceso indicado no existe.");
 
-                if (!await MaquinaPerteneceAlProcesoAsync(request.Maquina, request.ProcesoId, cancellationToken))
-                    return BadRequest($"La máquina {request.Maquina} no pertenece al proceso {request.ProcesoId}.");
+                var maquinaInvalida = await MaquinaFueraDelProcesoAsync(maquinas!.Select(m => m.Maquina).ToList(), request.ProcesoId, cancellationToken);
+                if (maquinaInvalida != null)
+                    return BadRequest($"La máquina {maquinaInvalida} no pertenece al proceso {request.ProcesoId}.");
 
                 var (errorCatalogos, nombres) = await ValidarCatalogosAsync(request.Detalles, cancellationToken);
                 if (errorCatalogos != null) return BadRequest(errorCatalogos);
 
                 var errorTipo = await ValidarTipoSubcategoriasAsync(request.ProcesoId, request.Detalles.Select(d => d.SubCatMP_Id).ToList(), nombres!, cancellationToken);
                 if (errorTipo != null) return BadRequest(errorTipo);
+
+                var errorMateriales = await ValidarMaterialesCatalogoAsync(request.ProcesoId, request.Detalles, nombres!, cancellationToken);
+                if (errorMateriales != null) return BadRequest(errorMateriales);
 
                 if (request.ProcesoId == ProcesoExtrusion)
                 {
@@ -148,7 +154,7 @@ namespace PlasticaribeAPI.Controllers
                 var solicitud = new Solicitud_MatPrimaExtrusion
                 {
                     SolMpExt_OT = request.OrdenTrabajo,
-                    SolMpExt_Maquina = request.Maquina,
+                    SolMpExt_Maquina = maquinas![0].Maquina, // la primera máquina, para los reportes anteriores
                     Proceso_Id = request.ProcesoId,
                     Estado_Id = EstadosSolicitudMaterial.Pendiente,
                     Usua_Id = usuarioId,
@@ -160,7 +166,12 @@ namespace PlasticaribeAPI.Controllers
                 _context.Solicitud_MatPrimaExtrusion.Add(solicitud);
                 await _context.SaveChangesAsync(cancellationToken);
 
-                _context.DetSolicitud_MatPrimaExtrusion.AddRange(request.Detalles.Select(d => NuevoDetalle(solicitud.SolMpExt_Id, d, nombres![d.SubCatMP_Id])));
+                var detalles = request.Detalles.Select(d => (Request: d, Entidad: NuevoDetalle(solicitud.SolMpExt_Id, d, nombres![d.SubCatMP_Id]))).ToList();
+                _context.DetSolicitud_MatPrimaExtrusion.AddRange(detalles.Select(d => d.Entidad));
+                await _context.SaveChangesAsync(cancellationToken);
+
+                _context.DetSolicitud_Materiales.AddRange(detalles.SelectMany(d => NuevosMateriales(solicitud.SolMpExt_Id, d.Entidad.Codigo, d.Request.Materiales)));
+                _context.Solicitud_Maquinas.AddRange(maquinas!.Select(m => NuevaMaquina(solicitud.SolMpExt_Id, m)));
                 await _context.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
 
@@ -193,6 +204,8 @@ namespace PlasticaribeAPI.Controllers
 
             var errorFormato = ValidarFormatoDetalles(request.Detalles);
             if (errorFormato != null) return BadRequest(errorFormato);
+            var (maquinas, errorMaquinas) = ReglasSolicitudMaterial.ValidarMaquinas(request.Maquinas, request.Maquina);
+            if (errorMaquinas != null) return BadRequest(errorMaquinas);
 
             var strategy = _context.Database.CreateExecutionStrategy();
             return await strategy.ExecuteAsync<IActionResult>(async () =>
@@ -212,13 +225,23 @@ namespace PlasticaribeAPI.Controllers
                 if (fechaEntrega != solicitud.SolMpExt_FechaEstimadaEntrega?.Date && fechaEntrega < DateTime.Today)
                     return BadRequest("La fecha estimada de entrega no puede ser anterior a hoy.");
 
-                // La máquina solo se valida si cambia, para no bloquear solicitudes antiguas con máquinas que ya no están en el catálogo.
-                if (request.Maquina != solicitud.SolMpExt_Maquina &&
-                    !await MaquinaPerteneceAlProcesoAsync(request.Maquina, solicitud.Proceso_Id, cancellationToken))
-                    return BadRequest($"La máquina {request.Maquina} no pertenece al proceso {solicitud.Proceso_Id}.");
+                // Solo se validan las máquinas agregadas, para no bloquear solicitudes antiguas con máquinas que ya no están en el catálogo.
+                var maquinasActuales = await _context.Solicitud_Maquinas
+                    .AsNoTracking()
+                    .Where(m => m.SolMpExt_Id == id)
+                    .Select(m => m.SolMaq_Maquina)
+                    .ToListAsync(cancellationToken);
+                maquinasActuales.Add(solicitud.SolMpExt_Maquina);
+                var maquinaInvalida = await MaquinaFueraDelProcesoAsync(
+                    maquinas!.Select(m => m.Maquina).Where(m => !maquinasActuales.Contains(m)).ToList(), solicitud.Proceso_Id, cancellationToken);
+                if (maquinaInvalida != null)
+                    return BadRequest($"La máquina {maquinaInvalida} no pertenece al proceso {solicitud.Proceso_Id}.");
 
                 var (errorCatalogos, nombres) = await ValidarCatalogosAsync(request.Detalles, cancellationToken);
                 if (errorCatalogos != null) return BadRequest(errorCatalogos);
+
+                var errorMateriales = await ValidarMaterialesCatalogoAsync(solicitud.Proceso_Id, request.Detalles, nombres!, cancellationToken);
+                if (errorMateriales != null) return BadRequest(errorMateriales);
 
                 var cantidades = (await _solicitudes.ObtenerCantidadesAsync(id, cancellationToken)).ToDictionary(c => c.SubCatMP_Id);
                 var nuevas = request.Detalles.ToDictionary(d => d.SubCatMP_Id);
@@ -255,7 +278,7 @@ namespace PlasticaribeAPI.Controllers
                 if (advertencias.Count > 0 && !request.ConfirmarSaldoNegativo)
                     return ConflictoDisponibilidad(advertencias);
 
-                solicitud.SolMpExt_Maquina = request.Maquina;
+                solicitud.SolMpExt_Maquina = maquinas![0].Maquina; // la primera máquina, para los reportes anteriores
                 solicitud.SolMpExt_Observacion = request.Observacion;
                 solicitud.SolMpExt_FechaEstimadaEntrega = request.FechaEstimadaEntrega?.Date;
 
@@ -281,11 +304,15 @@ namespace PlasticaribeAPI.Controllers
                 }
 
                 var subcategoriasExistentes = existentes.Select(d => d.SubCatMP_Id).ToHashSet();
-                _context.DetSolicitud_MatPrimaExtrusion.AddRange(request.Detalles
+                var agregados = request.Detalles
                     .Where(d => !subcategoriasExistentes.Contains(d.SubCatMP_Id))
-                    .Select(d => NuevoDetalle(id, d, nombres![d.SubCatMP_Id])));
+                    .Select(d => NuevoDetalle(id, d, nombres![d.SubCatMP_Id]))
+                    .ToList();
+                _context.DetSolicitud_MatPrimaExtrusion.AddRange(agregados);
 
                 await _context.SaveChangesAsync(cancellationToken);
+                await ReemplazarMaterialesAsync(id, request.Detalles, existentes.Concat(agregados), cancellationToken);
+                await ReemplazarMaquinasAsync(id, maquinas!, cancellationToken);
                 var estado = await _solicitudes.RecalcularEstadoAsync(id, cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
 
@@ -293,9 +320,399 @@ namespace PlasticaribeAPI.Controllers
             });
         }
 
-        /// <summary>Indica si la máquina (por su número) pertenece al proceso.</summary>
-        private Task<bool> MaquinaPerteneceAlProcesoAsync(int maquina, string proceso, CancellationToken cancellationToken) =>
-            _context.Maquinas.AsNoTracking().AnyAsync(m => m.Maq_Numero == maquina && m.Proceso_Id == proceso, cancellationToken);
+        /// <summary>
+        /// Consulta las solicitudes para el reporte de movimientos: una fila por solicitud, de la más nueva a la más vieja.
+        /// Al buscar por número de solicitud no se aplican las fechas. Sin fechas no hay límite de tiempo.
+        /// </summary>
+        /// <param name="desde">Fecha inicial de creación (opcional).</param>
+        /// <param name="hasta">Fecha final de creación (opcional).</param>
+        /// <param name="id">Número exacto de la solicitud (opcional).</param>
+        /// <param name="ot">Orden de trabajo exacta (opcional).</param>
+        /// <param name="estados">Estados separados por coma, p. ej. "11,12" (opcional).</param>
+        /// <param name="soloMias">Solo las solicitudes creadas por el usuario del token (página del solicitante).</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>Solicitudes encontradas con sus máquinas; 400 si el filtro de estados no es válido.</returns>
+        [HttpGet("consulta")]
+        public async Task<IActionResult> Consultar(
+            [FromQuery] DateTime? desde,
+            [FromQuery] DateTime? hasta,
+            [FromQuery] long? id,
+            [FromQuery] long? ot,
+            [FromQuery] string? estados,
+            [FromQuery] bool soloMias,
+            CancellationToken cancellationToken)
+        {
+            long usuarioId = 0;
+            if (soloMias && !long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out usuarioId))
+                return Unauthorized();
+
+            var listaEstados = new List<int>();
+            foreach (var texto in (estados ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            {
+                if (!int.TryParse(texto, NumberStyles.None, CultureInfo.InvariantCulture, out var estado))
+                    return BadRequest("El filtro de estados no es válido.");
+                listaEstados.Add(estado);
+            }
+
+            var consulta = _context.Solicitud_MatPrimaExtrusion
+                .AsNoTracking()
+                .Where(s => s.SolMpExt_Id != EstadosSolicitudMaterial.SolicitudGenericaId);
+            if (id != null)
+            {
+                consulta = consulta.Where(s => s.SolMpExt_Id == id);
+            }
+            else
+            {
+                if (desde != null) consulta = consulta.Where(s => s.SolMpExt_Fecha >= desde.Value.Date);
+                if (hasta != null) consulta = consulta.Where(s => s.SolMpExt_Fecha <= hasta.Value.Date);
+            }
+            if (ot != null) consulta = consulta.Where(s => s.SolMpExt_OT == ot);
+            if (soloMias) consulta = consulta.Where(s => s.Usua_Id == usuarioId);
+            if (listaEstados.Count > 0) consulta = consulta.Where(s => listaEstados.Contains(s.Estado_Id));
+
+            var solicitudes = await consulta
+                .OrderByDescending(s => s.SolMpExt_Id)
+                .Select(s => new
+                {
+                    Id = s.SolMpExt_Id,
+                    OT = s.SolMpExt_OT,
+                    s.Proceso_Id,
+                    Proceso = s.Proceso!.Proceso_Nombre,
+                    s.Estado_Id,
+                    Estado = s.Estado!.Estado_Nombre,
+                    s.Usua_Id,
+                    Usuario = s.Usua!.Usua_Nombre,
+                    Fecha = s.SolMpExt_Fecha,
+                    Hora = s.SolMpExt_Hora,
+                    FechaEntrega = s.SolMpExt_FechaEstimadaEntrega,
+                    Observacion = s.SolMpExt_Observacion,
+                    MaquinaPrincipal = s.SolMpExt_Maquina,
+                    Maquinas = _context.Solicitud_Maquinas
+                        .Where(m => m.SolMpExt_Id == s.SolMpExt_Id)
+                        .OrderBy(m => m.SolMaq_Id)
+                        .Select(m => new { Maquina = m.SolMaq_Maquina, Porcentaje = m.SolMaq_Porcentaje })
+                        .ToList()
+                })
+                .ToListAsync(cancellationToken);
+
+            return Ok(solicitudes);
+        }
+
+        /// <summary>
+        /// Cuenta las solicitudes por estado (sin la solicitud genérica), con el mismo criterio de la consulta sin fechas.
+        /// </summary>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>Cantidad de solicitudes por estado.</returns>
+        [HttpGet("conteo-estados")]
+        public async Task<IActionResult> ContarPorEstado(CancellationToken cancellationToken)
+        {
+            var conteo = await _context.Solicitud_MatPrimaExtrusion
+                .AsNoTracking()
+                .Where(s => s.SolMpExt_Id != EstadosSolicitudMaterial.SolicitudGenericaId)
+                .GroupBy(s => new { s.Estado_Id, s.Estado!.Estado_Nombre })
+                .Select(g => new { g.Key.Estado_Id, Estado = g.Key.Estado_Nombre, Cantidad = g.Count() })
+                .ToListAsync(cancellationToken);
+
+            return Ok(conteo);
+        }
+
+        /// <summary>
+        /// Obtiene una solicitud con sus máquinas y sus subcategorías; cada subcategoría trae sus materiales con lo
+        /// solicitado, lo entregado y el stock. Los materiales entregados que no se solicitaron (sustitutos de la misma
+        /// subcategoría) aparecen con solicitado 0. Las solicitudes anteriores no tienen materiales.
+        /// </summary>
+        /// <param name="id">Identificador de la solicitud.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>La solicitud; 404 si no existe; 400 para la solicitud genérica.</returns>
+        [HttpGet("{id:long}")]
+        public async Task<IActionResult> ObtenerDetalle(long id, CancellationToken cancellationToken)
+        {
+            if (id == EstadosSolicitudMaterial.SolicitudGenericaId)
+                return BadRequest("La solicitud genérica no tiene detalle.");
+
+            var encabezado = await _context.Solicitud_MatPrimaExtrusion
+                .AsNoTracking()
+                .Where(s => s.SolMpExt_Id == id)
+                .Select(s => new
+                {
+                    s.SolMpExt_OT,
+                    s.Proceso_Id,
+                    Proceso = s.Proceso!.Proceso_Nombre,
+                    s.Estado_Id,
+                    Estado = s.Estado!.Estado_Nombre,
+                    s.Usua_Id,
+                    Usuario = s.Usua!.Usua_Nombre,
+                    s.SolMpExt_Fecha,
+                    s.SolMpExt_Hora,
+                    s.SolMpExt_FechaEstimadaEntrega,
+                    s.SolMpExt_Observacion,
+                    s.SolMpExt_Maquina
+                })
+                .FirstOrDefaultAsync(cancellationToken);
+            if (encabezado == null) return NotFound($"La solicitud N° {id} no existe.");
+
+            var maquinas = await _context.Solicitud_Maquinas
+                .AsNoTracking()
+                .Where(m => m.SolMpExt_Id == id)
+                .OrderBy(m => m.SolMaq_Id)
+                .Select(m => new MaquinaSolicitud(m.SolMaq_Maquina, m.SolMaq_Porcentaje))
+                .ToListAsync(cancellationToken);
+            if (maquinas.Count == 0) maquinas.Add(new MaquinaSolicitud(encabezado.SolMpExt_Maquina, 100m));
+
+            var filas = await _context.DetSolicitud_MatPrimaExtrusion
+                .AsNoTracking()
+                .Where(d => d.SolMpExt_Id == id)
+                .OrderBy(d => d.Codigo)
+                .Select(d => new { d.Codigo, d.SubCatMP_Id, d.SubCatMP_Nombre, d.UndMed_Id, d.DtSolMpExt_Cantidad })
+                .ToListAsync(cancellationToken);
+
+            var solicitados = await _context.DetSolicitud_Materiales
+                .AsNoTracking()
+                .Where(m => m.SolMpExt_Id == id)
+                .OrderBy(m => m.DtSolMat_Id)
+                .Select(m => new
+                {
+                    m.Codigo,
+                    Tipo = m.DtSolMat_TipoMaterial,
+                    MaterialId = m.MatPri_Id ?? m.Tinta_Id ?? 0,
+                    Nombre = m.MatPri_Id != null ? m.MatPri!.MatPri_Nombre : m.Tinta!.Tinta_Nombre,
+                    UndMed_Id = m.MatPri_Id != null ? m.MatPri!.UndMed_Id : m.Tinta!.UndMed_Id,
+                    Stock = m.MatPri_Id != null ? m.MatPri!.MatPri_Stock : m.Tinta!.Tinta_Stock,
+                    Cantidad = m.DtSolMat_Cantidad
+                })
+                .ToListAsync(cancellationToken);
+
+            var asignado = await _solicitudes.ObtenerAsignadoAsync([id], cancellationToken);
+            var entregados = await _solicitudes.ObtenerAsignadoPorMaterialAsync(id, cancellationToken);
+            var entregadoPorMaquina = await _solicitudes.ObtenerAsignadoPorMaquinaAsync(id, cancellationToken);
+            var asignaciones = await _solicitudes.ObtenerAsignacionesAsync(id, cancellationToken);
+            var reservas = (await _reservas.ObtenerReservasAsync(filas.Select(f => f.SubCatMP_Id).Distinct().ToList(), cancellationToken))
+                .ToDictionary(r => r.SubCatMP_Id);
+
+            var subcategorias = filas
+                .GroupBy(f => f.SubCatMP_Id)
+                .Select(g =>
+                {
+                    var codigos = g.Select(f => f.Codigo).ToHashSet();
+                    var pedidos = solicitados.Where(m => codigos.Contains(m.Codigo)).ToList();
+                    var entregadosSub = entregados.Where(e => e.SubCatMP_Id == g.Key).ToList();
+
+                    // Materiales solicitados (en su orden) y luego los entregados que no se pidieron.
+                    var materiales = pedidos
+                        .GroupBy(m => (m.Tipo, m.MaterialId))
+                        .Select(m =>
+                        {
+                            var primero = m.First();
+                            var entregado = entregadosSub.FirstOrDefault(e => e.Tipo == m.Key.Tipo && e.MaterialId == m.Key.MaterialId)?.Entregado ?? 0m;
+                            return new MaterialDetalleSolicitud(m.Key.Tipo, m.Key.MaterialId, primero.Nombre.Trim(), primero.UndMed_Id, primero.Stock, m.Sum(x => x.Cantidad), entregado, false);
+                        })
+                        .ToList();
+                    materiales.AddRange(entregadosSub
+                        .Where(e => !materiales.Any(m => m.TipoMaterial == e.Tipo && m.MaterialId == e.MaterialId))
+                        .Select(e => new MaterialDetalleSolicitud(e.Tipo, e.MaterialId, e.Nombre.Trim(), e.UndMed_Id, e.Stock, 0m, e.Entregado, pedidos.Count > 0)));
+
+                    var solicitado = g.Sum(f => f.DtSolMpExt_Cantidad);
+                    var entregadoSub = asignado.GetValueOrDefault((id, g.Key));
+                    reservas.TryGetValue(g.Key, out var reserva);
+                    return new
+                    {
+                        Codigo = g.Min(f => f.Codigo),
+                        SubCatMP_Id = g.Key,
+                        Nombre = g.First().SubCatMP_Nombre.Trim(),
+                        g.First().UndMed_Id,
+                        Solicitado = solicitado,
+                        Entregado = entregadoSub,
+                        Faltante = Math.Max(0m, solicitado - entregadoSub),
+                        Stock = reserva?.Existencia ?? 0m,
+                        Disponible = reserva?.Disponible ?? 0m,
+                        ConMateriales = pedidos.Count > 0,
+                        Materiales = materiales
+                    };
+                })
+                .ToList();
+
+            return Ok(new
+            {
+                Id = id,
+                OT = encabezado.SolMpExt_OT,
+                encabezado.Proceso_Id,
+                encabezado.Proceso,
+                encabezado.Estado_Id,
+                encabezado.Estado,
+                encabezado.Usua_Id,
+                encabezado.Usuario,
+                Fecha = encabezado.SolMpExt_Fecha,
+                Hora = encabezado.SolMpExt_Hora,
+                FechaEntrega = encabezado.SolMpExt_FechaEstimadaEntrega,
+                Observacion = encabezado.SolMpExt_Observacion,
+                // Por máquina: su porcentaje, lo que le toca del total solicitado (informativo) y lo ya entregado a ella.
+                Maquinas = maquinas.Select(m => new
+                {
+                    m.Maquina,
+                    m.Porcentaje,
+                    Objetivo = Math.Round(subcategorias.Sum(s => s.Solicitado) * m.Porcentaje / 100m, 2),
+                    Entregado = entregadoPorMaquina.GetValueOrDefault(m.Maquina)
+                }),
+                Subcategorias = subcategorias,
+                // Asignaciones de la solicitud (para "Ver asignación PDF" en Movimientos).
+                Asignaciones = asignaciones
+            });
+        }
+
+        /// <summary>
+        /// Finaliza (5) o cancela (4) una solicitud. Quien gestiona solicitudes (policy GestionarSolicitudMaterial) lo hace
+        /// con las pendientes y parciales; el solicitante solo puede cancelar la suya mientras esté pendiente.
+        /// La actualización es condicional al estado leído, así no se cambia una solicitud que otra operación modificó.
+        /// </summary>
+        /// <param name="id">Identificador de la solicitud.</param>
+        /// <param name="request">Estado nuevo.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>200 con el estado nuevo; 400, 403, 404 o 409 según la regla que no se cumple.</returns>
+        [HttpPut("{id:long}/estado")]
+        public async Task<IActionResult> CambiarEstado(long id, CambiarEstadoSolicitudRequest request, CancellationToken cancellationToken)
+        {
+            if (!long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var usuarioId))
+                return Unauthorized();
+            if (id == EstadosSolicitudMaterial.SolicitudGenericaId)
+                return Conflict("La solicitud genérica no se puede finalizar ni cancelar.");
+
+            var actual = await _context.Solicitud_MatPrimaExtrusion
+                .AsNoTracking()
+                .Where(s => s.SolMpExt_Id == id)
+                .Select(s => new { s.Estado_Id, s.Usua_Id })
+                .FirstOrDefaultAsync(cancellationToken);
+            if (actual == null) return NotFound($"La solicitud N° {id} no existe.");
+
+            var esGestor = (await _authorization.AuthorizeAsync(User, "GestionarSolicitudMaterial")).Succeeded;
+            var esDueno = actual.Usua_Id == usuarioId;
+            var error = ReglasSolicitudMaterial.ValidarCambioEstado(request.Estado, actual.Estado_Id, esGestor, esDueno);
+            if (error != null) return StatusCode(error.Value.StatusCode, error.Value.Mensaje);
+
+            var estadoLeido = actual.Estado_Id;
+            var actualizadas = await _context.Solicitud_MatPrimaExtrusion
+                .Where(s => s.SolMpExt_Id == id && s.Estado_Id == estadoLeido)
+                .ExecuteUpdateAsync(s => s.SetProperty(x => x.Estado_Id, request.Estado), cancellationToken);
+            if (actualizadas == 0)
+                return Conflict($"La solicitud N° {id} cambió de estado mientras tanto. Consúltela de nuevo.");
+
+            return Ok(new { SolMpExt_Id = id, Estado_Id = request.Estado });
+        }
+
+        /// <summary>
+        /// Busca la primera máquina (por su número) que no pertenece al proceso.
+        /// </summary>
+        /// <returns>El número de la máquina inválida, o null si todas pertenecen.</returns>
+        private async Task<int?> MaquinaFueraDelProcesoAsync(IReadOnlyCollection<int> maquinas, string proceso, CancellationToken cancellationToken)
+        {
+            if (maquinas.Count == 0) return null;
+            var numeros = maquinas.ToList();
+            var validas = await _context.Maquinas
+                .AsNoTracking()
+                .Where(m => m.Proceso_Id == proceso && numeros.Contains(m.Maq_Numero))
+                .Select(m => m.Maq_Numero)
+                .Distinct()
+                .ToListAsync(cancellationToken);
+            var invalidas = numeros.Where(m => !validas.Contains(m)).ToList();
+            return invalidas.Count == 0 ? null : invalidas[0];
+        }
+
+        /// <summary>
+        /// Comprueba que los materiales existan, sean del tipo del proceso (materias primas en Extrusión y tintas en
+        /// los demás) y pertenezcan a la subcategoría en la que se enviaron.
+        /// </summary>
+        /// <returns>Mensaje de error, o null si todos son válidos.</returns>
+        private async Task<string?> ValidarMaterialesCatalogoAsync(
+            string proceso,
+            IReadOnlyCollection<SolicitudExtrusionDetalleRequest> detalles,
+            IReadOnlyDictionary<int, string> nombres,
+            CancellationToken cancellationToken)
+        {
+            var materiales = detalles.SelectMany(d => (d.Materiales ?? []).Select(m => (Subcategoria: d.SubCatMP_Id, Material: m))).ToList();
+            if (materiales.Count == 0) return null;
+
+            var tipo = ReglasSolicitudMaterial.TipoMaterialDelProceso(proceso);
+            if (materiales.Any(x => x.Material.TipoMaterial != tipo))
+                return tipo == TipoMaterialInventario.MateriaPrima
+                    ? "En Extrusión solo se solicitan materias primas."
+                    : $"En el proceso {proceso} solo se solicitan tintas.";
+
+            var ids = materiales.Select(x => x.Material.MaterialId).Distinct().ToList();
+            var catalogo = tipo == TipoMaterialInventario.MateriaPrima
+                ? await _context.Materias_Primas
+                    .AsNoTracking()
+                    .Where(m => ids.Contains(m.MatPri_Id))
+                    .Select(m => new { Id = m.MatPri_Id, Nombre = m.MatPri_Nombre, m.SubCatMP_Id })
+                    .ToDictionaryAsync(m => m.Id, cancellationToken)
+                : await _context.Tintas
+                    .AsNoTracking()
+                    .Where(t => ids.Contains(t.Tinta_Id))
+                    .Select(t => new { Id = t.Tinta_Id, Nombre = t.Tinta_Nombre, t.SubCatMP_Id })
+                    .ToDictionaryAsync(t => t.Id, cancellationToken);
+
+            foreach (var (subcategoria, material) in materiales)
+            {
+                if (!catalogo.TryGetValue(material.MaterialId, out var encontrado))
+                    return $"El material {material.MaterialId} no existe.";
+                if (encontrado.SubCatMP_Id != subcategoria)
+                    return $"El material {encontrado.Nombre.Trim()} no pertenece a la subcategoría {nombres[subcategoria].Trim()}.";
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Guarda los materiales de cada subcategoría editada en su fila principal. Las subcategorías que no envían
+        /// materiales (formato anterior) conservan los suyos solo si siguen sumando la cantidad de la subcategoría.
+        /// Los materiales de las subcategorías quitadas ya se borraron en cascada con su fila.
+        /// </summary>
+        /// <param name="solicitudId">Solicitud editada.</param>
+        /// <param name="detalles">Subcategorías finales de la petición.</param>
+        /// <param name="filas">Filas de detalle guardadas (existentes y agregadas), ya con su código.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        private async Task ReemplazarMaterialesAsync(
+            long solicitudId,
+            IReadOnlyCollection<SolicitudExtrusionDetalleRequest> detalles,
+            IEnumerable<DetSolicitud_MatPrimaExtrusion> filas,
+            CancellationToken cancellationToken)
+        {
+            var principal = filas
+                .GroupBy(f => f.SubCatMP_Id)
+                .ToDictionary(g => g.Key, g => g.Min(f => f.Codigo));
+            var sumaPorCodigo = await _context.DetSolicitud_Materiales
+                .AsNoTracking()
+                .Where(m => m.SolMpExt_Id == solicitudId)
+                .GroupBy(m => m.Codigo)
+                .Select(g => new { Codigo = g.Key, Suma = g.Sum(x => x.DtSolMat_Cantidad) })
+                .ToDictionaryAsync(g => g.Codigo, g => g.Suma, cancellationToken);
+
+            var reemplazar = new List<long>();
+            var nuevos = new List<DetSolicitud_Materiales>();
+            foreach (var detalle in detalles)
+            {
+                var codigo = principal[detalle.SubCatMP_Id];
+                if (detalle.Materiales == null)
+                {
+                    if (sumaPorCodigo.TryGetValue(codigo, out var suma) && suma != detalle.Cantidad) reemplazar.Add(codigo);
+                    continue;
+                }
+                reemplazar.Add(codigo);
+                nuevos.AddRange(NuevosMateriales(solicitudId, codigo, detalle.Materiales));
+            }
+
+            if (reemplazar.Count > 0)
+                await _context.DetSolicitud_Materiales
+                    .Where(m => m.SolMpExt_Id == solicitudId && reemplazar.Contains(m.Codigo))
+                    .ExecuteDeleteAsync(cancellationToken);
+            _context.DetSolicitud_Materiales.AddRange(nuevos);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        /// <summary>Reemplaza las máquinas de la solicitud por las de la edición.</summary>
+        private async Task ReemplazarMaquinasAsync(long solicitudId, IEnumerable<MaquinaSolicitud> maquinas, CancellationToken cancellationToken)
+        {
+            await _context.Solicitud_Maquinas.Where(m => m.SolMpExt_Id == solicitudId).ExecuteDeleteAsync(cancellationToken);
+            _context.Solicitud_Maquinas.AddRange(maquinas.Select(m => NuevaMaquina(solicitudId, m)));
+            await _context.SaveChangesAsync(cancellationToken);
+        }
 
         /// <summary>
         /// Comprueba que las subcategorías correspondan al proceso, con el mismo criterio de la búsqueda de subcategorías:
@@ -397,7 +814,7 @@ namespace PlasticaribeAPI.Controllers
                 return "Las cantidades deben tener máximo dos decimales.";
             if (detalles.Select(d => d.SubCatMP_Id).Distinct().Count() != detalles.Count)
                 return "No se puede repetir una subcategoría en la misma solicitud.";
-            return null;
+            return ReglasSolicitudMaterial.ValidarMateriales(detalles);
         }
 
         /// <summary>
@@ -470,6 +887,45 @@ namespace PlasticaribeAPI.Controllers
             DtSolMpExt_CantidadFaltante = detalle.Cantidad,
             UndMed_Id = detalle.UndMed_Id
         };
+
+        /// <summary>Crea los materiales de una subcategoría de la solicitud.</summary>
+        private static IEnumerable<DetSolicitud_Materiales> NuevosMateriales(long solicitudId, long codigo, IEnumerable<SolicitudMaterialRequest>? materiales) =>
+            (materiales ?? []).Select(m => new DetSolicitud_Materiales
+            {
+                Codigo = codigo,
+                SolMpExt_Id = solicitudId,
+                DtSolMat_TipoMaterial = m.TipoMaterial,
+                MatPri_Id = m.TipoMaterial == TipoMaterialInventario.MateriaPrima ? m.MaterialId : null,
+                Tinta_Id = m.TipoMaterial == TipoMaterialInventario.Tinta ? m.MaterialId : null,
+                DtSolMat_Cantidad = m.Cantidad
+            });
+
+        /// <summary>Crea una máquina de la solicitud con su porcentaje.</summary>
+        private static Solicitud_Maquinas NuevaMaquina(long solicitudId, MaquinaSolicitud maquina) => new()
+        {
+            SolMpExt_Id = solicitudId,
+            SolMaq_Maquina = maquina.Maquina,
+            SolMaq_Porcentaje = maquina.Porcentaje
+        };
+
+        /// <summary>Material de una subcategoría en el detalle de la solicitud.</summary>
+        /// <param name="TipoMaterial">Materia prima o tinta.</param>
+        /// <param name="MaterialId">Identificador del material.</param>
+        /// <param name="Nombre">Nombre del material.</param>
+        /// <param name="UndMed_Id">Unidad de medida.</param>
+        /// <param name="Stock">Stock actual del material.</param>
+        /// <param name="Solicitado">Cantidad solicitada (0 si se entregó sin pedirse).</param>
+        /// <param name="Entregado">Cantidad asignada a la solicitud.</param>
+        /// <param name="EsSustituto">Se entregó en lugar de los materiales solicitados de la subcategoría.</param>
+        private sealed record MaterialDetalleSolicitud(
+            TipoMaterialInventario TipoMaterial,
+            long MaterialId,
+            string Nombre,
+            string UndMed_Id,
+            decimal Stock,
+            decimal Solicitado,
+            decimal Entregado,
+            bool EsSustituto);
 
         /// <summary>Subcategoría cuya reserva adicional supera la disponibilidad informativa.</summary>
         /// <param name="SubCatMP_Id">Subcategoría.</param>

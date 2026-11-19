@@ -10,8 +10,17 @@ namespace PlasticaribeAPI.Models
         [Range(1, long.MaxValue)]
         public long OrdenTrabajo { get; set; }
 
+        /// <summary>
+        /// Máquina única del formato anterior. Se usa solo si no se envía <see cref="Maquinas"/> (queda al 100%).
+        /// </summary>
         [Range(0, int.MaxValue)]
         public int Maquina { get; set; }
+
+        /// <summary>
+        /// Máquinas a las que va el material y el porcentaje de cada una; los porcentajes deben sumar 100.
+        /// </summary>
+        [MaxLength(20)]
+        public List<SolicitudMaquinaRequest>? Maquinas { get; set; }
 
         [Required]
         [StringLength(10, MinimumLength = 1)]
@@ -54,8 +63,17 @@ namespace PlasticaribeAPI.Models
     /// </summary>
     public sealed class EditarSolicitudExtrusionRequest
     {
+        /// <summary>
+        /// Máquina única del formato anterior. Se usa solo si no se envía <see cref="Maquinas"/> (queda al 100%).
+        /// </summary>
         [Range(0, int.MaxValue)]
         public int Maquina { get; set; }
+
+        /// <summary>
+        /// Máquinas a las que va el material y el porcentaje de cada una; los porcentajes deben sumar 100.
+        /// </summary>
+        [MaxLength(20)]
+        public List<SolicitudMaquinaRequest>? Maquinas { get; set; }
 
         public string? Observacion { get; set; }
 
@@ -102,6 +120,47 @@ namespace PlasticaribeAPI.Models
         [Required]
         [StringLength(10, MinimumLength = 1)]
         public string UndMed_Id { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Materiales de la subcategoría elegidos por el solicitante. Si se envían, <see cref="Cantidad"/> debe ser su suma.
+        /// </summary>
+        [MaxLength(100)]
+        public List<SolicitudMaterialRequest>? Materiales { get; set; }
+    }
+
+    /// <summary>
+    /// Material elegido dentro de una subcategoría de la solicitud.
+    /// </summary>
+    public sealed class SolicitudMaterialRequest
+    {
+        public TipoMaterialInventario TipoMaterial { get; set; }
+
+        [Range(1, long.MaxValue)]
+        public long MaterialId { get; set; }
+
+        [Range(typeof(decimal), "0.01", "9999999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
+        public decimal Cantidad { get; set; }
+    }
+
+    /// <summary>
+    /// Máquina de la solicitud y el porcentaje del material que le corresponde.
+    /// </summary>
+    public sealed class SolicitudMaquinaRequest
+    {
+        [Range(1, int.MaxValue)]
+        public int Maquina { get; set; }
+
+        [Range(typeof(decimal), "0.01", "100", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
+        public decimal Porcentaje { get; set; }
+    }
+
+    /// <summary>
+    /// Cambio de estado manual de una solicitud: 5 finalizar o 4 cancelar.
+    /// </summary>
+    public sealed class CambiarEstadoSolicitudRequest
+    {
+        [Range(1, int.MaxValue)]
+        public int Estado { get; set; }
     }
 
     /// <summary>

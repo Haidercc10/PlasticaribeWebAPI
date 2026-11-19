@@ -207,6 +207,16 @@ namespace PlasticaribeAPI.Service
             if (solicitud.SolMpExt_OT != request.OrdenTrabajo)
                 return RegistrarAsignacionResult.Invalid($"La solicitud N° {solicitudId} pertenece a la OT {solicitud.SolMpExt_OT}.");
 
+            // La entrega va a una de las máquinas de la solicitud (la distribución por máquina es informativa).
+            var maquinas = await _context.Solicitud_Maquinas
+                .AsNoTracking()
+                .Where(m => m.SolMpExt_Id == solicitudId)
+                .Select(m => m.SolMaq_Maquina)
+                .ToListAsync(cancellationToken);
+            if (maquinas.Count > 0 && !maquinas.Contains(request.Maquina))
+                return RegistrarAsignacionResult.Invalid(
+                    $"La máquina {request.Maquina} no está en la solicitud N° {solicitudId} (máquinas: {string.Join(", ", maquinas.Order())}).");
+
             var faltantes = (await _solicitudes.ObtenerCantidadesAsync(solicitudId, cancellationToken))
                 .ToDictionary(c => c.SubCatMP_Id, c => c.Faltante);
 

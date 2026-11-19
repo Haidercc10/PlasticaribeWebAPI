@@ -148,6 +148,8 @@ namespace PlasticaribeAPI.Data
         public DbSet<EventosCalendario> EventosCalendario { get; set; }
         public DbSet<Solicitud_MatPrimaExtrusion> Solicitud_MatPrimaExtrusion { get; set; }
         public DbSet<DetSolicitud_MatPrimaExtrusion> DetSolicitud_MatPrimaExtrusion { get; set; }
+        public DbSet<DetSolicitud_Materiales> DetSolicitud_Materiales { get; set; }
+        public DbSet<Solicitud_Maquinas> Solicitud_Maquinas { get; set; }
         public DbSet<Tipo_Solicitud_Rollos_Areas> Tipo_Solicitud_Rollos_Areas { get; set; }
         public DbSet<Solicitud_Rollos_Areas> Solicitud_Rollos_Areas { get; set; }
         public DbSet<Detalles_SolicitudRollos> Detalles_SolicitudRollos { get; set; }
@@ -961,6 +963,19 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.UndMed).WithMany().HasForeignKey(asigmp => asigmp.UndMed_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
             modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.SolMatPriExt).WithMany().HasForeignKey(asigmp => asigmp.SolMpExt_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
             modelBuilder.Entity<DetSolicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.SubCatMP).WithMany().HasForeignKey(asigmp => asigmp.SubCatMP_Id).OnDelete(DeleteBehavior.Restrict); //foranea subcategorias
+
+            //Materiales de cada subcategoría de la solicitud: se borran con su subcategoría (cascada solo por ese camino).
+            modelBuilder.Entity<DetSolicitud_Materiales>().HasOne(m => m.DetSolicitud).WithMany().HasForeignKey(m => m.Codigo).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<DetSolicitud_Materiales>().HasOne(m => m.SolMatPriExt).WithMany().HasForeignKey(m => m.SolMpExt_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<DetSolicitud_Materiales>().HasOne(m => m.MatPri).WithMany().HasForeignKey(m => m.MatPri_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<DetSolicitud_Materiales>().HasOne(m => m.Tinta).WithMany().HasForeignKey(m => m.Tinta_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<DetSolicitud_Materiales>().Property(m => m.DtSolMat_TipoMaterial).HasConversion<int>();
+            modelBuilder.Entity<DetSolicitud_Materiales>().ToTable(tb => tb.HasCheckConstraint("CK_DetSolicitud_Materiales_Tipo",
+                "([DtSolMat_TipoMaterial] = 1 AND [MatPri_Id] IS NOT NULL AND [Tinta_Id] IS NULL) OR ([DtSolMat_TipoMaterial] = 2 AND [Tinta_Id] IS NOT NULL AND [MatPri_Id] IS NULL)"));
+
+            //Máquinas de la solicitud con su porcentaje (una fila por máquina).
+            modelBuilder.Entity<Solicitud_Maquinas>().HasOne(m => m.SolMatPriExt).WithMany().HasForeignKey(m => m.SolMpExt_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Solicitud_Maquinas>().HasIndex(m => new { m.SolMpExt_Id, m.SolMaq_Maquina }).IsUnique();
 
             //Solicitud de Rollos a Areas
             modelBuilder.Entity<Solicitud_Rollos_Areas>().ToTable(tb => tb.HasTrigger("Auditoria_Solicitud_Rollos_Areas"));

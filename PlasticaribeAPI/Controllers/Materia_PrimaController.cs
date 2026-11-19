@@ -1827,6 +1827,7 @@ namespace PlasticaribeAPI.Controllers
                                         Subcategoria = mp.SubcategoriasMP.SubCatMP_Nombre,
                                         Id_Subcategoria = mp.SubCatMP_Id,
                                         Precio = mp.MatPri_Precio,
+                                        UndMed_Id = mp.UndMed_Id,
                                     }).ToListAsync();
                 return Ok(result);
             }
@@ -1842,6 +1843,7 @@ namespace PlasticaribeAPI.Controllers
                                         Subcategoria = tt.SubcategoriasMP.SubCatMP_Nombre,
                                         Id_Subcategoria = tt.SubCatMP_Id,
                                         Precio = tt.Tinta_Precio,
+                                        UndMed_Id = tt.UndMed_Id,
                                     }).ToListAsync();
                 return Ok(result);
             }

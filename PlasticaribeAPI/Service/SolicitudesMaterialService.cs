@@ -47,6 +47,44 @@ namespace PlasticaribeAPI.Service
     }
 
     /// <summary>
+    /// Material asignado a una solicitud, con lo entregado en total.
+    /// </summary>
+    /// <param name="Tipo">Materia prima o tinta.</param>
+    /// <param name="MaterialId">Identificador del material.</param>
+    /// <param name="Nombre">Nombre del material.</param>
+    /// <param name="UndMed_Id">Unidad de medida del material.</param>
+    /// <param name="SubCatMP_Id">Subcategoría del material.</param>
+    /// <param name="Stock">Stock actual del material.</param>
+    /// <param name="Entregado">Cantidad asignada a la solicitud.</param>
+    public sealed record MaterialEntregadoSolicitud(
+        TipoMaterialInventario Tipo,
+        long MaterialId,
+        string Nombre,
+        string UndMed_Id,
+        int SubCatMP_Id,
+        decimal Stock,
+        decimal Entregado);
+
+    /// <summary>
+    /// Asignación de una solicitud, para listar sus PDF.
+    /// </summary>
+    /// <param name="Id">Número de la asignación.</param>
+    /// <param name="Fecha">Fecha real de entrega (o la de registro).</param>
+    /// <param name="Hora">Hora de registro.</param>
+    /// <param name="Maquina">Máquina que recibió.</param>
+    /// <param name="Cantidad">Total asignado (materias primas y tintas).</param>
+    /// <param name="ConMateriasPrimas">Tiene materias primas (PDF ASIGMP).</param>
+    /// <param name="ConTintas">Tiene tintas (PDF ASIGTINTAS).</param>
+    public sealed record AsignacionDeSolicitud(
+        long Id,
+        DateTime Fecha,
+        string? Hora,
+        int Maquina,
+        decimal Cantidad,
+        bool ConMateriasPrimas,
+        bool ConTintas);
+
+    /// <summary>
     /// Reglas compartidas entre la solicitud de material de producción y la asignación de materia prima:
     /// cantidades asignadas por subcategoría, estado de la solicitud y consumo de la OT.
     /// </summary>
@@ -105,6 +143,101 @@ namespace PlasticaribeAPI.Service
             return asignadoMp.Concat(asignadoTinta)
                 .GroupBy(a => (a.SolMpExt_Id, a.SubCatMP_Id))
                 .ToDictionary(g => g.Key, g => g.Sum(x => x.Asignado));
+        }
+
+        /// <summary>
+        /// Suma lo asignado a una solicitud por material (materias primas y tintas), con la subcategoría de cada material.
+        /// Incluye los materiales que se entregaron en lugar de los solicitados (sustitutos de la misma subcategoría).
+        /// </summary>
+        /// <param name="solicitudId">Identificador de la solicitud.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>Una fila por material asignado.</returns>
+        public async Task<List<MaterialEntregadoSolicitud>> ObtenerAsignadoPorMaterialAsync(long solicitudId, CancellationToken cancellationToken)
+        {
+            var materiasPrimas = await _context.DetallesAsignaciones_MateriasPrimas
+                .AsNoTracking()
+                .Where(d => d.AsigMp!.SolMpExt_Id == solicitudId && d.MatPri_Id != MateriaPrimaGenericaId && d.MatPri!.SubCatMP_Id != null)
+                .GroupBy(d => new { d.MatPri_Id, d.MatPri!.MatPri_Nombre, d.MatPri.UndMed_Id, SubCatMP_Id = d.MatPri.SubCatMP_Id!.Value, d.MatPri.MatPri_Stock })
+                .Select(g => new MaterialEntregadoSolicitud(
+                    TipoMaterialInventario.MateriaPrima, g.Key.MatPri_Id, g.Key.MatPri_Nombre, g.Key.UndMed_Id, g.Key.SubCatMP_Id, g.Key.MatPri_Stock, g.Sum(x => x.DtAsigMp_Cantidad)))
+                .ToListAsync(cancellationToken);
+
+            var tintas = await _context.DetalleAsignaciones_Tintas
+                .AsNoTracking()
+                .Where(d => d.AsigMp!.SolMpExt_Id == solicitudId && d.Tinta_Id != TintaGenericaId && d.Tinta!.SubCatMP_Id != null)
+                .GroupBy(d => new { d.Tinta_Id, d.Tinta!.Tinta_Nombre, d.Tinta.UndMed_Id, SubCatMP_Id = d.Tinta.SubCatMP_Id!.Value, d.Tinta.Tinta_Stock })
+                .Select(g => new MaterialEntregadoSolicitud(
+                    TipoMaterialInventario.Tinta, g.Key.Tinta_Id, g.Key.Tinta_Nombre, g.Key.UndMed_Id, g.Key.SubCatMP_Id, g.Key.Tinta_Stock, g.Sum(x => x.DtAsigTinta_Cantidad)))
+                .ToListAsync(cancellationToken);
+
+            return [.. materiasPrimas, .. tintas];
+        }
+
+        /// <summary>
+        /// Lista las asignaciones de una solicitud (para ver sus PDF): número, fecha, máquina, cantidad total
+        /// y si llevan materias primas y/o tintas (cada tipo se imprime en un PDF distinto).
+        /// </summary>
+        /// <param name="solicitudId">Identificador de la solicitud.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>Las asignaciones de la solicitud, de la más reciente a la más antigua.</returns>
+        public async Task<List<AsignacionDeSolicitud>> ObtenerAsignacionesAsync(long solicitudId, CancellationToken cancellationToken)
+        {
+            var asignaciones = await _context.Asignaciones_MatPrima
+                .AsNoTracking()
+                .Where(a => a.SolMpExt_Id == solicitudId)
+                .Select(a => new { a.AsigMp_Id, Fecha = a.AsigMp_FechaRealEntrega ?? a.AsigMp_FechaEntrega, a.AsigMp_Hora, a.AsigMp_Maquina })
+                .ToListAsync(cancellationToken);
+            if (asignaciones.Count == 0) return [];
+
+            var ids = asignaciones.Select(a => a.AsigMp_Id).ToList();
+            var materiasPrimas = await _context.DetallesAsignaciones_MateriasPrimas
+                .AsNoTracking()
+                .Where(d => ids.Contains(d.AsigMp_Id))
+                .GroupBy(d => d.AsigMp_Id)
+                .Select(g => new { AsigMp_Id = g.Key, Cantidad = g.Sum(x => x.DtAsigMp_Cantidad) })
+                .ToDictionaryAsync(x => x.AsigMp_Id, x => x.Cantidad, cancellationToken);
+            var tintas = await _context.DetalleAsignaciones_Tintas
+                .AsNoTracking()
+                .Where(d => ids.Contains(d.AsigMp_Id))
+                .GroupBy(d => d.AsigMp_Id)
+                .Select(g => new { AsigMp_Id = g.Key, Cantidad = g.Sum(x => x.DtAsigTinta_Cantidad) })
+                .ToDictionaryAsync(x => x.AsigMp_Id, x => x.Cantidad, cancellationToken);
+
+            return asignaciones
+                .OrderByDescending(a => a.AsigMp_Id)
+                .Select(a => new AsignacionDeSolicitud(
+                    a.AsigMp_Id, a.Fecha, a.AsigMp_Hora, a.AsigMp_Maquina,
+                    materiasPrimas.GetValueOrDefault(a.AsigMp_Id) + tintas.GetValueOrDefault(a.AsigMp_Id),
+                    materiasPrimas.ContainsKey(a.AsigMp_Id), tintas.ContainsKey(a.AsigMp_Id)))
+                .ToList();
+        }
+
+        /// <summary>
+        /// Suma lo entregado a una solicitud por máquina (materias primas y tintas con subcategoría, sin los materiales genéricos),
+        /// con la misma regla que lo entregado por subcategoría. Cada asignación va a una sola máquina.
+        /// </summary>
+        /// <param name="solicitudId">Identificador de la solicitud.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>Lo entregado por número de máquina.</returns>
+        public async Task<Dictionary<int, decimal>> ObtenerAsignadoPorMaquinaAsync(long solicitudId, CancellationToken cancellationToken)
+        {
+            var materiasPrimas = await _context.DetallesAsignaciones_MateriasPrimas
+                .AsNoTracking()
+                .Where(d => d.AsigMp!.SolMpExt_Id == solicitudId && d.MatPri_Id != MateriaPrimaGenericaId && d.MatPri!.SubCatMP_Id != null)
+                .GroupBy(d => d.AsigMp!.AsigMp_Maquina)
+                .Select(g => new { Maquina = g.Key, Entregado = g.Sum(x => x.DtAsigMp_Cantidad) })
+                .ToListAsync(cancellationToken);
+
+            var tintas = await _context.DetalleAsignaciones_Tintas
+                .AsNoTracking()
+                .Where(d => d.AsigMp!.SolMpExt_Id == solicitudId && d.Tinta_Id != TintaGenericaId && d.Tinta!.SubCatMP_Id != null)
+                .GroupBy(d => d.AsigMp!.AsigMp_Maquina)
+                .Select(g => new { Maquina = g.Key, Entregado = g.Sum(x => x.DtAsigTinta_Cantidad) })
+                .ToListAsync(cancellationToken);
+
+            return materiasPrimas.Concat(tintas)
+                .GroupBy(a => a.Maquina)
+                .ToDictionary(g => g.Key, g => g.Sum(x => x.Entregado));
         }
 
         /// <summary>

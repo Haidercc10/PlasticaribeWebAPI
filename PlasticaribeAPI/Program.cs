@@ -142,9 +142,13 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("ExcederLimiteOT", policy =>
         policy.RequireRole("1", "104"));
 
-    // Editar solicitudes de material de producción ya creadas: los mismos roles que la página deja editar (1 y 104).
+    // Editar solicitudes de material de producción ya creadas: solo ADMINISTRADOR (1); el solicitante no edita.
     options.AddPolicy("EditarSolicitudMaterial", policy =>
-        policy.RequireRole("1", "104"));
+        policy.RequireRole("1"));
+
+    // Finalizar o cancelar solicitudes de material desde el reporte: los roles que asignan (1, 3, 7 y 104).
+    options.AddPolicy("GestionarSolicitudMaterial", policy =>
+        policy.RequireRole("1", "3", "7", "104"));
 
     // Marcar solicitudes de material como verificadas: ADMINISTRADOR (1) y SUPERIOR EXTRUSION 2 (85).
     options.AddPolicy("VerificarSolicitudMaterial", policy =>
