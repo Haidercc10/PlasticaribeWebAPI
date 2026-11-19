@@ -69,7 +69,7 @@ namespace PlasticaribeAPI.Controllers
                               }).ToListAsync();
 
             if (todo != null) return Ok(todo);
-            else return BadRequest("No se encontraron registros de solicitudes de material de producción");
+            else return BadRequest("No se encontraron registros de solicitudes de materia prima");
         }
 
         /** Obtener ultima solicitud */
@@ -81,7 +81,7 @@ namespace PlasticaribeAPI.Controllers
             var ultima = _context.Solicitud_MatPrimaExtrusion.Max(p => p.SolMpExt_Id);
 
             if (ultima != 0) return Ok(ultima);
-            else return BadRequest("No se encontraron registros de solicitudes de material de producción");
+            else return BadRequest("No se encontraron registros de solicitudes de materia prima");
         }
 
         /// <summary>
