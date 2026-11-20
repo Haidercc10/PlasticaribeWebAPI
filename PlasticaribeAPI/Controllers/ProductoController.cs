@@ -3,9 +3,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Ocsp;
+using Microsoft.Data.SqlClient;
 using PlasticaribeAPI.Data;
+using PlasticaribeAPI.DTOs;
+using PlasticaribeAPI.Interfaces;
 using PlasticaribeAPI.Models;
+using PlasticaribeAPI.Service;
 using ServiceReference1;
+using System.Globalization;
+using System.Security.Claims;
 using System.ServiceModel;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks.Dataflow;
@@ -18,6 +24,9 @@ namespace PlasticaribeAPI.Controllers
     public class ProductoController : ControllerBase
     {
         private readonly dataContext _context;
+
+        /// <summary>Roles autorizados para crear artículos en Zeus.</summary>
+        private static readonly HashSet<string> RolesCreanArticuloZeus = new() { "1", "98" };
 
         public ProductoController(dataContext context)
         {
@@ -230,18 +239,28 @@ namespace PlasticaribeAPI.Controllers
             return products.Any() ? Ok(products) : NotFound();
         }
 
+        /// <summary>
+        /// Endpoint heredado: crea en Zeus el artículo del item con los valores históricos (grupo 00301, presentación igual a la
+        /// descripción, costo igual al precio de venta de Existencias_Productos). Mantiene el contrato anterior hacia el front.
+        /// </summary>
+        /// <param name="item">Código del item (Prod_Id).</param>
+        /// <param name="zeus">Servicio de artículos Zeus.</param>
+        /// <returns>200 con la respuesta SOAP si Zeus responde SUCCESS; 400 con la respuesta si falla; 404 si el item no existe;
+        /// 500 si ocurre una excepción.</returns>
         [HttpGet("PostArticuloZeus/{item}")]
-        public async Task<ActionResult> PostArticuloZeus(string item)
+        public async Task<ActionResult> PostArticuloZeus(string item, [FromServices] IZeusArticuloService zeus)
         {
+            if (!int.TryParse(item, out int prodId))
+                return NotFound();
+
             var article = await (from p in _context.Set<Producto>()
                                 join exis in _context.Set<Existencia_Productos>() on p.Prod_Id equals exis.Prod_Id
-                                where p.Prod_Id == Convert.ToInt32(item)
+                                where p.Prod_Id == prodId
                                 select new
                                 {
                                     Item = p.Prod_Id,
                                     Referencia = p.Prod_Nombre,
                                     Descripcion = p.Prod_Descripcion,
-                                    Costo = exis.ExProd_PrecioVenta,
                                     PrecioVenta = exis.ExProd_PrecioVenta,
                                 }).FirstOrDefaultAsync();
 
@@ -251,74 +270,115 @@ namespace PlasticaribeAPI.Controllers
 
             try
             {
-                string tipo = Convert.ToString("PRODUCTO TERMINADO");
-                string valorizacion = "PROMEDIO";
-                string grupo = "00301";
-                string precio = article.PrecioVenta.HasValue ? Convert.ToString(article.PrecioVenta.Value) : Convert.ToString(0m);
-
-                SoapRequestAction request = new SoapRequestAction();
-                request.User = "wsZeusInvProd";
-                request.Password = "wsZeusInvProd";
-
-                request.Body = "<Articulo>" +
-                                    "<Op>I</Op>" +
-                                        "<Codigo>" + Convert.ToString(article.Item) + "</Codigo>" +
-                                        "<Nombre>" + Convert.ToString(article.Referencia) + "</Nombre>" +
-                                        "<Descripcion>" + Convert.ToString(article.Descripcion) + "</Descripcion>" +
-                                        "<Grupo> " + grupo + " </Grupo>" +
-                                        "<GrupoAuxiliar> " + grupo + "</GrupoAuxiliar>" +
-                                        "<Presentacion>" + Convert.ToString(article.Descripcion) + " </Presentacion>" +
-                                        "<CostoPromedio>" + article.Costo + "</CostoPromedio>" +
-                                        "<Tipo>" + tipo + "</Tipo>" +
-                                        "<Valorizacion>" + valorizacion + "</Valorizacion>" +
-                                        "<Categoria>Gravado</Categoria>" +
-                                        "<PorcentajeIva>19.000000</PorcentajeIva>" +
-                                        "<CuentaIVA>24081005</CuentaIVA>" +
-                                        "<PrecioVenta>" + precio + "</PrecioVenta>" +
-                                        "<DescripcionOtroIdioma>" + Convert.ToString(article.Descripcion) + "</DescripcionOtroIdioma>" +
-                                        "<ComplementoCosto>2</ComplementoCosto>" +
-                                        "<DesHabilitado>0</DesHabilitado>" +
-                                        "<DiasGarantia>0</DiasGarantia>" +
-                                        "<ComplementoVenta>2</ComplementoVenta>" +
-                                        "<ConfiguracionPrecioVenta>4</ConfiguracionPrecioVenta>" +
-                                        "<ComplementoInventario>4</ComplementoInventario>" +
-                                        "<ComplementoDevolucionVentas1>2</ComplementoDevolucionVentas1>" +
-                                        "<CuentaIVAVentas>24080505</CuentaIVAVentas>" +
-                                        "<CuentaIVAVentas>24080505</CuentaIVAVentas>" +
-                                        "<CuentaIVADevolucionVentas>24081020</CuentaIVADevolucionVentas>" +
-                                        "<ComplementoInventarioRemisionado>4</ComplementoInventarioRemisionado>" +
-                                        "<ComplementoCentroCosto>4</ComplementoCentroCosto>" +
-                                        "<ComplementoVenta1>4</ComplementoVenta1>" +
-                                        "<TipoArticulo>G</TipoArticulo>" +
-                                        "<UnidadesContenidaEmpaque>1.0000</UnidadesContenidaEmpaque>" +
-                                        "<ArticuloBolsaAgropecuaria>N</ArticuloBolsaAgropecuaria>" +
-                                        "<MaximoIVADescontable>19.0000</MaximoIVADescontable>" +
-                                        "<ModificarCantidadAlistamientoPorVerificacion>0</ModificarCantidadAlistamientoPorVerificacion>		 " +
-                               "</Articulo>";
-
-                request.DynamicProperty = "7";
-                request.Action = "Inventario"; //modulo
-                request.TypeSQL = "true"; //1
-
-                var binding = new BasicHttpBinding()
+                decimal precio = article.PrecioVenta ?? 0m;
+                var response = await zeus.EnviarArticuloAsync(new ArticuloZeusDatos
                 {
-                    Name = "BasicHttpBinding_IFakeService",
-                    MaxBufferSize = 2147483647,
-                    MaxReceivedMessageSize = 2147483647
-                };
-
-                var endpoint = new EndpointAddress("http://192.168.0.85/wsGenericoZeus/ServiceWS.asmx");
-                WebservicesGenericoZeusSoapClient client = new WebservicesGenericoZeusSoapClient(binding, endpoint);
-                SoapResponse response = await client.ExecuteActionSOAPAsync(request);
-                if (Convert.ToString(response.Status) == "SUCCESS") Console.Write("Ok");
-                return Convert.ToString(response.Status) == "SUCCESS" ? Ok(response) : BadRequest(response);
-
+                    Codigo = article.Item.ToString(CultureInfo.InvariantCulture),
+                    Nombre = article.Referencia ?? string.Empty,
+                    Descripcion = article.Descripcion ?? string.Empty,
+                    Grupo = "00301",
+                    Presentacion = (article.Descripcion ?? string.Empty) + " ",
+                    Costo = precio,
+                    PrecioVenta = precio,
+                });
+                return response.Status == Status.SUCCESS ? Ok(response) : BadRequest(response);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
+        }
 
+        /// <summary>
+        /// Crea en Zeus el artículo de un producto existente en Plasticaribe para una presentación, si aún no existe.
+        /// Grupo según el tipo de producto, GrupoFacturacion = grupo + presentación, Precio = precio recibido y
+        /// Costo = precio × 0,75. Solo roles 1 y 98.
+        /// </summary>
+        /// <param name="codigo">Código del producto (Prod_Id).</param>
+        /// <param name="presentacion">Presentación: Kilo/Kg/KLS, Unidad/Und/UND, Paquete/PAQ, Metro/MTS.</param>
+        /// <param name="body">Precio unitario de venta (obligatorio, mayor que cero).</param>
+        /// <param name="zeus">Servicio de artículos Zeus.</param>
+        /// <param name="cancellationToken">Token de cancelación.</param>
+        /// <returns>200 con <c>{ creado, yaExistia }</c>; 400 si la presentación o el precio no son válidos; 403 si el rol no
+        /// está autorizado; 404 si el producto no existe; 502 si falla la consulta a Zeus o el servicio SOAP rechaza el artículo.</returns>
+        [HttpPost("{codigo:int}/articuloZeus/{presentacion}")]
+        public async Task<ActionResult<CrearArticuloZeusResponse>> CrearArticuloZeus(int codigo, string presentacion,
+            [FromBody] CrearArticuloZeusRequest body, [FromServices] IZeusArticuloService zeus, CancellationToken cancellationToken)
+        {
+            if (!RolesCreanArticuloZeus.Contains(User.FindFirstValue(ClaimTypes.Role) ?? string.Empty))
+                return Forbid();
+
+            string? presentacionZeus = ZeusArticuloService.PresentacionZeus(presentacion);
+            if (presentacionZeus == null)
+                return BadRequest($"La presentación '{presentacion}' no es válida. Use Kilo, Unidad, Paquete o Metro.");
+            if (body?.Precio is not decimal precio || precio <= 0)
+                return BadRequest("El precio es obligatorio y debe ser mayor que cero.");
+
+            var producto = await _context.Set<Producto>()
+                .Where(p => p.Prod_Id == codigo)
+                .Select(p => new { p.Prod_Id, p.Prod_Nombre, p.Prod_Descripcion, p.TpProd_Id })
+                .FirstOrDefaultAsync(cancellationToken);
+            if (producto == null)
+                return NotFound($"El producto {codigo} no existe en Plasticaribe.");
+
+            string codigoZeus = codigo.ToString(CultureInfo.InvariantCulture);
+            try
+            {
+                if (await zeus.ExisteArticuloAsync(codigoZeus, presentacionZeus, cancellationToken))
+                    return Ok(new CrearArticuloZeusResponse { Creado = false, YaExistia = true });
+            }
+            catch (SqlException ex)
+            {
+                return Problem($"No se pudo consultar el artículo en Zeus: {ex.Message}", statusCode: StatusCodes.Status502BadGateway);
+            }
+
+            string grupo = ZeusArticuloService.GrupoZeus(producto.TpProd_Id);
+            SoapResponse response;
+            try
+            {
+                response = await zeus.EnviarArticuloAsync(new ArticuloZeusDatos
+                {
+                    Codigo = codigoZeus,
+                    Nombre = producto.Prod_Nombre,
+                    Descripcion = string.IsNullOrWhiteSpace(producto.Prod_Descripcion) ? producto.Prod_Nombre : producto.Prod_Descripcion,
+                    Grupo = grupo,
+                    Presentacion = presentacionZeus,
+                    GrupoFacturacion = grupo + presentacionZeus,
+                    PrecioVenta = precio,
+                    Costo = Math.Round(precio * 0.75m, 4),
+                });
+            }
+            catch (Exception ex) when (ex is CommunicationException or TimeoutException or InvalidOperationException)
+            {
+                return Problem($"No se pudo comunicar con el servicio de Zeus: {ex.Message}", statusCode: StatusCodes.Status502BadGateway);
+            }
+
+            if (response.Status != Status.SUCCESS)
+                return Problem($"Zeus rechazó el artículo: {response.Message}", statusCode: StatusCodes.Status502BadGateway);
+
+            return Ok(new CrearArticuloZeusResponse { Creado = true, YaExistia = false });
+        }
+
+        /// <summary>
+        /// Artículos de Zeus del producto (uno por presentación: KLS, UND, PAQ, MTS) con nombre, descripción, grupo,
+        /// grupo de facturación, precio y costo, para mostrar el estado de sincronización con Zeus.
+        /// </summary>
+        /// <param name="codigo">Código del producto (Prod_Id).</param>
+        /// <param name="zeus">Servicio de artículos Zeus.</param>
+        /// <param name="cancellationToken">Token de cancelación.</param>
+        /// <returns>200 con la lista de artículos (vacía si no existe en Zeus); 502 si falla la consulta a Zeus.</returns>
+        [HttpGet("{codigo:int}/articulosZeus")]
+        public async Task<ActionResult<List<ArticuloZeusResumen>>> GetArticulosZeus(int codigo, [FromServices] IZeusArticuloService zeus,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                return Ok(await zeus.ObtenerArticulosAsync(codigo.ToString(CultureInfo.InvariantCulture), cancellationToken));
+            }
+            catch (SqlException ex)
+            {
+                return Problem($"No se pudo consultar el artículo en Zeus: {ex.Message}", statusCode: StatusCodes.Status502BadGateway);
+            }
         }
 
         // PUT: api/Producto/5
