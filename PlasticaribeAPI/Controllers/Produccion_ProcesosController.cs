@@ -756,57 +756,62 @@ namespace PlasticaribeAPI.Controllers
         }
 
         /// <summary>
-        /// Versión optimizada de <c>getInfoProduction</c> para la vista de eliminar rollos: OT y rollo se comparan por igualdad
-        /// (permite usar índices y no trae OTs/rollos parecidos), cada filtro se agrega solo si viene, se consulta una sola vez
-        /// sin seguimiento de cambios y si no hay datos devuelve una lista vacía en vez de 404.
+        /// Rollos disponibles (estado 19 y sin envío a Zeus) para la vista de eliminar rollos. OT y rollo se comparan por igualdad,
+        /// cada filtro se agrega solo si viene y si no hay datos devuelve una lista vacía.
+        /// Las fechas son opcionales cuando se busca por OT o por número de rollo, así un rollo antiguo también se encuentra;
+        /// sin OT ni rollo el rango de fechas es obligatorio. La ruta con las fechas en la URL se mantiene por compatibilidad.
+        /// Solo trae rollos cuya OT tiene registro en Estados_ProcesosOT, porque sin él <c>putDeleteRolls</c> no los puede eliminar.
         /// </summary>
+        /// <returns>Rollos con la cantidad y la unidad que se muestran (unidades si es sellado en Und/Paquete, si no kilos).</returns>
+        [HttpGet("getInfoProductionToDelete")]
         [HttpGet("getInfoProductionToDelete/{date1}/{date2}")]
         public async Task<ActionResult> getInfoProductionToDelete(
-            DateTime date1,
-            DateTime date2,
+            DateTime? date1,
+            DateTime? date2,
             long? ot,
             string? process,
             long? roll,
             CancellationToken cancellationToken)
         {
+            if (!ot.HasValue && !roll.HasValue && !date1.HasValue)
+                return BadRequest("Indique un rango de fechas, una OT o un número de rollo para consultar.");
+
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var production = _context.Set<Produccion_Procesos>()
                 .AsNoTracking()
-                .Where(pp => pp.Fecha >= date1 &&
-                             pp.Fecha <= date2 &&
-                             pp.Envio_Zeus == false &&
-                             pp.Estado_Rollo == 19);
+                .Where(pp => pp.Envio_Zeus == false && pp.Estado_Rollo == 19);
 
+            if (date1.HasValue)
+            {
+                var start = date1.Value.Date;
+                var endExclusive = (date2 ?? date1.Value).Date.AddDays(1);
+                production = production.Where(pp => pp.Fecha >= start && pp.Fecha < endExclusive);
+            }
             if (ot.HasValue) production = production.Where(pp => pp.OT == ot.Value);
             if (!string.IsNullOrWhiteSpace(process)) production = production.Where(pp => pp.Proceso_Id == process);
             if (roll.HasValue) production = production.Where(pp => pp.NumeroRollo_BagPro == roll.Value);
 
-            var data = await (from pp in production
-                              join epot in _context.Set<Estados_ProcesosOT>().AsNoTracking()
-                                  on pp.OT equals epot.EstProcOT_OrdenTrabajo
-                              orderby pp.Fecha, pp.NumeroRollo_BagPro
-                              select new
-                              {
-                                  pp.Id,
-                                  pp.OT,
-                                  pp.Cli_Id,
-                                  pp.Clientes.Cli_Nombre,
-                                  pp.Prod_Id,
-                                  pp.Producto.Prod_Nombre,
-                                  Cantidad_Pedida = pp.Presentacion == "Kg" ? epot.EstProcOT_CantidadPedida : epot.EstProcOT_CantidadPedidaUnd,
-                                  pp.Numero_Rollo,
-                                  pp.NumeroRollo_BagPro,
-                                  pp.Fecha,
-                                  pp.Hora,
-                                  pp.Maquina,
-                                  pp.Proceso_Id,
-                                  pp.Estado_Rollo,
-                                  pp.Peso_Bruto,
-                                  pp.Peso_Neto,
-                                  pp.Cantidad,
-                                  pp.Presentacion,
-                                  pp.Proceso.Proceso_Nombre,
-                              }).ToListAsync(cancellationToken);
+            var data = await production
+                .Where(pp => _context.Set<Estados_ProcesosOT>().Any(epot => epot.EstProcOT_OrdenTrabajo == pp.OT))
+                .OrderBy(pp => pp.Fecha)
+                .ThenBy(pp => pp.NumeroRollo_BagPro)
+                .Select(pp => new
+                {
+                    pp.Id,
+                    pp.OT,
+                    pp.Prod_Id,
+                    pp.Producto.Prod_Nombre,
+                    pp.NumeroRollo_BagPro,
+                    pp.Fecha,
+                    pp.Proceso_Id,
+                    pp.Proceso.Proceso_Nombre,
+                    pp.Peso_Neto,
+                    pp.Cantidad,
+                    pp.Presentacion,
+                    CantidadMostrar = pp.Proceso_Id == "SELLA" && (pp.Presentacion == "Und" || pp.Presentacion == "Paquete") ? pp.Cantidad : pp.Peso_Neto,
+                    Unidad = pp.Proceso_Id == "SELLA" && (pp.Presentacion == "Und" || pp.Presentacion == "Paquete") ? pp.Presentacion : "Kg",
+                })
+                .ToListAsync(cancellationToken);
 
             return Ok(data);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
