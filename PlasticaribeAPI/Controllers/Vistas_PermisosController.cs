@@ -70,6 +70,33 @@ namespace PlasticaribeAPI.Controllers
             return Ok(con);
         }
 
+        /// <summary>
+        /// Menú lateral del rol en una sola consulta: todas sus vistas activas, con una fila por cada categoría
+        /// a la que pertenece la vista (Vp_Categoria guarda varias como "|Cat1|Cat2|").
+        /// </summary>
+        [HttpGet("get_menu/{rol}")]
+        public async Task<ActionResult> Get_Menu(string rol)
+        {
+            var vistas = await (from vp in _context.Set<Vistas_Permisos>()
+                                where vp.Vp_Id_Roles.Contains($"|{rol}|") &&
+                                      vp.Vp_Estado == 1
+                                select new { vp.Vp_Nombre, vp.Vp_Icono_Menu, vp.Vp_Ruta, vp.Vp_Categoria })
+                               .AsNoTracking()
+                               .ToListAsync();
+
+            var menu = vistas.SelectMany(vp => (vp.Vp_Categoria ?? string.Empty)
+                                .Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                                .Distinct()
+                                .Select(categoria => new
+                                {
+                                    Categoria = categoria,
+                                    Nombre = vp.Vp_Nombre,
+                                    Icono = vp.Vp_Icono_Menu,
+                                    Ruta = vp.Vp_Ruta,
+                                }));
+            return Ok(menu);
+        }
+
         //
         [HttpGet("get_permisos/{rol}/{ruta}")]
         public ActionResult Get_Permisos(string rol, string ruta)
