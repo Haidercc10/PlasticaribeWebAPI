@@ -8,30 +8,61 @@ namespace PlasticaribeAPI.Service
     /// <summary>
     /// Estados y valores fijos que usan las solicitudes de material de producción.
     /// </summary>
+    /// <remarks>
+    /// Los estados son del tipo de estado <see cref="TipoEstado"/> (solicitud y asignación de materia prima) y los usan
+    /// tanto cada solicitud como la "solicitud de la OT" (<see cref="SolicitudMaterial_OT"/>).
+    /// </remarks>
     public static class EstadosSolicitudMaterial
     {
+        /// <summary>Tipo de estado "Solicitud y asignación de materia prima".</summary>
+        public const int TipoEstado = (int)TipoEstadoEnum.SolicitudAsignacionMp;
+
+        /// <summary>Sin material asignado.</summary>
+        public const int Pendiente = (int)EstadoEnum.SolicitudMpPendiente;
+
+        /// <summary>Con material asignado que no cubre todo lo solicitado (o, en la OT, que no llega al tope).</summary>
+        public const int Parcial = (int)EstadoEnum.SolicitudMpParcial;
+
+        /// <summary>
+        /// Solicitud: recibió todo lo que pidió, o su OT se completó. OT: llegó al tope con el adicional, o alguien la
+        /// completó a mano después de llegar al umbral. No admite más asignaciones ni ediciones y no se deshace.
+        /// </summary>
+        public const int Completada = (int)EstadoEnum.SolicitudMpCompletada;
+
+        /// <summary>Se cerró la asignación de materiales de la OT (todas sus solicitudes estaban completadas).</summary>
+        public const int Finalizada = (int)EstadoEnum.SolicitudMpFinalizada;
+
+        /// <summary>El solicitante comprobó físicamente lo recibido para la OT.</summary>
+        public const int Verificada = (int)EstadoEnum.SolicitudMpVerificada;
+
         /// <summary>Solicitud cancelada.</summary>
-        public const int Cancelada = 4;
-
-        /// <summary>Solicitud con todas sus subcategorías entregadas.</summary>
-        public const int Finalizada = 5;
-
-        /// <summary>Solicitud sin asignaciones.</summary>
-        public const int Pendiente = 11;
-
-        /// <summary>Solicitud con asignaciones que no cubren todo lo solicitado.</summary>
-        public const int Parcial = 12;
-
-        /// <summary>Solicitud finalizada que un administrador o superior de extrusión revisó y marcó como verificada.</summary>
-        public const int Verificada = 55;
+        public const int Cancelada = (int)EstadoEnum.SolicitudMpCancelada;
 
         /// <summary>Solicitud genérica que se asocia a las asignaciones hechas sin solicitud.</summary>
         public const long SolicitudGenericaId = 1;
 
+        /// <summary>Adicional (margen o tolerancia) sobre los kg de la OT que se permite solicitar y asignar.</summary>
+        public const decimal AdicionalKgOT = 0.05m;
+
+        /// <summary>Indica si la solicitud está activa: pendiente o parcial.</summary>
+        /// <param name="estado">Estado de la solicitud.</param>
+        /// <returns>True si aún puede recibir asignaciones y ediciones.</returns>
+        public static bool EstaActiva(int estado) => estado is Pendiente or Parcial;
+
         /// <summary>Indica si el estado ya no admite asignaciones ni ediciones.</summary>
         /// <param name="estado">Estado de la solicitud.</param>
-        /// <returns>True si la solicitud está cancelada, finalizada o verificada.</returns>
-        public static bool EstaCerrada(int estado) => estado is Cancelada or Finalizada or Verificada;
+        /// <returns>True si la solicitud está completada, finalizada, verificada o cancelada.</returns>
+        public static bool EstaCerrada(int estado) => !EstaActiva(estado);
+
+        /// <summary>Kg máximos que se pueden solicitar y asignar a una OT: sus kg más el adicional.</summary>
+        /// <param name="kgOT">Kg de la OT.</param>
+        /// <returns>Tope de la OT redondeado a dos decimales.</returns>
+        public static decimal TopeKgOT(decimal kgOT) => Math.Round(kgOT * (1m + AdicionalKgOT), 2);
+
+        /// <summary>Kg de la OT a partir del tope enviado por el cliente (kg de la OT más el adicional).</summary>
+        /// <param name="tope">Tope de la OT.</param>
+        /// <returns>Kg de la OT redondeados a dos decimales.</returns>
+        public static decimal KgOTDesdeTope(decimal tope) => Math.Round(tope / (1m + AdicionalKgOT), 2);
     }
 
     /// <summary>
@@ -88,7 +119,7 @@ namespace PlasticaribeAPI.Service
     /// Reglas compartidas entre la solicitud de material de producción y la asignación de materia prima:
     /// cantidades asignadas por subcategoría, estado de la solicitud y consumo de la OT.
     /// </summary>
-    public sealed class SolicitudesMaterialService
+    public sealed partial class SolicitudesMaterialService
     {
         /// <summary>Categoría de materia prima que no cuenta para el límite de kg de la OT.</summary>
         public const int CategoriaExcluidaLimiteOT = 18;
@@ -262,8 +293,8 @@ namespace PlasticaribeAPI.Service
         }
 
         /// <summary>
-        /// Calcula el estado de una solicitud: pendiente sin asignaciones, finalizada si todas las subcategorías
-        /// están cubiertas y parcial en cualquier otro caso.
+        /// Calcula el estado de una solicitud por su total de kg (no por subcategoría): pendiente sin asignaciones,
+        /// completada si lo asignado cubre el total solicitado y parcial en cualquier otro caso.
         /// </summary>
         /// <param name="cantidades">Solicitado y asignado por subcategoría.</param>
         /// <returns>Estado calculado.</returns>
@@ -272,8 +303,8 @@ namespace PlasticaribeAPI.Service
             if (cantidades.Count == 0 || cantidades.All(c => c.Asignado <= 0m))
                 return EstadosSolicitudMaterial.Pendiente;
 
-            return cantidades.All(c => c.Asignado >= c.Solicitado)
-                ? EstadosSolicitudMaterial.Finalizada
+            return cantidades.Sum(c => c.Asignado) >= cantidades.Sum(c => c.Solicitado)
+                ? EstadosSolicitudMaterial.Completada
                 : EstadosSolicitudMaterial.Parcial;
         }
 
@@ -298,8 +329,9 @@ namespace PlasticaribeAPI.Service
         }
 
         /// <summary>
-        /// Recalcula el estado de la solicitud y las cantidades entregadas y faltantes de sus detalles, y guarda los cambios.
-        /// Las solicitudes canceladas, las verificadas y la solicitud genérica no se modifican.
+        /// Recalcula el estado de la solicitud y las cantidades entregadas y faltantes de sus detalles, guarda los cambios
+        /// y recalcula la solicitud de su OT. Las solicitudes que ya no están activas (completadas, finalizadas,
+        /// verificadas o canceladas) y la solicitud genérica no se modifican.
         /// </summary>
         /// <param name="solicitudId">Identificador de la solicitud.</param>
         /// <param name="cancellationToken">Token para cancelar la operación.</param>
@@ -310,8 +342,7 @@ namespace PlasticaribeAPI.Service
                 .AsTracking()
                 .FirstOrDefaultAsync(s => s.SolMpExt_Id == solicitudId, cancellationToken);
             if (solicitud == null) return null;
-            if (solicitudId == EstadosSolicitudMaterial.SolicitudGenericaId ||
-                solicitud.Estado_Id is EstadosSolicitudMaterial.Cancelada or EstadosSolicitudMaterial.Verificada)
+            if (solicitudId == EstadosSolicitudMaterial.SolicitudGenericaId || EstadosSolicitudMaterial.EstaCerrada(solicitud.Estado_Id))
                 return solicitud.Estado_Id;
 
             var detalles = await _context.DetSolicitud_MatPrimaExtrusion
@@ -339,7 +370,14 @@ namespace PlasticaribeAPI.Service
             solicitud.Estado_Id = CalcularEstado(cantidades);
 
             await _context.SaveChangesAsync(cancellationToken);
-            return solicitud.Estado_Id;
+
+            // La OT puede completarse con esta asignación (y completar sus solicitudes activas de materia prima).
+            await RecalcularOTAsync(solicitud.SolMpExt_OT, cancellationToken);
+            return await _context.Solicitud_MatPrimaExtrusion
+                .AsNoTracking()
+                .Where(s => s.SolMpExt_Id == solicitudId)
+                .Select(s => s.Estado_Id)
+                .FirstAsync(cancellationToken);
         }
 
         /// <summary>

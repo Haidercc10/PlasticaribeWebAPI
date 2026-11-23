@@ -148,11 +148,16 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("EditarSolicitudMaterial", policy =>
         policy.RequireRole("1"));
 
-    // Finalizar o cancelar solicitudes de material desde el reporte: los roles que asignan (1, 3, 7 y 104).
+    // Cancelar solicitudes de material pendientes o parciales desde el reporte: los roles que asignan (1, 3, 7 y 104).
     options.AddPolicy("GestionarSolicitudMaterial", policy =>
         policy.RequireRole("1", "3", "7", "104"));
 
-    // Marcar solicitudes de material como verificadas: ADMINISTRADOR (1) y SUPERIOR EXTRUSION 2 (85).
+    // Completar y finalizar la solicitud de la OT: ADMINISTRADOR (1), asignador (3) y solicitante (85).
+    // Provisional hasta que se defina un único responsable de cerrar la OT.
+    options.AddPolicy("GestionarSolicitudOT", policy =>
+        policy.RequireRole("1", "3", "85"));
+
+    // Verificar la solicitud de la OT (lo recibido físicamente): ADMINISTRADOR (1) y solicitante (85).
     options.AddPolicy("VerificarSolicitudMaterial", policy =>
         policy.RequireRole("1", "85"));
 });

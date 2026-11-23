@@ -9380,6 +9380,52 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Servicios_Produccion");
                 });
 
+            modelBuilder.Entity("PlasticaribeAPI.Models.SolicitudMaterial_OT", b =>
+                {
+                    b.Property<long>("SolOT_OrdenTrabajo")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Estado_Id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("SolOT_FechaCompletada")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("SolOT_FechaFinalizada")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("SolOT_FechaRegistro")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("SolOT_FechaVerificada")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("SolOT_KgOT")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("decimal(14,2)");
+
+                    b.Property<long?>("Usua_IdCompleta")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("Usua_IdFinaliza")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("Usua_IdVerifica")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("SolOT_OrdenTrabajo");
+
+                    b.HasIndex("Estado_Id");
+
+                    b.HasIndex("Usua_IdCompleta");
+
+                    b.HasIndex("Usua_IdFinaliza");
+
+                    b.HasIndex("Usua_IdVerifica");
+
+                    b.ToTable("SolicitudMaterial_OT");
+                });
+
             modelBuilder.Entity("PlasticaribeAPI.Models.Solicitud_Maquinas", b =>
                 {
                     b.Property<long>("SolMaq_Id")
@@ -9424,6 +9470,9 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<DateTime>("SolMpExt_Fecha")
                         .HasColumnType("Date");
 
+                    b.Property<DateTime?>("SolMpExt_FechaCancelacion")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("SolMpExt_FechaEstimadaEntrega")
                         .HasColumnType("Date");
 
@@ -9432,6 +9481,9 @@ namespace PlasticaribeAPI.Migrations
 
                     b.Property<int>("SolMpExt_Maquina")
                         .HasColumnType("int");
+
+                    b.Property<string>("SolMpExt_MotivoCancelacion")
+                        .HasColumnType("varchar(1000)");
 
                     b.Property<long>("SolMpExt_OT")
                         .HasColumnType("bigint");
@@ -9442,6 +9494,9 @@ namespace PlasticaribeAPI.Migrations
                     b.Property<long>("Usua_Id")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("Usua_IdCancela")
+                        .HasColumnType("bigint");
+
                     b.HasKey("SolMpExt_Id");
 
                     b.HasIndex("Estado_Id");
@@ -9449,6 +9504,8 @@ namespace PlasticaribeAPI.Migrations
                     b.HasIndex("Proceso_Id");
 
                     b.HasIndex("Usua_Id");
+
+                    b.HasIndex("Usua_IdCancela");
 
                     b.ToTable("Solicitud_MatPrimaExtrusion", t =>
                         {
@@ -15773,6 +15830,38 @@ namespace PlasticaribeAPI.Migrations
                     b.Navigation("Proceso2");
                 });
 
+            modelBuilder.Entity("PlasticaribeAPI.Models.SolicitudMaterial_OT", b =>
+                {
+                    b.HasOne("PlasticaribeAPI.Models.Estado", "Estado")
+                        .WithMany()
+                        .HasForeignKey("Estado_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "UsuaCompleta")
+                        .WithMany()
+                        .HasForeignKey("Usua_IdCompleta")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "UsuaFinaliza")
+                        .WithMany()
+                        .HasForeignKey("Usua_IdFinaliza")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "UsuaVerifica")
+                        .WithMany()
+                        .HasForeignKey("Usua_IdVerifica")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Estado");
+
+                    b.Navigation("UsuaCompleta");
+
+                    b.Navigation("UsuaFinaliza");
+
+                    b.Navigation("UsuaVerifica");
+                });
+
             modelBuilder.Entity("PlasticaribeAPI.Models.Solicitud_Maquinas", b =>
                 {
                     b.HasOne("PlasticaribeAPI.Models.Solicitud_MatPrimaExtrusion", "SolMatPriExt")
@@ -15804,11 +15893,18 @@ namespace PlasticaribeAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "UsuaCancela")
+                        .WithMany()
+                        .HasForeignKey("Usua_IdCancela")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Estado");
 
                     b.Navigation("Proceso");
 
                     b.Navigation("Usua");
+
+                    b.Navigation("UsuaCancela");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Solicitud_MateriaPrima", b =>

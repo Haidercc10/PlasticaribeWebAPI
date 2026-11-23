@@ -150,6 +150,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<DetSolicitud_MatPrimaExtrusion> DetSolicitud_MatPrimaExtrusion { get; set; }
         public DbSet<DetSolicitud_Materiales> DetSolicitud_Materiales { get; set; }
         public DbSet<Solicitud_Maquinas> Solicitud_Maquinas { get; set; }
+        public DbSet<SolicitudMaterial_OT> SolicitudMaterial_OT { get; set; }
         public DbSet<Tipo_Solicitud_Rollos_Areas> Tipo_Solicitud_Rollos_Areas { get; set; }
         public DbSet<Solicitud_Rollos_Areas> Solicitud_Rollos_Areas { get; set; }
         public DbSet<Detalles_SolicitudRollos> Detalles_SolicitudRollos { get; set; }
@@ -954,6 +955,7 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Solicitud_MatPrimaExtrusion>().ToTable(tb => tb.HasTrigger("Auditoria_Solicitud_MatPrimaExtrusion"));
             modelBuilder.Entity<Solicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.Estado).WithMany().HasForeignKey(asigmp => asigmp.Estado_Id).OnDelete(DeleteBehavior.Restrict); //foranea estado
             modelBuilder.Entity<Solicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.Usua).WithMany().HasForeignKey(asgmpr => asgmpr.Usua_Id).OnDelete(DeleteBehavior.Restrict); //foranea usuario
+            modelBuilder.Entity<Solicitud_MatPrimaExtrusion>().HasOne(s => s.UsuaCancela).WithMany().HasForeignKey(s => s.Usua_IdCancela).OnDelete(DeleteBehavior.Restrict); //foranea usuario que cancela
             modelBuilder.Entity<Solicitud_MatPrimaExtrusion>().HasOne(asgmp => asgmp.Proceso).WithMany().HasForeignKey(asigmp => asigmp.Proceso_Id).OnDelete(DeleteBehavior.Restrict); //foranea proceso
 
             //DetSolicitudes_MatPrimaExtrusion
@@ -976,6 +978,12 @@ namespace PlasticaribeAPI.Data
             //Máquinas de la solicitud con su porcentaje (una fila por máquina).
             modelBuilder.Entity<Solicitud_Maquinas>().HasOne(m => m.SolMatPriExt).WithMany().HasForeignKey(m => m.SolMpExt_Id).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Solicitud_Maquinas>().HasIndex(m => new { m.SolMpExt_Id, m.SolMaq_Maquina }).IsUnique();
+
+            //Solicitud de la OT: estado de todas las solicitudes de material de una OT (una fila por OT).
+            modelBuilder.Entity<SolicitudMaterial_OT>().HasOne(o => o.Estado).WithMany().HasForeignKey(o => o.Estado_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<SolicitudMaterial_OT>().HasOne(o => o.UsuaCompleta).WithMany().HasForeignKey(o => o.Usua_IdCompleta).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<SolicitudMaterial_OT>().HasOne(o => o.UsuaFinaliza).WithMany().HasForeignKey(o => o.Usua_IdFinaliza).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<SolicitudMaterial_OT>().HasOne(o => o.UsuaVerifica).WithMany().HasForeignKey(o => o.Usua_IdVerifica).OnDelete(DeleteBehavior.Restrict);
 
             //Solicitud de Rollos a Areas
             modelBuilder.Entity<Solicitud_Rollos_Areas>().ToTable(tb => tb.HasTrigger("Auditoria_Solicitud_Rollos_Areas"));

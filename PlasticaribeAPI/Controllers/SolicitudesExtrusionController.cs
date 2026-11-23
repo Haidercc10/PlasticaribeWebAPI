@@ -139,6 +139,10 @@ namespace PlasticaribeAPI.Controllers
                 var errorMateriales = await ValidarMaterialesCatalogoAsync(request.ProcesoId, request.Detalles, nombres!, cancellationToken);
                 if (errorMateriales != null) return BadRequest(errorMateriales);
 
+                var otCerrada = SolicitudesMaterialService.MotivoOTCerrada(
+                    await _solicitudes.ObtenerEstadoOTAsync(request.OrdenTrabajo, cancellationToken), request.ProcesoId, request.OrdenTrabajo);
+                if (otCerrada != null) return Conflict(otCerrada);
+
                 if (request.ProcesoId == ProcesoExtrusion)
                 {
                     var errorLimite = await ValidarLimiteOTAsync(request.OrdenTrabajo, request.LimiteKgOT, request.ConfirmarExcesoLimite,
@@ -173,6 +177,7 @@ namespace PlasticaribeAPI.Controllers
                 _context.DetSolicitud_Materiales.AddRange(detalles.SelectMany(d => NuevosMateriales(solicitud.SolMpExt_Id, d.Entidad.Codigo, d.Request.Materiales)));
                 _context.Solicitud_Maquinas.AddRange(maquinas!.Select(m => NuevaMaquina(solicitud.SolMpExt_Id, m)));
                 await _context.SaveChangesAsync(cancellationToken);
+                await _solicitudes.RegistrarKgOTAsync(request.OrdenTrabajo, SolicitudesMaterialService.KgOTDe(request.KgOT, request.LimiteKgOT), cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
 
                 return CreatedAtAction(
@@ -218,7 +223,11 @@ namespace PlasticaribeAPI.Controllers
                     .FirstOrDefaultAsync(s => s.SolMpExt_Id == id, cancellationToken);
                 if (solicitud == null) return NotFound($"La solicitud N° {id} no existe.");
                 if (EstadosSolicitudMaterial.EstaCerrada(solicitud.Estado_Id))
-                    return Conflict($"La solicitud N° {id} está finalizada, verificada o cancelada y no se puede editar.");
+                    return Conflict($"La solicitud N° {id} ya no está activa (completada, finalizada, verificada o cancelada) y no se puede editar.");
+
+                var otCerrada = SolicitudesMaterialService.MotivoOTCerrada(
+                    await _solicitudes.ObtenerEstadoOTAsync(solicitud.SolMpExt_OT, cancellationToken), solicitud.Proceso_Id, solicitud.SolMpExt_OT);
+                if (otCerrada != null) return Conflict(otCerrada);
 
                 // Solo se exige fecha futura si se cambia, para poder editar solicitudes cuya fecha ya pasó sin moverla.
                 var fechaEntrega = request.FechaEstimadaEntrega!.Value.Date;
@@ -313,6 +322,7 @@ namespace PlasticaribeAPI.Controllers
                 await _context.SaveChangesAsync(cancellationToken);
                 await ReemplazarMaterialesAsync(id, request.Detalles, existentes.Concat(agregados), cancellationToken);
                 await ReemplazarMaquinasAsync(id, maquinas!, cancellationToken);
+                await _solicitudes.GuardarKgOTAsync(solicitud.SolMpExt_OT, SolicitudesMaterialService.KgOTDe(request.KgOT, request.LimiteKgOT), cancellationToken);
                 var estado = await _solicitudes.RecalcularEstadoAsync(id, cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
 
@@ -380,6 +390,15 @@ namespace PlasticaribeAPI.Controllers
                     Proceso = s.Proceso!.Proceso_Nombre,
                     s.Estado_Id,
                     Estado = s.Estado!.Estado_Nombre,
+                    // Estado de la solicitud de la OT (todas las solicitudes de la OT).
+                    EstadoOT_Id = _context.SolicitudMaterial_OT
+                        .Where(o => o.SolOT_OrdenTrabajo == s.SolMpExt_OT)
+                        .Select(o => (int?)o.Estado_Id)
+                        .FirstOrDefault(),
+                    EstadoOT = _context.SolicitudMaterial_OT
+                        .Where(o => o.SolOT_OrdenTrabajo == s.SolMpExt_OT)
+                        .Select(o => o.Estado!.Estado_Nombre)
+                        .FirstOrDefault(),
                     s.Usua_Id,
                     Usuario = s.Usua!.Usua_Nombre,
                     Fecha = s.SolMpExt_Fecha,
@@ -387,6 +406,10 @@ namespace PlasticaribeAPI.Controllers
                     FechaEntrega = s.SolMpExt_FechaEstimadaEntrega,
                     Observacion = s.SolMpExt_Observacion,
                     MaquinaPrincipal = s.SolMpExt_Maquina,
+                    // Total solicitado de la solicitud (suma de sus subcategorías).
+                    TotalSolicitado = _context.DetSolicitud_MatPrimaExtrusion
+                        .Where(d => d.SolMpExt_Id == s.SolMpExt_Id)
+                        .Sum(d => (decimal?)d.DtSolMpExt_Cantidad) ?? 0m,
                     Maquinas = _context.Solicitud_Maquinas
                         .Where(m => m.SolMpExt_Id == s.SolMpExt_Id)
                         .OrderBy(m => m.SolMaq_Id)
@@ -446,7 +469,10 @@ namespace PlasticaribeAPI.Controllers
                     s.SolMpExt_Hora,
                     s.SolMpExt_FechaEstimadaEntrega,
                     s.SolMpExt_Observacion,
-                    s.SolMpExt_Maquina
+                    s.SolMpExt_Maquina,
+                    s.SolMpExt_MotivoCancelacion,
+                    s.SolMpExt_FechaCancelacion,
+                    UsuarioCancela = s.UsuaCancela != null ? s.UsuaCancela.Usua_Nombre : null
                 })
                 .FirstOrDefaultAsync(cancellationToken);
             if (encabezado == null) return NotFound($"La solicitud N° {id} no existe.");
@@ -545,6 +571,10 @@ namespace PlasticaribeAPI.Controllers
                 Hora = encabezado.SolMpExt_Hora,
                 FechaEntrega = encabezado.SolMpExt_FechaEstimadaEntrega,
                 Observacion = encabezado.SolMpExt_Observacion,
+                // Cancelación (null si no está cancelada).
+                MotivoCancelacion = encabezado.SolMpExt_MotivoCancelacion,
+                FechaCancelacion = encabezado.SolMpExt_FechaCancelacion,
+                encabezado.UsuarioCancela,
                 // Por máquina: su porcentaje, lo que le toca del total solicitado (informativo) y lo ya entregado a ella.
                 Maquinas = maquinas.Select(m => new
                 {
@@ -560,8 +590,9 @@ namespace PlasticaribeAPI.Controllers
         }
 
         /// <summary>
-        /// Finaliza (5) o cancela (4) una solicitud. Quien gestiona solicitudes (policy GestionarSolicitudMaterial) lo hace
-        /// con las pendientes y parciales; el solicitante solo puede cancelar la suya mientras esté pendiente.
+        /// Cancela una solicitud. Quien gestiona solicitudes (policy GestionarSolicitudMaterial) cancela las pendientes y
+        /// parciales; el solicitante solo puede cancelar la suya mientras esté pendiente. Ya no se finaliza una solicitud
+        /// sola: se completa al recibir todo y se finaliza con su OT (ot/{ot}/finalizar).
         /// La actualización es condicional al estado leído, así no se cambia una solicitud que otra operación modificó.
         /// </summary>
         /// <param name="id">Identificador de la solicitud.</param>
@@ -588,14 +619,129 @@ namespace PlasticaribeAPI.Controllers
             var error = ReglasSolicitudMaterial.ValidarCambioEstado(request.Estado, actual.Estado_Id, esGestor, esDueno);
             if (error != null) return StatusCode(error.Value.StatusCode, error.Value.Mensaje);
 
+            var motivo = request.Motivo?.Trim();
+            if (string.IsNullOrEmpty(motivo))
+                return BadRequest("Debe indicar el motivo de la cancelación.");
+
+            // Se guarda quién canceló, cuándo y por qué.
             var estadoLeido = actual.Estado_Id;
+            var ahora = DateTime.Now;
             var actualizadas = await _context.Solicitud_MatPrimaExtrusion
                 .Where(s => s.SolMpExt_Id == id && s.Estado_Id == estadoLeido)
-                .ExecuteUpdateAsync(s => s.SetProperty(x => x.Estado_Id, request.Estado), cancellationToken);
+                .ExecuteUpdateAsync(s => s
+                    .SetProperty(x => x.Estado_Id, request.Estado)
+                    .SetProperty(x => x.SolMpExt_MotivoCancelacion, motivo)
+                    .SetProperty(x => x.SolMpExt_FechaCancelacion, ahora)
+                    .SetProperty(x => x.Usua_IdCancela, usuarioId), cancellationToken);
             if (actualizadas == 0)
                 return Conflict($"La solicitud N° {id} cambió de estado mientras tanto. Consúltela de nuevo.");
 
             return Ok(new { SolMpExt_Id = id, Estado_Id = request.Estado });
+        }
+
+        /// <summary>
+        /// Obtiene el avance y el estado de la solicitud de la OT (todas sus solicitudes): kg de la OT, tope con el
+        /// adicional, kg solicitados y asignados, solicitudes por estado y qué acciones permite.
+        /// </summary>
+        /// <param name="ot">Número de la OT.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>El resumen; 404 si la OT no tiene solicitudes.</returns>
+        [HttpGet("ot/{ot:long}")]
+        public async Task<IActionResult> ObtenerResumenOT(long ot, CancellationToken cancellationToken)
+        {
+            var resumen = await _solicitudes.ObtenerResumenOTAsync(ot, cancellationToken);
+            return resumen == null ? NotFound($"La OT {ot} no tiene solicitudes de material.") : Ok(resumen);
+        }
+
+        /// <summary>
+        /// Guarda los kg de la OT tomados de BagPro y recalcula su estado (por ejemplo, para las OT anteriores a esta
+        /// regla, que no tienen sus kg). Solo aplica a OT que ya tienen solicitudes.
+        /// </summary>
+        /// <param name="ot">Número de la OT.</param>
+        /// <param name="request">Kg de la OT.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>El resumen actualizado; 404 si la OT no tiene solicitudes.</returns>
+        [HttpPut("ot/{ot:long}/kg")]
+        public Task<IActionResult> RegistrarKgOT(long ot, RegistrarKgOTRequest request, CancellationToken cancellationToken) =>
+            EnTransaccionOTAsync(async () =>
+            {
+                if (await _solicitudes.ObtenerEstadoOTAsync(ot, cancellationToken) == null)
+                    return NotFound($"La OT {ot} no tiene solicitudes de material.");
+                await _solicitudes.RegistrarKgOTAsync(ot, request.KgOT, cancellationToken);
+                return null;
+            }, ot, cancellationToken);
+
+        /// <summary>
+        /// Completa a mano la solicitud de la OT después de que lo asignado llegó a los kg de la OT (umbral) y completa
+        /// sus solicitudes activas de materia prima. No se puede deshacer. Para administrador, asignador y solicitante.
+        /// </summary>
+        /// <param name="ot">Número de la OT.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>El resumen actualizado; 404 o 409 según la regla que no se cumple.</returns>
+        [HttpPut("ot/{ot:long}/completar")]
+        [Authorize(Policy = "GestionarSolicitudOT")]
+        public Task<IActionResult> CompletarOT(long ot, CancellationToken cancellationToken) =>
+            AccionOTAsync(ot, usuario => _solicitudes.CompletarOTAsync(ot, usuario, cancellationToken), cancellationToken);
+
+        /// <summary>
+        /// Finaliza la solicitud de la OT (cierra la asignación de materiales) cuando está completada y no tiene
+        /// solicitudes activas. Si la OT aún no produce, queda ASIGNADA en Estados_ProcesosOT.
+        /// Para administrador, asignador y solicitante.
+        /// </summary>
+        /// <param name="ot">Número de la OT.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>El resumen actualizado; 404 o 409 según la regla que no se cumple.</returns>
+        [HttpPut("ot/{ot:long}/finalizar")]
+        [Authorize(Policy = "GestionarSolicitudOT")]
+        public Task<IActionResult> FinalizarOT(long ot, CancellationToken cancellationToken) =>
+            AccionOTAsync(ot, usuario => _solicitudes.FinalizarOTAsync(ot, usuario, cancellationToken), cancellationToken);
+
+        /// <summary>
+        /// Verifica la solicitud de la OT finalizada: el solicitante comprobó físicamente lo recibido.
+        /// Para administrador y solicitante.
+        /// </summary>
+        /// <param name="ot">Número de la OT.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        /// <returns>El resumen actualizado; 404 o 409 según la regla que no se cumple.</returns>
+        [HttpPut("ot/{ot:long}/verificar")]
+        [Authorize(Policy = "VerificarSolicitudMaterial")]
+        public Task<IActionResult> VerificarOT(long ot, CancellationToken cancellationToken) =>
+            AccionOTAsync(ot, usuario => _solicitudes.VerificarOTAsync(ot, usuario, cancellationToken), cancellationToken);
+
+        /// <summary>
+        /// Ejecuta una acción de la solicitud de la OT con el usuario del token y responde el resumen o el error.
+        /// </summary>
+        private async Task<IActionResult> AccionOTAsync(long ot, Func<long, Task<ResultadoAccionOT>> accion, CancellationToken cancellationToken)
+        {
+            if (!long.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var usuarioId))
+                return Unauthorized();
+
+            return await EnTransaccionOTAsync(async () =>
+            {
+                var resultado = await accion(usuarioId);
+                return resultado.StatusCode == StatusCodes.Status200OK ? null : StatusCode(resultado.StatusCode, resultado.Mensaje);
+            }, ot, cancellationToken);
+        }
+
+        /// <summary>
+        /// Ejecuta una operación sobre la solicitud de la OT en una transacción serializable (para que no se cruce con
+        /// una asignación) y, si no devolvió un error, responde el resumen actualizado de la OT.
+        /// </summary>
+        /// <param name="operacion">Operación; devuelve la respuesta de error o null si se aplicó.</param>
+        /// <param name="ot">Número de la OT.</param>
+        /// <param name="cancellationToken">Token para cancelar la operación.</param>
+        private Task<IActionResult> EnTransaccionOTAsync(Func<Task<IActionResult?>> operacion, long ot, CancellationToken cancellationToken)
+        {
+            var strategy = _context.Database.CreateExecutionStrategy();
+            return strategy.ExecuteAsync<IActionResult>(async () =>
+            {
+                _context.ChangeTracker.Clear();
+                await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+                var error = await operacion();
+                if (error != null) return error;
+                await transaction.CommitAsync(cancellationToken);
+                return Ok(await _solicitudes.ObtenerResumenOTAsync(ot, cancellationToken));
+            });
         }
 
         /// <summary>

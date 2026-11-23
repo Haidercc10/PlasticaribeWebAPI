@@ -84,25 +84,26 @@ namespace PlasticaribeAPI.Service
             proceso == "EXT" ? TipoMaterialInventario.MateriaPrima : TipoMaterialInventario.Tinta;
 
         /// <summary>
-        /// Indica si un usuario puede cambiar la solicitud al estado indicado.
-        /// Quien gestiona solicitudes finaliza o cancela las pendientes y parciales; el solicitante solo puede
-        /// cancelar su propia solicitud mientras esté pendiente.
+        /// Indica si un usuario puede cancelar la solicitud. Quien gestiona solicitudes cancela las pendientes y
+        /// parciales; el solicitante solo puede cancelar su propia solicitud mientras esté pendiente.
         /// </summary>
-        /// <param name="estadoNuevo">Estado pedido (finalizada o cancelada).</param>
+        /// <param name="estadoNuevo">Estado pedido (solo se admite cancelada).</param>
         /// <param name="estadoActual">Estado actual de la solicitud.</param>
         /// <param name="esGestor">El usuario tiene la policy GestionarSolicitudMaterial.</param>
         /// <param name="esDueno">El usuario es quien creó la solicitud.</param>
         /// <returns>Null si se permite; si no, el código HTTP (403 o 409) y el mensaje.</returns>
         public static (int StatusCode, string Mensaje)? ValidarCambioEstado(int estadoNuevo, int estadoActual, bool esGestor, bool esDueno)
         {
-            if (estadoNuevo is not (EstadosSolicitudMaterial.Finalizada or EstadosSolicitudMaterial.Cancelada))
-                return (400, "Solo se puede finalizar o cancelar una solicitud.");
+            // Las solicitudes ya no se finalizan una por una: se completan solas y se finalizan con su OT.
+            if (estadoNuevo != EstadosSolicitudMaterial.Cancelada)
+                return (400, "Solo se puede cancelar una solicitud; se finaliza junto con su OT.");
 
-            var activa = estadoActual is EstadosSolicitudMaterial.Pendiente or EstadosSolicitudMaterial.Parcial;
             if (esGestor)
-                return activa ? null : (409, "Solo se pueden finalizar o cancelar solicitudes pendientes o parciales.");
+                return EstadosSolicitudMaterial.EstaActiva(estadoActual)
+                    ? null
+                    : (409, "Solo se pueden cancelar solicitudes pendientes o parciales.");
 
-            if (!esDueno || estadoNuevo != EstadosSolicitudMaterial.Cancelada)
+            if (!esDueno)
                 return (403, "No tiene permiso para cambiar el estado de esta solicitud.");
 
             return estadoActual == EstadosSolicitudMaterial.Pendiente

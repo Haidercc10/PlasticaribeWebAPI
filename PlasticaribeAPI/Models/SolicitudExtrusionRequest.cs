@@ -47,6 +47,13 @@ namespace PlasticaribeAPI.Models
         public decimal? LimiteKgOT { get; set; }
 
         /// <summary>
+        /// Kg de la OT en BagPro, sin el adicional (umbral de la solicitud de la OT). Si no se envía se calcula desde
+        /// <see cref="LimiteKgOT"/>.
+        /// </summary>
+        [Range(typeof(decimal), "0", "9999999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
+        public decimal? KgOT { get; set; }
+
+        /// <summary>
         /// Indica que un usuario con la policy ExcederLimiteOT confirmó solicitar por encima del límite de la OT.
         /// </summary>
         public bool ConfirmarExcesoLimite { get; set; }
@@ -94,6 +101,13 @@ namespace PlasticaribeAPI.Models
         /// </summary>
         [Range(typeof(decimal), "0", "9999999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
         public decimal? LimiteKgOT { get; set; }
+
+        /// <summary>
+        /// Kg de la OT en BagPro, sin el adicional (umbral de la solicitud de la OT). Si no se envía se calcula desde
+        /// <see cref="LimiteKgOT"/>.
+        /// </summary>
+        [Range(typeof(decimal), "0", "9999999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
+        public decimal? KgOT { get; set; }
 
         /// <summary>
         /// Indica que un usuario con la policy ExcederLimiteOT confirmó solicitar por encima del límite de la OT.
@@ -155,12 +169,26 @@ namespace PlasticaribeAPI.Models
     }
 
     /// <summary>
-    /// Cambio de estado manual de una solicitud: 5 finalizar o 4 cancelar.
+    /// Cambio de estado manual de una solicitud: solo se admite cancelarla, con su motivo.
     /// </summary>
     public sealed class CambiarEstadoSolicitudRequest
     {
         [Range(1, int.MaxValue)]
         public int Estado { get; set; }
+
+        /// <summary>Motivo de la cancelación (obligatorio, máximo 1000 caracteres).</summary>
+        [MaxLength(1000)]
+        public string? Motivo { get; set; }
+    }
+
+    /// <summary>
+    /// Kg de una OT tomados de BagPro, para su solicitud de la OT.
+    /// </summary>
+    public sealed class RegistrarKgOTRequest
+    {
+        /// <summary>Kg de la OT, sin el adicional.</summary>
+        [Range(typeof(decimal), "0.01", "9999999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
+        public decimal KgOT { get; set; }
     }
 
     /// <summary>

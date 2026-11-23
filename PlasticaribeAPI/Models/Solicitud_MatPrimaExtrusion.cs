@@ -41,6 +41,18 @@ namespace PlasticaribeAPI.Models
 
         [Column(TypeName = "Date")]
         public DateTime? SolMpExt_FechaEstimadaEntrega { get; set; }
+
+
+        /// <summary>Motivo que escribió quien canceló la solicitud.</summary>
+        [Column(TypeName = "varchar(1000)")]
+        public string? SolMpExt_MotivoCancelacion { get; set; }
+
+        /// <summary>Fecha y hora en que se canceló la solicitud.</summary>
+        public DateTime? SolMpExt_FechaCancelacion { get; set; }
+
+        /// <summary>Usuario que canceló la solicitud.</summary>
+        public long? Usua_IdCancela { get; set; }
+        public Usuario? UsuaCancela { get; set; }
     }
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

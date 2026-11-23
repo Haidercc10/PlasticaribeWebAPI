@@ -124,17 +124,18 @@ public class ReglasSolicitudMaterialTests
     }
 
     [Theory]
-    // Quien gestiona: finaliza o cancela pendientes y parciales.
-    [InlineData(EstadosSolicitudMaterial.Finalizada, EstadosSolicitudMaterial.Pendiente, true, false, null)]
+    // Quien gestiona: cancela pendientes y parciales.
+    [InlineData(EstadosSolicitudMaterial.Cancelada, EstadosSolicitudMaterial.Pendiente, true, false, null)]
     [InlineData(EstadosSolicitudMaterial.Cancelada, EstadosSolicitudMaterial.Parcial, true, false, null)]
+    [InlineData(EstadosSolicitudMaterial.Cancelada, EstadosSolicitudMaterial.Completada, true, false, 409)]
     [InlineData(EstadosSolicitudMaterial.Cancelada, EstadosSolicitudMaterial.Finalizada, true, false, 409)]
-    [InlineData(EstadosSolicitudMaterial.Finalizada, EstadosSolicitudMaterial.Verificada, true, false, 409)]
     // Solicitante: solo cancela la suya mientras esté pendiente.
     [InlineData(EstadosSolicitudMaterial.Cancelada, EstadosSolicitudMaterial.Pendiente, false, true, null)]
     [InlineData(EstadosSolicitudMaterial.Cancelada, EstadosSolicitudMaterial.Parcial, false, true, 409)]
-    [InlineData(EstadosSolicitudMaterial.Finalizada, EstadosSolicitudMaterial.Pendiente, false, true, 403)]
     [InlineData(EstadosSolicitudMaterial.Cancelada, EstadosSolicitudMaterial.Pendiente, false, false, 403)]
-    // Solo se puede pedir finalizar o cancelar.
+    // Ya no se finaliza una solicitud sola (se finaliza con su OT): solo se puede cancelar.
+    [InlineData(EstadosSolicitudMaterial.Finalizada, EstadosSolicitudMaterial.Pendiente, true, false, 400)]
+    [InlineData(EstadosSolicitudMaterial.Finalizada, EstadosSolicitudMaterial.Pendiente, false, true, 400)]
     [InlineData(EstadosSolicitudMaterial.Verificada, EstadosSolicitudMaterial.Finalizada, true, false, 400)]
     public void ValidarCambioEstado_aplica_las_reglas_por_rol_y_estado(int nuevo, int actual, bool esGestor, bool esDueno, int? esperado)
     {

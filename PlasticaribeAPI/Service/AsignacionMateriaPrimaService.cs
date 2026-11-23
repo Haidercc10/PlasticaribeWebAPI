@@ -84,6 +84,14 @@ namespace PlasticaribeAPI.Service
                 if (materiales.Count != request.Materiales.Count)
                     return RegistrarAsignacionResult.NotFound("Uno o más materiales no existen.");
 
+                // Una OT completada no recibe más materia prima; finalizada o verificada no recibe nada.
+                var conMateriaPrima = request.Materiales.Any(m => m.TipoMaterial == TipoMaterialInventario.MateriaPrima);
+                var otCerrada = SolicitudesMaterialService.MotivoOTCerrada(
+                    await _solicitudes.ObtenerEstadoOTAsync(request.OrdenTrabajo, cancellationToken),
+                    conMateriaPrima ? SolicitudesMaterialService.ProcesoMateriaPrima : string.Empty,
+                    request.OrdenTrabajo);
+                if (otCerrada != null) return RegistrarAsignacionResult.Conflict(otCerrada);
+
                 var solicitudId = request.SolicitudId ?? EstadosSolicitudMaterial.SolicitudGenericaId;
                 var esSolicitudReal = solicitudId != EstadosSolicitudMaterial.SolicitudGenericaId;
                 if (esSolicitudReal)
@@ -153,9 +161,12 @@ namespace PlasticaribeAPI.Service
                     cancellationToken);
                 if (errorConsumo != null) return new RegistrarAsignacionResult(errorConsumo.StatusCode, errorConsumo.Message);
 
+                // Se guardan los kg de la OT y se recalcula la solicitud y su OT (sin solicitud, solo la OT).
+                await _solicitudes.GuardarKgOTAsync(request.OrdenTrabajo, SolicitudesMaterialService.KgOTDe(request.KgOT, request.LimiteKgOT), cancellationToken);
                 int? estadoSolicitud = esSolicitudReal
                     ? await _solicitudes.RecalcularEstadoAsync(solicitudId, cancellationToken)
                     : null;
+                if (!esSolicitudReal) await _solicitudes.RecalcularOTAsync(request.OrdenTrabajo, cancellationToken);
 
                 if (autorizacionId != null && !await MarcarAutorizacionProcesadaAsync(autorizacionId.Value, asignacion.AsigMp_Id, cancellationToken))
                     return RegistrarAsignacionResult.Conflict("La autorización de exceso fue usada por otra operación. Intente de nuevo.");
@@ -203,7 +214,7 @@ namespace PlasticaribeAPI.Service
             if (solicitud == null)
                 return RegistrarAsignacionResult.NotFound($"La solicitud N° {solicitudId} no existe.");
             if (EstadosSolicitudMaterial.EstaCerrada(solicitud.Estado_Id))
-                return RegistrarAsignacionResult.Conflict($"La solicitud N° {solicitudId} está finalizada o cancelada.");
+                return RegistrarAsignacionResult.Conflict($"La solicitud N° {solicitudId} ya no está activa (completada, finalizada, verificada o cancelada); no admite más asignaciones.");
             if (solicitud.SolMpExt_OT != request.OrdenTrabajo)
                 return RegistrarAsignacionResult.Invalid($"La solicitud N° {solicitudId} pertenece a la OT {solicitud.SolMpExt_OT}.");
 

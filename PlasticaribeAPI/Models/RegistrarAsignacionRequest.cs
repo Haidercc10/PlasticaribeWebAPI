@@ -42,6 +42,13 @@ namespace PlasticaribeAPI.Models
         public decimal LimiteKgOT { get; set; }
 
         /// <summary>
+        /// Kg de la OT en BagPro, sin el adicional (umbral de la solicitud de la OT). Si no se envía se calcula desde
+        /// <see cref="LimiteKgOT"/>.
+        /// </summary>
+        [Range(typeof(decimal), "0", "9999999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
+        public decimal? KgOT { get; set; }
+
+        /// <summary>
         /// Indica que un usuario con permiso para exceder el límite vio la advertencia y decidió continuar.
         /// </summary>
         public bool ConfirmarExceso { get; set; }
