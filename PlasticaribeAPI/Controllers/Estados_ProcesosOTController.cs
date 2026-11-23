@@ -709,41 +709,72 @@ namespace PlasticaribeAPI.Controllers
         }
 
         [HttpPost("getOtsForSalesOrder")]
-        public ActionResult getOtsForSalesOrder([FromBody] List<CustomerOrders> CustomerOrders)
+        public async Task<ActionResult> getOtsForSalesOrder([FromBody] List<CustomerOrders> CustomerOrders)
         {
-            List<object> orders = new List<object>();
-            int counter = 0;
+            // Antes se hacía una consulta por cada línea de pedido (N+1). Ahora se traen en una sola consulta todas las OT
+            // de los productos pedidos dentro del rango total de fechas, y se emparejan en memoria con cada línea.
+            // La respuesta conserva el mismo orden y forma: un objeto (o null) por cada línea recibida.
+            if (CustomerOrders == null || CustomerOrders.Count == 0) return Ok(new List<object>());
+
+            var productos = CustomerOrders.Select(x => x.item).Distinct().ToList();
+            var desde = CustomerOrders.Min(x => x.date1);
+            var hasta = CustomerOrders.Max(x => x.date2);
+
+            var ordenes = await (from e in _context.Set<Estados_ProcesosOT>().AsNoTracking()
+                                 where e.EstProcOT_FechaCreacion >= desde &&
+                                       e.EstProcOT_FechaCreacion <= hasta &&
+                                       productos.Contains(e.Prod_Id)
+                                 select new
+                                 {
+                                     e.EstProcOT_FechaCreacion,
+                                     e.EstProcOT_OrdenTrabajo,
+                                     e.Prod_Id,
+                                     e.Estado_Id,
+                                     e.EstProcOT_ExtrusionKg,
+                                     e.EstProcOT_ImpresionKg,
+                                     e.EstProcOT_RotograbadoKg,
+                                     e.EstProcOT_LaminadoKg,
+                                     e.EstProcOT_CorteKg,
+                                     e.EstProcOT_DobladoKg,
+                                     e.EstProcOT_EmpaqueKg,
+                                     e.EstProcOT_SelladoUnd,
+                                     e.EstProcOT_SelladoKg,
+                                     e.EstProcOT_WiketiadoUnd,
+                                     e.EstProcOT_WiketiadoKg,
+                                     e.EstProcOT_PerforadoKg,
+                                 }).ToListAsync();
+
+            // Por producto, de la OT más reciente a la más antigua: así la OT elegida para cada línea siempre es la misma.
+            var porProducto = ordenes
+                .GroupBy(e => e.Prod_Id)
+                .ToDictionary(g => g.Key, g => g.OrderByDescending(e => e.EstProcOT_FechaCreacion).ThenByDescending(e => e.EstProcOT_OrdenTrabajo).ToList());
+
+            List<object?> orders = new List<object?>();
             foreach (var item in CustomerOrders)
             {
-                var ordersProduction = (from e in _context.Set<Estados_ProcesosOT>()
-                                        where e.EstProcOT_FechaCreacion >= item.date1 &&
-                                              e.EstProcOT_FechaCreacion <= item.date2 &&
-                                              e.Prod_Id == item.item //&&
-                                                                     //cl.PtPresentacionNom == item.presentation //&&
-                                                                     //cl.Cliente == Convert.ToInt32(codBagpro)
-                                        select new
-                                        {
-                                            OT = e.EstProcOT_OrdenTrabajo,
-                                            Consecutivo = item.consecutivo,
-                                            Item = e.Prod_Id,
-                                            Status = e.Estado_Id,
-                                            Extrusion = e.EstProcOT_ExtrusionKg,
-                                            Impresión = e.EstProcOT_ImpresionKg,
-                                            Rotograbado = e.EstProcOT_RotograbadoKg,
-                                            Laminado = e.EstProcOT_LaminadoKg,
-                                            Corte = e.EstProcOT_CorteKg,
-                                            Doblado = e.EstProcOT_DobladoKg,
-                                            Empaque = e.EstProcOT_EmpaqueKg,
-                                            SelladoUnd = e.EstProcOT_SelladoUnd,
-                                            SelladoKg = e.EstProcOT_SelladoKg,
-                                            WiketiadoUnd = e.EstProcOT_WiketiadoUnd,
-                                            WiketiadoKg = e.EstProcOT_WiketiadoKg,
-                                            Perforado = e.EstProcOT_PerforadoKg,
-                                        }).FirstOrDefault();
+                var e = porProducto.TryGetValue(item.item, out var lista)
+                    ? lista.FirstOrDefault(x => x.EstProcOT_FechaCreacion >= item.date1 && x.EstProcOT_FechaCreacion <= item.date2)
+                    : null;
 
-                counter++;
-                orders.Add(ordersProduction);
-                if (CustomerOrders.Count() == counter) return Ok(orders);
+                orders.Add(e == null ? null : new
+                {
+                    OT = e.EstProcOT_OrdenTrabajo,
+                    Consecutivo = item.consecutivo,
+                    Item = e.Prod_Id,
+                    Status = e.Estado_Id,
+                    Extrusion = e.EstProcOT_ExtrusionKg,
+                    Impresión = e.EstProcOT_ImpresionKg,
+                    Rotograbado = e.EstProcOT_RotograbadoKg,
+                    Laminado = e.EstProcOT_LaminadoKg,
+                    Corte = e.EstProcOT_CorteKg,
+                    Doblado = e.EstProcOT_DobladoKg,
+                    Empaque = e.EstProcOT_EmpaqueKg,
+                    SelladoUnd = e.EstProcOT_SelladoUnd,
+                    SelladoKg = e.EstProcOT_SelladoKg,
+                    WiketiadoUnd = e.EstProcOT_WiketiadoUnd,
+                    WiketiadoKg = e.EstProcOT_WiketiadoKg,
+                    Perforado = e.EstProcOT_PerforadoKg,
+                });
             }
             return Ok(orders);
         }
