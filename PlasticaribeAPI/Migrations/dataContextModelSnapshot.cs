@@ -4670,6 +4670,57 @@ namespace PlasticaribeAPI.Migrations
                     b.ToTable("Fallas_Tecnicas");
                 });
 
+            modelBuilder.Entity("PlasticaribeAPI.Models.Ficha_Complementaria_Item", b =>
+                {
+                    b.Property<int>("Prod_Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CodigoBarras")
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<int?>("Embobinado_Id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Fecha_Creacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Fecha_Modifica")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("LargoContinuo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("MezclaAjustada")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("PasoGuias")
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("Repeticiones")
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("UbicacionGuia")
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<long>("Usua_Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("Usua_Modifica")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Prod_Id");
+
+                    b.HasIndex("Usua_Id");
+
+                    b.HasIndex("Usua_Modifica");
+
+                    b.ToTable("Ficha_Complementaria_Item");
+                });
+
             modelBuilder.Entity("PlasticaribeAPI.Models.Formato", b =>
                 {
                     b.Property<long>("Formato_Id")
@@ -13553,6 +13604,32 @@ namespace PlasticaribeAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("TipoFallaTecnica");
+                });
+
+            modelBuilder.Entity("PlasticaribeAPI.Models.Ficha_Complementaria_Item", b =>
+                {
+                    b.HasOne("PlasticaribeAPI.Models.Producto", "Producto")
+                        .WithOne()
+                        .HasForeignKey("PlasticaribeAPI.Models.Ficha_Complementaria_Item", "Prod_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("Usua_Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PlasticaribeAPI.Models.Usuario", "UsuarioModifica")
+                        .WithMany()
+                        .HasForeignKey("Usua_Modifica")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Producto");
+
+                    b.Navigation("Usuario");
+
+                    b.Navigation("UsuarioModifica");
                 });
 
             modelBuilder.Entity("PlasticaribeAPI.Models.Incapacidades", b =>

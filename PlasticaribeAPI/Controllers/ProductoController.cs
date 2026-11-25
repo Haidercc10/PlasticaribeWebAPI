@@ -25,8 +25,8 @@ namespace PlasticaribeAPI.Controllers
     {
         private readonly dataContext _context;
 
-        /// <summary>Roles autorizados para crear artículos en Zeus.</summary>
-        private static readonly HashSet<string> RolesCreanArticuloZeus = new() { "1", "98" };
+        /// <summary>Roles autorizados para crear artículos en Zeus (también se usa en la ficha complementaria del item).</summary>
+        internal static readonly HashSet<string> RolesCreanArticuloZeus = new() { "1", "98" };
 
         public ProductoController(dataContext context)
         {
