@@ -288,6 +288,39 @@ namespace PlasticaribeAPI.Controllers
             return Ok(Desperdicio);
         }
 
+        /// <summary>
+        /// Desperdicio (Kg) del mes actual de todos los procesos en una sola consulta; reemplaza llamar
+        /// GetDesperdiciosMes una vez por proceso. Mismas reglas: mes de producción de 7:00 a. m. del día 1
+        /// a 6:59 a. m. del día 1 del mes siguiente, y el SELLA de las máquinas 35, 37, 38 y 39 cuenta como CAMISILLA.
+        /// </summary>
+        /// <returns>Lista de { proceso, desperdicio }; los procesos sin desperdicio no aparecen.</returns>
+        [HttpGet("GetDesperdiciosMesPorProceso")]
+        public async Task<ActionResult> GetDesperdiciosMesPorProceso()
+        {
+            string horaInicio = "07:00:00";
+            string horaFin = "06:59:59";
+            DateTime primerDia = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            DateTime fechaExtendida = primerDia.AddMonths(1);
+            List<int> machines = [35, 37, 38, 39];
+
+            var desperdicios = await (from d in _context.Set<Desperdicio>()
+                                      // GetDesperdiciosMes("CAMISILLA") solo cuenta SELLA de esas máquinas, no el Proceso_Id CAMISILLA
+                                      where d.Proceso_Id != "CAMISILLA"
+                                      && (
+                                           (d.Desp_Fecha == primerDia && String.Compare(d.Desp_HoraRegistro, horaInicio) >= 0)
+                                           || (d.Desp_Fecha == fechaExtendida && String.Compare(d.Desp_HoraRegistro, horaFin) < 0)
+                                           || (d.Desp_Fecha > primerDia && d.Desp_Fecha < fechaExtendida)
+                                         )
+                                      group d by (d.Proceso_Id == "SELLA" && machines.Contains(Convert.ToInt32(d.Maquina))) ? "CAMISILLA" : d.Proceso_Id into g
+                                      select new
+                                      {
+                                          Proceso = g.Key,
+                                          Desperdicio = g.Sum(x => (decimal?)x.Desp_PesoKg) ?? 0m,
+                                      }).ToListAsync();
+
+            return Ok(desperdicios);
+        }
+
             /** Movimientos Desperdicios*/
             [HttpGet("getMovDesperdicios/{fecha1}/{fecha2}")]
 #pragma warning disable CS8632 // La anotación para tipos de referencia que aceptan valores NULL solo debe usarse en el código dentro de un contexto de anotaciones "#nullable".

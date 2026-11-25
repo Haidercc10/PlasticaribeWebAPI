@@ -1,15 +1,20 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlasticaribeAPI.Data;
 using PlasticaribeAPI.Models;
+using System.Security.Claims;
 
 namespace PlasticaribeAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, Authorize]
     public class Produccion_DiariaController : ControllerBase
     {
+        /// <summary>Roles que pueden cambiar la meta diaria por máquina (1 = administrador).</summary>
+        private static readonly HashSet<string> RolesEditanMetaDiaria = new() { "1" };
+
         private readonly dataContext _context;
 
         public Produccion_DiariaController(dataContext context)
@@ -59,8 +64,10 @@ namespace PlasticaribeAPI.Controllers
                           ProcessName = g.Key.Proceso_Nombre,
                           Date = g.Key.Prd_Fecha,
                           Weight = g.Sum(x => x.Prd_Peso),
-                          Percentage = Math.Round(g.Sum(x => x.Prd_Porcentaje)),
-                          Goal = g.Sum(x => x.Prd_Meta) > Convert.ToDecimal(0) ? (g.Sum(x => x.Prd_Meta) / 2) : Convert.ToDecimal(0),
+                          // Cada fila (turno) guarda la meta completa del día: se toma MAX, no SUM/2
+                          // (SUM/2 daba la mitad cuando la máquina solo trabajó un turno).
+                          Percentage = g.Max(x => x.Prd_Meta) > 0 ? Math.Round(g.Sum(x => x.Prd_Peso) * 100 / g.Max(x => x.Prd_Meta)) : 0,
+                          Goal = g.Max(x => x.Prd_Meta),
                           WeightNight = g.Where(x => x.Turno_Id == "NOCHE")
                                        .Sum(x => (decimal?)x.Prd_Peso) ?? 0,
                           weightDay = g.Where(x => x.Turno_Id == "DIA")
@@ -90,6 +97,11 @@ namespace PlasticaribeAPI.Controllers
         [HttpPut("putGoalForMachine/{machine}/{process}/{date}/{goal}")]
         public async Task<IActionResult> putGoalForMachine(int machine, string process, DateTime date, decimal goal)
         {
+            if (!RolesEditanMetaDiaria.Contains(User.FindFirstValue(ClaimTypes.Role) ?? string.Empty))
+                return Forbid();
+            if (goal <= 0)
+                return BadRequest("La meta debe ser mayor a 0.");
+
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8634 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'class' constraint.
             var production = from pd in _context.Set<Produccion_Diaria>() 
@@ -153,7 +165,7 @@ namespace PlasticaribeAPI.Controllers
             return NoContent();
         }
 
-        //
+        // Las filas diarias las crea por SQL una tarea programada del .250; este endpoint exige sesión como el resto.
         [HttpPost]
         public async Task<ActionResult<Produccion_Diaria>> PostProduccion_Diaria(Produccion_Diaria Produccion_Diaria)
         {
