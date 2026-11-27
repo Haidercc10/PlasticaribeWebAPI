@@ -152,6 +152,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<DetSolicitud_Materiales> DetSolicitud_Materiales { get; set; }
         public DbSet<Solicitud_Maquinas> Solicitud_Maquinas { get; set; }
         public DbSet<SolicitudMaterial_OT> SolicitudMaterial_OT { get; set; }
+        public DbSet<Ficha_Complementaria_Item> Ficha_Complementaria_Item { get; set; }
         public DbSet<Tipo_Solicitud_Rollos_Areas> Tipo_Solicitud_Rollos_Areas { get; set; }
         public DbSet<Solicitud_Rollos_Areas> Solicitud_Rollos_Areas { get; set; }
         public DbSet<Detalles_SolicitudRollos> Detalles_SolicitudRollos { get; set; }
@@ -992,6 +993,13 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<SolicitudMaterial_OT>().HasOne(o => o.UsuaCompleta).WithMany().HasForeignKey(o => o.Usua_IdCompleta).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<SolicitudMaterial_OT>().HasOne(o => o.UsuaFinaliza).WithMany().HasForeignKey(o => o.Usua_IdFinaliza).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<SolicitudMaterial_OT>().HasOne(o => o.UsuaVerifica).WithMany().HasForeignKey(o => o.Usua_IdVerifica).OnDelete(DeleteBehavior.Restrict);
+
+            //Ficha complementaria del item: datos que no existen en BagPro (una fila por producto, 1 a 1 con Productos).
+            modelBuilder.Entity<Ficha_Complementaria_Item>().HasOne(f => f.Producto).WithOne().HasForeignKey<Ficha_Complementaria_Item>(f => f.Prod_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Ficha_Complementaria_Item>().HasOne(f => f.Usuario).WithMany().HasForeignKey(f => f.Usua_Id).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Ficha_Complementaria_Item>().HasOne(f => f.UsuarioModifica).WithMany().HasForeignKey(f => f.Usua_Modifica).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Ficha_Complementaria_Item>().Property(f => f.LargoContinuo).HasDefaultValue(false);
+            modelBuilder.Entity<Ficha_Complementaria_Item>().Property(f => f.MezclaAjustada).HasDefaultValue(false);
 
             //Solicitud de Rollos a Areas
             modelBuilder.Entity<Solicitud_Rollos_Areas>().ToTable(tb => tb.HasTrigger("Auditoria_Solicitud_Rollos_Areas"));
