@@ -24,6 +24,10 @@ namespace PlasticaribeAPI.Controllers
         private const long MaxBytesImagen = 5 * 1024 * 1024;
         /// <summary>Máximo de caracteres de la descripción y de cada comentario (igual al maxlength del front).</summary>
         private const int MaxCaracteresTexto = 2000;
+        /// <summary>Máximo de notificaciones sin leer que se devuelven por consulta.</summary>
+        private const int MaxNotificaciones = 50;
+        /// <summary>Caracteres del comentario que se envían para el aviso de la esquina.</summary>
+        private const int MaxCaracteresAvisoComentario = 200;
         private static readonly string[] ExtensionesLegado = { ".png", ".jpg", ".jpeg" };
 
         private readonly dataContext _context;
@@ -155,9 +159,10 @@ namespace PlasticaribeAPI.Controllers
             _context.Tickets.Add(ticket);
 
             // Así el reportante entiende por qué tiene un ticket que no creó
+            Tickets_Revisados? registroANombre = null;
             if (nombreReportante != null)
             {
-                _context.Tickets_Revisados.Add(new Tickets_Revisados
+                registroANombre = new Tickets_Revisados
                 {
                     Tickets = ticket,
                     Usua_Id = usuarioId,
@@ -165,8 +170,12 @@ namespace PlasticaribeAPI.Controllers
                     EstadoNuevo_Id = null,
                     TicketRev_Fecha = ahora.Date,
                     TicketRev_Hora = ahora.ToString("HH:mm:ss"),
-                });
+                };
+                _context.Tickets_Revisados.Add(registroANombre);
             }
+
+            // Soporte recibe el aviso del ticket nuevo; si se registró a nombre de otro, también el reportante
+            await AgregarNotificacionesAsync(ticket, usuarioId, nombreReportante != null, TipoNotificacionTicket.NUEVO, registroANombre, ahora);
 
             // Guardar archivos en disco; si falla la BD se eliminan
             var archivosEscritos = new List<string>();
@@ -439,7 +448,9 @@ namespace PlasticaribeAPI.Controllers
             var ahora = DateTime.Now;
             ticket.Estado_Id = (int)nuevo;
             ticket.Ticket_FechaResolucion = nuevo == EstadoTicket.RESUELTO ? ahora : null;
-            _context.Tickets_Revisados.Add(NuevoHistorial(ticket.Ticket_Id, usuarioId, comentario, (int)nuevo, ahora));
+            var revision = NuevoHistorial(ticket.Ticket_Id, usuarioId, comentario, (int)nuevo, ahora);
+            _context.Tickets_Revisados.Add(revision);
+            await AgregarNotificacionesAsync(ticket, usuarioId, esSoporte, TipoNotificacionTicket.CAMBIO_ESTADO, revision, ahora);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -459,9 +470,136 @@ namespace PlasticaribeAPI.Controllers
             if (comentario.Length > MaxCaracteresTexto) return BadRequest($"El comentario no puede superar {MaxCaracteresTexto} caracteres.");
             if (comentario.Length == 0) return BadRequest("El comentario no puede estar vacío.");
 
-            _context.Tickets_Revisados.Add(NuevoHistorial(id, usuarioId, comentario, null, DateTime.Now));
+            var ahora = DateTime.Now;
+            var revision = NuevoHistorial(id, usuarioId, comentario, null, ahora);
+            _context.Tickets_Revisados.Add(revision);
+            await AgregarNotificacionesAsync(ticket, usuarioId, await EsSoporteAsync(), TipoNotificacionTicket.COMENTARIO, revision, ahora);
             await _context.SaveChangesAsync();
             return NoContent();
+        }
+
+        // ---------------------------------------------------------------- notificaciones
+
+        /// <summary>
+        /// Notificaciones sin leer del usuario autenticado (las más antiguas primero, máximo 50), con el total sin leer.
+        /// El front las consulta cada 60 s para mostrar los avisos de la esquina y el contador de la barra superior.
+        /// </summary>
+        [HttpGet("notificaciones")]
+        public async Task<ActionResult> GetNotificaciones()
+        {
+            if (!TryObtenerUsuarioId(out var usuarioId)) return Unauthorized();
+
+            var pendientes = _context.Tickets_Notificaciones.AsNoTracking()
+                .Where(n => n.Usua_Id == usuarioId && !n.TicketNot_Leida);
+            var total = await pendientes.CountAsync();
+
+            var lista = await pendientes
+                .OrderBy(n => n.TicketNot_Id)
+                .Take(MaxNotificaciones)
+                .Select(n => new
+                {
+                    Id = n.TicketNot_Id,
+                    TicketId = n.Ticket_Id,
+                    Asunto = n.Ticket!.Ticket_Asunto,
+                    Tipo = n.TicketNot_Tipo,
+                    // Estado al que pasó (cambio de estado) o el estado actual del ticket (nuevo o comentario)
+                    EstadoId = n.Revision != null && n.Revision.EstadoNuevo_Id != null ? n.Revision.EstadoNuevo_Id.Value : n.Ticket.Estado_Id,
+                    Estado = n.Revision != null && n.Revision.EstadoNuevo != null ? n.Revision.EstadoNuevo.Estado_Nombre : n.Ticket.Estado!.Estado_Nombre,
+                    Autor = n.Autor != null ? n.Autor.Usua_Nombre : "",
+                    Comentario = n.Revision != null ? n.Revision.TicketRev_Descripcion : n.Ticket.Ticket_Descripcion,
+                    Fecha = n.TicketNot_Fecha,
+                    // Ticket propio (se abre en Mis tickets) o atendido por soporte (se abre en Gestionar tickets)
+                    EsMio = n.Ticket.Usua_Id == usuarioId || n.Ticket.UsuaRegistra_Id == usuarioId,
+                })
+                .ToListAsync();
+
+            return Ok(new
+            {
+                Total = total,
+                Notificaciones = lista.Select(n => new
+                {
+                    n.Id, n.TicketId, n.Asunto, n.Tipo, n.EstadoId, Estado = n.Estado?.Trim(), n.Autor,
+                    Comentario = Truncar((n.Comentario ?? string.Empty).Trim(), MaxCaracteresAvisoComentario),
+                    n.Fecha, n.EsMio,
+                }),
+            });
+        }
+
+        /// <summary>
+        /// Marca como leídas las notificaciones del usuario autenticado: las de un ticket (al abrirlo o con "Marcar como
+        /// leído") o todas si no se indica el ticket.
+        /// </summary>
+        /// <param name="ticketId">Ticket cuyas notificaciones se marcan; null para todas.</param>
+        [HttpPost("notificaciones/leidas")]
+        public async Task<ActionResult> MarcarNotificacionesLeidas(long? ticketId = null)
+        {
+            if (!TryObtenerUsuarioId(out var usuarioId)) return Unauthorized();
+            var ahora = DateTime.Now;
+            await _context.Tickets_Notificaciones
+                .Where(n => n.Usua_Id == usuarioId && !n.TicketNot_Leida && (ticketId == null || n.Ticket_Id == ticketId))
+                .ExecuteUpdateAsync(s => s
+                    .SetProperty(n => n.TicketNot_Leida, true)
+                    .SetProperty(n => n.TicketNot_FechaLeida, ahora));
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Agrega (sin guardar) una notificación por destinatario del movimiento. Siempre se avisa al reportante y a quien
+        /// registró el ticket a su nombre; a soporte, cuando el ticket es nuevo o el movimiento lo hace el reportante
+        /// (no soporte, o soporte en su propio ticket). Quien hace el movimiento nunca recibe su propio aviso.
+        /// </summary>
+        /// <param name="ticket">Ticket del movimiento (nuevo o ya guardado).</param>
+        /// <param name="autorId">Usuario que hace el movimiento.</param>
+        /// <param name="autorEsSoporte">El autor tiene permiso a Gestionar Tickets.</param>
+        /// <param name="tipo">Qué pasó.</param>
+        /// <param name="revision">Movimiento del historial que se acaba de agregar; null en un ticket nuevo sin historial.</param>
+        /// <param name="fecha">Fecha del movimiento.</param>
+        private async Task AgregarNotificacionesAsync(Tickets ticket, long autorId, bool autorEsSoporte, TipoNotificacionTicket tipo,
+            Tickets_Revisados? revision, DateTime fecha)
+        {
+            var destinatarios = new HashSet<long> { ticket.Usua_Id };
+            if (ticket.UsuaRegistra_Id.HasValue) destinatarios.Add(ticket.UsuaRegistra_Id.Value);
+            if (tipo == TipoNotificacionTicket.NUEVO || !autorEsSoporte || autorId == ticket.Usua_Id)
+                destinatarios.UnionWith(await ObtenerUsuariosSoporteAsync());
+            destinatarios.Remove(autorId);
+
+            var esNuevo = ticket.Ticket_Id == 0;
+            foreach (var destinatario in destinatarios)
+            {
+                _context.Tickets_Notificaciones.Add(new Tickets_Notificaciones
+                {
+                    // Ticket nuevo: se enlaza por la entidad (aún no tiene Id); uno existente, por su Id (puede venir sin seguimiento)
+                    Ticket = esNuevo ? ticket : null,
+                    Ticket_Id = ticket.Ticket_Id,
+                    Usua_Id = destinatario,
+                    Revision = revision,
+                    UsuaAutor_Id = autorId,
+                    TicketNot_Tipo = (int)tipo,
+                    TicketNot_Fecha = fecha,
+                    TicketNot_Leida = false,
+                });
+            }
+        }
+
+        /// <summary>Usuarios activos cuyo rol tiene permiso a la vista "Gestionar Tickets" (soporte).</summary>
+        private async Task<List<long>> ObtenerUsuariosSoporteAsync()
+        {
+            var permisos = await _context.Vistas_Permisos.AsNoTracking()
+                .Where(vp => vp.Vp_Nombre == VistaGestionTickets && vp.Vp_Estado == 1)
+                .Select(vp => vp.Vp_Id_Roles)
+                .ToListAsync();
+            var roles = permisos
+                .SelectMany(p => (p ?? string.Empty).Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                .Select(r => int.TryParse(r, out var rol) ? rol : (int?)null)
+                .Where(r => r.HasValue)
+                .Select(r => r!.Value)
+                .Distinct()
+                .ToList();
+            if (roles.Count == 0) return new List<long>();
+            return await _context.Usuarios.AsNoTracking()
+                .Where(u => u.Estado_Id == UsuarioActivo && roles.Contains(u.RolUsu_Id))
+                .Select(u => u.Usua_Id)
+                .ToListAsync();
         }
 
         // ---------------------------------------------------------------- utilidades

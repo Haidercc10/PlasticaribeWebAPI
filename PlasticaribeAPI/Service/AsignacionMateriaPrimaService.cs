@@ -99,6 +99,23 @@ namespace PlasticaribeAPI.Service
                     var errorSolicitud = await ValidarContraSolicitudAsync(solicitudId, request, materiales, cancellationToken);
                     if (errorSolicitud != null) return errorSolicitud;
                 }
+                else
+                {
+                    // Sin solicitud: si la OT tiene solicitudes pendientes o parciales, se asignan desde ellas
+                    // (Movimientos de solicitudes); asignar directo descontaría esos kg dos veces en "por solicitar".
+                    var activas = await _context.Solicitud_MatPrimaExtrusion
+                        .AsNoTracking()
+                        .Where(s => s.SolMpExt_OT == request.OrdenTrabajo &&
+                            s.SolMpExt_Id != EstadosSolicitudMaterial.SolicitudGenericaId &&
+                            (s.Estado_Id == EstadosSolicitudMaterial.Pendiente || s.Estado_Id == EstadosSolicitudMaterial.Parcial))
+                        .OrderBy(s => s.SolMpExt_Id)
+                        .Select(s => s.SolMpExt_Id)
+                        .ToListAsync(cancellationToken);
+                    if (activas.Count > 0)
+                        return RegistrarAsignacionResult.Conflict(
+                            $"La OT {request.OrdenTrabajo} tiene solicitudes de material pendientes o parciales por revisar " +
+                            $"(N° {string.Join(", ", activas)}). Asígnelas desde Movimientos de solicitudes de materia prima.");
+                }
 
                 var kgNuevos = request.Materiales
                     .Where(m => m.TipoMaterial == TipoMaterialInventario.MateriaPrima &&

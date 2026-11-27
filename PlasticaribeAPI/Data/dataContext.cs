@@ -142,6 +142,7 @@ namespace PlasticaribeAPI.Data
         public DbSet<Tickets_Revisados> Tickets_Revisados { get; set; }
         public DbSet<Tickets_Tipos> Tickets_Tipos { get; set; }
         public DbSet<Tickets_Adjuntos> Tickets_Adjuntos { get; set; }
+        public DbSet<Tickets_Notificaciones> Tickets_Notificaciones { get; set; }
         public DbSet<Detalles_SolicitudMateriaPrima> Detalles_SolicitudMateriaPrima { get; set; }
         public DbSet<Solicitud_MateriaPrima> Solicitud_MateriaPrima { get; set; }
         public DbSet<SolicitudesMP_OrdenesCompra> SolicitudesMP_OrdenesCompra { get; set; }
@@ -927,6 +928,13 @@ namespace PlasticaribeAPI.Data
             modelBuilder.Entity<Tickets_Revisados>().HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Tickets_Revisados>().HasOne(x => x.Tickets).WithMany().HasForeignKey(x => x.Ticket_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
             modelBuilder.Entity<Tickets_Revisados>().HasOne(x => x.EstadoNuevo).WithMany().HasForeignKey(x => x.EstadoNuevo_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+
+            // Notificaciones de tickets (una por destinatario y movimiento)
+            modelBuilder.Entity<Tickets_Notificaciones>().HasOne(x => x.Ticket).WithMany().HasForeignKey(x => x.Ticket_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Tickets_Notificaciones>().HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.Usua_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Tickets_Notificaciones>().HasOne(x => x.Autor).WithMany().HasForeignKey(x => x.UsuaAutor_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Tickets_Notificaciones>().HasOne(x => x.Revision).WithMany().HasForeignKey(x => x.TicketRev_Id).OnDelete(deleteBehavior: DeleteBehavior.Restrict);
+            modelBuilder.Entity<Tickets_Notificaciones>().HasIndex(x => new { x.Usua_Id, x.TicketNot_Leida, x.Ticket_Id });
 
             //Solicitud de Materia Prima
             modelBuilder.Entity<Solicitud_MateriaPrima>().ToTable(tb => tb.HasTrigger("Auditoria_Solicitud_MateriaPrima"));
